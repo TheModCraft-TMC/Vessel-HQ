@@ -36,6 +36,8 @@ The strongest product direction is to combine **TMC-P01**, **TMC-P02**, and **TM
 
 ## Frontend modernization track
 
+The committed implementation direction and acceptance criteria are maintained in [React and realtime frontend modernization](frontend-modernization.md).
+
 The September 12, 2026 source snapshot is already predominantly React and TypeScript by non-generated production source volume, but the application runtime is still AngularJS-first:
 
 | Signal | Current snapshot | Meaning |

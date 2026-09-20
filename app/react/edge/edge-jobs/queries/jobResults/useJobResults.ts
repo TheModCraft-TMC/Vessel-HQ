@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import {
-  PaginatedResults,
-  withPaginationHeaders,
-} from '@/react/common/api/pagination.types';
+import { withPaginationHeaders } from '@/react/common/api/pagination.types';
 import {
   BaseQueryOptions,
   BaseQueryParams,
@@ -18,24 +15,10 @@ import { queryKeys } from './query-keys';
 
 type QueryOptions = BaseQueryOptions<typeof sortOptions>;
 
-type RefetchInterval =
-  | number
-  | false
-  | ((data: PaginatedResults<Array<JobResult>> | undefined) => number | false);
-
-export function useJobResults(
-  id: EdgeJob['Id'],
-  {
-    refetchInterval,
-    ...query
-  }: {
-    refetchInterval?: RefetchInterval;
-  } & QueryOptions = {}
-) {
+export function useJobResults(id: EdgeJob['Id'], query: QueryOptions = {}) {
   return useQuery({
     queryKey: [...queryKeys.base(id), query],
     queryFn: () => getJobResults(id, queryParamsFromQueryOptions(query)),
-    refetchInterval,
   });
 }
 

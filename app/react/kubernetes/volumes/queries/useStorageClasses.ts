@@ -10,7 +10,6 @@ import { parseKubernetesAxiosError } from '@/react/kubernetes/axiosError';
 export function useStorageClasses<T = StorageClass>(
   environmentId: EnvironmentId,
   queryOptions?: {
-    refetchInterval?: number;
     select?: (storageClasses: StorageClass[]) => T[];
   }
 ) {
@@ -18,7 +17,6 @@ export function useStorageClasses<T = StorageClass>(
     queryKeys.storages(environmentId),
     () => getStorageClasses(environmentId),
     {
-      refetchInterval: queryOptions?.refetchInterval,
       select: queryOptions?.select,
       ...withError('Unable to retrieve storage classes'),
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
@@ -30,8 +30,8 @@ vi.mock('../TestConnection/RegistryTestConnection', () => ({
   },
 }));
 
-test('should render form with all required fields', () => {
-  renderComponent();
+test('should render form with all required fields', async () => {
+  await renderComponent();
 
   expect(screen.getByText('Important notice')).toBeVisible();
   expect(screen.getByText('DockerHub account details')).toBeVisible();
@@ -45,7 +45,7 @@ test('should render form with all required fields', () => {
 });
 
 test('should show validation errors for empty required fields', async () => {
-  renderComponent();
+  await renderComponent();
 
   const submitButton = screen.getByRole('button', { name: 'Add registry' });
 
@@ -65,7 +65,7 @@ test('should show error when name is already used', async () => {
     Promise.resolve(name === 'existing-name')
   );
 
-  renderComponent({ nameIsUsed });
+  await renderComponent({ nameIsUsed });
 
   const user = userEvent.setup();
 
@@ -84,7 +84,7 @@ test('should submit form with valid data', async () => {
   const user = userEvent.setup();
   const onSubmit = vi.fn();
 
-  renderComponent({ onSubmit });
+  await renderComponent({ onSubmit });
 
   await user.type(screen.getByLabelText(/Name/), 'test-registry');
   await user.type(screen.getByLabelText(/DockerHub username/), 'testuser');
@@ -110,30 +110,30 @@ test('should submit form with valid data', async () => {
   });
 });
 
-test('should show loading state when isLoading is true', () => {
-  renderComponent({ isLoading: true });
+test('should show loading state when isLoading is true', async () => {
+  await renderComponent({ isLoading: true });
 
   const submitButton = screen.getByRole('button', { name: 'In progress...' });
 
   expect(submitButton).toBeDisabled();
 });
 
-test('should populate form with initial values', () => {
+test('should populate form with initial values', async () => {
   const initialValues = {
     Name: 'my-registry',
     Username: 'myuser',
     Password: 'mypassword',
   };
 
-  renderComponent({ initialValues });
+  await renderComponent({ initialValues });
 
   expect(screen.getByDisplayValue('my-registry')).toBeVisible();
   expect(screen.getByDisplayValue('myuser')).toBeVisible();
   expect(screen.getByDisplayValue('mypassword')).toBeVisible();
 });
 
-test('should display dockerhub guide link', () => {
-  renderComponent();
+test('should display dockerhub guide link', async () => {
+  await renderComponent();
 
   const link = screen.getByRole('link', { name: /dockerhub guide/ });
   expect(link).toHaveAttribute(
@@ -143,7 +143,7 @@ test('should display dockerhub guide link', () => {
   expect(link).toHaveAttribute('target', '_blank');
 });
 
-function renderComponent(
+async function renderComponent(
   props: Partial<React.ComponentProps<typeof RegistryFormDockerhub>> = {}
 ) {
   const defaultInitialValues: RegistryFormDockerhubValues = {
@@ -167,5 +167,7 @@ function renderComponent(
 
   const Wrapped = withTestQueryProvider(RegistryFormDockerhub);
 
-  return render(<Wrapped {...actualProps} />);
+  const result = render(<Wrapped {...actualProps} />);
+  await act(async () => {});
+  return result;
 }

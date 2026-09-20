@@ -50,9 +50,9 @@ const primaryOptions: BoxSelectorOption<CreationType>[] = _.compact([
           <Badge type="infoSecondary">Supports Policies</Badge>
         </span>
         <span className="mt-1 block">
-          The remote environment will initiate connections to the Portainer
+          The remote environment will initiate connections to the Vessel HQ
           server, with the ability to open a secure on-demand tunnel for
-          real-time interaction. The Portainer server must be accessible from
+          real-time interaction. The Vessel HQ server must be accessible from
           the Edge Agent environment.
         </span>
       </>
@@ -64,7 +64,7 @@ const primaryOptions: BoxSelectorOption<CreationType>[] = _.compact([
     icon: <BadgeIcon icon={EdgeAgentAsyncIcon} size="3xl" />,
     label: 'Edge Agent Async',
     description:
-      'The remote environment will initiate connections to the Portainer server, without the ability to open a real-time tunnel. The Portainer server must be accessible from the Edge Agent environment.',
+      'The remote environment will initiate connections to the Vessel HQ server, without the ability to open a real-time tunnel. The Vessel HQ server must be accessible from the Edge Agent environment.',
     value: 'edgeAgentAsync' as CreationType,
   },
 ]);
@@ -75,7 +75,7 @@ const legacyOptions: BoxSelectorOption<CreationType>[] = [
     icon: <BadgeIcon icon={Zap} size="3xl" />,
     label: 'Agent',
     description:
-      'The Portainer Server will initiate connections to the remote environment. The agent on the remote environment must be accessible from the Portainer server environment.',
+      'The Vessel HQ server will initiate connections to the remote environment. The agent on the remote environment must be accessible from the Vessel HQ server environment.',
     value: 'agent',
   },
   {
@@ -113,8 +113,8 @@ export function WizardDocker({ onCreate, isDockerStandalone }: Props) {
           <div>
             Only do this <b>once</b> for your environment, regardless of how
             many nodes are in the cluster. You do <b>not</b> need to add each
-            node as an individual environment in Portainer. Adding just one node
-            (we recommend the manager node) will allow Portainer to manage the
+            node as an individual environment in Vessel HQ. Adding just one node
+            (we recommend the manager node) will allow Vessel HQ to manage the
             entire cluster.
           </div>
         </Alert>

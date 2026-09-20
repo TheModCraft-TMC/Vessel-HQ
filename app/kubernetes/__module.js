@@ -1,55 +1,45 @@
-import { EnvironmentStatus } from '@/react/portainer/environments/types';
-
-import { updateAxiosAdapter } from '@/react/portainer/services/axios/axios';
-import { PortainerEndpointTypes } from '@/portainer/models/endpoint/models';
-import { cache } from '@/react/portainer/services/axios/axios';
-import { CACHE_REFRESH_EVENT, CACHE_DURATION } from '../portainer/services/http-request.helper';
+import { EnvironmentRegistriesListRoute } from '@/portainer/react/views/route-components';
+import { registerReactState } from '@/react-tools/registerReactState';
+import {
+  ApplicationDetailsRoute,
+  ApplicationStatsRoute,
+  KubernetesLogsRoute,
+  ApplicationsListRoute,
+  ClusterRolesRoute,
+  ConfigmapsAndSecretsRoute,
+  HelmApplicationRoute,
+  HelmInstallRoute,
+  IngressCreateRoute,
+  IngressesListRoute,
+  JobsRoute,
+  KubectlShellRoute,
+  KubernetesClusterRoute,
+  KubernetesConfigureRoute,
+  KubernetesConsoleRoute,
+  KubernetesDashboardRoute,
+  KubernetesNodeRoute,
+  KubernetesNodeStatsRoute,
+  KubernetesRegistryAccessRoute,
+  KubernetesDeployRoute,
+  ApplicationCreateRoute,
+  ApplicationEditRoute,
+  KubernetesResourceEditorRoute,
+  NamespaceAccessRoute,
+  NamespaceCreateRoute,
+  NamespaceRoute,
+  NamespacesListRoute,
+  ResourceDetailsYAMLRoute,
+  RolesRoute,
+  ServiceAccountRoute,
+  ServiceAccountsRoute,
+  ServicesRoute,
+  VolumesRoute,
+} from '@/kubernetes/react/views/route-components';
 import { AccessHeaders } from '../portainer/authorization-guard';
 
-import registriesModule from './registries';
-import customTemplateModule from './custom-templates';
-import { reactModule } from './react';
 import './views/kubernetes.css';
 
-// The angular-cache npm package didn't have exclude options, so implement a custom cache
-// with an added check to only cache kubernetes requests
-class ExpirationCache {
-  constructor() {
-    this.store = new Map();
-    this.timeout = CACHE_DURATION;
-  }
-
-  get(key) {
-    return this.store.get(key);
-  }
-
-  put(key, val) {
-    // only cache requests with 'kubernetes' in the url
-    if (key.includes('kubernetes')) {
-      this.store.set(key, val);
-      // remove it once it's expired
-      setTimeout(() => {
-        this.remove(key);
-      }, this.timeout);
-    }
-  }
-
-  remove(key) {
-    this.store.delete(key);
-  }
-
-  removeAll() {
-    this.store = new Map();
-  }
-
-  delete() {
-    // skip because this is standalone, not a part of $cacheFactory
-  }
-}
-
-angular.module('portainer.kubernetes', ['portainer.app', registriesModule, customTemplateModule, reactModule]).config([
-  '$stateRegistryProvider',
-  function ($stateRegistryProvider) {
+export function registerKubernetesStates($stateRegistryProvider) {
     'use strict';
 
     const kubernetes = {
@@ -58,102 +48,6 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       parent: 'endpoint',
       abstract: true,
 
-      onEnter: /* @ngInject */ function onEnter(
-        $async,
-        $state,
-        endpoint,
-        KubernetesHealthService,
-        Notifications,
-        StateManager,
-        $http,
-        Authentication,
-        UserService,
-        EndpointService,
-        EndpointProvider
-      ) {
-        return $async(async () => {
-          // if the user wants to use front end cache for performance, set the angular caching settings
-          const userDetails = Authentication.getUserDetails();
-          const user = await UserService.user(userDetails.ID);
-          updateAxiosAdapter(user.UseCache);
-          if (user.UseCache) {
-            $http.defaults.cache = new ExpirationCache();
-            window.addEventListener(CACHE_REFRESH_EVENT, () => {
-              $http.defaults.cache.removeAll();
-              cache.store.clear();
-            });
-          }
-
-          // EE-5842: do not redirect shell views when the env is removed
-          const nextTransition = $state.transition && $state.transition.to();
-          const nextTransitionName = nextTransition ? nextTransition.name : '';
-          if (nextTransitionName === 'kubernetes.kubectlshell' && !endpoint) {
-            return;
-          }
-
-          const kubeTypes = [
-            PortainerEndpointTypes.KubernetesLocalEnvironment,
-            PortainerEndpointTypes.AgentOnKubernetesEnvironment,
-            PortainerEndpointTypes.EdgeAgentOnKubernetesEnvironment,
-          ];
-
-          if (!kubeTypes.includes(endpoint.Type)) {
-            $state.go('portainer.home');
-            return;
-          }
-
-          try {
-            const status = await checkEndpointStatus(endpoint);
-
-            if (endpoint.Type !== PortainerEndpointTypes.EdgeAgentOnKubernetesEnvironment) {
-              await updateEndpointStatus(endpoint, status);
-            }
-            endpoint.Status = status;
-
-            if (endpoint.Status === EnvironmentStatus.Down) {
-              throw new Error(
-                endpoint.Type === PortainerEndpointTypes.EdgeAgentOnKubernetesEnvironment
-                  ? 'Unable to contact Edge agent, please ensure that the agent is properly running on the remote environment.'
-                  : `The environment named ${endpoint.Name} is unreachable.`
-              );
-            }
-
-            await StateManager.updateEndpointState(endpoint);
-          } catch (e) {
-            let params = {};
-
-            if (endpoint.Type == PortainerEndpointTypes.EdgeAgentOnKubernetesEnvironment) {
-              params = { redirect: true, environmentId: endpoint.Id, environmentName: endpoint.Name, route: 'kubernetes.dashboard' };
-            } else {
-              EndpointProvider.clean();
-              Notifications.error('Failed loading environment', e);
-            }
-            // Prevent redirect to home for shell views when environment is unreachable
-            // Show toast error instead (handled above in Notifications.error)
-            if (nextTransitionName === 'kubernetes.kubectlshell') {
-              return;
-            }
-            $state.go('portainer.home', params, { reload: true, inherit: false });
-            return false;
-          }
-
-          async function checkEndpointStatus(endpoint) {
-            try {
-              await KubernetesHealthService.ping(endpoint.Id);
-              return EnvironmentStatus.Up;
-            } catch (e) {
-              return EnvironmentStatus.Down;
-            }
-          }
-
-          async function updateEndpointStatus(endpoint, status) {
-            if (endpoint.Status === status) {
-              return;
-            }
-            await EndpointService.updateEndpoint(endpoint.Id, { Status: status });
-          }
-        });
-      },
     };
 
     const helmApplication = {
@@ -161,7 +55,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/helm/:namespace/:name?revision&tab',
       views: {
         'content@': {
-          component: 'kubernetesHelmApplicationView',
+          component: HelmApplicationRoute,
         },
       },
       data: {
@@ -174,7 +68,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/helm?referrer',
       views: {
         'content@': {
-          component: 'helmInstallView',
+          component: HelmInstallRoute,
         },
       },
       params: {
@@ -190,7 +84,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/services',
       views: {
         'content@': {
-          component: 'kubernetesServicesView',
+          component: ServicesRoute,
         },
       },
       data: {
@@ -202,7 +96,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:namespace/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -225,7 +119,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/ingresses',
       views: {
         'content@': {
-          component: 'kubernetesIngressesView',
+          component: IngressesListRoute,
         },
       },
       data: {
@@ -238,7 +132,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/add',
       views: {
         'content@': {
-          component: 'kubernetesIngressesCreateView',
+          component: IngressCreateRoute,
         },
       },
       data: {
@@ -251,7 +145,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:namespace/:name/edit',
       views: {
         'content@': {
-          component: 'kubernetesIngressesCreateView',
+          component: IngressCreateRoute,
         },
       },
     };
@@ -261,7 +155,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/applications?tab',
       views: {
         'content@': {
-          component: 'kubernetesApplicationsView',
+          component: ApplicationsListRoute,
         },
       },
       data: {
@@ -274,7 +168,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/new',
       views: {
         'content@': {
-          component: 'kubernetesCreateApplicationView',
+          component: ApplicationCreateRoute,
         },
       },
       data: {
@@ -290,7 +184,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       },
       views: {
         'content@': {
-          component: 'applicationDetailsView',
+          component: ApplicationDetailsRoute,
         },
       },
       data: {
@@ -303,7 +197,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/edit',
       views: {
         'content@': {
-          component: 'kubernetesCreateApplicationView',
+          component: ApplicationEditRoute,
         },
       },
       data: {
@@ -316,7 +210,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:pod/:container/console',
       views: {
         'content@': {
-          component: 'kubernetesConsoleView',
+          component: KubernetesConsoleRoute,
         },
       },
     };
@@ -326,7 +220,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:pod/:container/logs',
       views: {
         'content@': {
-          component: 'kubernetesApplicationLogsView',
+          component: KubernetesLogsRoute,
         },
       },
     };
@@ -336,7 +230,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:pod/:container/stats',
       views: {
         'content@': {
-          component: 'kubernetesApplicationStatsView',
+          component: ApplicationStatsRoute,
         },
       },
     };
@@ -358,7 +252,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/logs',
       views: {
         'content@': {
-          component: 'kubernetesStackLogsView',
+          component: KubernetesLogsRoute,
         },
       },
     };
@@ -368,7 +262,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/configurations?tab',
       views: {
         'content@': {
-          component: 'kubernetesConfigMapsAndSecretsView',
+          component: ConfigmapsAndSecretsRoute,
         },
       },
       params: {
@@ -392,11 +286,18 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/new',
       views: {
         'content@': {
-          component: 'kubernetesCreateConfigMapView',
+          component: KubernetesResourceEditorRoute,
         },
       },
       data: {
         docs: '/user/kubernetes/configurations/add-configmap',
+        resourceEditorConfig: {
+          title: 'Create ConfigMap',
+          kind: 'ConfigMap',
+          plural: 'configmaps',
+          listRoute: 'kubernetes.configurations',
+          isCreate: true,
+        },
       },
     };
 
@@ -405,7 +306,15 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:namespace/:name',
       views: {
         'content@': {
-          component: 'kubernetesConfigMapView',
+          component: KubernetesResourceEditorRoute,
+        },
+      },
+      data: {
+        resourceEditorConfig: {
+          title: 'ConfigMap details',
+          kind: 'ConfigMap',
+          plural: 'configmaps',
+          listRoute: 'kubernetes.configurations',
         },
       },
     };
@@ -424,11 +333,18 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/new',
       views: {
         'content@': {
-          component: 'kubernetesCreateSecretView',
+          component: KubernetesResourceEditorRoute,
         },
       },
       data: {
         docs: '/user/kubernetes/configurations/add-secret',
+        resourceEditorConfig: {
+          title: 'Create secret',
+          kind: 'Secret',
+          plural: 'secrets',
+          listRoute: 'kubernetes.configurations',
+          isCreate: true,
+        },
       },
     };
 
@@ -440,7 +356,15 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       },
       views: {
         'content@': {
-          component: 'kubernetesSecretView',
+          component: KubernetesResourceEditorRoute,
+        },
+      },
+      data: {
+        resourceEditorConfig: {
+          title: 'Secret details',
+          kind: 'Secret',
+          plural: 'secrets',
+          listRoute: 'kubernetes.configurations',
         },
       },
     };
@@ -450,7 +374,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/cluster',
       views: {
         'content@': {
-          component: 'kubernetesClusterView',
+          component: KubernetesClusterRoute,
         },
       },
       data: {
@@ -463,7 +387,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:nodeName?tab',
       views: {
         'content@': {
-          component: 'kubernetesNodeViewReact',
+          component: KubernetesNodeRoute,
         },
       },
     };
@@ -473,7 +397,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/stats',
       views: {
         'content@': {
-          component: 'kubernetesNodeStatsView',
+          component: KubernetesNodeStatsRoute,
         },
       },
     };
@@ -483,7 +407,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/kubectl-shell',
       views: {
         'content@': {
-          component: 'kubectlShellView',
+          component: KubectlShellRoute,
         },
         'sidebar@': {},
       },
@@ -494,7 +418,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/dashboard',
       views: {
         'content@': {
-          component: 'kubernetesDashboardView',
+          component: KubernetesDashboardRoute,
         },
       },
       data: {
@@ -507,7 +431,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/deploy?templateId&referrer&tab&buildMethod&chartName',
       views: {
         'content@': {
-          component: 'kubernetesDeployView',
+          component: KubernetesDeployRoute,
         },
       },
       data: {
@@ -520,7 +444,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/namespaces',
       views: {
         'content@': {
-          component: 'kubernetesNamespacesView',
+          component: NamespacesListRoute,
         },
       },
       data: {
@@ -533,7 +457,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/new',
       views: {
         'content@': {
-          component: 'kubernetesCreateNamespaceView',
+          component: NamespaceCreateRoute,
         },
       },
       data: {
@@ -546,7 +470,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:id?tab',
       views: {
         'content@': {
-          component: 'namespaceView',
+          component: NamespaceRoute,
         },
       },
       data: {
@@ -559,7 +483,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/access',
       views: {
         'content@': {
-          component: 'kubernetesNamespaceAccessView',
+          component: NamespaceAccessRoute,
         },
       },
       data: {
@@ -572,7 +496,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/volumes?tab',
       views: {
         'content@': {
-          component: 'kubernetesVolumesView',
+          component: VolumesRoute,
         },
       },
       data: {
@@ -588,7 +512,21 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:namespace/:name',
       views: {
         'content@': {
-          component: 'kubernetesVolumeView',
+          component: ResourceDetailsYAMLRoute,
+        },
+      },
+      data: {
+        resourceConfig: {
+          title: 'Volume details',
+          breadcrumbLabel: 'Volumes',
+          breadcrumbLink: 'kubernetes.volumes',
+          breadcrumbTab: 'volumes',
+          resourceType: 'persistentvolumeclaim',
+          apiVersion: 'v1',
+          resourcePlural: 'persistentvolumeclaims',
+          namespaced: true,
+          yamlIdentifier: 'volume-yaml',
+          dataCy: 'k8sVolDetail-volYaml',
         },
       },
     };
@@ -598,7 +536,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/persistent-volumes/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -622,7 +560,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/storage-classes/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -646,7 +584,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/registries',
       views: {
         'content@': {
-          component: 'environmentRegistriesView',
+          component: EnvironmentRegistriesListRoute,
         },
       },
       data: {
@@ -659,7 +597,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/:id/access',
       views: {
         'content@': {
-          component: 'kubernetesRegistryAccessView',
+          component: KubernetesRegistryAccessRoute,
         },
       },
       data: {
@@ -672,25 +610,11 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/configure',
       views: {
         'content@': {
-          component: 'kubernetesConfigureView',
+          component: KubernetesConfigureRoute,
         },
       },
       data: {
         docs: '/user/kubernetes/cluster/setup',
-      },
-    };
-
-    const endpointKubernetesSecurityConstraint = {
-      name: 'kubernetes.cluster.securityConstraint',
-      url: '/securityConstraint',
-      views: {
-        'content@': {
-          templateUrl: '../kubernetes/views/security-constraint/constraint.html',
-          controller: 'KubernetesSecurityConstraintController',
-        },
-      },
-      data: {
-        docs: '/user/kubernetes/cluster/security',
       },
     };
 
@@ -705,7 +629,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/jobs?tab',
       views: {
         'content@': {
-          component: 'jobsView',
+          component: JobsRoute,
         },
       },
       data: {
@@ -717,7 +641,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/jobs/:namespace/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -740,7 +664,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/cronjobs/:namespace/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -764,7 +688,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/serviceAccounts',
       views: {
         'content@': {
-          component: 'serviceAccountsView',
+          component: ServiceAccountsRoute,
         },
       },
       data: {
@@ -777,7 +701,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/serviceAccounts/:namespace/:name?tab',
       views: {
         'content@': {
-          component: 'serviceAccountView',
+          component: ServiceAccountRoute,
         },
       },
       data: {
@@ -790,7 +714,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/clusterRoles?tab',
       views: {
         'content@': {
-          component: 'clusterRolesView',
+          component: ClusterRolesRoute,
         },
       },
       data: {
@@ -802,7 +726,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/clusterRoles/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -825,7 +749,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/clusterRoleBindings/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -849,7 +773,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/roles?tab',
       views: {
         'content@': {
-          component: 'k8sRolesView',
+          component: RolesRoute,
         },
       },
       data: {
@@ -861,7 +785,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/roles/:namespace/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -884,7 +808,7 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       url: '/roleBindings/:namespace/:name?tab',
       views: {
         'content@': {
-          component: 'kubernetesResourceDetailsYAMLView',
+          component: ResourceDetailsYAMLRoute,
         },
       },
       data: {
@@ -903,62 +827,59 @@ angular.module('portainer.kubernetes', ['portainer.app', registriesModule, custo
       },
     };
 
-    $stateRegistryProvider.register(kubernetes);
-    $stateRegistryProvider.register(helmApplication);
-    $stateRegistryProvider.register(applications);
-    $stateRegistryProvider.register(applicationCreation);
-    $stateRegistryProvider.register(application);
-    $stateRegistryProvider.register(applicationEdit);
-    $stateRegistryProvider.register(applicationConsole);
-    $stateRegistryProvider.register(applicationLogs);
-    $stateRegistryProvider.register(applicationStats);
-    $stateRegistryProvider.register(stacks);
-    $stateRegistryProvider.register(stack);
-    $stateRegistryProvider.register(stackLogs);
-    $stateRegistryProvider.register(configurations);
-    $stateRegistryProvider.register(configmaps);
-    $stateRegistryProvider.register(configMapCreation);
-    $stateRegistryProvider.register(secrets);
-    $stateRegistryProvider.register(secretCreation);
-    $stateRegistryProvider.register(configMap);
-    $stateRegistryProvider.register(secret);
-    $stateRegistryProvider.register(cluster);
-    $stateRegistryProvider.register(dashboard);
-    $stateRegistryProvider.register(deploy);
-    $stateRegistryProvider.register(helmInstall);
-    $stateRegistryProvider.register(node);
-    $stateRegistryProvider.register(nodeStats);
-    $stateRegistryProvider.register(kubectlShell);
-    $stateRegistryProvider.register(namespaces);
-    $stateRegistryProvider.register(namespaceCreation);
-    $stateRegistryProvider.register(namespace);
-    $stateRegistryProvider.register(namespaceAccess);
-    $stateRegistryProvider.register(volumes);
-    $stateRegistryProvider.register(volume);
-    $stateRegistryProvider.register(persistentVolume);
-    $stateRegistryProvider.register(storageClass);
-    $stateRegistryProvider.register(registries);
-    $stateRegistryProvider.register(registriesAccess);
-    $stateRegistryProvider.register(endpointKubernetesConfiguration);
-    $stateRegistryProvider.register(endpointKubernetesSecurityConstraint);
+    registerReactState($stateRegistryProvider, kubernetes);
+    registerReactState($stateRegistryProvider, helmApplication);
+    registerReactState($stateRegistryProvider, applications);
+    registerReactState($stateRegistryProvider, applicationCreation);
+    registerReactState($stateRegistryProvider, application);
+    registerReactState($stateRegistryProvider, applicationEdit);
+    registerReactState($stateRegistryProvider, applicationConsole);
+    registerReactState($stateRegistryProvider, applicationLogs);
+    registerReactState($stateRegistryProvider, applicationStats);
+    registerReactState($stateRegistryProvider, stacks);
+    registerReactState($stateRegistryProvider, stack);
+    registerReactState($stateRegistryProvider, stackLogs);
+    registerReactState($stateRegistryProvider, configurations);
+    registerReactState($stateRegistryProvider, configmaps);
+    registerReactState($stateRegistryProvider, configMapCreation);
+    registerReactState($stateRegistryProvider, secrets);
+    registerReactState($stateRegistryProvider, secretCreation);
+    registerReactState($stateRegistryProvider, configMap);
+    registerReactState($stateRegistryProvider, secret);
+    registerReactState($stateRegistryProvider, cluster);
+    registerReactState($stateRegistryProvider, dashboard);
+    registerReactState($stateRegistryProvider, deploy);
+    registerReactState($stateRegistryProvider, helmInstall);
+    registerReactState($stateRegistryProvider, node);
+    registerReactState($stateRegistryProvider, nodeStats);
+    registerReactState($stateRegistryProvider, kubectlShell);
+    registerReactState($stateRegistryProvider, namespaces);
+    registerReactState($stateRegistryProvider, namespaceCreation);
+    registerReactState($stateRegistryProvider, namespace);
+    registerReactState($stateRegistryProvider, namespaceAccess);
+    registerReactState($stateRegistryProvider, volumes);
+    registerReactState($stateRegistryProvider, volume);
+    registerReactState($stateRegistryProvider, persistentVolume);
+    registerReactState($stateRegistryProvider, storageClass);
+    registerReactState($stateRegistryProvider, registries);
+    registerReactState($stateRegistryProvider, registriesAccess);
+    registerReactState($stateRegistryProvider, endpointKubernetesConfiguration);
+    registerReactState($stateRegistryProvider, services);
+    registerReactState($stateRegistryProvider, service);
+    registerReactState($stateRegistryProvider, ingresses);
+    registerReactState($stateRegistryProvider, ingressesCreate);
+    registerReactState($stateRegistryProvider, ingressesEdit);
 
-    $stateRegistryProvider.register(services);
-    $stateRegistryProvider.register(service);
-    $stateRegistryProvider.register(ingresses);
-    $stateRegistryProvider.register(ingressesCreate);
-    $stateRegistryProvider.register(ingressesEdit);
-
-    $stateRegistryProvider.register(moreResources);
-    $stateRegistryProvider.register(jobs);
-    $stateRegistryProvider.register(job);
-    $stateRegistryProvider.register(cronJob);
-    $stateRegistryProvider.register(serviceAccounts);
-    $stateRegistryProvider.register(serviceAccount);
-    $stateRegistryProvider.register(clusterRoles);
-    $stateRegistryProvider.register(clusterRole);
-    $stateRegistryProvider.register(clusterRoleBinding);
-    $stateRegistryProvider.register(roles);
-    $stateRegistryProvider.register(role);
-    $stateRegistryProvider.register(roleBinding);
-  },
-]);
+    registerReactState($stateRegistryProvider, moreResources);
+    registerReactState($stateRegistryProvider, jobs);
+    registerReactState($stateRegistryProvider, job);
+    registerReactState($stateRegistryProvider, cronJob);
+    registerReactState($stateRegistryProvider, serviceAccounts);
+    registerReactState($stateRegistryProvider, serviceAccount);
+    registerReactState($stateRegistryProvider, clusterRoles);
+    registerReactState($stateRegistryProvider, clusterRole);
+    registerReactState($stateRegistryProvider, clusterRoleBinding);
+    registerReactState($stateRegistryProvider, roles);
+    registerReactState($stateRegistryProvider, role);
+    registerReactState($stateRegistryProvider, roleBinding);
+}

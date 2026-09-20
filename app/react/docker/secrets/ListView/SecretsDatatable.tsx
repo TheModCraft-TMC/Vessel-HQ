@@ -6,17 +6,10 @@ import { isoDate } from '@/portainer/filters/filters';
 import { Authorized, useAuthorizations } from '@/react/hooks/useUser';
 
 import { buildNameColumn } from '@@/datatables/buildNameColumn';
-import { Datatable, TableSettingsMenu } from '@@/datatables';
-import {
-  BasicTableSettings,
-  RefreshableTableSettings,
-  createPersistedStore,
-  refreshableSettings,
-} from '@@/datatables/types';
+import { Datatable } from '@@/datatables';
+import { BasicTableSettings, createPersistedStore } from '@@/datatables/types';
 import { useTableState } from '@@/datatables/useTableState';
-import { TableSettingsMenuAutoRefresh } from '@@/datatables/TableSettingsMenuAutoRefresh';
 import { AddButton } from '@@/buttons';
-import { useRepeater } from '@@/datatables/useRepeater';
 import { DeleteButton } from '@@/buttons/DeleteButton';
 
 import { createOwnershipColumn } from '../../components/datatable/createOwnershipColumn';
@@ -31,28 +24,19 @@ const columns = [
   createOwnershipColumn<SecretViewModel>(),
 ];
 
-interface TableSettings extends BasicTableSettings, RefreshableTableSettings {}
+type TableSettings = BasicTableSettings;
 
 const storageKey = 'docker-secrets';
-const store = createPersistedStore<TableSettings>(
-  storageKey,
-  undefined,
-  (set) => ({
-    ...refreshableSettings(set),
-  })
-);
+const store = createPersistedStore<TableSettings>(storageKey);
 
 export function SecretsDatatable({
   dataset,
   onRemove,
-  onRefresh,
 }: {
   dataset?: Array<SecretViewModel>;
   onRemove(items: Array<SecretViewModel>): void;
-  onRefresh(): Promise<void>;
 }) {
   const tableState = useTableState(store, storageKey);
-  useRepeater(tableState.autoRefreshRateMS, onRefresh);
 
   const hasWriteAccessQuery = useAuthorizations([
     'DockerSecretCreate',
@@ -74,14 +58,6 @@ export function SecretsDatatable({
           <TableActions selectedItems={selectedItems} onRemove={onRemove} />
         )
       }
-      renderTableSettings={() => (
-        <TableSettingsMenu>
-          <TableSettingsMenuAutoRefresh
-            value={tableState.autoRefreshRateMS}
-            onChange={(value) => tableState.setAutoRefreshRate(value)}
-          />
-        </TableSettingsMenu>
-      )}
     />
   );
 }

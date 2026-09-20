@@ -19,7 +19,7 @@ const mockUser: User = {
  *
  * should only be used in tests
  */
-export function withUserProvider<T>(
+export function withUserProvider<T extends object>(
   WrappedComponent: ComponentType<T>,
   user = mockUser
 ): ComponentType<T> {
@@ -27,7 +27,7 @@ export function withUserProvider<T>(
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     const state = useMemo(() => ({ user }), []);
 
     return (

@@ -53,7 +53,7 @@ func RestoreArchive(archive io.Reader, password string, filestorePath string, ga
 	// At some point, backups were created containing a subdirectory, now we need to handle both
 	restorePath, err = getRestoreSourcePath(restorePath)
 	if err != nil {
-		return errors.Wrap(err, "failed to restore from backup. Portainer database missing from backup file")
+		return errors.Wrap(err, "failed to restore from backup. Vessel HQ database missing from backup file")
 	}
 
 	if err := restoreFiles(restorePath, filestorePath); err != nil {

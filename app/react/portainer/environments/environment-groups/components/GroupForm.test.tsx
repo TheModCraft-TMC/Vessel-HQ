@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { http, HttpResponse } from 'msw';
@@ -275,7 +275,7 @@ describe('GroupForm', () => {
         ).toBeVisible();
       });
 
-      resolveSubmit!();
+      await act(async () => resolveSubmit!());
     });
   });
 

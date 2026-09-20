@@ -12,7 +12,7 @@ function Template({
   copyText,
   displayText,
   children,
-}: JSX.IntrinsicAttributes & PropsWithChildren<Props>) {
+}: React.JSX.IntrinsicAttributes & PropsWithChildren<Props>) {
   return (
     <CopyButton
       copyText={copyText}

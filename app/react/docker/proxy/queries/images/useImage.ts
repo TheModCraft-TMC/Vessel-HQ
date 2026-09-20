@@ -4,6 +4,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 
 import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
+import { withAgentTargetHeader } from '../utils';
 
 /**
  * Raw docker API proxy
@@ -13,11 +14,13 @@ import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
  */
 export async function getImage(
   environmentId: EnvironmentId,
-  id: Required<ImageInspect['Id']>
+  id: Required<ImageInspect['Id']>,
+  { nodeName }: { nodeName?: string } = {}
 ) {
   try {
     const { data } = await axios.get<ImageInspect>(
-      buildDockerProxyUrl(environmentId, 'images', id, 'json')
+      buildDockerProxyUrl(environmentId, 'images', id, 'json'),
+      { headers: { ...withAgentTargetHeader(nodeName) } }
     );
     return data;
   } catch (e) {

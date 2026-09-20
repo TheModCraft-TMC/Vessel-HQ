@@ -4,7 +4,6 @@ import { Authorized } from '@/react/hooks/useUser';
 
 import { ColumnVisibilityMenu } from '@@/datatables/ColumnVisibilityMenu';
 import { TableSettingsMenu } from '@@/datatables';
-import { TableSettingsMenuAutoRefresh } from '@@/datatables/TableSettingsMenuAutoRefresh';
 import { Checkbox } from '@@/form-components/Checkbox';
 
 import { TableSettings } from './store';
@@ -42,11 +41,6 @@ export function TableSettingsMenus({
             }}
           />
         </Authorized>
-
-        <TableSettingsMenuAutoRefresh
-          value={tableState.autoRefreshRateMS}
-          onChange={(value) => tableState.setAutoRefreshRate(value)}
-        />
       </TableSettingsMenu>
     </>
   );

@@ -61,7 +61,7 @@ export function StatsView() {
           networkUnavailable={networkUnavailable}
           ioUnavailable={ioUnavailable}
         />
-        {error && (
+        {Boolean(error) && (
           <Alert color="error" title="Unable to retrieve container statistics">
             {error instanceof Error
               ? error.message

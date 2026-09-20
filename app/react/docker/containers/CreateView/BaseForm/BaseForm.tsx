@@ -97,7 +97,7 @@ export function BaseForm({
               <div className="col-sm-12">
                 <SwitchField
                   label="Always pull the image"
-                  tooltip="When enabled, Portainer will automatically try to pull the specified image before creating the container."
+                  tooltip="When enabled, Vessel HQ will automatically try to pull the specified image before creating the container."
                   checked={values.alwaysPull}
                   onChange={(alwaysPull) =>
                     setFieldValue('alwaysPull', alwaysPull)
@@ -138,7 +138,7 @@ export function BaseForm({
               <SwitchField
                 label="Publish all exposed ports to random host ports"
                 data-cy="publish-all-ports-switch"
-                tooltip="When enabled, Portainer will let Docker automatically map a random port on the host to each one defined in the image Dockerfile."
+                tooltip="When enabled, Vessel HQ will let Docker automatically map a random port on the host to each one defined in the image Dockerfile."
                 checked={values.publishAllPorts}
                 onChange={(publishAllPorts) =>
                   setFieldValue('publishAllPorts', publishAllPorts)
@@ -178,7 +178,7 @@ export function BaseForm({
             <SwitchField
               label="Auto remove"
               data-cy="container-auto-remove-switch"
-              tooltip="When enabled, Portainer will automatically remove the container when it exits. This is useful when you want to use the container only once."
+              tooltip="When enabled, Vessel HQ will automatically remove the container when it exits. This is useful when you want to use the container only once."
               checked={values.autoRemove}
               onChange={(autoRemove) => setFieldValue('autoRemove', autoRemove)}
               labelClass="col-sm-3 col-lg-2"

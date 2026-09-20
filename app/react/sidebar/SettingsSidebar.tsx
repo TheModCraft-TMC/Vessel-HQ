@@ -118,29 +118,12 @@ export function SettingsSidebar({
             />
           )}
 
-          <SidebarParent
-            label="Logs"
-            to="portainer.authLogs"
+          <SidebarItem
+            label="Activity logs"
+            to="portainer.activityLogs"
             icon={FileText}
-            pathOptions={{
-              includePaths: ['portainer.activityLogs'],
-            }}
-            data-cy="k8sSidebar-logs"
-            listId="k8sSidebar-logs"
-          >
-            <SidebarItem
-              label="Authentication"
-              to="portainer.authLogs"
-              isSubMenu
-              data-cy="portainerSidebar-authLogs"
-            />
-            <SidebarItem
-              to="portainer.activityLogs"
-              label="Activity"
-              isSubMenu
-              data-cy="portainerSidebar-activityLogs"
-            />
-          </SidebarParent>
+            data-cy="portainerSidebar-activityLogs"
+          />
         </>
       )}
       {isBE && !isPureAdmin && isAdmin && (

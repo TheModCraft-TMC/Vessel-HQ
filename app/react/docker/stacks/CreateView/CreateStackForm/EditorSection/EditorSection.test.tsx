@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
 
 import { withTestRouter } from '@/react/test-utils/withRouter';
@@ -9,8 +9,8 @@ import { EditorFormValues } from './types';
 import { EditorSection } from './EditorSection';
 
 describe('EditorSection', () => {
-  it('should render the component', () => {
-    renderComponent();
+  it('should render the component', async () => {
+    await renderComponent();
 
     expect(screen.getByText('Web editor')).toBeInTheDocument();
     expect(
@@ -30,9 +30,9 @@ describe('EditorSection', () => {
     expect(link).toHaveAttribute('target', '_blank');
   });
 
-  it('should render with initial file content', () => {
+  it('should render with initial file content', async () => {
     const value = 'version: "3"\nservices:\n  web:\n    image: nginx';
-    renderComponent({
+    await renderComponent({
       initialValues: {
         fileContent: value,
       },
@@ -46,7 +46,7 @@ describe('EditorSection', () => {
   });
 });
 
-function renderComponent({
+async function renderComponent({
   initialValues,
   isSwarm = false,
 }: { initialValues?: Partial<EditorFormValues>; isSwarm?: boolean } = {}) {
@@ -60,9 +60,11 @@ function renderComponent({
 
   const Wrapped = withTestRouter(EditorSection);
 
-  return render(
+  const result = render(
     <Formik initialValues={values} onSubmit={() => {}} validateOnMount>
       <Wrapped isSwarm={isSwarm} isSaved={false} />
     </Formik>
   );
+  await act(async () => {});
+  return result;
 }

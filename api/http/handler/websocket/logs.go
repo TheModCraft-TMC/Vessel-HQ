@@ -23,16 +23,18 @@ const maxLogTail = 10_000
 
 var logResourceIDPattern = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$`)
 
-// @summary Stream Docker logs over a websocket
-// @description Streams container, service, or task logs through the existing access-controlled Docker proxy.
+// @summary Stream runtime logs over a websocket
+// @description Streams Docker container, service, or task logs, or Kubernetes pod logs, through the existing access-controlled environment proxy.
 // @description **Access policy**: authenticated
 // @security ApiKeyAuth
 // @security jwt
 // @tags websocket
 // @produce octet-stream
 // @param endpointId query int true "Environment identifier"
-// @param resource query string true "Docker resource type" Enums(containers,services,tasks)
-// @param id query string true "Docker resource identifier"
+// @param resource query string true "Runtime resource type" Enums(containers,services,tasks,pods)
+// @param id query string true "Runtime resource identifier"
+// @param namespace query string false "Kubernetes namespace (required for pods)"
+// @param container query string false "Kubernetes container name (required for pods)"
 // @param nodeName query string false "Swarm node name"
 // @param timestamps query bool false "Include timestamps"
 // @param since query int false "Unix timestamp"
@@ -56,15 +58,19 @@ func (handler *Handler) websocketLogs(w http.ResponseWriter, r *http.Request) *h
 	if err != nil {
 		return httperror.InternalServerError("Unable to find the environment in the database", err)
 	}
-	if !endpointutils.IsDockerEndpoint(endpoint) {
-		return httperror.BadRequest("Environment does not support Docker logs", nil)
-	}
-
 	if err := handler.requestBouncer.AuthorizedEndpointOperation(r, endpoint); err != nil {
 		return httperror.Forbidden("Permission denied to access environment", err)
 	}
 
-	proxyRequest, err := createDockerLogsProxyRequest(r)
+	var proxyRequest *http.Request
+	switch {
+	case endpointutils.IsDockerEndpoint(endpoint):
+		proxyRequest, err = createDockerLogsProxyRequest(r)
+	case endpointutils.IsKubernetesEndpoint(endpoint):
+		proxyRequest, err = createKubernetesLogsProxyRequest(r)
+	default:
+		return httperror.BadRequest("Environment does not support log streaming", nil)
+	}
 	if err != nil {
 		return httperror.BadRequest("Invalid log stream parameters", err)
 	}
@@ -94,6 +100,67 @@ func (handler *Handler) websocketLogs(w http.ResponseWriter, r *http.Request) *h
 
 	proxy.ServeHTTP(streamWriter, proxyRequest)
 	return nil
+}
+
+func createKubernetesLogsProxyRequest(r *http.Request) (*http.Request, error) {
+	if r.FormValue("resource") != "pods" {
+		return nil, fmt.Errorf("unsupported resource type %q", r.FormValue("resource"))
+	}
+
+	namespace := r.FormValue("namespace")
+	podName := r.FormValue("id")
+	containerName := r.FormValue("container")
+	if !logResourceIDPattern.MatchString(namespace) {
+		return nil, fmt.Errorf("invalid namespace")
+	}
+	if !logResourceIDPattern.MatchString(podName) {
+		return nil, fmt.Errorf("invalid pod identifier")
+	}
+	if !logResourceIDPattern.MatchString(containerName) {
+		return nil, fmt.Errorf("invalid container identifier")
+	}
+
+	timestamps, err := optionalBool(r.FormValue("timestamps"), false)
+	if err != nil {
+		return nil, fmt.Errorf("invalid timestamps value: %w", err)
+	}
+
+	since, err := optionalNonNegativeInt(r.FormValue("since"), 0)
+	if err != nil {
+		return nil, fmt.Errorf("invalid since value: %w", err)
+	}
+
+	tail, err := optionalNonNegativeInt(r.FormValue("tail"), 100)
+	if err != nil {
+		return nil, fmt.Errorf("invalid tail value: %w", err)
+	}
+	if tail > maxLogTail {
+		tail = maxLogTail
+	}
+
+	query := url.Values{}
+	query.Set("follow", "true")
+	query.Set("timestamps", strconv.FormatBool(timestamps))
+	query.Set("tailLines", strconv.FormatInt(tail, 10))
+	query.Set("container", containerName)
+	if since > 0 {
+		query.Set("sinceTime", time.Unix(since, 0).UTC().Format(time.RFC3339))
+	}
+
+	proxyRequest := r.Clone(r.Context())
+	proxyRequest.Method = http.MethodGet
+	proxyRequest.RequestURI = ""
+	proxyRequest.URL = &url.URL{
+		Path: fmt.Sprintf(
+			"/kubernetes/api/v1/namespaces/%s/pods/%s/log",
+			namespace,
+			podName,
+		),
+		RawQuery: query.Encode(),
+	}
+	proxyRequest.Header = http.Header{"Accept": []string{"text/plain"}}
+
+	return proxyRequest, nil
 }
 
 func createDockerLogsProxyRequest(r *http.Request) (*http.Request, error) {

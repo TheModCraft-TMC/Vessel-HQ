@@ -67,7 +67,7 @@ function SSLSettingsPanel() {
               <div className="form-group">
                 <div className="col-sm-12">
                   <TextTip color="orange">
-                    Forcing HTTPs only will cause Portainer to stop listening on
+                    Forcing HTTPS only will cause Vessel HQ to stop listening on
                     the HTTP port. Any edge agent environment that is using HTTP
                     will no longer be available.
                   </TextTip>
@@ -91,9 +91,9 @@ function SSLSettingsPanel() {
                 <div className="col-sm-12">
                   <TextTip color="blue">
                     Forcing secure cookies is intended for when users are
-                    accessing Portainer via a TLS-terminating reverse proxy or
+                    accessing Vessel HQ via a TLS-terminating reverse proxy or
                     Kubernetes ingress. Forcing secure cookies when accessing
-                    Portainer over plain HTTP will break Portainer login
+                    Vessel HQ over plain HTTP will break Vessel HQ login
                     entirely.
                   </TextTip>
                 </div>

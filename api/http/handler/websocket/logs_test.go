@@ -55,3 +55,47 @@ func TestCreateDockerLogsProxyRequestRejectsInvalidParameters(t *testing.T) {
 		assert.Error(t, err, query)
 	}
 }
+
+func TestCreateKubernetesLogsProxyRequest(t *testing.T) {
+	r := httptest.NewRequest(
+		http.MethodGet,
+		"/websocket/logs?resource=pods&id=api-7b9f&namespace=production&container=api&timestamps=true&since=42&tail=20000",
+		nil,
+	)
+	r.Header.Set("Connection", "Upgrade")
+	r.Header.Set("Upgrade", "websocket")
+	r.Header.Set("Authorization", "Bearer secret")
+	r.AddCookie(&http.Cookie{Name: "jwt", Value: "secret"})
+
+	proxyRequest, err := createKubernetesLogsProxyRequest(r)
+	require.NoError(t, err)
+
+	assert.Equal(t, http.MethodGet, proxyRequest.Method)
+	assert.Equal(t, "/kubernetes/api/v1/namespaces/production/pods/api-7b9f/log", proxyRequest.URL.Path)
+	assert.Equal(t, "true", proxyRequest.URL.Query().Get("follow"))
+	assert.Equal(t, "true", proxyRequest.URL.Query().Get("timestamps"))
+	assert.Equal(t, "1970-01-01T00:00:42Z", proxyRequest.URL.Query().Get("sinceTime"))
+	assert.Equal(t, "10000", proxyRequest.URL.Query().Get("tailLines"))
+	assert.Equal(t, "api", proxyRequest.URL.Query().Get("container"))
+	assert.Equal(t, "text/plain", proxyRequest.Header.Get("Accept"))
+	assert.Empty(t, proxyRequest.Header.Get("Connection"))
+	assert.Empty(t, proxyRequest.Header.Get("Upgrade"))
+	assert.Empty(t, proxyRequest.Header.Get("Authorization"))
+	assert.Empty(t, proxyRequest.Header.Get("Cookie"))
+}
+
+func TestCreateKubernetesLogsProxyRequestRejectsInvalidParameters(t *testing.T) {
+	tests := []string{
+		"resource=containers&id=api&namespace=default&container=api",
+		"resource=pods&id=../secret&namespace=default&container=api",
+		"resource=pods&id=api&namespace=../default&container=api",
+		"resource=pods&id=api&namespace=default&container=../api",
+		"resource=pods&id=api&namespace=default&container=api&tail=-1",
+	}
+
+	for _, query := range tests {
+		r := httptest.NewRequest(http.MethodGet, "/websocket/logs?"+query, nil)
+		_, err := createKubernetesLogsProxyRequest(r)
+		assert.Error(t, err, query)
+	}
+}

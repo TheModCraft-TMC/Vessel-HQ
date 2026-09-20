@@ -139,7 +139,7 @@ describe('ComposePathField', () => {
   });
 });
 
-describe('ComposePathField with Business Edition features', () => {
+describe('ComposePathField with limited features', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

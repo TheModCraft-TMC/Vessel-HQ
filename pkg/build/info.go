@@ -21,6 +21,9 @@ var (
 	// ImageTag is the Docker image tag associated with this build.
 	ImageTag string
 
+	// ReleaseVersion is the maintained fork release from RELEASE_VERSION.
+	ReleaseVersion string
+
 	// NodejsVersion is the version of Node.js used in the build.
 	NodejsVersion string
 

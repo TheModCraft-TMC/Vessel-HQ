@@ -23,12 +23,8 @@ export function useNodeMetricsQuery<T = NodeMetric>(
     queryFn: () => getMetricsForNode(environmentId, nodeName),
     select,
     ...(retry !== undefined && { retry }),
-    refetchInterval: refreshRateMS
-      ? (_data, query) => (query.state.error ? false : refreshRateMS)
-      : undefined,
     refetchOnWindowFocus: refreshRateMS ? false : undefined,
     refetchOnReconnect: refreshRateMS ? false : undefined,
-    refetchIntervalInBackground: !!refreshRateMS,
   });
 }
 

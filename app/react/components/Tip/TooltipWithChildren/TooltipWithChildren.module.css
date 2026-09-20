@@ -39,7 +39,3 @@
 .tooltip-heading {
   font-weight: 500;
 }
-
-.tooltip-beteaser {
-  @apply text-blue-8 hover:text-blue-9;
-}

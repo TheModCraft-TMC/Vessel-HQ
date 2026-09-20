@@ -68,7 +68,6 @@ export function useIngresses(
     async () => getIngresses(environmentId, params),
     {
       ...withError('Unable to get ingresses'),
-      refetchInterval: autoRefreshRate,
       enabled,
     }
   );

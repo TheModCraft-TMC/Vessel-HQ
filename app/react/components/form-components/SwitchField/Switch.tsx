@@ -4,8 +4,6 @@ import { isLimitedToBE } from '@/react/portainer/feature-flags/feature-flags.ser
 import { FeatureId } from '@/react/portainer/feature-flags/enums';
 import { AutomationTestingProps } from '@/types';
 
-import { BEFeatureIndicator } from '@@/BEFeatureIndicator';
-
 import './Switch.css';
 
 import styles from './Switch.module.css';
@@ -35,28 +33,26 @@ export function Switch({
 }: Props) {
   const limitedToBE = isLimitedToBE(featureId);
 
+  if (limitedToBE) {
+    return null;
+  }
+
   return (
-    <>
-      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- accessible text is provided by the parent SwitchField label */}
-      <label
-        className={clsx('switch', className, styles.root, {
-          business: limitedToBE,
-          limited: limitedToBE,
-        })}
-        data-cy={dataCy}
-        aria-checked={checked}
-      >
-        <input
-          type="checkbox"
-          name={name}
-          id={id}
-          checked={checked}
-          disabled={disabled || limitedToBE}
-          onChange={({ target: { checked } }) => onChange(checked, index)}
-        />
-        <span className="slider round before:content-['']" />
-      </label>
-      {featureId && limitedToBE && <BEFeatureIndicator featureId={featureId} />}
-    </>
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control -- accessible text is provided by the parent SwitchField label
+    <label
+      className={clsx('switch', className, styles.root)}
+      data-cy={dataCy}
+      aria-checked={checked}
+    >
+      <input
+        type="checkbox"
+        name={name}
+        id={id}
+        checked={checked}
+        disabled={disabled}
+        onChange={({ target: { checked } }) => onChange(checked, index)}
+      />
+      <span className="slider round before:content-['']" />
+    </label>
   );
 }

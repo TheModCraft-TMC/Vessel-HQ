@@ -44,7 +44,6 @@ export function JobsDatatable() {
   );
 
   const jobsQuery = useJobs(environmentId, {
-    refetchInterval: tableState.autoRefreshRateMS,
   });
   const jobsRowData = jobsQuery.data;
 

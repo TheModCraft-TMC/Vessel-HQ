@@ -1,9 +1,11 @@
 package security
 
 import (
+	"bufio"
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"net"
 	"net/http"
 	"slices"
 	"strings"
@@ -293,11 +295,82 @@ func (bouncer *RequestBouncer) mwUpgradeToRestrictedRequest(next http.Handler) h
 
 		ctx := StoreRestrictedRequestContext(r, requestContext)
 		bouncer.recordActivity(r, requestContext)
-		next.ServeHTTP(w, r.WithContext(ctx))
-		if bouncer.publishMutation != nil && isMutationRequest(r) {
+
+		if !isMutationRequest(r) {
+			next.ServeHTTP(w, r.WithContext(ctx))
+			return
+		}
+
+		responseWriter := &statusCapturingResponseWriter{ResponseWriter: w}
+		next.ServeHTTP(responseWriter, r.WithContext(ctx))
+		if bouncer.publishMutation != nil && responseWriter.wasSuccessful() {
 			bouncer.publishMutation()
 		}
 	})
+}
+
+// statusCapturingResponseWriter preserves the optional interfaces used by
+// reverse proxies while allowing mutation notifications to be emitted only
+// for successful responses.
+type statusCapturingResponseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func (writer *statusCapturingResponseWriter) WriteHeader(statusCode int) {
+	if statusCode >= 100 && statusCode < 200 {
+		writer.ResponseWriter.WriteHeader(statusCode)
+		return
+	}
+
+	if writer.statusCode != 0 {
+		return
+	}
+
+	writer.statusCode = statusCode
+	writer.ResponseWriter.WriteHeader(statusCode)
+}
+
+func (writer *statusCapturingResponseWriter) Write(payload []byte) (int, error) {
+	if writer.statusCode == 0 {
+		writer.WriteHeader(http.StatusOK)
+	}
+
+	return writer.ResponseWriter.Write(payload)
+}
+
+func (writer *statusCapturingResponseWriter) Flush() {
+	if writer.statusCode == 0 {
+		writer.WriteHeader(http.StatusOK)
+	}
+
+	_ = http.NewResponseController(writer.ResponseWriter).Flush()
+}
+
+func (writer *statusCapturingResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	return http.NewResponseController(writer.ResponseWriter).Hijack()
+}
+
+func (writer *statusCapturingResponseWriter) Push(target string, options *http.PushOptions) error {
+	pusher, ok := writer.ResponseWriter.(http.Pusher)
+	if !ok {
+		return http.ErrNotSupported
+	}
+
+	return pusher.Push(target, options)
+}
+
+func (writer *statusCapturingResponseWriter) Unwrap() http.ResponseWriter {
+	return writer.ResponseWriter
+}
+
+func (writer *statusCapturingResponseWriter) wasSuccessful() bool {
+	statusCode := writer.statusCode
+	if statusCode == 0 {
+		statusCode = http.StatusOK
+	}
+
+	return statusCode >= http.StatusOK && statusCode < http.StatusBadRequest
 }
 
 func (bouncer *RequestBouncer) recordActivity(r *http.Request, requestContext *RestrictedRequestContext) {

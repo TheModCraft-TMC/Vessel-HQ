@@ -8,12 +8,11 @@ import { useIdParam } from '@/react/hooks/useIdParam';
 import { AccessDatatable } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/AccessDatatable';
 import { Access } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/types';
 import { Option } from '@/react/portainer/access-control/AccessManagement/PorAccessManagementUsersSelector';
+import { CreateAccessWidget } from '@/react/portainer/access-control/AccessManagement/CreateAccessWidget';
 
 import { useGroup } from '../../queries/useGroup';
 import { useGroupAccesses } from '../../queries/useGroupAccesses';
 import { useUpdateGroupAccessMutation } from '../../queries/useUpdateGroupAccessMutation';
-
-import { CreateAccessWidget } from './CreateAccessWidget';
 
 export function AccessTab() {
   const groupId = useIdParam();

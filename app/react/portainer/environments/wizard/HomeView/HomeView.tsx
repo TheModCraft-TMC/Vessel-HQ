@@ -30,19 +30,19 @@ export function HomeView() {
             <WidgetBody>
               <div className="row">
                 <div className="col-sm-12 form-section-title">
-                  Welcome to Portainer
+                  Welcome to Vessel HQ
                 </div>
                 <div className="text-muted small">
                   {localEnvironmentAdded.status === 'success' && (
                     <p>
                       We have connected your local environment of{' '}
-                      {getTypeLabel(localEnvironmentAdded.type)} to Portainer.
+                      {getTypeLabel(localEnvironmentAdded.type)} to Vessel HQ.
                     </p>
                   )}
 
                   {localEnvironmentAdded.status === 'error' && (
                     <p>
-                      We could not connect your local environment to Portainer.
+                      We could not connect your local environment to Vessel HQ.
                       <br />
                       Please ensure your environment is correctly exposed. For
                       help with installation visit{' '}
@@ -57,8 +57,8 @@ export function HomeView() {
                   )}
 
                   <p>
-                    Get started below with your local portainer or connect more
-                    container environments.
+                    Get started below with your local Vessel HQ environment or
+                    connect more container environments.
                   </p>
                 </div>
 
@@ -76,7 +76,7 @@ export function HomeView() {
                             : Kube
                         }
                         title="Get Started"
-                        description="Proceed using the local environment which Portainer is running in"
+                        description="Proceed using the local environment where Vessel HQ is running"
                       />
                     </Link>
                   )}

@@ -46,7 +46,9 @@ function Item({ item, onChange, error, index }: ItemProps<string>) {
       </div>
       {error && (
         <FormError>
-          {typeof error === 'string' ? error : Object.values(error)[0]}
+          {typeof error === 'string'
+            ? error
+            : String(Object.values(error)[0] ?? '')}
         </FormError>
       )}
     </div>

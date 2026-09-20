@@ -21,7 +21,7 @@ export default {
   },
 } as Meta<Props>;
 
-// : JSX.IntrinsicAttributes & PropsWithChildren<Props>
+// : React.JSX.IntrinsicAttributes & PropsWithChildren<Props>
 function Template({
   size = '3xl',
   icon = 'edit',

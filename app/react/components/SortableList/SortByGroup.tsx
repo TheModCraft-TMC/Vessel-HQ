@@ -33,7 +33,7 @@ export function SortByGroup<TSortKey extends string>({
   dataCy,
 }: SortByGroupProps<TSortKey>) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex min-w-0 max-w-full items-center gap-1 overflow-x-auto sm:gap-3">
       <span
         className="text-xs font-semibold tracking-wider text-gray-11 th-highcontrast:text-white th-dark:text-white"
         data-cy="sort-by-label"
@@ -44,7 +44,7 @@ export function SortByGroup<TSortKey extends string>({
         className={clsx(
           'flex',
           'bg-gray-4 th-highcontrast:bg-black th-dark:bg-gray-iron-11',
-          'gap-1 rounded-md p-1 th-highcontrast:border th-highcontrast:border-solid th-highcontrast:border-white'
+          'gap-0 rounded-md p-1 sm:gap-1 th-highcontrast:border th-highcontrast:border-solid th-highcontrast:border-white'
         )}
         role="group"
         aria-label="Sort by"
@@ -69,7 +69,7 @@ export function SortByGroup<TSortKey extends string>({
 }
 
 const baseBtn = clsx(
-  'px-4 py-1.5 align-middle text-xs font-medium transition-colors'
+  'px-1.5 py-1.5 align-middle text-xs font-medium transition-colors sm:px-4'
 );
 const activeBtn = clsx(
   'z-10 rounded-md border-none font-medium',

@@ -71,7 +71,7 @@ describe('external and orphaned warnings', () => {
     renderComponent({ isExternal: true });
 
     expect(
-      screen.getByText(/This stack was created outside of Portainer/i)
+      screen.getByText(/This stack was created outside of Vessel HQ/i)
     ).toBeVisible();
     expect(screen.getByText('Information')).toBeVisible();
   });
@@ -99,7 +99,7 @@ describe('external and orphaned warnings', () => {
     renderComponent({ isExternal: true, isOrphaned: true });
 
     expect(
-      screen.getByText(/This stack was created outside of Portainer/i)
+      screen.getByText(/This stack was created outside of Vessel HQ/i)
     ).toBeVisible();
     expect(screen.getByText(/This stack is orphaned/i)).toBeVisible();
   });
@@ -109,7 +109,7 @@ describe('external and orphaned warnings', () => {
 
     expect(screen.queryByText('Information')).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/This stack was created outside of Portainer/i)
+      screen.queryByText(/This stack was created outside of Vessel HQ/i)
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText(/This stack is orphaned/i)

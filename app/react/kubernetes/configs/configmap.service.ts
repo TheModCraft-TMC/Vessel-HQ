@@ -62,9 +62,6 @@ export function useConfigMapsForCluster(
     {
       ...withError('Unable to retrieve ConfigMaps for cluster'),
       enabled: !!namespaces?.length,
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

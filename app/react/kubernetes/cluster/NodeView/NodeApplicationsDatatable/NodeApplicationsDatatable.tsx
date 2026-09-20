@@ -32,7 +32,6 @@ export function NodeApplicationsDatatable() {
   } = useCurrentStateAndParams();
   const applicationsQuery = useApplications(envId, {
     nodeName,
-    refetchInterval: tableState.autoRefreshRateMS,
   });
   const applications = applicationsQuery.data ?? [];
 

@@ -1,0 +1,1 @@
+export { KubernetesLogsView } from './LogsView';

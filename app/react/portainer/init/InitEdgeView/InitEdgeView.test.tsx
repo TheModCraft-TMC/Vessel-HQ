@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
@@ -21,9 +21,11 @@ vi.mock('@/react/portainer/settings/queries/useSettings', () => ({
   useSettings: () => useSettings(),
 }));
 
-function renderComponent() {
+async function renderComponent() {
   const Wrapped = withTestQueryProvider(withTestRouter(InitEdgeView));
-  return render(<Wrapped />);
+  const result = render(<Wrapped />);
+  await act(async () => {});
+  return result;
 }
 
 describe('InitEdgeView', () => {
@@ -42,11 +44,11 @@ describe('InitEdgeView', () => {
     });
   });
 
-  it('renders the value bullets and the enable switch, with fields hidden by default', () => {
-    renderComponent();
+  it('renders the value bullets and the enable switch, with fields hidden by default', async () => {
+    await renderComponent();
 
     expect(
-      screen.getByText(/Edge Compute lets Portainer/i)
+      screen.getByText(/Edge Compute lets Vessel HQ/i)
     ).toBeInTheDocument();
     expect(screen.getByRole('checkbox')).not.toBeChecked();
     // fields only appear once edge compute is enabled
@@ -57,7 +59,7 @@ describe('InitEdgeView', () => {
 
   it('reveals the URL field prefilled from the browser location when enabled', async () => {
     const user = userEvent.setup();
-    renderComponent();
+    await renderComponent();
 
     await user.click(screen.getByRole('checkbox', { name: /edge compute/i }));
 
@@ -68,7 +70,7 @@ describe('InitEdgeView', () => {
 
   it('skips to the wizard without saving when Skip is clicked', async () => {
     const user = userEvent.setup();
-    renderComponent();
+    await renderComponent();
 
     await user.click(screen.getByText('Skip'));
 
@@ -78,7 +80,7 @@ describe('InitEdgeView', () => {
 
   it('saves the partial settings payload and navigates to the wizard on enable', async () => {
     const user = userEvent.setup();
-    renderComponent();
+    await renderComponent();
 
     await user.click(screen.getByRole('checkbox', { name: /edge compute/i }));
 
@@ -113,7 +115,7 @@ describe('InitEdgeView', () => {
     });
 
     const user = userEvent.setup();
-    renderComponent();
+    await renderComponent();
 
     await user.click(screen.getByRole('checkbox', { name: /edge compute/i }));
 

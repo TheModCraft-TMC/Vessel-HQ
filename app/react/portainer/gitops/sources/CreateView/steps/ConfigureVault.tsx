@@ -114,7 +114,7 @@ export function ConfigureVault() {
         label="Token"
         required
         errors={errors.vault?.authentication?.token}
-        tooltip="Vault token used by Portainer when resolving stack secrets. Renewable periodic tokens are checked hourly and renewed after half their period has elapsed."
+        tooltip="Vault token used by Vessel HQ when resolving stack secrets. Renewable periodic tokens are checked hourly and renewed after half their period has elapsed."
       >
         <div className="flex flex-col gap-2">
           <Input

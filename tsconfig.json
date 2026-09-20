@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "outDir": "./dist/public",
-    "module": "es6",
+    "module": "esnext",
     "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.cache/vessel-tsconfig.tsbuildinfo",
     "target": "esnext",
     "allowJs": true,
     "checkJs": false,

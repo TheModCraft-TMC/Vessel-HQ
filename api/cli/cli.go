@@ -19,7 +19,7 @@ import (
 type Service struct{}
 
 var (
-	ErrInvalidEndpointProtocol       = errors.New("Invalid environment protocol: Portainer only supports unix://, npipe:// or tcp://")
+	ErrInvalidEndpointProtocol       = errors.New("Invalid environment protocol: Vessel HQ only supports unix://, npipe:// or tcp://")
 	ErrSocketOrNamedPipeNotFound     = errors.New("Unable to locate Unix socket or named pipe")
 	ErrInvalidSnapshotInterval       = errors.New("Invalid snapshot interval")
 	ErrAdminPassExcludeAdminPassFile = errors.New("Cannot use --admin-password with --admin-password-file")
@@ -27,8 +27,8 @@ var (
 
 func CLIFlags() *portainer.CLIFlags {
 	return &portainer.CLIFlags{
-		Addr:                      kingpin.Flag("bind", "Address and port to serve Portainer").Default(defaultBindAddress).Short('p').String(),
-		AddrHTTPS:                 kingpin.Flag("bind-https", "Address and port to serve Portainer via https").Default(defaultHTTPSBindAddress).String(),
+		Addr:                      kingpin.Flag("bind", "Address and port to serve Vessel HQ").Default(defaultBindAddress).Short('p').String(),
+		AddrHTTPS:                 kingpin.Flag("bind-https", "Address and port to serve Vessel HQ via https").Default(defaultHTTPSBindAddress).String(),
 		TunnelAddr:                kingpin.Flag("tunnel-addr", "Address to serve the tunnel server").Default(defaultTunnelServerAddress).String(),
 		TunnelPort:                kingpin.Flag("tunnel-port", "Port to serve the tunnel server").Default(defaultTunnelServerPort).String(),
 		Assets:                    kingpin.Flag("assets", "Path to the assets").Default(defaultAssetsDirectory).Short('a').String(),
@@ -72,17 +72,17 @@ func (Service) ParseFlags(version string) (*portainer.CLIFlags, error) {
 	var hasSSLFlag, hasSSLCertFlag, hasSSLKeyFlag bool
 	sslFlag := kingpin.Flag(
 		"ssl",
-		"Secure Portainer instance using SSL (deprecated)",
+		"Secure Vessel HQ instance using SSL (deprecated)",
 	).Default(defaultSSL).IsSetByUser(&hasSSLFlag)
 	ssl := sslFlag.Bool()
 	sslCertFlag := kingpin.Flag(
 		"sslcert",
-		"Path to the SSL certificate used to secure the Portainer instance",
+		"Path to the SSL certificate used to secure the Vessel HQ instance",
 	).IsSetByUser(&hasSSLCertFlag)
 	sslCert := sslCertFlag.String()
 	sslKeyFlag := kingpin.Flag(
 		"sslkey",
-		"Path to the SSL key used to secure the Portainer instance",
+		"Path to the SSL key used to secure the Vessel HQ instance",
 	).IsSetByUser(&hasSSLKeyFlag)
 	sslKey := sslKeyFlag.String()
 

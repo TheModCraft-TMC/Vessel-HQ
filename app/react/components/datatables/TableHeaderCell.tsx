@@ -81,20 +81,20 @@ function SortWrapper({
   );
 }
 
-export interface TableColumnHeaderAngularProps {
+export interface TableColumnHeaderWithDescriptionProps {
   colTitle: string;
   canSort: boolean;
   isSorted?: boolean;
   isSortedDesc?: boolean;
 }
 
-export function TableColumnHeaderAngular({
+export function TableColumnHeaderWithDescription({
   canSort,
   isSorted,
   colTitle,
   isSortedDesc = true,
   children,
-}: PropsWithChildren<TableColumnHeaderAngularProps>) {
+}: PropsWithChildren<TableColumnHeaderWithDescriptionProps>) {
   return (
     <div className="flex h-full flex-row flex-nowrap">
       <SortWrapper

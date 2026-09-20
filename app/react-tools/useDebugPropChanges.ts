@@ -40,7 +40,7 @@ export function useDebugPropChanges(
   newProps: Record<string, unknown>,
   verbose: boolean = true
 ) {
-  const lastProps = useRef<Record<string, unknown>>();
+  const lastProps = useRef<Record<string, unknown> | undefined>(undefined);
   // Should only run when the component re-mounts
   useEffect(() => {
     console.log('Mounted');

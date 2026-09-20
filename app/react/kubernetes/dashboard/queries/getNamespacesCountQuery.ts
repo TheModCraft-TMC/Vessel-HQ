@@ -18,9 +18,6 @@ export function useGetNamespacesCountQuery(
     async () => getNamespacesCount(environmentId),
     {
       ...withError('Unable to get namespaces count'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

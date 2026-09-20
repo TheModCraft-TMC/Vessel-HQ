@@ -9,7 +9,7 @@ export function RBACAlert() {
           enabled.
         </p>
         <p>
-          This means you can&apos;t use Portainer RBAC functionality to regulate
+          This means you can&apos;t use Vessel HQ RBAC functionality to regulate
           access to environment resources based on user roles.
         </p>
         <p className="mb-0">

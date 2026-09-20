@@ -23,7 +23,6 @@ export function ConfigsDatatable() {
   const tableState = useTableState(settingsStore, storageKey);
 
   const configListQuery = useConfigsList(environmentId, {
-    refetchInterval: tableState.autoRefreshRateMS,
     select: (configs) => configs.map((c) => new ConfigViewModel(c)),
   });
 

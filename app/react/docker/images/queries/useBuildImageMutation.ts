@@ -4,18 +4,21 @@ import { jsonObjectsToArrayHandler } from '@/portainer/helpers/json';
 
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';
 import { formatArrayQueryParamsForDockerAPI } from '../../proxy/queries/utils';
+import { withAgentTargetHeader } from '../../proxy/queries/utils';
 
 export async function buildImageFromUpload(
   environmentId: EnvironmentId,
   names: string[],
   file: File,
-  path: string
+  path: string,
+  { nodeName }: { nodeName?: string } = {}
 ) {
   return buildImage(
     environmentId,
     { t: names, dockerfile: path },
     file,
-    file.type
+    file.type,
+    nodeName
   );
 }
 
@@ -23,26 +26,30 @@ export async function buildImageFromURL(
   environmentId: EnvironmentId,
   names: string[],
   url: string,
-  path: string
+  path: string,
+  { nodeName }: { nodeName?: string } = {}
 ) {
   return buildImage(
     environmentId,
     { t: names, remote: url, dockerfile: path },
     {},
-    'application/x-tar'
+    'application/x-tar',
+    nodeName
   );
 }
 
 export async function buildImageFromDockerfileContent(
   environmentId: EnvironmentId,
   names: string[],
-  content: string
+  content: string,
+  { nodeName }: { nodeName?: string } = {}
 ) {
   return buildImage(
     environmentId,
     { t: names },
     { content },
-    'application/json'
+    'application/json',
+    nodeName
   );
 }
 
@@ -50,7 +57,8 @@ export async function buildImageFromDockerfileContentAndFiles(
   environmentId: EnvironmentId,
   names: string[],
   content: string,
-  files: File[]
+  files: File[],
+  { nodeName }: { nodeName?: string } = {}
 ) {
   const dockerfile = new Blob([content], { type: 'text/plain' });
   const uploadFiles = [dockerfile, ...files];
@@ -64,7 +72,8 @@ export async function buildImageFromDockerfileContentAndFiles(
     environmentId,
     { t: names },
     formData,
-    'multipart/form-data'
+    'multipart/form-data',
+    nodeName
   );
 }
 
@@ -104,14 +113,18 @@ async function buildImage(
   environmentId: EnvironmentId,
   params: BuildImageQueryParams,
   payload: unknown,
-  contentType: string
+  contentType: string,
+  nodeName?: string
 ) {
   try {
     const { data } = await axios.post(
       buildDockerProxyUrl(environmentId, 'build'),
       payload,
       {
-        headers: { 'Content-Type': contentType },
+        headers: {
+          'Content-Type': contentType,
+          ...withAgentTargetHeader(nodeName),
+        },
         params,
         transformResponse: jsonObjectsToArrayHandler,
         paramsSerializer: formatArrayQueryParamsForDockerAPI,

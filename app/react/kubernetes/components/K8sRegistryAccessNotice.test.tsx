@@ -131,7 +131,7 @@ describe('K8sRegistryAccessNotice', () => {
       render(<K8sRegistryAccessNotice namespace="my-ns" />);
       expect(screen.getByText(/no registries configured/i)).toBeVisible();
       expect(
-        screen.getByText(/contact your portainer administrator/i)
+        screen.getByText(/contact your Vessel HQ administrator/i)
       ).toBeVisible();
     });
   });
@@ -160,7 +160,7 @@ describe('K8sRegistryAccessNotice', () => {
       expect(screen.getByText(/registry access not configured/i)).toBeVisible();
       expect(
         screen.getByText(
-          /contact your portainer administrator to set up registry access/i
+          /contact your Vessel HQ administrator to set up registry access/i
         )
       ).toBeVisible();
     });

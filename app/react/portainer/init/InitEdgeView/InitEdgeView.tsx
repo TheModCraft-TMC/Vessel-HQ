@@ -54,7 +54,7 @@ export function InitEdgeView() {
 
             <WidgetBody loading={settingsQuery.isLoading}>
               <p className="text-muted">
-                Edge Compute lets Portainer manage environments that it cannot
+                Edge Compute lets Vessel HQ manage environments that it cannot
                 reach directly — remote devices, environments behind NAT or a
                 firewall, or sites with intermittent connectivity.
               </p>
@@ -65,7 +65,7 @@ export function InitEdgeView() {
                 </li>
                 <li>
                   Deploy stacks and jobs to many edge environments from a single
-                  Portainer instance.
+                  Vessel HQ instance.
                 </li>
               </ul>
 
@@ -99,7 +99,7 @@ export function InitEdgeView() {
                       <>
                         <TextTip color="blue" className="mb-2">
                           This is the URL that edge agents will use to reach
-                          this Portainer instance. It is prefilled from your
+                          this Vessel HQ instance. It is prefilled from your
                           browser — confirm it is reachable from where your
                           agents run. You can change it later in Settings &gt;
                           Edge Compute.

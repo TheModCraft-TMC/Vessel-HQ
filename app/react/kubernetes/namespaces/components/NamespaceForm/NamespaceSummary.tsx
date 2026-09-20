@@ -37,7 +37,7 @@ export function NamespaceSummary({ initialValues, values, isValid }: Props) {
       <div className="form-group">
         <div className="col-sm-12">
           <TextTip color="blue">
-            Portainer will execute the following Kubernetes actions.
+            Vessel HQ will execute the following Kubernetes actions.
           </TextTip>
         </div>
       </div>

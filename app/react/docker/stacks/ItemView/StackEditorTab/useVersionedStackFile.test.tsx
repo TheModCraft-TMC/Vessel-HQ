@@ -1,5 +1,5 @@
-import { waitFor } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
+import { PropsWithChildren } from 'react';
 import { http, HttpResponse } from 'msw';
 import { vi } from 'vitest';
 
@@ -522,11 +522,9 @@ function renderHookWithProviders({
   version?: number;
   onLoad: (content: string) => void;
 }) {
-  const Wrapper = withTestQueryProvider<{
-    stackId: number;
-    version?: number;
-    onLoad: (content: string) => void;
-  }>(({ children }) => <>{children}</>);
+  const Wrapper = withTestQueryProvider(
+    ({ children }: PropsWithChildren) => <>{children}</>
+  );
 
   return renderHook(useVersionedStackFile, {
     initialProps: { stackId, version, onLoad },

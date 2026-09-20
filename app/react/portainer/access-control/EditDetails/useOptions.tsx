@@ -1,11 +1,10 @@
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
-import { buildOption } from '@/portainer/components/BoxSelector';
 import { Team } from '@/react/portainer/users/teams/types';
 import { ownershipIcon } from '@/react/docker/components/datatable/createOwnershipColumn';
 
-import { BoxSelectorOption } from '@@/BoxSelector/types';
+import { BoxSelectorOption, buildOption } from '@@/BoxSelector';
 import { BadgeIcon } from '@@/BadgeIcon';
 
 import { ResourceControlOwnership } from '../types';

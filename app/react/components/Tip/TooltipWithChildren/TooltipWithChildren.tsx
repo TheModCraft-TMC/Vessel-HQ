@@ -5,10 +5,6 @@ import _ from 'lodash';
 
 import 'tippy.js/dist/tippy.css';
 
-import { FeatureId } from '@/react/portainer/feature-flags/enums';
-
-import { getFeatureDetails } from '@@/BEFeatureIndicator/utils';
-
 import styles from './TooltipWithChildren.module.css';
 
 export type Position = 'top' | 'right' | 'bottom' | 'left';
@@ -19,7 +15,6 @@ export interface Props {
   className?: string;
   children: React.ReactElement;
   heading?: string;
-  BEFeatureID?: FeatureId;
   appendTo?: TippyProps['appendTo'];
 }
 
@@ -29,14 +24,9 @@ export function TooltipWithChildren({
   className,
   children,
   heading,
-  BEFeatureID,
   appendTo,
 }: Props) {
   const id = _.uniqueId('tooltip-');
-
-  const { url, limitedToBE } = BEFeatureID
-    ? getFeatureDetails(BEFeatureID)
-    : { url: '', limitedToBE: false };
 
   const messageHTML = (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
@@ -45,19 +35,9 @@ export function TooltipWithChildren({
       onClick={onClickHandler}
       onMouseDown={onMouseDownHandler}
     >
-      {(heading || (BEFeatureID && limitedToBE)) && (
+      {heading && (
         <div className="mb-3 inline-flex w-full justify-between">
           <span>{heading}</span>
-          {BEFeatureID && limitedToBE && (
-            <a
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.tooltipBeteaser}
-            >
-              Business Feature
-            </a>
-          )}
         </div>
       )}
       <div className={styles.tooltipMessage}>{message}</div>

@@ -30,15 +30,6 @@ export function baseEdgeStackWebhookUrl() {
   return `${baseUrl}${API_ENDPOINT_EDGE_STACKS}/webhooks`;
 }
 
-/* @ngInject */
-export function WebhookHelperFactory() {
-  return {
-    returnWebhookUrl: dockerWebhookUrl,
-    getBaseStackWebhookUrl: baseStackWebhookUrl,
-    returnStackWebhookUrl: stackWebhookUrl,
-  };
-}
-
 function getBaseUrl() {
   const protocol = window.location.protocol.toLowerCase().replace(':', '');
 

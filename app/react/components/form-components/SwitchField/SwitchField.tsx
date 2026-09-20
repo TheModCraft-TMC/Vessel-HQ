@@ -3,6 +3,7 @@ import uuid from 'uuid';
 import { ComponentProps, PropsWithChildren, ReactNode, useState } from 'react';
 
 import { FeatureId } from '@/react/portainer/feature-flags/enums';
+import { isLimitedToBE } from '@/react/portainer/feature-flags/feature-flags.service';
 import { AutomationTestingProps } from '@/types';
 
 import { Tooltip } from '@@/Tip/Tooltip';
@@ -46,6 +47,10 @@ export function SwitchField({
 }: PropsWithChildren<Props>) {
   const [toggleId] = useState(() => `toggle_${uuid()}`);
   const toggleName = name ? `toggle_${name}` : '';
+
+  if (isLimitedToBE(featureId)) {
+    return null;
+  }
 
   return (
     <div className={clsx(styles.root, fieldClass)}>

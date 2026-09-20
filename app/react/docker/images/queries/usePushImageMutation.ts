@@ -5,19 +5,24 @@ import PortainerError from '@/portainer/error';
 import { jsonObjectsToArrayHandler } from '@/portainer/helpers/json';
 
 import { buildImageFullURI } from '../utils';
-import { withRegistryAuthHeader } from '../../proxy/queries/utils';
+import {
+  withAgentTargetHeader,
+  withRegistryAuthHeader,
+} from '../../proxy/queries/utils';
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';
 
 interface PushImageOptions {
   environmentId: EnvironmentId;
   image: string;
   registry?: Registry;
+  nodeName?: string;
 }
 
 export async function pushImage({
   environmentId,
   image,
   registry,
+  nodeName,
 }: PushImageOptions) {
   const imageURI = buildImageFullURI(image, registry);
 
@@ -28,6 +33,7 @@ export async function pushImage({
       {
         headers: {
           ...withRegistryAuthHeader(registry?.Id),
+          ...withAgentTargetHeader(nodeName),
         },
         transformResponse: jsonObjectsToArrayHandler,
       }

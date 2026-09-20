@@ -3,13 +3,15 @@ import { EnvironmentId } from '@/react/portainer/environments/types';
 
 import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
 import { formatArrayQueryParamsForDockerAPI } from '../utils';
+import { withAgentTargetHeader } from '../utils';
 
 /**
  * Raw docker API proxy
  */
 export async function downloadImages(
   environmentId: EnvironmentId,
-  images: { tags: string[]; id: string }[]
+  images: { tags: string[]; id: string }[],
+  { nodeName }: { nodeName?: string } = {}
 ) {
   const names = images.map((image) =>
     image.tags[0] !== '<none>:<none>' ? image.tags[0] : image.id
@@ -22,6 +24,7 @@ export async function downloadImages(
         params: { names },
         responseType: 'blob',
         paramsSerializer: formatArrayQueryParamsForDockerAPI,
+        headers: { ...withAgentTargetHeader(nodeName) },
       }
     );
     return data;

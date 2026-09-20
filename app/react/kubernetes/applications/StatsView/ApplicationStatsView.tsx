@@ -102,7 +102,7 @@ export function ApplicationStatsView() {
       <div className="mx-4 mb-4 space-y-4">
         {metricsState === 'unavailable' && (
           <Alert color="warn" title="Unable to retrieve container metrics">
-            Portainer was unable to retrieve any metrics associated to that
+            Vessel HQ was unable to retrieve any metrics associated with that
             container. Please contact your administrator to ensure that the
             Kubernetes metrics feature is properly configured.
           </Alert>

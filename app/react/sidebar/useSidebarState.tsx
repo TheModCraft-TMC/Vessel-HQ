@@ -7,7 +7,6 @@ import {
   useRef,
   useReducer,
 } from 'react';
-import angular, { IScope } from 'angular';
 import _ from 'lodash';
 
 import { sidebarStore } from './sidebarStore';
@@ -36,8 +35,6 @@ export function useSidebarState() {
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const { isOpen, toggle, setOpen } = sidebarStore();
   const prevIsOpen = useRef<boolean | null>(null);
-
-  useUpdateAngularService(isOpen);
 
   useEffect(() => {
     if (window.ddExtension) {
@@ -75,39 +72,6 @@ export function TestSidebarProvider({ children }: PropsWithChildren<unknown>) {
   );
 
   return <Context.Provider value={state}> {children} </Context.Provider>;
-}
-
-/* @ngInject */
-export function AngularSidebarService($rootScope: IScope) {
-  const state = {
-    isOpen: false,
-  };
-
-  function isSidebarOpen() {
-    return state.isOpen;
-  }
-
-  function setIsOpen(isOpen: boolean) {
-    $rootScope.$evalAsync(() => {
-      state.isOpen = isOpen;
-    });
-  }
-
-  return { isSidebarOpen, setIsOpen };
-}
-
-function useUpdateAngularService(isOpen: boolean) {
-  useEffect(() => {
-    // to sync "outside state" - for angularjs
-    const $injector = angular.element(document).injector();
-    $injector?.invoke(
-      /* @ngInject */ (
-        SidebarService: ReturnType<typeof AngularSidebarService>
-      ) => {
-        SidebarService.setIsOpen(isOpen);
-      }
-    );
-  }, [isOpen]);
 }
 
 function isMobile() {

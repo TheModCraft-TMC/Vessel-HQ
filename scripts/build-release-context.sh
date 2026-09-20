@@ -13,7 +13,7 @@ fi
 
 cd "$repository_root"
 
-echo "Building Portainer $release_version for linux/amd64 and linux/arm64"
+echo "Building Vessel HQ $release_version for linux/amd64 and linux/arm64"
 CI=true pnpm install --frozen-lockfile
 NODE_ENV=production pnpm run build --config webpack/webpack.production.js
 

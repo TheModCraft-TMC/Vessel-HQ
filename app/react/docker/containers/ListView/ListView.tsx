@@ -1,21 +1,25 @@
 import { useInfo } from '@/react/docker/proxy/queries/useInfo';
-import { Environment } from '@/react/portainer/environments/types';
+import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
+import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
 
 import { PageHeader } from '@@/PageHeader';
 
 import { ContainersDatatable } from './ContainersDatatable';
 
-interface Props {
-  endpoint: Environment;
-}
-
-export function ListView({ endpoint: environment }: Props) {
-  const isAgent = isAgentEnvironment(environment.Type);
-
-  const envInfoQuery = useInfo(environment.Id, {
+export function ListView() {
+  const environmentId = useEnvironmentId();
+  const environmentQuery = useCurrentEnvironment();
+  const environment = environmentQuery.data;
+  const envInfoQuery = useInfo(environmentId, {
     select: (info) => !!info.Swarm?.NodeID,
   });
+
+  if (!environment) {
+    return null;
+  }
+
+  const isAgent = isAgentEnvironment(environment.Type);
 
   const isSwarmManager = !!envInfoQuery.data;
   const isHostColumnVisible = isAgent && isSwarmManager;

@@ -76,7 +76,7 @@ func (handler *Handler) edgeJobTasksCollect(w http.ResponseWriter, r *http.Reque
 		cache.Del(endpointID)
 
 		if endpoint.Edge.AsyncMode {
-			return httperror.BadRequest("Async Edge Endpoints are not supported in Portainer CE", nil)
+			return httperror.BadRequest("Async Edge environments are not supported in Vessel HQ CE", nil)
 		}
 
 		return nil

@@ -60,7 +60,6 @@ export function ApplicationsDatatable({
     false
   );
   const applicationsQuery = useApplications(environmentId, {
-    refetchInterval: tableState.autoRefreshRateMS,
     namespace: tableState.namespace,
   });
   const ingressesQuery = useIngresses(environmentId);

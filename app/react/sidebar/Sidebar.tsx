@@ -13,7 +13,6 @@ import { SidebarItem } from './SidebarItem';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { SidebarProvider, useSidebarState } from './useSidebarState';
-import { UpgradeBEBannerWrapper } from './UpgradeBEBanner';
 import { AppDeliverySidebar } from './AppDeliverySidebar';
 
 export function Sidebar() {
@@ -43,7 +42,6 @@ function InnerSidebar() {
 
   return (
     <div className={clsx(styles.root, 'sidebar flex flex-col')}>
-      <UpgradeBEBannerWrapper />
       <nav
         className={clsx(
           styles.nav,

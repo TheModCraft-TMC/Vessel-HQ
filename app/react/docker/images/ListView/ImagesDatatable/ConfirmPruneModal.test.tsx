@@ -1,7 +1,17 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { confirmPruneImages } from './ConfirmPruneModal';
+
+function renderConfirmPruneImages(
+  ...args: Parameters<typeof confirmPruneImages>
+) {
+  let result!: ReturnType<typeof confirmPruneImages>;
+  act(() => {
+    result = confirmPruneImages(...args);
+  });
+  return result;
+}
 
 describe('ConfirmPruneModal', () => {
   afterEach(() => {
@@ -15,7 +25,7 @@ describe('ConfirmPruneModal', () => {
   });
 
   it('should render modal with title and description', async () => {
-    confirmPruneImages();
+    renderConfirmPruneImages();
 
     await waitFor(() => {
       expect(screen.getByText('Are you sure?')).toBeVisible();
@@ -26,7 +36,7 @@ describe('ConfirmPruneModal', () => {
   });
 
   it('should render switch for pruning all unused images', async () => {
-    confirmPruneImages();
+    renderConfirmPruneImages();
 
     await waitFor(() => {
       expect(screen.getByText('Delete all unused images')).toBeVisible();
@@ -35,7 +45,7 @@ describe('ConfirmPruneModal', () => {
 
   it('should return undefined when Cancel is clicked', async () => {
     const user = userEvent.setup();
-    const resultPromise = confirmPruneImages();
+    const resultPromise = renderConfirmPruneImages();
 
     const cancelButton = await screen.findByRole('button', { name: /cancel/i });
     await user.click(cancelButton);
@@ -46,7 +56,7 @@ describe('ConfirmPruneModal', () => {
 
   it('should return pruneAll: false and clearBuildCache: false when Continue is clicked without toggling switches', async () => {
     const user = userEvent.setup();
-    const resultPromise = confirmPruneImages();
+    const resultPromise = renderConfirmPruneImages();
 
     const confirmButton = await screen.findByRole('button', {
       name: /continue/i,
@@ -59,7 +69,7 @@ describe('ConfirmPruneModal', () => {
 
   it('should return pruneAll: true when first switch is toggled and Continue is clicked', async () => {
     const user = userEvent.setup();
-    const resultPromise = confirmPruneImages();
+    const resultPromise = renderConfirmPruneImages();
 
     const [pruneAllSwitch] = await screen.findAllByRole('checkbox');
     await user.click(pruneAllSwitch);
@@ -72,14 +82,14 @@ describe('ConfirmPruneModal', () => {
   });
 
   it('should have both switches unchecked by default', async () => {
-    confirmPruneImages();
+    renderConfirmPruneImages();
 
     const switches = await screen.findAllByRole('checkbox');
     switches.forEach((s) => expect(s).not.toBeChecked());
   });
 
   it('should render switch for clearing Docker build cache', async () => {
-    confirmPruneImages();
+    renderConfirmPruneImages();
 
     await waitFor(() => {
       expect(screen.getByText('Clear Docker build cache')).toBeVisible();
@@ -88,7 +98,7 @@ describe('ConfirmPruneModal', () => {
 
   it('should return clearBuildCache: true when build cache switch is toggled', async () => {
     const user = userEvent.setup();
-    const resultPromise = confirmPruneImages();
+    const resultPromise = renderConfirmPruneImages();
 
     const [, buildCacheSwitch] = await screen.findAllByRole('checkbox');
     await user.click(buildCacheSwitch);
@@ -101,7 +111,7 @@ describe('ConfirmPruneModal', () => {
   });
 
   it('should show validation message when no untagged images but unused images exist', async () => {
-    confirmPruneImages([
+    renderConfirmPruneImages([
       {
         id: 'img1',
         used: false,
@@ -121,7 +131,7 @@ describe('ConfirmPruneModal', () => {
   });
 
   it('should not show validation message when untagged images exist', async () => {
-    confirmPruneImages([
+    renderConfirmPruneImages([
       {
         id: 'img1',
         used: true,
@@ -142,7 +152,7 @@ describe('ConfirmPruneModal', () => {
 
   it('should not show validation message when switch is toggled', async () => {
     const user = userEvent.setup();
-    confirmPruneImages([
+    renderConfirmPruneImages([
       {
         id: 'img1',
         used: false,

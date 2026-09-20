@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { Formik } from 'formik';
 
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
@@ -11,20 +11,20 @@ import { GitSection } from './GitSection';
 import { GitFormValues } from './types';
 
 describe('GitSection', () => {
-  it('should render the git repository section', () => {
-    renderComponent();
+  it('should render the git repository section', async () => {
+    await renderComponent();
 
     expect(screen.getByText('Git repository')).toBeInTheDocument();
   });
 
-  it('should render the source selector', () => {
-    renderComponent();
+  it('should render the source selector', async () => {
+    await renderComponent();
 
     expect(screen.getByText('Source')).toBeInTheDocument();
   });
 
-  it('should render with auto update enabled', () => {
-    renderComponent({
+  it('should render with auto update enabled', async () => {
+    await renderComponent({
       webhookId: 'webhookId',
       initialValues: {
         AutoUpdate: {
@@ -38,20 +38,20 @@ describe('GitSection', () => {
     expect(screen.getByText('Git repository')).toBeInTheDocument();
   });
 
-  it('should render with docker standalone flag', () => {
-    renderComponent({ isDockerStandalone: true });
+  it('should render with docker standalone flag', async () => {
+    await renderComponent({ isDockerStandalone: true });
 
     expect(screen.getByText('Git repository')).toBeInTheDocument();
   });
 
-  it('should render relative path controls', () => {
-    renderComponent();
+  it('should render relative path controls', async () => {
+    await renderComponent();
 
     expect(screen.getByText('Enable relative path volumes')).toBeVisible();
   });
 });
 
-function renderComponent({
+async function renderComponent({
   webhookId = 'webhook',
   initialValues,
   isDockerStandalone,
@@ -87,5 +87,7 @@ function renderComponent({
     )
   );
 
-  return render(<Wrapped />);
+  const result = render(<Wrapped />);
+  await act(async () => {});
+  return result;
 }

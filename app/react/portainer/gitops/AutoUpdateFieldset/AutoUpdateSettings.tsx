@@ -34,7 +34,7 @@ export function AutoUpdateSettings({
 
       <TextTip color="orange" className="mb-2">
         Any changes to this stack or application that have been made locally via
-        Portainer or directly in the cluster will be overwritten by the git
+        Vessel HQ or directly in the cluster will be overwritten by the Git
         repository content, which may cause service interruption.
       </TextTip>
 
@@ -68,7 +68,7 @@ export function AutoUpdateSettings({
             <>
               <p>
                 If enabled, then when redeploy is triggered via the webhook or
-                polling, kubectl apply is always performed, even if Portainer
+                polling, kubectl apply is always performed, even if Vessel HQ
                 detects no difference between the git repo and what was stored
                 locally on last git pull.
               </p>
@@ -81,7 +81,7 @@ export function AutoUpdateSettings({
           ) : (
             <p>
               If enabled, then when redeploy is triggered via the webhook or
-              polling, the stack will be always redeployed, even if Portainer
+              polling, the stack will always be redeployed, even if Vessel HQ
               detects no difference between the git repo and what was stored
               locally on last git pull.
             </p>

@@ -2203,8 +2203,6 @@ const (
 	AssetsServerURL = "https://portainer-io-assets.sfo2.digitaloceanspaces.com"
 	// MessageOfTheDayURL represents the URL where Portainer MOTD message can be retrieved
 	MessageOfTheDayURL = AssetsServerURL + "/motd.json"
-	// ReleasesURL represents the URL used to retrieve all releases of Portainer
-	ReleasesURL = "https://api.github.com/repos/portainer/portainer/releases"
 	// VersionCheckURL represents the URL used to retrieve releases maintained by this fork.
 	VersionCheckURL = "https://hub.docker.com/v2/repositories/themodcrafttmc/portainer/tags?page_size=100&ordering=last_updated"
 	// PortainerAgentHeader represents the name of the header available in any agent response

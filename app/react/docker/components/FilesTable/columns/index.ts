@@ -13,6 +13,7 @@ import { NameCell } from './NameCell';
 import { ActionsCell } from './ActionsCell';
 
 export const columns = [
+  // @ts-expect-error TypeScript 6 exceeds its inference depth in TanStack's accessor helper.
   columnHelper.accessor('Name', {
     header: 'Name',
     cell: NameCell,

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
@@ -75,13 +75,13 @@ describe('PullImageFormWidget', () => {
   });
 
   describe('Authorization', () => {
-    it('should render widget when user has DockerImageCreate authorization', () => {
+    it('should render widget when user has DockerImageCreate authorization', async () => {
       vi.mocked(useAuthorizations).mockReturnValue({
         authorized: true,
         isLoading: false,
       });
 
-      renderComponent({ isNodeVisible: false });
+      await renderComponent({ isNodeVisible: false });
 
       expect(
         screen.getByRole('heading', { name: /pull image/i })
@@ -89,13 +89,13 @@ describe('PullImageFormWidget', () => {
       expect(screen.getByTestId('pull-image-form')).toBeVisible();
     });
 
-    it('should not render when user lacks DockerImageCreate authorization', () => {
+    it('should not render when user lacks DockerImageCreate authorization', async () => {
       vi.mocked(useAuthorizations).mockReturnValue({
         authorized: false,
         isLoading: false,
       });
 
-      renderComponent({ isNodeVisible: false });
+      await renderComponent({ isNodeVisible: false });
 
       expect(
         screen.queryByRole('heading', { name: /pull image/i })
@@ -112,23 +112,23 @@ describe('PullImageFormWidget', () => {
       });
     });
 
-    it('should render widget with title "Pull image"', () => {
-      renderComponent({ isNodeVisible: false });
+    it('should render widget with title "Pull image"', async () => {
+      await renderComponent({ isNodeVisible: false });
 
       expect(
         screen.getByRole('heading', { name: /pull image/i })
       ).toBeVisible();
     });
 
-    it('should not render NodeSelector when isNodeVisible=false', () => {
-      renderComponent({ isNodeVisible: false });
+    it('should not render NodeSelector when isNodeVisible=false', async () => {
+      await renderComponent({ isNodeVisible: false });
 
       expect(screen.queryByLabelText(/node/i)).not.toBeInTheDocument();
       expect(screen.queryByTestId('node-selector')).not.toBeInTheDocument();
     });
 
-    it('should render NodeSelector when isNodeVisible=true', () => {
-      renderComponent({ isNodeVisible: true });
+    it('should render NodeSelector when isNodeVisible=true', async () => {
+      await renderComponent({ isNodeVisible: true });
 
       expect(screen.getByLabelText(/node/i)).toBeVisible();
       expect(screen.getByTestId('node-selector')).toBeVisible();
@@ -146,7 +146,7 @@ describe('PullImageFormWidget', () => {
     it('should initialize usePullImageMutation with correct environment ID', async () => {
       const mockUsePullImageMutation = vi.mocked(usePullImageMutation);
 
-      renderComponent({ isNodeVisible: false });
+      await renderComponent({ isNodeVisible: false });
 
       // Verify mutation hook was called with environment ID 1
       expect(mockUsePullImageMutation).toHaveBeenCalledWith(1);
@@ -158,7 +158,7 @@ describe('PullImageFormWidget', () => {
         isLoading: true,
       } as unknown as ReturnType<typeof usePullImageMutation>);
 
-      renderComponent({ isNodeVisible: false });
+      await renderComponent({ isNodeVisible: false });
 
       const submitButton = screen.getByRole('button', {
         name: /download in progress/i,
@@ -169,7 +169,9 @@ describe('PullImageFormWidget', () => {
   });
 });
 
-function renderComponent({ isNodeVisible }: { isNodeVisible: boolean }) {
+async function renderComponent({ isNodeVisible }: { isNodeVisible: boolean }) {
   const Wrapped = withTestQueryProvider(withTestRouter(PullImageFormWidget));
-  return render(<Wrapped isNodeVisible={isNodeVisible} />);
+  const result = render(<Wrapped isNodeVisible={isNodeVisible} />);
+  await act(async () => {});
+  return result;
 }

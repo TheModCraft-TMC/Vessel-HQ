@@ -1,6 +1,6 @@
 import { ComponentType } from 'react';
 
-export function withEdition<T>(
+export function withEdition<T extends object>(
   WrappedComponent: ComponentType<T>,
   edition: 'BE' | 'CE'
 ): ComponentType<T> {
@@ -8,7 +8,7 @@ export function withEdition<T>(
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     if (process.env.PORTAINER_EDITION !== edition) {
       return null;
     }

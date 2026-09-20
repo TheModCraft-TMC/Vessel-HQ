@@ -17,11 +17,8 @@ export function useContainerStats(
   return useQuery({
     queryKey: queryKeys.stats(environmentId, id),
     queryFn: () => containerStats(environmentId, id, nodeName),
-    refetchInterval: (_data, query) =>
-      query.state.error ? false : refreshRateMS,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchIntervalInBackground: true,
   });
 }
 

@@ -41,7 +41,7 @@ export function InternalAuth({
     <>
       <FormSectionTitle>Information</FormSectionTitle>
       <div className="form-group col-sm-12 text-muted small">
-        When using internal authentication, Portainer will encrypt user
+        When using internal authentication, Vessel HQ will encrypt user
         passwords and store credentials locally.
       </div>
 

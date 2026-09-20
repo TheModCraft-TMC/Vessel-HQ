@@ -101,7 +101,6 @@ function useFetchLocalEnvironment() {
       ],
     },
     {
-      refetchInterval: false,
       staleTime: Infinity,
     }
   );

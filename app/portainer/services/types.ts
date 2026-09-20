@@ -4,6 +4,11 @@ export interface StateManager {
   updateEndpointState(endpoint: Environment): Promise<void>;
   updateLogo(logo: string): void;
   updateSnapshotInterval(interval: string): void;
+  setPasswordChangeSkipped(userId: string): void;
+  resetPasswordChangeSkips(userId: string): void;
+  getState(): {
+    UI: { timesPasswordChangeSkipped: Record<number, number> };
+  };
 }
 
 export interface IAuthenticationService {

@@ -30,6 +30,30 @@ export async function getUserMemberships(id: UserId) {
   }
 }
 
+export async function updateUser(
+  id: UserId,
+  payload: {
+    username?: string;
+    role?: number;
+    newPassword?: string;
+  }
+) {
+  try {
+    const { data } = await axios.put<User>(buildUrl(id), payload);
+    return data;
+  } catch (error) {
+    throw parseAxiosError(error as Error, 'Unable to update user');
+  }
+}
+
+export async function deleteUser(id: UserId) {
+  try {
+    await axios.delete(buildUrl(id));
+  } catch (error) {
+    throw parseAxiosError(error as Error, 'Unable to remove user');
+  }
+}
+
 export function buildUrl(id?: UserId, entity?: string) {
   let url = '/users';
 

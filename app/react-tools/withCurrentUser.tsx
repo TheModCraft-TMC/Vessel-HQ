@@ -4,14 +4,14 @@ import { UserProvider } from '@/react/hooks/useUser';
 
 import { withReactQuery } from './withReactQuery';
 
-export function withCurrentUser<T>(
-  WrappedComponent: ComponentType<T & JSX.IntrinsicAttributes>
-): ComponentType<T & JSX.IntrinsicAttributes> {
+export function withCurrentUser<T extends object>(
+  WrappedComponent: ComponentType<T>
+): ComponentType<T> {
   // Try to create a nice displayName for React Dev Tools.
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     return (
       <UserProvider>
         <WrappedComponent {...props} />

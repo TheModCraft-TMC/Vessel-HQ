@@ -49,9 +49,9 @@ const primaryOptions: BoxSelectorOption<CreationType>[] = _.compact([
           <Badge type="infoSecondary">Supports Policies</Badge>
         </span>
         <span className="mt-1 block">
-          The remote environment will initiate connections to the Portainer
+          The remote environment will initiate connections to the Vessel HQ
           server, with the ability to open a secure on-demand tunnel for
-          real-time interaction. The Portainer server must be accessible from
+          real-time interaction. The Vessel HQ server must be accessible from
           the Edge Agent environment.
         </span>
       </>
@@ -64,7 +64,7 @@ const primaryOptions: BoxSelectorOption<CreationType>[] = _.compact([
     iconType: 'badge',
     label: 'Edge Agent Async',
     description:
-      'The remote environment will initiate connections to the Portainer server, without the ability to open a real-time tunnel. The Portainer server must be accessible from the Edge Agent environment.',
+      'The remote environment will initiate connections to the Vessel HQ server, without the ability to open a real-time tunnel. The Vessel HQ server must be accessible from the Edge Agent environment.',
     value: 'edgeAgentAsync',
   },
 ]);
@@ -77,7 +77,7 @@ const legacyOptions: BoxSelectorOption<CreationType>[] = [
     label: 'Agent',
     value: 'agent',
     description:
-      'The Portainer Server will initiate connections to the remote environment. The agent on the remote environment must be accessible from the Portainer server environment.',
+      'The Vessel HQ server will initiate connections to the remote environment. The agent on the remote environment must be accessible from the Vessel HQ server environment.',
   },
   {
     id: 'kubeconfig_endpoint',

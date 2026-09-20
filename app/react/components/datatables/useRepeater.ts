@@ -16,7 +16,7 @@ export function useRepeater(
   }, [intervalId]);
 
   const startRepeater = useCallback(
-    (refreshRateMS) => {
+    (refreshRateMS: number) => {
       if (intervalId || !onRefresh) {
         return;
       }

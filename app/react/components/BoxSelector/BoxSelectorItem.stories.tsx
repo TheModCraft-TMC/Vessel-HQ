@@ -1,5 +1,4 @@
 import { Meta } from '@storybook/react-webpack5';
-import { ReactNode } from 'react';
 import { Briefcase } from 'lucide-react';
 
 import { init as initFeatureService } from '@/react/portainer/feature-flags/feature-flags.service';
@@ -85,7 +84,7 @@ function IconTemplate({
   icon,
   iconType,
 }: {
-  icon: ReactNode;
+  icon: import('../Icon').IconSource;
   iconType: 'raw' | 'logo' | 'badge';
 }) {
   return (

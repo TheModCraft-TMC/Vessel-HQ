@@ -63,8 +63,8 @@ export function ConfigurationItem({
               id={`k8sAppCreate-add${configurationType}Select_${index}`}
             />
           </InputGroup>
-          {formikError?.selectedConfiguration && (
-            <FormError>{formikError?.selectedConfiguration}</FormError>
+          {typeof formikError?.selectedConfiguration === 'string' && (
+            <FormError>{formikError.selectedConfiguration}</FormError>
           )}
         </div>
         <InputGroup size="small">

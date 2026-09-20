@@ -1,6 +1,8 @@
 import { ReactNode, ReactElement, Children } from 'react';
 
-function isReactElement(element: ReactNode): element is ReactElement {
+function isReactElement(
+  element: ReactNode
+): element is ReactElement<{ to?: string; children?: ReactNode }> {
   return (
     !!element &&
     typeof element === 'object' &&
@@ -15,7 +17,7 @@ export function getPaths(element: ReactNode, paths: string[]): string[] {
   }
 
   if (typeof element.props.to === 'undefined') {
-    return Children.map(element.props.children, (child) =>
+    return Children.toArray(element.props.children).flatMap((child) =>
       getPaths(child, paths)
     );
   }

@@ -1,0 +1,88 @@
+diff --git a/dist/tippy-react.esm.js b/dist/tippy-react.esm.js
+index 8fc6085b0e55b80757fa2eee59bb830947c624a5..65701d47a7d1c4a29c4c47dfca88e70209601858 100644
+--- a/dist/tippy-react.esm.js
++++ b/dist/tippy-react.esm.js
+@@ -357,7 +357,7 @@ function TippyGenerator(tippy) {
+     return /*#__PURE__*/React.createElement(React.Fragment, null, children ? /*#__PURE__*/cloneElement(children, {
+       ref: function ref(node) {
+         mutableBox.ref = node;
+-        preserveRef(children.ref, node);
++        preserveRef(children.props.ref, node);
+       }
+     }) : null, mounted && /*#__PURE__*/createPortal(render ? render(toDataAttributes(attrs), singletonContent, mutableBox.instance) : content, mutableBox.container));
+   }
+@@ -514,7 +514,7 @@ var forwardRef = (function (Tippy, defaultProps) {
+       React.createElement(Tippy, Object.assign({}, defaultProps, props), children ? /*#__PURE__*/cloneElement(children, {
+         ref: function ref(node) {
+           preserveRef(_ref2, node);
+-          preserveRef(children.ref, node);
++          preserveRef(children.props.ref, node);
+         }
+       }) : null)
+     );
+diff --git a/dist/tippy-react.umd.js b/dist/tippy-react.umd.js
+index 5788aeca769b4caf6a5502a8aab5f314978d91f5..1f2451490fd5f1007c6a6311e47aa6f079a35500 100644
+--- a/dist/tippy-react.umd.js
++++ b/dist/tippy-react.umd.js
+@@ -361,7 +361,7 @@
+       return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, children ? /*#__PURE__*/React.cloneElement(children, {
+         ref: function ref(node) {
+           mutableBox.ref = node;
+-          preserveRef(children.ref, node);
++          preserveRef(children.props.ref, node);
+         }
+       }) : null, mounted && /*#__PURE__*/reactDom.createPortal(render ? render(toDataAttributes(attrs), singletonContent, mutableBox.instance) : content, mutableBox.container));
+     }
+@@ -518,7 +518,7 @@
+         React__default.createElement(Tippy, Object.assign({}, defaultProps, props), children ? /*#__PURE__*/React.cloneElement(children, {
+           ref: function ref(node) {
+             preserveRef(_ref2, node);
+-            preserveRef(children.ref, node);
++            preserveRef(children.props.ref, node);
+           }
+         }) : null)
+       );
+diff --git a/headless/dist/tippy-react-headless.esm.js b/headless/dist/tippy-react-headless.esm.js
+index 0878ee974627d5c3defe765c4fa514623b98cfdc..2fbabb8d27c01b772d8df41ddc21dae48f84f0c7 100644
+--- a/headless/dist/tippy-react-headless.esm.js
++++ b/headless/dist/tippy-react-headless.esm.js
+@@ -357,7 +357,7 @@ function TippyGenerator(tippy) {
+     return /*#__PURE__*/React.createElement(React.Fragment, null, children ? /*#__PURE__*/cloneElement(children, {
+       ref: function ref(node) {
+         mutableBox.ref = node;
+-        preserveRef(children.ref, node);
++        preserveRef(children.props.ref, node);
+       }
+     }) : null, mounted && /*#__PURE__*/createPortal(render ? render(toDataAttributes(attrs), singletonContent, mutableBox.instance) : content, mutableBox.container));
+   }
+@@ -514,7 +514,7 @@ var forwardRef = (function (Tippy, defaultProps) {
+       React.createElement(Tippy, Object.assign({}, defaultProps, props), children ? /*#__PURE__*/cloneElement(children, {
+         ref: function ref(node) {
+           preserveRef(_ref2, node);
+-          preserveRef(children.ref, node);
++          preserveRef(children.props.ref, node);
+         }
+       }) : null)
+     );
+diff --git a/headless/dist/tippy-react-headless.umd.js b/headless/dist/tippy-react-headless.umd.js
+index caf6a755521fc2e30ee014b126fddebb305f4bc9..5c2515086c71504772357c5f58b56941a6cbf8a9 100644
+--- a/headless/dist/tippy-react-headless.umd.js
++++ b/headless/dist/tippy-react-headless.umd.js
+@@ -361,7 +361,7 @@
+       return /*#__PURE__*/React__default.createElement(React__default.Fragment, null, children ? /*#__PURE__*/React.cloneElement(children, {
+         ref: function ref(node) {
+           mutableBox.ref = node;
+-          preserveRef(children.ref, node);
++          preserveRef(children.props.ref, node);
+         }
+       }) : null, mounted && /*#__PURE__*/reactDom.createPortal(render ? render(toDataAttributes(attrs), singletonContent, mutableBox.instance) : content, mutableBox.container));
+     }
+@@ -518,7 +518,7 @@
+         React__default.createElement(Tippy, Object.assign({}, defaultProps, props), children ? /*#__PURE__*/React.cloneElement(children, {
+           ref: function ref(node) {
+             preserveRef(_ref2, node);
+-            preserveRef(children.ref, node);
++            preserveRef(children.props.ref, node);
+           }
+         }) : null)
+       );

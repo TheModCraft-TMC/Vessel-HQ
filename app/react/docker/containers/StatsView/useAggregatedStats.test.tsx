@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { Fragment } from 'react';

@@ -6,15 +6,16 @@ import {
   Info,
   XCircle,
 } from 'lucide-react';
-import { PropsWithChildren, ReactNode } from 'react';
+import { PropsWithChildren } from 'react';
 
 import { Icon } from '@@/Icon';
+import type { IconSource } from '@@/Icon';
 
 type AlertType = 'success' | 'error' | 'info' | 'warn' | 'default';
 
 export const alertSettings: Record<
   AlertType,
-  { container: string; header: string; body: string; icon: ReactNode }
+  { container: string; header: string; body: string; icon: IconSource }
 > = {
   success: {
     container:

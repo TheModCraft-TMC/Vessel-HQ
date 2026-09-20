@@ -40,7 +40,6 @@ export function ServiceAccountsDatatable() {
     })
   );
   const serviceAccountsQuery = useGetAllServiceAccountsQuery(environmentId, {
-    refetchInterval: tableState.autoRefreshRateMS,
   });
   const filteredServiceAccounts = useMemo(
     () =>

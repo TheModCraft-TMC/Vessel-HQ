@@ -1,15 +1,53 @@
-import angular from 'angular';
-
-import { PortainerEndpointTypes } from '@/portainer/models/endpoint/models';
-
-import { EnvironmentStatus } from '@/react/portainer/environments/types';
 import { AccessHeaders } from '@/portainer/authorization-guard';
+import { registerReactState } from '@/react-tools/registerReactState';
+import {
+  AppTemplatesRoute,
+  CreateCustomTemplateRoute,
+  CustomTemplatesListRoute,
+  EditCustomTemplateRoute,
+  EnvironmentRegistriesListRoute,
+} from '@/portainer/react/views/route-components';
+import {
+  ConfigsListRoute,
+  ConfigCreateRoute,
+  ConfigItemRoute,
+  ContainerItemRoute,
+  DockerDashboardRoute,
+  EventsListRoute,
+  ImagesListRoute,
+  ImageImportRoute,
+  ImageItemRoute,
+  ImageBuildRoute,
+  HostBrowseRoute,
+  NodeBrowseRoute,
+  HostDetailsRoute,
+  NodeDetailsRoute,
+  SwarmRoute,
+  SwarmVisualizerRoute,
+  DockerFeaturesConfigurationRoute,
+  NetworkItemRoute,
+  NetworksListRoute,
+  NetworkCreateRoute,
+  RegistryAccessRoute,
+  SecretCreateRoute,
+  SecretItemRoute,
+  ServiceLogsRoute,
+  ServicesListRoute,
+  ServiceItemRoute,
+  ServiceCreateRoute,
+  SecretsListRoute,
+  StackCreateRoute,
+  StackItemRoute,
+  StacksListRoute,
+  TaskLogsRoute,
+  TaskItemRoute,
+  VolumesListRoute,
+  VolumeItemRoute,
+  VolumeCreateRoute,
+  VolumeBrowseRoute,
+} from '@/docker/react/views/route-components';
 
-import { reactModule } from './react';
-
-angular.module('portainer.docker', ['portainer.app', reactModule]).config([
-  '$stateRegistryProvider',
-  function ($stateRegistryProvider) {
+export function registerDockerStates($stateRegistryProvider) {
     'use strict';
 
     var docker = {
@@ -17,58 +55,6 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       parent: 'endpoint',
       url: '/docker',
       abstract: true,
-      onEnter: /* @ngInject */ function onEnter(endpoint, $async, $state, EndpointService, Notifications, StateManager, SystemService, EndpointProvider) {
-        return $async(async () => {
-          const dockerTypes = [PortainerEndpointTypes.DockerEnvironment, PortainerEndpointTypes.AgentOnDockerEnvironment, PortainerEndpointTypes.EdgeAgentOnDockerEnvironment];
-
-          if (!dockerTypes.includes(endpoint.Type)) {
-            $state.go('portainer.home');
-            return;
-          }
-
-          try {
-            const { status, error } = await checkEndpointStatus(endpoint);
-
-            if (endpoint.Type !== PortainerEndpointTypes.EdgeAgentOnDockerEnvironment) {
-              await updateEndpointStatus(endpoint, status);
-            }
-            endpoint.Status = status;
-
-            if (status === EnvironmentStatus.Down) {
-              throw error || new Error(`The environment named ${endpoint.Name} is unreachable.`);
-            }
-
-            await StateManager.updateEndpointState(endpoint);
-          } catch (e) {
-            let params = {};
-
-            if (endpoint.Type == PortainerEndpointTypes.EdgeAgentOnDockerEnvironment) {
-              params = { redirect: true, environmentId: endpoint.Id, environmentName: endpoint.Name, route: 'docker.dashboard' };
-            } else {
-              EndpointProvider.clean();
-              Notifications.error('Failed loading environment', e);
-            }
-            $state.go('portainer.home', params, { reload: true, inherit: false });
-            return false;
-          }
-
-          async function checkEndpointStatus(endpoint) {
-            try {
-              await SystemService.ping(endpoint.Id);
-              return { status: EnvironmentStatus.Up };
-            } catch (e) {
-              return { status: EnvironmentStatus.Down, error: e };
-            }
-          }
-
-          async function updateEndpointStatus(endpoint, status) {
-            if (endpoint.Status === status) {
-              return;
-            }
-            await EndpointService.updateEndpoint(endpoint.Id, { Status: status });
-          }
-        });
-      },
     };
 
     var configs = {
@@ -76,7 +62,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/configs',
       views: {
         'content@': {
-          component: 'configsListView',
+          component: ConfigsListRoute,
         },
       },
       data: {
@@ -89,8 +75,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id',
       views: {
         'content@': {
-          templateUrl: './views/configs/edit/config.html',
-          controller: 'ConfigController',
+          component: ConfigItemRoute,
         },
       },
     };
@@ -100,9 +85,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/new?id',
       views: {
         'content@': {
-          templateUrl: './views/configs/create/createconfig.html',
-          controller: 'CreateConfigController',
-          controllerAs: 'ctrl',
+          component: ConfigCreateRoute,
         },
       },
       data: {
@@ -116,7 +99,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
 
       views: {
         'content@': {
-          component: 'customTemplatesView',
+          component: CustomTemplatesListRoute,
         },
       },
       data: {
@@ -130,7 +113,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
 
       views: {
         'content@': {
-          component: 'createCustomTemplatesView',
+          component: CreateCustomTemplateRoute,
         },
       },
     };
@@ -141,7 +124,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
 
       views: {
         'content@': {
-          component: 'editCustomTemplatesView',
+          component: EditCustomTemplateRoute,
         },
       },
     };
@@ -151,7 +134,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/dashboard',
       views: {
         'content@': {
-          component: 'dockerDashboardView',
+          component: DockerDashboardRoute,
         },
       },
       data: {
@@ -164,7 +147,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/host',
       views: {
         'content@': {
-          component: 'hostView',
+          component: HostDetailsRoute,
         },
       },
       data: {
@@ -177,7 +160,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/browser',
       views: {
         'content@': {
-          component: 'hostBrowserView',
+          component: HostBrowseRoute,
         },
       },
     };
@@ -187,7 +170,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/events',
       views: {
         'content@': {
-          component: 'eventsListView',
+          component: EventsListRoute,
         },
       },
       data: {
@@ -200,7 +183,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/images',
       views: {
         'content@': {
-          component: 'imagesListView',
+          component: ImagesListRoute,
         },
       },
       data: {
@@ -213,8 +196,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id?nodeName',
       views: {
         'content@': {
-          templateUrl: './views/images/edit/image.html',
-          controller: 'ImageController',
+          component: ImageItemRoute,
         },
       },
     };
@@ -224,8 +206,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/build',
       views: {
         'content@': {
-          templateUrl: './views/images/build/buildimage.html',
-          controller: 'BuildImageController',
+          component: ImageBuildRoute,
         },
       },
       data: {
@@ -238,8 +219,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/import',
       views: {
         'content@': {
-          templateUrl: './views/images/import/importimage.html',
-          controller: 'ImportImageController',
+          component: ImageImportRoute,
         },
       },
       data: {
@@ -252,7 +232,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/networks',
       views: {
         'content@': {
-          component: 'networksListView',
+          component: NetworksListRoute,
         },
       },
       data: {
@@ -265,7 +245,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id?nodeName',
       views: {
         'content@': {
-          component: 'networkDetailsView',
+          component: NetworkItemRoute,
         },
       },
     };
@@ -275,8 +255,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/new',
       views: {
         'content@': {
-          templateUrl: './views/networks/create/createnetwork.html',
-          controller: 'CreateNetworkController',
+          component: NetworkCreateRoute,
         },
       },
       data: {
@@ -298,7 +277,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id',
       views: {
         'content@': {
-          component: 'nodeDetailsView',
+          component: NodeDetailsRoute,
         },
       },
     };
@@ -308,7 +287,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/browse',
       views: {
         'content@': {
-          component: 'nodeBrowserView',
+          component: NodeBrowseRoute,
         },
       },
     };
@@ -318,8 +297,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/secrets',
       views: {
         'content@': {
-          templateUrl: './views/secrets/secrets.html',
-          controller: 'SecretsController',
+          component: SecretsListRoute,
         },
       },
       data: {
@@ -332,8 +310,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id',
       views: {
         'content@': {
-          templateUrl: './views/secrets/edit/secret.html',
-          controller: 'SecretController',
+          component: SecretItemRoute,
         },
       },
     };
@@ -343,8 +320,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/new',
       views: {
         'content@': {
-          templateUrl: './views/secrets/create/createsecret.html',
-          controller: 'CreateSecretController',
+          component: SecretCreateRoute,
         },
       },
       data: {
@@ -357,8 +333,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/services',
       views: {
         'content@': {
-          templateUrl: './views/services/services.html',
-          controller: 'ServicesController',
+          component: ServicesListRoute,
         },
       },
       data: {
@@ -371,8 +346,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id',
       views: {
         'content@': {
-          templateUrl: './views/services/edit/service.html',
-          controller: 'ServiceController',
+          component: ServiceItemRoute,
         },
       },
     };
@@ -382,8 +356,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/new',
       views: {
         'content@': {
-          templateUrl: './views/services/create/createservice.html',
-          controller: 'CreateServiceController',
+          component: ServiceCreateRoute,
         },
       },
       data: {
@@ -396,8 +369,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/logs',
       views: {
         'content@': {
-          templateUrl: './views/services/logs/servicelogs.html',
-          controller: 'ServiceLogsController',
+          component: ServiceLogsRoute,
         },
       },
     };
@@ -407,8 +379,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/stacks',
       views: {
         'content@': {
-          templateUrl: '~@/portainer/views/stacks/stacks.html',
-          controller: 'StacksController',
+          component: StacksListRoute,
         },
       },
       data: {
@@ -421,7 +392,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:name?id&type&regular&external&orphaned&orphanedRunning&tab',
       views: {
         'content@': {
-          component: 'stackItemView',
+          component: StackItemRoute,
         },
       },
     };
@@ -431,7 +402,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id?nodeName',
       views: {
         'content@': {
-          component: 'containerItemView',
+          component: ContainerItemRoute,
         },
       },
     };
@@ -441,7 +412,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/newstack',
       views: {
         'content@': {
-          component: 'createStackView',
+          component: StackCreateRoute,
         },
       },
     };
@@ -451,8 +422,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/swarm',
       views: {
         'content@': {
-          templateUrl: './views/swarm/swarm.html',
-          controller: 'SwarmController',
+          component: SwarmRoute,
         },
       },
       data: {
@@ -465,8 +435,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/visualizer',
       views: {
         'content@': {
-          templateUrl: './views/swarm/visualizer/swarmvisualizer.html',
-          controller: 'SwarmVisualizerController',
+          component: SwarmVisualizerRoute,
         },
       },
       data: {
@@ -485,8 +454,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id',
       views: {
         'content@': {
-          templateUrl: './views/tasks/edit/task.html',
-          controller: 'TaskController',
+          component: TaskItemRoute,
         },
       },
     };
@@ -496,8 +464,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/logs',
       views: {
         'content@': {
-          templateUrl: './views/tasks/logs/tasklogs.html',
-          controller: 'TaskLogsController',
+          component: TaskLogsRoute,
         },
       },
     };
@@ -507,7 +474,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/templates?template',
       views: {
         'content@': {
-          component: 'appTemplatesView',
+          component: AppTemplatesRoute,
         },
       },
       data: {
@@ -520,8 +487,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/volumes',
       views: {
         'content@': {
-          templateUrl: './views/volumes/volumes.html',
-          controller: 'VolumesController',
+          component: VolumesListRoute,
         },
       },
       data: {
@@ -534,8 +500,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id?nodeName',
       views: {
         'content@': {
-          templateUrl: './views/volumes/edit/volume.html',
-          controller: 'VolumeController',
+          component: VolumeItemRoute,
         },
       },
     };
@@ -545,8 +510,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/browse',
       views: {
         'content@': {
-          templateUrl: './views/volumes/browse/browsevolume.html',
-          controller: 'BrowseVolumeController',
+          component: VolumeBrowseRoute,
         },
       },
     };
@@ -556,8 +520,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/new',
       views: {
         'content@': {
-          templateUrl: './views/volumes/create/createvolume.html',
-          controller: 'CreateVolumeController',
+          component: VolumeCreateRoute,
         },
       },
       data: {
@@ -570,7 +533,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/feat-config',
       views: {
         'content@': {
-          component: 'dockerFeaturesConfigurationView',
+          component: DockerFeaturesConfigurationRoute,
         },
       },
       data: {
@@ -583,7 +546,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/feat-config',
       views: {
         'content@': {
-          component: 'dockerFeaturesConfigurationView',
+          component: DockerFeaturesConfigurationRoute,
         },
       },
       data: {
@@ -596,7 +559,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/registries',
       views: {
         'content@': {
-          component: 'environmentRegistriesView',
+          component: EnvironmentRegistriesListRoute,
         },
       },
       data: {
@@ -609,7 +572,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/registries',
       views: {
         'content@': {
-          component: 'environmentRegistriesView',
+          component: EnvironmentRegistriesListRoute,
         },
       },
       data: {
@@ -622,7 +585,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id/access',
       views: {
         'content@': {
-          component: 'dockerRegistryAccessView',
+          component: RegistryAccessRoute,
         },
       },
       data: {
@@ -635,7 +598,7 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       url: '/:id/access',
       views: {
         'content@': {
-          component: 'dockerRegistryAccessView',
+          component: RegistryAccessRoute,
         },
       },
       data: {
@@ -643,54 +606,53 @@ angular.module('portainer.docker', ['portainer.app', reactModule]).config([
       },
     };
 
-    $stateRegistryProvider.register(configs);
-    $stateRegistryProvider.register(config);
-    $stateRegistryProvider.register(configCreation);
+    registerReactState($stateRegistryProvider, configs);
+    registerReactState($stateRegistryProvider, config);
+    registerReactState($stateRegistryProvider, configCreation);
 
-    $stateRegistryProvider.register(customTemplates);
-    $stateRegistryProvider.register(customTemplatesNew);
-    $stateRegistryProvider.register(customTemplatesEdit);
-    $stateRegistryProvider.register(docker);
-    $stateRegistryProvider.register(dashboard);
-    $stateRegistryProvider.register(host);
-    $stateRegistryProvider.register(hostBrowser);
-    $stateRegistryProvider.register(events);
-    $stateRegistryProvider.register(images);
-    $stateRegistryProvider.register(image);
-    $stateRegistryProvider.register(imageBuild);
-    $stateRegistryProvider.register(imageImport);
-    $stateRegistryProvider.register(networks);
-    $stateRegistryProvider.register(network);
-    $stateRegistryProvider.register(networkCreation);
-    $stateRegistryProvider.register(nodes);
-    $stateRegistryProvider.register(node);
-    $stateRegistryProvider.register(nodeBrowser);
-    $stateRegistryProvider.register(secrets);
-    $stateRegistryProvider.register(secret);
-    $stateRegistryProvider.register(secretCreation);
-    $stateRegistryProvider.register(services);
-    $stateRegistryProvider.register(service);
-    $stateRegistryProvider.register(serviceCreation);
-    $stateRegistryProvider.register(serviceLogs);
-    $stateRegistryProvider.register(stacks);
-    $stateRegistryProvider.register(stack);
-    $stateRegistryProvider.register(stackContainer);
-    $stateRegistryProvider.register(stackCreation);
-    $stateRegistryProvider.register(swarm);
-    $stateRegistryProvider.register(swarmVisualizer);
-    $stateRegistryProvider.register(tasks);
-    $stateRegistryProvider.register(task);
-    $stateRegistryProvider.register(taskLogs);
-    $stateRegistryProvider.register(templates);
-    $stateRegistryProvider.register(volumes);
-    $stateRegistryProvider.register(volume);
-    $stateRegistryProvider.register(volumeBrowse);
-    $stateRegistryProvider.register(volumeCreation);
-    $stateRegistryProvider.register(dockerFeaturesConfiguration);
-    $stateRegistryProvider.register(swarmFeaturesConfiguration);
-    $stateRegistryProvider.register(dockerRegistries);
-    $stateRegistryProvider.register(swarmRegistries);
-    $stateRegistryProvider.register(dockerRegistryAccess);
-    $stateRegistryProvider.register(swarmRegistryAccess);
-  },
-]);
+    registerReactState($stateRegistryProvider, customTemplates);
+    registerReactState($stateRegistryProvider, customTemplatesNew);
+    registerReactState($stateRegistryProvider, customTemplatesEdit);
+    registerReactState($stateRegistryProvider, docker);
+    registerReactState($stateRegistryProvider, dashboard);
+    registerReactState($stateRegistryProvider, host);
+    registerReactState($stateRegistryProvider, hostBrowser);
+    registerReactState($stateRegistryProvider, events);
+    registerReactState($stateRegistryProvider, images);
+    registerReactState($stateRegistryProvider, image);
+    registerReactState($stateRegistryProvider, imageBuild);
+    registerReactState($stateRegistryProvider, imageImport);
+    registerReactState($stateRegistryProvider, networks);
+    registerReactState($stateRegistryProvider, network);
+    registerReactState($stateRegistryProvider, networkCreation);
+    registerReactState($stateRegistryProvider, nodes);
+    registerReactState($stateRegistryProvider, node);
+    registerReactState($stateRegistryProvider, nodeBrowser);
+    registerReactState($stateRegistryProvider, secrets);
+    registerReactState($stateRegistryProvider, secret);
+    registerReactState($stateRegistryProvider, secretCreation);
+    registerReactState($stateRegistryProvider, services);
+    registerReactState($stateRegistryProvider, service);
+    registerReactState($stateRegistryProvider, serviceCreation);
+    registerReactState($stateRegistryProvider, serviceLogs);
+    registerReactState($stateRegistryProvider, stacks);
+    registerReactState($stateRegistryProvider, stack);
+    registerReactState($stateRegistryProvider, stackContainer);
+    registerReactState($stateRegistryProvider, stackCreation);
+    registerReactState($stateRegistryProvider, swarm);
+    registerReactState($stateRegistryProvider, swarmVisualizer);
+    registerReactState($stateRegistryProvider, tasks);
+    registerReactState($stateRegistryProvider, task);
+    registerReactState($stateRegistryProvider, taskLogs);
+    registerReactState($stateRegistryProvider, templates);
+    registerReactState($stateRegistryProvider, volumes);
+    registerReactState($stateRegistryProvider, volume);
+    registerReactState($stateRegistryProvider, volumeBrowse);
+    registerReactState($stateRegistryProvider, volumeCreation);
+    registerReactState($stateRegistryProvider, dockerFeaturesConfiguration);
+    registerReactState($stateRegistryProvider, swarmFeaturesConfiguration);
+    registerReactState($stateRegistryProvider, dockerRegistries);
+    registerReactState($stateRegistryProvider, swarmRegistries);
+    registerReactState($stateRegistryProvider, dockerRegistryAccess);
+    registerReactState($stateRegistryProvider, swarmRegistryAccess);
+}

@@ -34,7 +34,6 @@ export function useNodesQuery<T = Node[]>(
         'Failed to get nodes from the Kubernetes api',
         'Failed to get nodes'
       ),
-      refetchInterval: options?.autoRefreshRate ?? false,
       select: options?.select,
     }
   );

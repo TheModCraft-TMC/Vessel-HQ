@@ -51,17 +51,6 @@ export function useHelmRepoOptions() {
           label: 'Helm Repositories',
           options: repoOptions,
         },
-        {
-          label: 'OCI Registries',
-          options: [
-            {
-              label:
-                'Installing from an OCI registry is a Portainer Business Feature',
-              value: {},
-              disabled: true,
-            },
-          ],
-        },
       ];
     },
   });

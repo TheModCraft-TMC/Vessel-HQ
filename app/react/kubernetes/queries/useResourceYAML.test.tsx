@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { HttpResponse } from 'msw';
 

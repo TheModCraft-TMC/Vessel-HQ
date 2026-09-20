@@ -53,7 +53,9 @@ describe('SettingsSidebar', () => {
       expect(
         screen.getByTestId('portainerSidebar-registries')
       ).toBeInTheDocument();
-      expect(screen.getByTestId('k8sSidebar-logs')).toBeInTheDocument();
+      expect(
+        screen.getByTestId('portainerSidebar-activityLogs')
+      ).toBeInTheDocument();
       expect(
         screen.getByTestId('portainerSidebar-notifications')
       ).toBeInTheDocument();
@@ -84,12 +86,9 @@ describe('SettingsSidebar', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render logs submenu items', () => {
+    it('should render activity logs', () => {
       renderComponent({ isPureAdmin: true, isAdmin: true });
 
-      expect(
-        screen.getByTestId('portainerSidebar-authLogs')
-      ).toBeInTheDocument();
       expect(
         screen.getByTestId('portainerSidebar-activityLogs')
       ).toBeInTheDocument();
@@ -209,7 +208,9 @@ describe('SettingsSidebar', () => {
       expect(
         screen.queryByTestId('portainerSidebar-registries')
       ).not.toBeInTheDocument();
-      expect(screen.queryByTestId('k8sSidebar-logs')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('portainerSidebar-activityLogs')
+      ).not.toBeInTheDocument();
       expect(
         screen.queryByTestId('portainerSidebar-settings')
       ).not.toBeInTheDocument();

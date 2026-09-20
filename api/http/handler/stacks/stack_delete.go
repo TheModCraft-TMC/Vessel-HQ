@@ -323,7 +323,7 @@ func (handler *Handler) stackDeleteKubernetesByName(w http.ResponseWriter, r *ht
 	}
 
 	if errs != nil {
-		return httperror.InternalServerError("Unable to delete some Kubernetes stack(s). Check Portainer logs for more details", nil)
+		return httperror.InternalServerError("Unable to delete some Kubernetes stacks. Check Vessel HQ logs for more details", nil)
 	}
 
 	return response.Empty(w)

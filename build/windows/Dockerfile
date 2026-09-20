@@ -24,11 +24,9 @@ ARG BUILD_DATE=unspecified
 LABEL git_commit=$GIT_COMMIT \
   org.opencontainers.image.revision=$GIT_COMMIT \
   org.opencontainers.image.created=$BUILD_DATE \
-  org.opencontainers.image.title="Portainer CE" \
-  org.opencontainers.image.description="Portainer Community Edition server." \
-  org.opencontainers.image.vendor="Portainer.io" \
-  org.opencontainers.image.url="https://www.portainer.io" \
-  org.opencontainers.image.documentation="https://docs.portainer.io" \
+  org.opencontainers.image.title="Vessel HQ" \
+  org.opencontainers.image.description="Vessel HQ container management server." \
+  org.opencontainers.image.vendor="TheModCraft" \
   io.portainer.server="true"
 
 ENTRYPOINT ["/portainer.exe"]

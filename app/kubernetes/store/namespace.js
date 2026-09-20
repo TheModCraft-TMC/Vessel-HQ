@@ -1,5 +1,5 @@
 // singleton pattern as:
-// * we don't want to use AngularJS DI to fetch the single instance
+// * consumers need direct access to the shared instance
 // * we need to use the Store in static functions / non-instanciated classes
 const storeNamespaces = {};
 

@@ -11,7 +11,6 @@ import { queryKeys } from './query-keys';
 type Options<T> = {
   select?: (data: HelmRelease) => T;
   showResources?: boolean;
-  refetchInterval?: number;
   enabled?: boolean;
   staleTime?: number;
   /** when the revision is undefined, the latest revision is fetched */
@@ -26,7 +25,7 @@ export function useHelmRelease<T = HelmRelease>(
   namespace: string,
   options: Options<T> = {}
 ) {
-  const { select, showResources, refetchInterval, revision, staleTime } =
+  const { select, showResources, revision, staleTime } =
     options;
   return useQuery(
     queryKeys.release(environmentId, namespace, name, revision, showResources),
@@ -44,7 +43,6 @@ export function useHelmRelease<T = HelmRelease>(
       // occasionally the application shows before the release is created, take some more time to refetch
       retryDelay: 2000,
       select,
-      refetchInterval,
       staleTime,
     }
   );

@@ -11,7 +11,6 @@ import { queryKeys } from './query-keys';
 export function useGetAllServiceAccountsQuery(
   environmentId: EnvironmentId,
   options?: {
-    refetchInterval?: number;
     enabled?: boolean;
   }
 ) {

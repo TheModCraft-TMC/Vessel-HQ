@@ -13,7 +13,7 @@ export function useLimitToBE(defaultPath = 'portainer.home') {
   return false;
 }
 
-export function withLimitToBE<T>(
+export function withLimitToBE<T extends object>(
   WrappedComponent: ComponentType<T>,
   defaultPath = 'portainer.home'
 ): ComponentType<T> {
@@ -21,7 +21,7 @@ export function withLimitToBE<T>(
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     const isLimitedToBE = useLimitToBE(defaultPath);
 
     if (isLimitedToBE) {

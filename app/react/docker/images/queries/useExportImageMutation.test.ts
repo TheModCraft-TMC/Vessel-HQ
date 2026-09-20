@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { saveAs } from 'file-saver';
 import { createElement, Fragment } from 'react';

@@ -12,14 +12,12 @@ import { queryKeys } from './query-keys';
 export function useConfigsList<T>(
   environmentId: EnvironmentId,
   {
-    refetchInterval,
     select,
-  }: { refetchInterval?: number; select?: (configs: Config[]) => T } = {}
+  }: { select?: (configs: Config[]) => T } = {}
 ) {
   return useQuery({
     queryKey: queryKeys.list(environmentId),
     queryFn: () => getConfigs(environmentId),
-    refetchInterval,
     select,
     ...withError('Unable to retrieve configs'),
   });

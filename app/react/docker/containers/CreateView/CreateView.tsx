@@ -135,7 +135,7 @@ function CreateForm() {
       const confirmed = await confirmDestructive({
         title: 'Are you sure?',
         message:
-          'A container with the same name already exists. Portainer can automatically remove it and re-create one. Do you want to replace it?',
+          'A container with the same name already exists. Vessel HQ can automatically remove it and re-create one. Do you want to replace it?',
         confirmButton: buildConfirmButton('Replace', 'danger'),
       });
 

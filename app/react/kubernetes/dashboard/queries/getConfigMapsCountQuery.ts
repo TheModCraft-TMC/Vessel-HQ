@@ -18,9 +18,6 @@ export function useGetConfigMapsCountQuery(
     async () => getConfigMapsCount(environmentId),
     {
       ...withError('Unable to get applications count'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

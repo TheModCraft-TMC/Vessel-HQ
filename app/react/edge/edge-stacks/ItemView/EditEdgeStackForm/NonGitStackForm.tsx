@@ -350,7 +350,6 @@ function InnerForm({
               size="small"
               disabled={!isValid || staggerUpdating}
               isLoading={isLoading}
-              button-spinner="$ctrl.actionInProgress"
               loadingText="Update in progress..."
             >
               Update the stack

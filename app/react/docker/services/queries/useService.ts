@@ -7,6 +7,7 @@ import { ServiceId } from '@/react/docker/services/types';
 import { queryKeys } from '@/react/docker/services/queries/query-keys';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import { buildUrl } from '@/react/docker/services/queries/build-url';
+import { PortainerResponse } from '@/react/docker/types';
 
 export function useService(environmentId: EnvironmentId, serviceId: ServiceId) {
   return useQuery(
@@ -24,7 +25,7 @@ export async function getService(
   serviceId: ServiceId
 ) {
   try {
-    const { data } = await axios.get<Service>(
+    const { data } = await axios.get<PortainerResponse<Service>>(
       buildUrl(environmentId, serviceId)
     );
 

@@ -6,13 +6,9 @@ import { endpointTypeName } from '@/portainer/filters/filters';
 import {
   getEnvironmentTypeIcon,
   isEdgeEnvironment,
-  isUnassociatedEdgeEnvironment,
 } from '@/react/portainer/environments/utils';
 import { EnvironmentId } from '@/react/portainer/environments/types';
-import {
-  ENVIRONMENTS_POLLING_INTERVAL,
-  useEnvironmentList,
-} from '@/react/portainer/environments/queries/useEnvironmentList';
+import { useEnvironmentList } from '@/react/portainer/environments/queries/useEnvironmentList';
 
 import { EdgeIndicator } from '@@/EdgeIndicator';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
@@ -27,21 +23,7 @@ interface Props {
 export function WizardEndpointsList({ environmentIds }: Props) {
   const { environments } = useEnvironmentList(
     { endpointIds: environmentIds },
-    {
-      refetchInterval: (environments) => {
-        if (!environments) {
-          return false;
-        }
-
-        if (!environments.value.some(isUnassociatedEdgeEnvironment)) {
-          return false;
-        }
-
-        return ENVIRONMENTS_POLLING_INTERVAL;
-      },
-
-      enabled: environmentIds.length > 0,
-    }
+    { enabled: environmentIds.length > 0 }
   );
 
   return (

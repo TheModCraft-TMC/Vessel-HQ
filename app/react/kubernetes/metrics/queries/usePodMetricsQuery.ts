@@ -26,12 +26,8 @@ export function usePodMetricsQuery<T = SinglePodMetric>(
   return useQuery({
     queryFn: () => getMetricsForPod(environmentId, namespace, podName),
     queryKey: [environmentId, 'pod-metrics', namespace, podName],
-    refetchInterval: refreshRateMS
-      ? (_data, query) => (query.state.error ? false : refreshRateMS)
-      : undefined,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchIntervalInBackground: true,
     select,
   });
 }

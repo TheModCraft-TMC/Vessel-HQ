@@ -1,6 +1,5 @@
 import {
   BasicTableSettings,
-  RefreshableTableSettings,
   SettableColumnsTableSettings,
 } from '@@/datatables/types';
 
@@ -9,5 +8,4 @@ export type TableSettings = {
   expanded: true | Record<string, boolean>;
   setExpanded(value: true | Record<string, boolean>): void;
 } & SettableColumnsTableSettings &
-  RefreshableTableSettings &
   BasicTableSettings;

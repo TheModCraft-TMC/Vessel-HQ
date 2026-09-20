@@ -1,8 +1,15 @@
-import { Transition, TransitionService } from '@uirouter/angularjs';
+import { Transition, TransitionService } from '@uirouter/react';
 
+import { queryClient } from '@/react-tools/react-query';
+import { startRealtimeQuerySync } from '@/react-tools/realtime-query-sync';
 import { storeReturnUrl } from '@/react/portainer/helpers/returnUrl';
-
-import { IAuthenticationService } from './services/types';
+import { hasAuthorizations } from '@/react/hooks/useUser';
+import {
+  getAuthenticatedUser,
+  initializeAuthentication,
+  isAdministrator,
+  isEdgeAdministrator,
+} from '@/react/portainer/auth/auth.service';
 
 export enum AccessHeaders {
   Restricted = 'restricted',
@@ -23,9 +30,6 @@ export function requiresAuthHook(transitionService: TransitionService) {
 
 // exported for tests
 export async function checkAuthorizations(transition: Transition) {
-  const authService: IAuthenticationService = transition
-    .injector()
-    .get('Authentication');
   const stateTo = transition.to();
   const $state = transition.router.stateService;
 
@@ -34,7 +38,7 @@ export async function checkAuthorizations(transition: Transition) {
     return undefined;
   }
 
-  const isLoggedIn = await authService.init();
+  const isLoggedIn = await initializeAuthentication();
 
   if (!isLoggedIn) {
     // eslint-disable-next-line no-console
@@ -48,13 +52,15 @@ export async function checkAuthorizations(transition: Transition) {
     return $state.target('portainer.logout');
   }
 
+  startRealtimeQuerySync(queryClient);
+
   if (typeof access === 'string') {
     if (access === 'restricted') {
       return undefined;
     }
 
     if (access === 'admin') {
-      if (authService.isPureAdmin()) {
+      if (isAdministrator()) {
         return undefined;
       }
 
@@ -67,7 +73,7 @@ export async function checkAuthorizations(transition: Transition) {
     }
 
     if (access === 'edge-admin') {
-      if (authService.isAdmin(true)) {
+      if (isEdgeAdministrator()) {
         return undefined;
       }
 
@@ -80,7 +86,12 @@ export async function checkAuthorizations(transition: Transition) {
     }
   }
 
-  if (access.length > 0 && !authService.hasAuthorizations(access)) {
+  const user = getAuthenticatedUser();
+  const endpointId = Number(transition.params().endpointId) || undefined;
+  if (
+    access.length > 0 &&
+    (!user || !hasAuthorizations(user, access, endpointId))
+  ) {
     // eslint-disable-next-line no-console
     console.info(
       'User does not have the required authorizations, redirecting to home'

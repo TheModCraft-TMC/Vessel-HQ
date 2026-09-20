@@ -1,6 +1,5 @@
 import { ArrowDownCircle } from 'lucide-react';
 
-import { FeatureId } from '@/react/portainer/feature-flags/enums';
 import Microsoft from '@/assets/ico/vendor/microsoft.svg?c';
 import Ldap from '@/assets/ico/ldap.svg?c';
 import OAuth from '@/assets/ico/oauth.svg?c';
@@ -33,7 +32,6 @@ const options = [
     description: 'AD authentication',
     iconType: 'logo',
     value: AuthenticationMethod.AD,
-    feature: FeatureId.HIDE_INTERNAL_AUTH,
   },
   {
     id: 'auth_oauth',

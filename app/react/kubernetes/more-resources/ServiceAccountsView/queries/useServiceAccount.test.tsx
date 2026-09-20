@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/react';
 import { HttpResponse } from 'msw';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 
 import { server, http } from '@/setup-tests/server';
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';

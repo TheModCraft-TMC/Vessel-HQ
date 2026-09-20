@@ -60,7 +60,7 @@ export function EnvironmentCard({
         params={dashboardRoute.params}
         data-cy={`environment-card-${environment.Name}`}
       >
-        <div className="flex min-w-0 flex-1 gap-3">
+        <div className="flex min-w-0 basis-full gap-3 lg:basis-auto">
           <div className="flex items-center justify-center self-center rounded-lg bg-blue-9/10 p-2 pt-2">
             <EnvironmentIcon
               type={environment.Type}
@@ -70,7 +70,7 @@ export function EnvironmentCard({
 
           <div className="flex min-w-0 flex-1 grow flex-col gap-1">
             {/* First row - title */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="break-words text-sm font-bold">
                 {environment.Name}
               </span>
@@ -78,7 +78,7 @@ export function EnvironmentCard({
               {showSnapshotButton && <SnapshotBadge />}
             </div>
             {/* Middle row - status info */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {isEdge ? (
                 <EdgeIndicator environment={environment} showLastCheckInDate />
               ) : (
@@ -98,7 +98,7 @@ export function EnvironmentCard({
               <span className="small text-muted vertical-center">•</span>
               <EnvironmentURL environment={environment} />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <EnvironmentGroupName groupName={groupName} />
               <EnvironmentTypeTag environment={environment} />
               <AgentDetails environment={environment} />
@@ -111,7 +111,7 @@ export function EnvironmentCard({
       Buttons are extracted out of the main button because it causes errors with react and accessibility issues
       see https://stackoverflow.com/questions/66409964/warning-validatedomnesting-a-cannot-appear-as-a-descendant-of-a
       */}
-      <div className="absolute inset-y-0 right-0 flex w-56 justify-end">
+      <div className="absolute inset-y-0 right-0 flex w-14 justify-end">
         <EditButtons environment={environment} />
       </div>
     </div>

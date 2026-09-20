@@ -1,0 +1,9 @@
+<svg width="680" height="128" viewBox="0 0 680 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">Vessel HQ</title>
+  <rect width="112" height="112" y="8" rx="28" fill="#0F766E"/>
+  <path d="M27 34L56 93L85 34H70L56 66L42 34H27Z" fill="#F8FAFC"/>
+  <path d="M29 89C44 80 68 80 83 89C69 102 43 102 29 89Z" fill="#99F6E4"/>
+  <text x="142" y="84" fill="#172033" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="64" font-weight="750" letter-spacing="1">VESSEL</text>
+  <rect x="420" y="38" width="105" height="58" rx="16" fill="#0F766E"/>
+  <text x="442" y="79" fill="#F8FAFC" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="34" font-weight="800" letter-spacing="2">HQ</text>
+</svg>

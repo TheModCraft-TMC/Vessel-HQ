@@ -129,7 +129,7 @@ export function K8sRegistryAccessNotice({
             .
           </>
         ) : (
-          ' To pull private images automatically, contact your Portainer administrator to add a registry and set up registry access.'
+          ' To pull private images automatically, contact your Vessel HQ administrator to add a registry and set up registry access.'
         )}
       </TextTip>
     );
@@ -158,7 +158,7 @@ export function K8sRegistryAccessNotice({
             .
           </>
         ) : (
-          ' To pull private images automatically, contact your Portainer administrator to set up registry access.'
+          ' To pull private images automatically, contact your Vessel HQ administrator to set up registry access.'
         )}
       </TextTip>
     );

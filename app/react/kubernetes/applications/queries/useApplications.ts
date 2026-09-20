@@ -14,7 +14,6 @@ type GetAppsParams = {
 };
 
 type GetAppsQueryOptions = {
-  refetchInterval?: number;
 } & GetAppsParams;
 
 /**
@@ -25,12 +24,11 @@ export function useApplications(
   environmentId: EnvironmentId,
   queryOptions?: GetAppsQueryOptions
 ) {
-  const { refetchInterval, ...params } = queryOptions ?? {};
+  const { ...params } = queryOptions ?? {};
   return useQuery(
     queryKeys.applications(environmentId, params),
     () => getApplications(environmentId, params),
     {
-      refetchInterval,
       ...withError('Unable to retrieve applications'),
     }
   );

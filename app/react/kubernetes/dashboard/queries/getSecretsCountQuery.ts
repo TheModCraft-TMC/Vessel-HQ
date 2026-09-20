@@ -18,9 +18,6 @@ export function useGetSecretsCountQuery(
     async () => getSecretsCount(environmentId),
     {
       ...withError('Unable to get secrets count'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

@@ -10,7 +10,7 @@ export default {
 
 function Template({
   children,
-}: JSX.IntrinsicAttributes & PropsWithChildren<unknown>) {
+}: React.JSX.IntrinsicAttributes & PropsWithChildren<unknown>) {
   return <FormSectionTitle>{children}</FormSectionTitle>;
 }
 

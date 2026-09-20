@@ -39,7 +39,7 @@ function ControlCell({
 
   if (isOrphanedStack(item)) {
     return (
-      <Warning tooltip="This stack was created inside an environment that is no longer registered inside Portainer.">
+      <Warning tooltip="This stack was created inside an environment that is no longer registered in Vessel HQ.">
         Orphaned
       </Warning>
     );

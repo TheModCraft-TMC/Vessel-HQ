@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { HttpResponse, http } from 'msw';
 
 import { withTestRouter } from '@/react/test-utils/withRouter';
@@ -73,17 +73,19 @@ describe('SettingsView', () => {
     );
   }
 
-  function renderComponent() {
+  async function renderComponent() {
     const Wrapped = withTestQueryProvider(
       withUserProvider(withTestRouter(SettingsView))
     );
-    return render(<Wrapped />);
+    const result = render(<Wrapped />);
+    await act(async () => {});
+    return result;
   }
 
   describe('Experimental Features', () => {
     test('should NOT render ExperimentalFeatures component in CE edition', async () => {
       setupMocks();
-      const { queryByText } = renderComponent();
+      const { queryByText } = await renderComponent();
 
       // Check that the ExperimentalFeatures component is NOT rendered
       const experimentalFeaturesTitle = queryByText('Experimental features');

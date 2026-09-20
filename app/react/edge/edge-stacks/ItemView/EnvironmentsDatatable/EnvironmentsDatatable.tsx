@@ -25,19 +25,7 @@ const settingsStore = createPersistedStore(tableKey);
 export function EnvironmentsDatatable() {
   const stackId = useIdParam('stackId');
 
-  const edgeStackQuery = useEdgeStack(stackId, {
-    refetchInterval(data) {
-      if (!data) {
-        return 0;
-      }
-
-      return Object.values(data.Status).some((status) =>
-        status.Status.every((s) => s.Type === StatusType.Running)
-      )
-        ? 0
-        : 10000;
-    },
-  });
+  const edgeStackQuery = useEdgeStack(stackId);
 
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useParamState<StatusType>(

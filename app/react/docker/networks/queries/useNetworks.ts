@@ -42,8 +42,6 @@ export function useNetworks<T = Array<DockerNetwork>>(
       enabled,
       onSuccess,
       select,
-
-      refetchInterval: autoRefreshRate ?? false,
       ...withError('Unable to retrieve networks'),
     }
   );

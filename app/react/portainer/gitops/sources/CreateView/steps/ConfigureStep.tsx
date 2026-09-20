@@ -56,7 +56,7 @@ function SharedFields() {
         label="Source Name"
         required
         errors={errors.name}
-        tooltip="A unique name to identify this source in Portainer"
+        tooltip="A unique name to identify this source in Vessel HQ"
       >
         <Input
           id="source-name-input"

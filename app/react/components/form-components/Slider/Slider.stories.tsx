@@ -15,7 +15,7 @@ function Template({
   step,
   dataCy,
   visibleTooltip,
-}: JSX.IntrinsicAttributes & Props) {
+}: React.JSX.IntrinsicAttributes & Props) {
   const [sliderValue, setSliderValue] = useState(min);
 
   useEffect(() => {

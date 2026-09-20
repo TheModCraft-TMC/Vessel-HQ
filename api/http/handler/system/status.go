@@ -15,8 +15,8 @@ type status struct {
 }
 
 // @id systemStatus
-// @summary Check Portainer status
-// @description Retrieve Portainer status
+// @summary Check Vessel HQ status
+// @description Retrieve Vessel HQ status
 // @description **Access policy**: public
 // @tags system
 // @produce json
@@ -30,17 +30,17 @@ func (handler *Handler) systemStatus(w http.ResponseWriter, r *http.Request) *ht
 
 // swagger docs for deprecated route:
 // @id StatusInspect
-// @summary Check Portainer status
+// @summary Check Vessel HQ status
 // @deprecated
 // @description Deprecated: use the `/system/status` endpoint instead.
-// @description Retrieve Portainer status
+// @description Retrieve Vessel HQ status
 // @description **Access policy**: public
 // @tags status
 // @produce json
 // @success 200 {object} status "Success"
 // @router /status [get]
 func (handler *Handler) statusInspectDeprecated(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
-	log.Warn().Msg("The /status endpoint is deprecated and will be removed in a future version of Portainer. Please use the /system/status endpoint instead.")
+	log.Warn().Msg("The /status endpoint is deprecated and will be removed in a future version of Vessel HQ. Please use the /system/status endpoint instead.")
 
 	return handler.systemStatus(w, r)
 }

@@ -18,9 +18,6 @@ export function useGetServicesCountQuery(
     async () => getServicesCount(environmentId),
     {
       ...withError('Unable to get services count'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

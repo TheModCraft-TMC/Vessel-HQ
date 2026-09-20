@@ -18,9 +18,6 @@ export function useGetVolumesCountQuery(
     async () => getVolumesCount(environmentId),
     {
       ...withError('Unable to get volumes count'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

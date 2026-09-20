@@ -2,6 +2,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 
 import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
+import { withAgentTargetHeader } from '../utils';
 
 /**
  * Raw docker API proxy
@@ -9,7 +10,11 @@ import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
  * @param file
  * @returns
  */
-export async function uploadImages(environmentId: EnvironmentId, file: File) {
+export async function uploadImages(
+  environmentId: EnvironmentId,
+  file: File,
+  { nodeName }: { nodeName?: string } = {}
+) {
   try {
     return await axios.post(
       buildDockerProxyUrl(environmentId, 'images', 'load'),
@@ -17,6 +22,7 @@ export async function uploadImages(environmentId: EnvironmentId, file: File) {
       {
         headers: {
           'Content-Type': file.type, // 'application/x-tar',
+          ...withAgentTargetHeader(nodeName),
         },
       }
     );

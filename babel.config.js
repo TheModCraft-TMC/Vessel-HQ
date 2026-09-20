@@ -1,5 +1,5 @@
 module.exports = {
-  plugins: ['lodash', 'angularjs-annotate'],
+  plugins: ['lodash'],
   presets: [
     [
       '@babel/preset-env',

@@ -8,8 +8,8 @@ import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 import { Icon } from '@@/Icon';
 import { Tooltip } from '@@/Tip/Tooltip';
 import {
-  TableColumnHeaderAngular,
-  TableColumnHeaderAngularProps,
+  TableColumnHeaderWithDescription,
+  TableColumnHeaderWithDescriptionProps,
 } from '@@/datatables/TableHeaderCell';
 
 export function TableColumnHeaderImageUpToDate({
@@ -17,16 +17,16 @@ export function TableColumnHeaderImageUpToDate({
   isSorted,
   colTitle,
   isSortedDesc = true,
-}: TableColumnHeaderAngularProps) {
+}: TableColumnHeaderWithDescriptionProps) {
   return (
-    <TableColumnHeaderAngular
+    <TableColumnHeaderWithDescription
       canSort={canSort}
       isSorted={isSorted}
       colTitle={colTitle}
       isSortedDesc={isSortedDesc}
     >
       <ImageUpToDateTooltip />
-    </TableColumnHeaderAngular>
+    </TableColumnHeaderWithDescription>
   );
 }
 

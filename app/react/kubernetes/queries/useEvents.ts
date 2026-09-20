@@ -71,9 +71,6 @@ export function useEvents<T = Event[]>(
     () => getEvents(environmentId, { params, namespace }),
     {
       ...withError('Unable to retrieve events'),
-      refetchInterval() {
-        return queryOptions?.autoRefreshRate ?? false;
-      },
       select: queryOptions?.select,
     }
   );

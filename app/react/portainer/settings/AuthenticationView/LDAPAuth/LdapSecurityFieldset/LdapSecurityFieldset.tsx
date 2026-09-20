@@ -7,7 +7,6 @@ import { FileUploadField } from '@@/form-components/FileUpload';
 import { FormControl } from '@@/form-components/FormControl';
 import { FormSection } from '@@/form-components/FormSection';
 import { SwitchField } from '@@/form-components/SwitchField';
-import { BEFeatureIndicator } from '@@/BEFeatureIndicator';
 
 export interface LdapSecurityConfig {
   startTLS: boolean;
@@ -35,6 +34,10 @@ export function LdapSecurityFieldset({
 }: Props) {
   const showCaCert = values.tls || (values.startTLS && !values.tlsSkipVerify);
   const isCaCertLimited = isLimitedToBE(limitedFeatureId);
+
+  if (isCaCertLimited) {
+    return null;
+  }
 
   return (
     <FormSection title={title}>
@@ -100,9 +103,6 @@ export function LdapSecurityFieldset({
             state={uploadState}
             disabled={isCaCertLimited}
           />
-          {limitedFeatureId && (
-            <BEFeatureIndicator featureId={limitedFeatureId} />
-          )}
         </FormControl>
       )}
     </FormSection>

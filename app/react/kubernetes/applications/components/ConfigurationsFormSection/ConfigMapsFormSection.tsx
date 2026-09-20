@@ -35,7 +35,7 @@ export function ConfigMapsFormSection({
     <FormSection title="ConfigMaps" titleSize="sm">
       {!!values.length && (
         <TextTip color="blue">
-          Portainer will automatically expose all the keys of a ConfigMap as
+          Vessel HQ will automatically expose all the keys of a ConfigMap as
           environment variables. This behavior can be overridden to filesystem
           mounts for each key via the override option.
         </TextTip>

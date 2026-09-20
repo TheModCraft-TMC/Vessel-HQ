@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import angular from 'angular';
 
-import { StateManager } from '@/portainer/services/types';
+import { updateApplicationState } from '@/react/portainer/app-state';
 
 import { PageHeader } from '@@/PageHeader';
 
@@ -61,14 +60,8 @@ export function SettingsView() {
 }
 
 function handleSuccess(settings: Settings) {
-  // to sync "outside state" - for angularjs
-  // this is a hack, but it works
-  // state manager should be replaced with a non angular solution, maybe using zustand
-  const $injector = angular.element(document).injector();
-  $injector.invoke(
-    /* @ngInject */ (StateManager: StateManager) => {
-      StateManager?.updateLogo(settings.LogoURL);
-      StateManager?.updateSnapshotInterval(settings.SnapshotInterval);
-    }
-  );
+  updateApplicationState({
+    logo: settings.LogoURL,
+    snapshotInterval: settings.SnapshotInterval,
+  });
 }

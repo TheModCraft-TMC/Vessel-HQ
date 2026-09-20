@@ -728,3 +728,27 @@ progress {
 progress::-webkit-progress-bar {
   background-color: transparent;
 }
+
+.vessel-ssr-shell {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--bg-body-color, #f6f7f9);
+  color: var(--text-body-color, #1f2937);
+  text-align: center;
+}
+
+.vessel-ssr-brand {
+  color: #0f766e;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.vessel-ssr-loading {
+  color: var(--text-muted-color, #64748b);
+  font-size: 0.875rem;
+}

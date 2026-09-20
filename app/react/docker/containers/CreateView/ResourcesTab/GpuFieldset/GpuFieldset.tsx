@@ -164,7 +164,7 @@ export function GpuFieldset({
           <div className="form-group">
             <div className="col-sm-3 col-lg-2 control-label text-left">
               Capabilities
-              <Tooltip message="‘compute’ and ‘utility’ capabilities are preselected by Portainer because they are used by default when you don’t explicitly specify capabilities with docker CLI ‘--gpus’ option." />
+              <Tooltip message="‘compute’ and ‘utility’ capabilities are preselected by Vessel HQ because they are used by default when you don’t explicitly specify capabilities with the Docker CLI ‘--gpus’ option." />
             </div>
             <div className="col-sm-9 col-lg-10 text-left">
               <Select<GpuOption, true>

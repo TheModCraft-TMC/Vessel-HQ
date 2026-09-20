@@ -720,7 +720,7 @@ func main() {
 			Str("pnpm_version", build.PnpmVersion).
 			Str("webpack_version", build.WebpackVersion).
 			Str("go_version", build.GoVersion).
-			Msg("starting Portainer")
+			Msg("starting Vessel HQ")
 
 		// Start blocks while the HTTPS server is running, much like ServerSocket.accept
 		// keeps a Java server alive. It returns when the server stops or fails.

@@ -40,7 +40,7 @@ export function SortableListHeader<TSortKey extends string>({
   return (
     <div
       className={clsx(
-        'flex flex-wrap items-center justify-between gap-3 px-5 py-3',
+        'flex flex-wrap items-center justify-between gap-3 px-3 py-3 sm:px-5',
         'bg-gray-2 th-highcontrast:bg-black th-dark:bg-gray-iron-10'
       )}
     >
@@ -52,7 +52,7 @@ export function SortableListHeader<TSortKey extends string>({
         groupOptions={groupOptions}
         dataCy={`${dataCy}-sort`}
       />
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
         {headerButtons}
         <SearchBar
           value={searchTerm}

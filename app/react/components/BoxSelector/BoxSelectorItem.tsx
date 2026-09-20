@@ -3,13 +3,12 @@ import { type LucideIcon, Check } from 'lucide-react';
 import { Fragment } from 'react';
 
 import { Icon } from '@/react/components/Icon';
+import { isLimitedToBE } from '@/react/portainer/feature-flags/feature-flags.service';
 
 import { BadgeIcon } from '@@/BadgeIcon';
-import { getFeatureDetails } from '@@/BEFeatureIndicator/utils';
 
 import styles from './BoxSelectorItem.module.css';
 import { BoxSelectorOption, Value } from './types';
-import { LimitedToBeBoxSelectorIndicator } from './LimitedToBeBoxSelectorIndicator';
 import { BoxOption } from './BoxOption';
 import { LogoIcon } from './LogoIcon';
 
@@ -28,7 +27,7 @@ type Props<T extends Value> = {
 export function BoxSelectorItem<T extends Value>({
   radioName,
   option,
-  onSelect = () => {},
+  onSelect,
   disabled,
   tooltip,
   type = 'radio',
@@ -36,37 +35,28 @@ export function BoxSelectorItem<T extends Value>({
   slim = false,
   checkIcon = Check,
 }: Props<T>) {
-  const { limitedToBE = false, url: featureUrl } = getFeatureDetails(
-    option.feature
-  );
+  const limitedToBE = isLimitedToBE(option.feature);
 
   const ContentBox = slim ? 'div' : Fragment;
 
+  if (limitedToBE) {
+    return null;
+  }
+
   return (
     <BoxOption
-      className={clsx(styles.boxSelectorItem, {
-        [styles.business]: limitedToBE,
-        [styles.limited]: limitedToBE,
-      })}
+      className={styles.boxSelectorItem}
       radioName={radioName}
       option={option}
       isSelected={isSelected}
       disabled={isDisabled()}
-      onSelect={(value) => onSelect(value, limitedToBE)}
+      onSelect={(value) => onSelect(value, false)}
       tooltip={tooltip}
       type={type}
       checkIcon={checkIcon}
     >
-      {limitedToBE && (
-        <LimitedToBeBoxSelectorIndicator
-          url={featureUrl}
-          // show tooltip only for radio type options because be-only checkbox options can't be selected
-          showTooltip={type === 'radio'}
-        />
-      )}
       <div
         className={clsx('flex min-w-[140px] gap-2', {
-          'opacity-30': limitedToBE,
           'h-full flex-col justify-start': !slim,
           'slim items-center': slim,
         })}
@@ -83,7 +73,7 @@ export function BoxSelectorItem<T extends Value>({
   );
 
   function isDisabled() {
-    return disabled || (limitedToBE && option.disabledWhenLimited);
+    return disabled;
   }
 
   function renderIcon() {

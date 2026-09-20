@@ -30,7 +30,7 @@ describe('Header', () => {
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute(
       'src',
-      expect.stringContaining('portainer_logo-CE.svg')
+      expect.stringContaining('vessel-hq-logo.svg')
     );
   });
 
@@ -41,27 +41,6 @@ describe('Header', () => {
     const logo = screen.getByAltText('Logo');
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute('src', customLogo);
-  });
-
-  it('should show "Powered by" section when sidebar is open and custom logo is provided', () => {
-    const customLogo = 'https://example.com/custom-logo.png';
-    renderComponent({ logo: customLogo });
-
-    expect(screen.getByText('Powered by')).toBeInTheDocument();
-    expect(screen.getByText('portainer community')).toBeInTheDocument();
-  });
-
-  it('should not show "Powered by" section when no custom logo', () => {
-    renderComponent();
-
-    expect(screen.queryByText('Powered by')).not.toBeInTheDocument();
-  });
-
-  it('should not show "Powered by" section when sidebar is closed', () => {
-    const customLogo = 'https://example.com/custom-logo.png';
-    renderComponent({ logo: customLogo }, { isOpen: false, toggle: vi.fn() });
-
-    expect(screen.queryByText('Powered by')).not.toBeInTheDocument();
   });
 
   it('should apply flex-wrap class to logo container', () => {
@@ -97,7 +76,7 @@ describe('Header', () => {
     const logo = screen.getByAltText('Logo');
     expect(logo).toHaveAttribute(
       'src',
-      expect.stringContaining('portainer-p-icon-white.svg')
+      expect.stringContaining('vessel-hq-mark.svg')
     );
   });
 

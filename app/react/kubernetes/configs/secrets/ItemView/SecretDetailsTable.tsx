@@ -57,7 +57,7 @@ export function SecretDetailsTable({
       {parsedRegistryId && (
         <DetailsRow label="Registry">
           <RegistryBadge registryId={parsedRegistryId}>
-            <Tooltip message="This registry secret was created by Portainer to allow pulling images. Manually editing this secret is disabled." />
+            <Tooltip message="This registry secret was created by Vessel HQ to allow pulling images. Manually editing this secret is disabled." />
           </RegistryBadge>
         </DetailsRow>
       )}

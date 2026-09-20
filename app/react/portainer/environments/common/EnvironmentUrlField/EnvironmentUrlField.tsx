@@ -24,7 +24,7 @@ export function EnvironmentUrlField({
       inputId="environment-url-field"
       tooltip={
         isAgent
-          ? 'The address for the Portainer agent in the format <HOST>:<PORT> or <IP>:<PORT>'
+          ? 'The address for the Vessel HQ agent in the format <HOST>:<PORT> or <IP>:<PORT>'
           : 'URL or IP address of a Docker host. The Docker API must be exposed over a TCP port. Please refer to the Docker documentation to configure it.'
       }
     >

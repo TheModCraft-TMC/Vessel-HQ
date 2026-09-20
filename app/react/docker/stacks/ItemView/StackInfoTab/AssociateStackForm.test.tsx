@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { delay, http, HttpResponse } from 'msw';
 
@@ -45,8 +45,8 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-it('should render correctly', () => {
-  renderComponent();
+it('should render correctly', async () => {
+  await renderComponent();
 
   expect(screen.getByText('Associate to this environment')).toBeVisible();
   expect(
@@ -76,7 +76,7 @@ describe('form submission', () => {
     );
 
     const user = userEvent.setup();
-    renderComponent({
+    await renderComponent({
       environmentId: 5,
       stackId: 123,
       isOrphanedRunning: true,
@@ -110,7 +110,7 @@ describe('form submission', () => {
     );
 
     const user = userEvent.setup();
-    renderComponent();
+    await renderComponent();
 
     const associateButton = screen.getByRole('button', { name: 'Associate' });
     await user.click(associateButton);
@@ -143,7 +143,7 @@ describe('form submission', () => {
     );
 
     const user = userEvent.setup();
-    renderComponent({ stackName: 'my-stack' });
+    await renderComponent({ stackName: 'my-stack' });
 
     const associateButton = screen.getByRole('button', { name: 'Associate' });
     await user.click(associateButton);
@@ -178,7 +178,7 @@ describe('swarmId integration', () => {
     );
 
     const user = userEvent.setup();
-    renderComponent({ environmentId: 1 });
+    await renderComponent({ environmentId: 1 });
 
     const associateButton = screen.getByRole('button', { name: 'Associate' });
     await user.click(associateButton);
@@ -206,7 +206,7 @@ describe('swarmId integration', () => {
     );
 
     const user = userEvent.setup();
-    renderComponent();
+    await renderComponent();
 
     const associateButton = screen.getByRole('button', { name: 'Associate' });
     await user.click(associateButton);
@@ -233,7 +233,7 @@ describe('orphanedRunning parameter', () => {
     );
 
     const user = userEvent.setup();
-    renderComponent({ isOrphanedRunning: true });
+    await renderComponent({ isOrphanedRunning: true });
 
     const associateButton = screen.getByRole('button', { name: 'Associate' });
     await user.click(associateButton);
@@ -257,7 +257,7 @@ describe('orphanedRunning parameter', () => {
     );
 
     const user = userEvent.setup();
-    renderComponent({ isOrphanedRunning: undefined });
+    await renderComponent({ isOrphanedRunning: undefined });
 
     const associateButton = screen.getByRole('button', { name: 'Associate' });
     await user.click(associateButton);
@@ -268,7 +268,7 @@ describe('orphanedRunning parameter', () => {
   });
 });
 
-function renderComponent({
+async function renderComponent({
   stackName = 'test-stack',
   environmentId = 1,
   stackId = 123,
@@ -287,7 +287,7 @@ function renderComponent({
     withTestRouter(withUserProvider(AssociateStackForm))
   );
 
-  return render(
+  const result = render(
     <Wrapped
       stackName={stackName}
       environmentId={environmentId}
@@ -295,6 +295,8 @@ function renderComponent({
       isOrphanedRunning={isOrphanedRunning}
     />
   );
+  await act(async () => {});
+  return result;
 }
 
 function createMockStackResponse(stackId = '123') {

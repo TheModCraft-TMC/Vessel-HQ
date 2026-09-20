@@ -7,7 +7,7 @@ export default {
   title: 'Components/Tip/Tooltip',
 } as Meta;
 
-function Template({ message, position }: JSX.IntrinsicAttributes & Props) {
+function Template({ message, position }: React.JSX.IntrinsicAttributes & Props) {
   return (
     <div className="col-sm-3 col-lg-2">
       Example tooltip

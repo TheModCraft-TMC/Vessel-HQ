@@ -6,6 +6,7 @@ export interface Filters {
   name?: string[];
   network?: NetworkId[];
   status?: ContainerStatus[];
+  volume?: string[];
 }
 
 export type ContainerProcesses = {

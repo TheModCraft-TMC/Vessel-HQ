@@ -8,8 +8,15 @@ import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
 
 import { queryKeys } from './query-keys';
 
-export function useNodes(environmentId: EnvironmentId) {
-  return useQuery(queryKeys.base(environmentId), () => getNodes(environmentId));
+export function useNodes(
+  environmentId: EnvironmentId,
+  { enabled = true }: { enabled?: boolean } = {}
+) {
+  return useQuery(
+    queryKeys.base(environmentId),
+    () => getNodes(environmentId),
+    { enabled }
+  );
 }
 
 /**

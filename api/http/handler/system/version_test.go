@@ -107,10 +107,20 @@ func Test_HasNewerVersion(t *testing.T) {
 func Test_serverVersion(t *testing.T) {
 	t.Parallel()
 
-	require.Equal(t, "2.39.3.2.16", serverVersion("2.39.3.2.16", "2.45.0"))
-	require.Equal(t, "2.39.3.2.16", serverVersion("v2.39.3.2.16", "2.45.0"))
-	require.Equal(t, "2.45.0", serverVersion("latest", "2.45.0"))
-	require.Equal(t, "2.45.0", serverVersion("N/A", "2.45.0"))
+	require.Equal(t, "2.39.3.2.16", serverVersion("2.39.3.2.16", "2.39.3.2.15"))
+	require.Equal(t, "2.39.3.2.16", serverVersion("v2.39.3.2.16", "2.39.3.2.15"))
+	require.Equal(t, "2.39.3.2.15", serverVersion("latest", "2.39.3.2.15"))
+	require.Equal(t, "2.39.3.2.15", serverVersion("N/A", "v2.39.3.2.15"))
+	require.Equal(t, "development", serverVersion("N/A", ""))
+}
+
+func TestVersionCheckURLUsesMaintainedImageRepository(t *testing.T) {
+	t.Parallel()
+
+	require.Equal(t,
+		"https://hub.docker.com/v2/repositories/themodcrafttmc/portainer/tags?page_size=100&ordering=last_updated",
+		portainer.VersionCheckURL,
+	)
 }
 
 func Test_GetLatestVersion(t *testing.T) {

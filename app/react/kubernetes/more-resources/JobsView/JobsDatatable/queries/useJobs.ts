@@ -10,16 +10,13 @@ import { queryKeys } from './query-keys';
 
 export function useJobs(
   environmentId: EnvironmentId,
-  options?: { refetchInterval?: number; enabled?: boolean }
+  options?: { enabled?: boolean }
 ) {
   return useQuery(
     queryKeys.list(environmentId),
     async () => getAllJobs(environmentId),
     {
       ...withError('Unable to get Jobs'),
-      refetchInterval() {
-        return options?.refetchInterval ?? false;
-      },
       enabled: options?.enabled,
     }
   );

@@ -90,7 +90,7 @@ func (handler *Handler) validateOAuth(w http.ResponseWriter, r *http.Request) *h
 	}
 
 	if user == nil && !settings.OAuthSettings.OAuthAutoCreateUsers {
-		return httperror.Forbidden("Account not created beforehand in Portainer and automatic user provisioning not enabled", httperrors.ErrUnauthorized)
+		return httperror.Forbidden("Account not created beforehand in Vessel HQ and automatic user provisioning not enabled", httperrors.ErrUnauthorized)
 	}
 
 	if user == nil {

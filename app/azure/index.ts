@@ -1,42 +1,19 @@
-import angular from 'angular';
-import { StateRegistry, StateService } from '@uirouter/angularjs';
+import { StateRegistry } from '@uirouter/react';
 
-import { Environment } from '@/react/portainer/environments/types';
-import { notifyError } from '@/portainer/services/notifications';
-import { StateManager } from '@/portainer/services/types';
+import { registerReactState } from '@/react-tools/registerReactState';
+import {
+  AzureDashboardRoute,
+  ContainerInstanceCreateRoute,
+  ContainerInstanceRoute,
+  ContainerInstancesListRoute,
+} from '@/azure/react/views/route-components';
 
-import { reactModule } from './react';
-
-export const azureModule = angular
-  .module('portainer.azure', [reactModule])
-  .config(config).name;
-
-/* @ngInject */
-function config($stateRegistryProvider: StateRegistry) {
+export function registerAzureStates($stateRegistryProvider: StateRegistry) {
   const azure = {
     name: 'azure',
     url: '/azure',
     parent: 'endpoint',
     abstract: true,
-    onEnter: /* @ngInject */ function onEnter(
-      $async: (fn: () => Promise<void>) => Promise<void>,
-      $state: StateService,
-      endpoint: Environment,
-      StateManager: StateManager
-    ) {
-      return $async(async () => {
-        if (endpoint.Type !== 3) {
-          $state.go('portainer.home');
-          return;
-        }
-        try {
-          await StateManager.updateEndpointState(endpoint);
-        } catch (e) {
-          notifyError('Failed loading environment', e as Error);
-          $state.go('portainer.home', {}, { reload: true });
-        }
-      });
-    },
   };
 
   const containerInstances = {
@@ -44,7 +21,7 @@ function config($stateRegistryProvider: StateRegistry) {
     url: '/containerinstances',
     views: {
       'content@': {
-        component: 'containerInstancesView',
+        component: ContainerInstancesListRoute,
       },
     },
     data: {
@@ -57,7 +34,7 @@ function config($stateRegistryProvider: StateRegistry) {
     url: '/:id',
     views: {
       'content@': {
-        component: 'containerInstanceView',
+        component: ContainerInstanceRoute,
       },
     },
   };
@@ -67,7 +44,7 @@ function config($stateRegistryProvider: StateRegistry) {
     url: '/new/',
     views: {
       'content@': {
-        component: 'createContainerInstanceView',
+        component: ContainerInstanceCreateRoute,
       },
     },
   };
@@ -77,7 +54,7 @@ function config($stateRegistryProvider: StateRegistry) {
     url: '/dashboard',
     views: {
       'content@': {
-        component: 'dashboardView',
+        component: AzureDashboardRoute,
       },
     },
     data: {
@@ -85,9 +62,9 @@ function config($stateRegistryProvider: StateRegistry) {
     },
   };
 
-  $stateRegistryProvider.register(azure);
-  $stateRegistryProvider.register(containerInstances);
-  $stateRegistryProvider.register(containerInstance);
-  $stateRegistryProvider.register(containerInstanceCreation);
-  $stateRegistryProvider.register(dashboard);
+  registerReactState($stateRegistryProvider, azure);
+  registerReactState($stateRegistryProvider, containerInstances);
+  registerReactState($stateRegistryProvider, containerInstance);
+  registerReactState($stateRegistryProvider, containerInstanceCreation);
+  registerReactState($stateRegistryProvider, dashboard);
 }

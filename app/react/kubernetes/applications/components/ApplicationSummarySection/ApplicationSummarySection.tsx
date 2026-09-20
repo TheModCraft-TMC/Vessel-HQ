@@ -32,7 +32,7 @@ export function ApplicationSummarySection({
   return (
     <FormSection title="Summary" isFoldable defaultFolded={false}>
       <TextTip color="blue">
-        Portainer will execute the following Kubernetes actions.
+        Vessel HQ will execute the following Kubernetes actions.
       </TextTip>
       <ul className="small text-muted ml-5 w-full">
         {appResourceSummaries.map((summary) => (

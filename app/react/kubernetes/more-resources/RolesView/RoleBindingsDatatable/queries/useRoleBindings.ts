@@ -17,9 +17,6 @@ export function useRoleBindings(
     async () => getAllRoleBindings(environmentId),
     {
       ...withError('Unable to get role bindings'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
       enabled: options?.enabled,
     }
   );

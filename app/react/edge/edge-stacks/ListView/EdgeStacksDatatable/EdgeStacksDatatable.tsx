@@ -20,7 +20,6 @@ export function EdgeStacksDatatable() {
   const tableState = useTableState(settingsStore, tableKey);
   const edgeStacksQuery = useEdgeStacks<Array<DecoratedEdgeStack>>({
     params: { summarizeStatuses: true },
-    refetchInterval: tableState.autoRefreshRateMS,
   });
 
   return (

@@ -706,10 +706,15 @@
       "KubeSecretKey": null,
       "LogoutURI": "",
       "OAuthAutoCreateUsers": false,
+      "OAuthAutoMapTeamMemberships": false,
       "RedirectURI": "",
       "ResourceURI": "",
       "SSO": false,
       "Scopes": "",
+      "TeamMemberships": {
+        "OAuthClaimMappings": null,
+        "OAuthClaimName": ""
+      },
       "UserIdentifier": ""
     },
     "SnapshotInterval": "5m",

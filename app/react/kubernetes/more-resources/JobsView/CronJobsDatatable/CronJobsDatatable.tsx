@@ -52,7 +52,6 @@ export function CronJobsDatatable() {
   );
 
   const cronJobsQuery = useCronJobs(environmentId, {
-    refetchInterval: tableState.autoRefreshRateMS,
   });
   const cronJobsRowData = cronJobsQuery.data;
 

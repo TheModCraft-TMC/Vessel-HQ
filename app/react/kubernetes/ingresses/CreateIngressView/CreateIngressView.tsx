@@ -391,7 +391,7 @@ export function CreateIngressView() {
 
       if (isEdit && !ingressRule.IngressClassName && isEditClassNameSet) {
         errors.className =
-          'No ingress class is currently set for this ingress - use of the Portainer UI requires one to be set.';
+          'No ingress class is currently set for this ingress - use of the Vessel HQ UI requires one to be set.';
       }
 
       if (

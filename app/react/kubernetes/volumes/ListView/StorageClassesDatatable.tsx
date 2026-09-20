@@ -42,7 +42,6 @@ export function StorageClassesDatatable() {
   const deleteStorageClassesMutation = useDeleteStorageClasses(envId);
   const setDefaultStorageClassMutation = useSetDefaultStorageClass(envId);
   const storageClassesQuery = useStorageClasses(envId, {
-    refetchInterval: tableState.autoRefreshRateMS,
   });
   const storageClasses = storageClassesQuery.data ?? [];
 

@@ -25,11 +25,15 @@ export interface LDAPSettings {
   ReaderDN: string;
   Password?: string;
   URL: string;
+  URLs?: string[];
+  ServerType?: number;
   TLSConfig: TLSConfiguration;
   StartTLS: boolean;
   SearchSettings: LDAPSearchSettings[];
   GroupSearchSettings: LDAPGroupSearchSettings[];
   AutoCreateUsers: boolean;
+  AdminAutoPopulate?: boolean;
+  AdminGroupSearchSettings?: LDAPGroupSearchSettings[];
 }
 
 export interface Pair {
@@ -59,6 +63,8 @@ export interface OAuthSettings {
   SSO: boolean;
   LogoutURI: string;
   KubeSecretKey: string;
+  AuthStyle?: OAuthStyle;
+  HideInternalAuth?: boolean;
 }
 
 export enum AuthenticationMethod {
@@ -169,6 +175,8 @@ export interface PublicSettingsResponse {
   AuthenticationMethod: AuthenticationMethod;
   /** The minimum required length for a password of any user when using internal auth mode */
   RequiredPasswordLength: number;
+  /** Whether first-run setup operations require the server setup token. */
+  RequiresSetupToken?: boolean;
   /** Deployment options for encouraging deployment as code (only on BE) */
   GlobalDeploymentOptions: GlobalDeploymentOptions;
   /** Whether edge compute features are enabled */

@@ -1,7 +1,7 @@
-import { PropsWithChildren, ReactNode } from 'react';
+import { PropsWithChildren } from 'react';
 import { Loader2 } from 'lucide-react';
 
-import { Icon } from '@@/Icon';
+import { Icon, type IconSource } from '@@/Icon';
 
 import { type Props as ButtonProps, Button } from './Button';
 
@@ -32,7 +32,7 @@ export function LoadingButton({
   );
 }
 
-function loadingButtonIcon(isLoading: boolean, defaultIcon: ReactNode) {
+function loadingButtonIcon(isLoading: boolean, defaultIcon?: IconSource) {
   if (!isLoading) {
     return defaultIcon;
   }

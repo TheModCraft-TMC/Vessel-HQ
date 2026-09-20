@@ -1,65 +1,43 @@
-import featureFlagModule from '@/react/portainer/feature-flags';
-
-import './rbac';
-
-import componentsModule from './components';
-import settingsModule from './settings';
-import userActivityModule from './user-activity';
-import servicesModule from './services';
-import { reactModule } from './react';
-import { sidebarModule } from './react/views/sidebar';
-import environmentsModule from './environments';
-import { helpersModule } from './helpers';
-import { AccessHeaders, requiresAuthHook } from './authorization-guard';
+import { AccessHeaders } from './authorization-guard';
 import { filterParam, paginationParams } from './helpers/stateParamHelper';
+import { registerReactState } from '../react-tools/registerReactState';
+import {
+  CreateHelmRepositoryRoute,
+  AccountRoute,
+  LogoutRoute,
+  LoginRoute,
+  CreateUserAccessTokenRoute,
+  EdgeAutoCreateScriptRoute,
+  EnvironmentGroupCreateRoute,
+  EnvironmentGroupEditRoute,
+  EnvironmentGroupsListRoute,
+  EnvironmentItemRoute,
+  EnvironmentAccessRoute,
+  EnvironmentsListRoute,
+  HomeRoute,
+  InitEdgeRoute,
+  InitAdminRoute,
+  EdgeComputeSettingsRoute,
+  SettingsRoute,
+  AuthenticationSettingsRoute,
+  SidebarRoute,
+  SourceCreateRoute,
+  SourceItemRoute,
+  SourcesListRoute,
+  UsersListRoute,
+  UserRoute,
+  TagsRoute,
+  WorkflowItemRoute,
+  WorkflowsListRoute,
+} from './react/views/route-components';
 
-async function initAuthentication(Authentication) {
-  return await Authentication.init();
-}
-
-angular
-  .module('portainer.app', [
-    'portainer.oauth',
-    'portainer.rbac',
-    'portainer.registrymanagement',
-    componentsModule,
-    settingsModule,
-    featureFlagModule,
-    userActivityModule,
-    servicesModule,
-    reactModule,
-    sidebarModule,
-    environmentsModule,
-    helpersModule,
-  ])
-  .config([
-    '$stateRegistryProvider',
-    function ($stateRegistryProvider) {
+export function registerPortainerStates($stateRegistryProvider) {
       var root = {
         name: 'root',
         abstract: true,
-        onEnter: /* @ngInject */ function onEnter($async, StateManager, Authentication, Notifications, $state) {
-          return $async(async () => {
-            const appState = StateManager.getState();
-            if (!appState.loading) {
-              return;
-            }
-            try {
-              const loggedIn = await initAuthentication(Authentication);
-              await StateManager.initialize();
-              if (!loggedIn && isTransitionRequiresAuthentication($state.transition)) {
-                $state.go('portainer.logout');
-                return Promise.reject('Unauthenticated');
-              }
-            } catch (err) {
-              Notifications.error('Failure', err, 'Unable to retrieve application settings');
-              throw err;
-            }
-          });
-        },
         views: {
           'sidebar@': {
-            component: 'sidebar',
+            component: SidebarRoute,
           },
         },
         data: {
@@ -72,29 +50,6 @@ angular
         url: '/:endpointId',
         parent: 'root',
         abstract: true,
-        resolve: {
-          endpoint: /* @ngInject */ function endpoint($async, $state, $transition$, EndpointProvider, EndpointService, Notifications) {
-            return $async(async () => {
-              try {
-                const endpointId = +$transition$.params().endpointId;
-
-                const endpoint = await EndpointService.endpoint(endpointId);
-                if ((endpoint.Type === 4 || endpoint.Type === 7) && !endpoint.EdgeID) {
-                  $state.go('portainer.endpoints.endpoint', { id: endpoint.Id });
-                  return;
-                }
-
-                EndpointProvider.setCurrentEndpoint(endpoint);
-
-                return endpoint;
-              } catch (e) {
-                Notifications.error('Failed loading environment', e);
-                $state.go('portainer.home', {}, { reload: true });
-                return;
-              }
-            });
-          },
-        },
       };
 
       var portainer = {
@@ -108,8 +63,7 @@ angular
         url: '/account',
         views: {
           'content@': {
-            templateUrl: './views/account/account.html',
-            controller: 'AccountController',
+            component: AccountRoute,
           },
         },
         data: {
@@ -122,7 +76,7 @@ angular
         url: '/tokens/new',
         views: {
           'content@': {
-            component: 'createUserAccessToken',
+            component: CreateUserAccessTokenRoute,
           },
         },
       };
@@ -132,7 +86,7 @@ angular
         url: '/helm-repository/new',
         views: {
           'content@': {
-            component: 'createHelmRepositoryView',
+            component: CreateHelmRepositoryRoute,
           },
         },
       };
@@ -145,9 +99,7 @@ angular
         },
         views: {
           'content@': {
-            templateUrl: './views/auth/auth.html',
-            controller: 'AuthenticationController',
-            controllerAs: 'ctrl',
+            component: LoginRoute,
           },
           'sidebar@': {},
         },
@@ -164,9 +116,7 @@ angular
         },
         views: {
           'content@': {
-            templateUrl: './views/logout/logout.html',
-            controller: 'LogoutController',
-            controllerAs: 'ctrl',
+            component: LogoutRoute,
           },
           'sidebar@': {},
         },
@@ -180,7 +130,7 @@ angular
         url: '/endpoints',
         views: {
           'content@': {
-            component: 'environmentsListView',
+            component: EnvironmentsListRoute,
           },
         },
         data: {
@@ -196,7 +146,7 @@ angular
         },
         views: {
           'content@': {
-            component: 'environmentsItemView',
+            component: EnvironmentItemRoute,
           },
         },
       };
@@ -206,7 +156,7 @@ angular
         url: '/aeec',
         views: {
           'content@': {
-            component: 'edgeAutoCreateScriptView',
+            component: EdgeAutoCreateScriptRoute,
           },
         },
         data: {
@@ -219,9 +169,7 @@ angular
         url: '/access',
         views: {
           'content@': {
-            templateUrl: './views/endpoints/access/endpointAccess.html',
-            controller: 'EndpointAccessController',
-            controllerAs: 'ctrl',
+            component: EnvironmentAccessRoute,
           },
         },
       };
@@ -231,7 +179,7 @@ angular
         url: '/groups',
         views: {
           'content@': {
-            component: 'environmentGroupsListView',
+            component: EnvironmentGroupsListRoute,
           },
         },
         data: {
@@ -245,7 +193,7 @@ angular
         url: '/:id?tab',
         views: {
           'content@': {
-            component: 'environmentGroupEditView',
+            component: EnvironmentGroupEditRoute,
           },
         },
         params: {
@@ -263,7 +211,7 @@ angular
         url: '/new',
         views: {
           'content@': {
-            component: 'environmentGroupCreateView',
+            component: EnvironmentGroupCreateRoute,
           },
         },
       };
@@ -280,7 +228,7 @@ angular
         },
         views: {
           'content@': {
-            component: 'homeView',
+            component: HomeRoute,
           },
         },
         data: {
@@ -310,7 +258,7 @@ angular
         },
         views: {
           'content@': {
-            component: 'workflowsView',
+            component: WorkflowsListRoute,
           },
         },
       };
@@ -320,7 +268,7 @@ angular
         url: '/:workflowId',
         views: {
           'content@': {
-            component: 'workflowItemView',
+            component: WorkflowItemRoute,
           },
         },
       };
@@ -338,7 +286,7 @@ angular
         },
         views: {
           'content@': {
-            component: 'sourcesListView',
+            component: SourcesListRoute,
           },
         },
       };
@@ -351,7 +299,7 @@ angular
         },
         views: {
           'content@': {
-            component: 'sourceItemView',
+            component: SourceItemRoute,
           },
         },
       };
@@ -361,7 +309,7 @@ angular
         url: '/new',
         views: {
           'content@': {
-            component: 'sourceCreateView',
+            component: SourceCreateRoute,
           },
         },
       };
@@ -383,8 +331,7 @@ angular
         url: '/admin',
         views: {
           'content@': {
-            templateUrl: './views/init/admin/initAdmin.html',
-            controller: 'InitAdminController',
+            component: InitAdminRoute,
           },
         },
       };
@@ -394,7 +341,7 @@ angular
         url: '/edge',
         views: {
           'content@': {
-            component: 'initEdgeView',
+            component: InitEdgeRoute,
           },
         },
       };
@@ -404,7 +351,7 @@ angular
         url: '/settings',
         views: {
           'content@': {
-            component: 'settingsView',
+            component: SettingsRoute,
           },
         },
         data: {
@@ -417,10 +364,7 @@ angular
         name: 'portainer.settings.authentication',
         url: '/auth',
         views: {
-          'content@': {
-            templateUrl: './views/settings/authentication/settingsAuthentication.html',
-            controller: 'SettingsAuthenticationController',
-          },
+          'content@': { component: AuthenticationSettingsRoute },
         },
         data: {
           docs: '/admin/settings/authentication',
@@ -432,7 +376,7 @@ angular
         url: '/edge',
         views: {
           'content@': {
-            component: 'settingsEdgeComputeView',
+            component: EdgeComputeSettingsRoute,
           },
         },
         data: {
@@ -445,8 +389,7 @@ angular
         url: '/tags',
         views: {
           'content@': {
-            templateUrl: './views/tags/tags.html',
-            controller: 'TagsController',
+            component: TagsRoute,
           },
         },
         data: {
@@ -460,7 +403,7 @@ angular
         url: '/users',
         views: {
           'content@': {
-            component: 'usersListView',
+            component: UsersListRoute,
           },
         },
         data: {
@@ -474,58 +417,40 @@ angular
         url: '/:id',
         views: {
           'content@': {
-            templateUrl: './views/users/edit/user.html',
-            controller: 'UserController',
+            component: UserRoute,
           },
         },
       };
 
-      $stateRegistryProvider.register(root);
-      $stateRegistryProvider.register(endpointRoot);
-      $stateRegistryProvider.register(portainer);
-      $stateRegistryProvider.register(account);
-      $stateRegistryProvider.register(tokenCreation);
-      $stateRegistryProvider.register(authentication);
-      $stateRegistryProvider.register(logout);
-      $stateRegistryProvider.register(endpoints);
-      $stateRegistryProvider.register(endpoint);
-      $stateRegistryProvider.register(endpointAccess);
-      $stateRegistryProvider.register(edgeAutoCreateScript);
-      $stateRegistryProvider.register(groups);
-      $stateRegistryProvider.register(group);
-      $stateRegistryProvider.register(groupCreation);
-      $stateRegistryProvider.register(home);
-      $stateRegistryProvider.register(gitopsBase);
-      $stateRegistryProvider.register(workflows);
-      $stateRegistryProvider.register(gitopsWorkflowDetail);
-      $stateRegistryProvider.register(gitopsSources);
-      $stateRegistryProvider.register(gitopsSourceDetail);
-      $stateRegistryProvider.register(gitopsSourceCreate);
-      $stateRegistryProvider.register(init);
-      $stateRegistryProvider.register(initAdmin);
-      $stateRegistryProvider.register(initEdge);
-      $stateRegistryProvider.register(settings);
-      $stateRegistryProvider.register(settingsAuthentication);
-      $stateRegistryProvider.register(settingsEdgeCompute);
-      $stateRegistryProvider.register(tags);
-      $stateRegistryProvider.register(users);
-      $stateRegistryProvider.register(user);
-      $stateRegistryProvider.register(createHelmRepository);
-    },
-  ])
-  .run(run);
-
-function isTransitionRequiresAuthentication(transition) {
-  const UNAUTHENTICATED_ROUTES = ['portainer.logout', 'portainer.auth'];
-  if (!transition) {
-    return true;
-  }
-  const nextTransition = transition && transition.to();
-  const nextTransitionName = nextTransition ? nextTransition.name : '';
-  return !UNAUTHENTICATED_ROUTES.some((route) => nextTransitionName.startsWith(route));
-}
-
-/* @ngInject */
-function run($transitions) {
-  requiresAuthHook($transitions);
+      registerReactState($stateRegistryProvider, root);
+      registerReactState($stateRegistryProvider, endpointRoot);
+      registerReactState($stateRegistryProvider, portainer);
+      registerReactState($stateRegistryProvider, account);
+      registerReactState($stateRegistryProvider, tokenCreation);
+      registerReactState($stateRegistryProvider, authentication);
+      registerReactState($stateRegistryProvider, logout);
+      registerReactState($stateRegistryProvider, endpoints);
+      registerReactState($stateRegistryProvider, endpoint);
+      registerReactState($stateRegistryProvider, endpointAccess);
+      registerReactState($stateRegistryProvider, edgeAutoCreateScript);
+      registerReactState($stateRegistryProvider, groups);
+      registerReactState($stateRegistryProvider, group);
+      registerReactState($stateRegistryProvider, groupCreation);
+      registerReactState($stateRegistryProvider, home);
+      registerReactState($stateRegistryProvider, gitopsBase);
+      registerReactState($stateRegistryProvider, workflows);
+      registerReactState($stateRegistryProvider, gitopsWorkflowDetail);
+      registerReactState($stateRegistryProvider, gitopsSources);
+      registerReactState($stateRegistryProvider, gitopsSourceDetail);
+      registerReactState($stateRegistryProvider, gitopsSourceCreate);
+      registerReactState($stateRegistryProvider, init);
+      registerReactState($stateRegistryProvider, initAdmin);
+      registerReactState($stateRegistryProvider, initEdge);
+      registerReactState($stateRegistryProvider, settings);
+      registerReactState($stateRegistryProvider, settingsAuthentication);
+      registerReactState($stateRegistryProvider, settingsEdgeCompute);
+      registerReactState($stateRegistryProvider, tags);
+      registerReactState($stateRegistryProvider, users);
+      registerReactState($stateRegistryProvider, user);
+      registerReactState($stateRegistryProvider, createHelmRepository);
 }

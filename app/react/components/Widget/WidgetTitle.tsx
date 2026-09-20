@@ -1,12 +1,14 @@
 import clsx from 'clsx';
 import { PropsWithChildren, ReactNode } from 'react';
 
+import type { IconSource } from '../Icon';
+
 import { WidgetIcon } from './WidgetIcon';
 import { useWidgetContext } from './Widget';
 
 interface Props {
   title: ReactNode;
-  icon?: ReactNode;
+  icon?: IconSource;
   className?: string;
   subtitle?: string;
 }
@@ -25,7 +27,10 @@ export function WidgetTitle({
       <div className="flex items-center justify-between">
         <span className={clsx('inline-flex items-center gap-1', className)}>
           {icon && <WidgetIcon icon={icon} />}
-          <h2 id={titleId} className={clsx('m-0 text-base', icon && 'ml-1')}>
+          <h2
+            id={titleId}
+            className={clsx('m-0 text-base', Boolean(icon) && 'ml-1')}
+          >
             {title}
           </h2>
         </span>

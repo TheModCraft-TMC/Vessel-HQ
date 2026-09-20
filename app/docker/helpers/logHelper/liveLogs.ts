@@ -22,6 +22,15 @@ type LiveLogsOptions = {
   onError: (error: Error) => void;
 };
 
+type KubernetesLiveLogsOptions = Omit<
+  LiveLogsOptions,
+  'resource' | 'resourceId' | 'nodeName' | 'multiplexed'
+> & {
+  namespace: string;
+  podName: string;
+  containerName: string;
+};
+
 export class DockerLogStreamDecoder {
   private readonly decoder = new TextDecoder();
 
@@ -89,7 +98,47 @@ export function buildDockerLogsWebSocketUrl(
   return url.toString();
 }
 
+export function buildKubernetesLogsWebSocketUrl(
+  options: Omit<KubernetesLiveLogsOptions, 'onLogs' | 'onError'>
+) {
+  const base = new URL(baseHref(), window.location.origin);
+  const url = new URL('api/websocket/logs', base);
+  url.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  url.searchParams.set('endpointId', String(options.environmentId));
+  url.searchParams.set('resource', 'pods');
+  url.searchParams.set('id', options.podName);
+  url.searchParams.set('namespace', options.namespace);
+  url.searchParams.set('container', options.containerName);
+  url.searchParams.set('timestamps', String(options.timestamps));
+  url.searchParams.set('since', String(normalizeNonNegative(options.since, 0)));
+  url.searchParams.set(
+    'tail',
+    String(Math.min(normalizeNonNegative(options.tail, 100), MAX_LOG_LINES))
+  );
+  return url.toString();
+}
+
 export function openDockerLogsStream(options: LiveLogsOptions) {
+  return openLogsStream(
+    options,
+    buildDockerLogsWebSocketUrl(options),
+    options.multiplexed
+  );
+}
+
+export function openKubernetesLogsStream(options: KubernetesLiveLogsOptions) {
+  return openLogsStream(
+    options,
+    buildKubernetesLogsWebSocketUrl(options),
+    false
+  );
+}
+
+function openLogsStream(
+  options: Pick<LiveLogsOptions, 'tail' | 'timestamps' | 'onLogs' | 'onError'>,
+  url: string,
+  multiplexed: boolean
+) {
   let socket: WebSocket | undefined;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
   let updateTimer: ReturnType<typeof setTimeout> | undefined;
@@ -124,8 +173,8 @@ export function openDockerLogsStream(options: LiveLogsOptions) {
       return;
     }
 
-    const decoder = new DockerLogStreamDecoder(options.multiplexed);
-    socket = new WebSocket(buildDockerLogsWebSocketUrl(options));
+    const decoder = new DockerLogStreamDecoder(multiplexed);
+    socket = new WebSocket(url);
     socket.binaryType = 'arraybuffer';
 
     socket.addEventListener('message', (event) => {

@@ -14,7 +14,6 @@ export function useNamespaceVolumes(
   environmentId: EnvironmentId,
   namespace: string,
   queryOptions?: {
-    refetchInterval?: number;
     withApplications?: boolean;
   }
 ) {
@@ -26,7 +25,6 @@ export function useNamespaceVolumes(
       }),
     {
       enabled: !!namespace,
-      refetchInterval: queryOptions?.refetchInterval,
       select: convertToVolumeViewModels,
       ...withError('Unable to retrieve volumes'),
     }

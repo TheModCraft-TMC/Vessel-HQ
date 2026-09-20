@@ -91,11 +91,14 @@ format-server: ## Format server code
 	go fmt ./...
 
 ##@ Lint
-.PHONY: lint lint-client lint-server check-lint-version
+.PHONY: lint lint-client lint-server check-lint-version check-frontend-modernization
 lint: lint-client lint-server ## Lint all code
 
-lint-client: ## Lint client code
+lint-client: check-frontend-modernization ## Lint client code
 	pnpm run lint
+
+check-frontend-modernization: ## Prevent new AngularJS and frontend polling debt
+	pnpm run check:frontend-modernization
 
 check-lint-version:
 	@installed=v$$(golangci-lint --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1); \

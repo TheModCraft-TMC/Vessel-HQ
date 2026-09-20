@@ -82,7 +82,7 @@ function HelmDatatableDescription({ isAdmin }: { isAdmin: boolean }) {
   return (
     <TextTip color="blue" className="mb-3">
       <p>
-        Adding a Helm repository here makes it available only in your Portainer
+        Adding a Helm repository here makes it available only in your Vessel HQ
         user account. The Helm charts from these repositories (along with the
         globally set Helm repository) are shown in the &apos;Create from
         Code&apos; screen.

@@ -130,7 +130,7 @@ export function UpgradeButton({
             <Tooltip
               message={
                 <div>
-                  Portainer is unable to find any versions for this chart in the
+                  Vessel HQ is unable to find any versions for this chart in the
                   repositories saved. Try adding a new repository which contains
                   the chart in the{' '}
                   <Link

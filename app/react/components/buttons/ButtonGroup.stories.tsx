@@ -12,7 +12,7 @@ export default {
 
 function Template({
   size,
-}: JSX.IntrinsicAttributes & PropsWithChildren<Props>) {
+}: React.JSX.IntrinsicAttributes & PropsWithChildren<Props>) {
   return (
     <ButtonGroup size={size}>
       <Button icon={Play} color="primary" onClick={() => {}} data-cy="button">

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
 import { http, HttpResponse } from 'msw';
@@ -315,8 +315,10 @@ describe('StackDuplicationFormInner', () => {
   });
 
   describe('rename functionality', () => {
-    it('should display rename help text', () => {
+    it('should display rename help text', async () => {
       const { getByText } = renderFormInner();
+
+      await act(async () => {});
 
       expect(
         getByText(

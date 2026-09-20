@@ -13,7 +13,7 @@ export function useGoToHighlightedRow<T extends { id: string }>(
     handlePageChangeRef.current = goToPage;
   });
 
-  const highlightedItemIdRef = useRef<string>();
+  const highlightedItemIdRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     if (

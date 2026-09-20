@@ -18,9 +18,6 @@ export function useGetIngressesCountQuery(
     async () => getIngressesCount(environmentId),
     {
       ...withError('Unable to get ingresses count'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

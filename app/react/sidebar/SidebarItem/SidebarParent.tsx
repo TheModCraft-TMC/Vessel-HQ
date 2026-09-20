@@ -4,6 +4,7 @@ import { PropsWithChildren, useState } from 'react';
 import { AutomationTestingProps } from '@/types';
 
 import { Icon } from '@@/Icon';
+import type { IconSource } from '@@/Icon';
 import { Link } from '@@/Link';
 import { CollapseExpandButton } from '@@/CollapseExpandButton';
 
@@ -15,7 +16,7 @@ import { SidebarTooltip } from './SidebarTooltip';
 
 type Props = {
   label: string;
-  icon: React.ReactNode;
+  icon: IconSource;
   to: string;
   pathOptions?: PathOptions;
   params?: object;

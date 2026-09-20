@@ -12,7 +12,6 @@ export function StackServicesDatatable({ name }: { name: string }) {
     <ServicesDatatable
       dataset={services}
       titleIcon={ListIcon}
-      onRefresh={servicesQuery.refetch}
       tableKey="stack-services"
     />
   );

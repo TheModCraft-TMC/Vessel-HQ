@@ -10,7 +10,6 @@ import {
 
 import { Tooltip } from '@@/Tip/Tooltip';
 import { Button } from '@@/buttons';
-import { BEFeatureIndicator } from '@@/BEFeatureIndicator';
 
 export function DefaultRegistryAction() {
   const settingsQuery = usePublicSettings({
@@ -25,6 +24,10 @@ export function DefaultRegistryAction() {
 
   const isLimited = isLimitedToBE(FeatureId.HIDE_DOCKER_HUB_ANONYMOUS);
 
+  if (isLimited) {
+    return null;
+  }
+
   return (
     <>
       {!hideDefaultRegistry ? (
@@ -38,13 +41,6 @@ export function DefaultRegistryAction() {
           >
             Hide for all users
           </Button>
-          <BEFeatureIndicator featureId={FeatureId.HIDE_DOCKER_HUB_ANONYMOUS} />
-          {isLimited && (
-            <Tooltip
-              message="This hides the option in any registry dropdown prompts but does not prevent a user from deploying anonymously from Docker Hub directly via YAML.
-            Note: Docker Hub (anonymous) will continue to show as the ONLY option if there are NO other registries available to the user."
-            />
-          )}
         </div>
       ) : (
         <div className="vertical-center">

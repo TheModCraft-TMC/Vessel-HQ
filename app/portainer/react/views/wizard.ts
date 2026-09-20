@@ -1,46 +1,25 @@
-import angular from 'angular';
-import { StateRegistry } from '@uirouter/angularjs';
+import { StateRegistry } from '@uirouter/react';
 
-import { r2a } from '@/react-tools/react2angular';
+import { registerReactState } from '@/react-tools/registerReactState';
 import {
   EnvironmentCreationView,
   EnvironmentTypeSelectView,
   HomeView,
 } from '@/react/portainer/environments/wizard';
 import { withCurrentUser } from '@/react-tools/withCurrentUser';
-import { withReactQuery } from '@/react-tools/withReactQuery';
-import { withUIRouter } from '@/react-tools/withUIRouter';
 import { AccessHeaders } from '@/portainer/authorization-guard';
 
-export const wizardModule = angular
-  .module('portainer.app.react.views.wizard', [])
-  .component(
-    'wizardEnvironmentCreationView',
-    r2a(
-      withUIRouter(withReactQuery(withCurrentUser(EnvironmentCreationView))),
-      []
-    )
-  )
-  .component(
-    'wizardEnvironmentTypeSelectView',
-    r2a(
-      withUIRouter(withReactQuery(withCurrentUser(EnvironmentTypeSelectView))),
-      []
-    )
-  )
-  .component(
-    'wizardMainView',
-    r2a(withUIRouter(withReactQuery(withCurrentUser(HomeView))), [])
-  )
-  .config(config).name;
+const EnvironmentCreationRoute = withCurrentUser(EnvironmentCreationView);
+const EnvironmentTypeSelectRoute = withCurrentUser(EnvironmentTypeSelectView);
+const WizardHomeRoute = withCurrentUser(HomeView);
 
-function config($stateRegistryProvider: StateRegistry) {
-  $stateRegistryProvider.register({
+export function registerWizardStates($stateRegistryProvider: StateRegistry) {
+  registerReactState($stateRegistryProvider, {
     name: 'portainer.wizard',
     url: '/wizard',
     views: {
       'content@': {
-        component: 'wizardMainView',
+        component: WizardHomeRoute,
       },
     },
     data: {
@@ -48,12 +27,12 @@ function config($stateRegistryProvider: StateRegistry) {
     },
   });
 
-  $stateRegistryProvider.register({
+  registerReactState($stateRegistryProvider, {
     name: 'portainer.wizard.endpoints',
     url: '/endpoints?referrer',
     views: {
       'content@': {
-        component: 'wizardEnvironmentTypeSelectView',
+        component: EnvironmentTypeSelectRoute,
       },
     },
     params: {
@@ -64,12 +43,12 @@ function config($stateRegistryProvider: StateRegistry) {
     },
   });
 
-  $stateRegistryProvider.register({
+  registerReactState($stateRegistryProvider, {
     name: 'portainer.wizard.endpoints.create',
     url: '/create?envType&step',
     views: {
       'content@': {
-        component: 'wizardEnvironmentCreationView',
+        component: EnvironmentCreationRoute,
       },
     },
     params: {

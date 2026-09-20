@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
@@ -157,10 +157,10 @@ describe('HelmTemplatesList', () => {
     await user.type(searchInput, 'nginx');
 
     // Wait 300ms for debounce
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 300);
+    await act(async () => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 300);
+      });
     });
 
     // Should show only nginx chart
@@ -234,10 +234,10 @@ describe('HelmTemplatesList', () => {
     await user.type(searchInput, 'nonexistent chart');
 
     // Wait 300ms for debounce
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 300);
+    await act(async () => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 300);
+      });
     });
 
     // Check for no results message

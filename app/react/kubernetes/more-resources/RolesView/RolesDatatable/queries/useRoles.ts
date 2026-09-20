@@ -20,9 +20,6 @@ export function useRoles(
     async () => getAllRoles(environmentId),
     {
       ...withError('Unable to get roles'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
       enabled: options?.enabled,
     }
   );

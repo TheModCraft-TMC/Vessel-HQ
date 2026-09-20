@@ -7,9 +7,9 @@ ARG BUILD_DATE=unspecified
 ARG RELEASE_VERSION=unspecified
 ENV COMPOSE_UNPACKER_IMAGE=${COMPOSE_UNPACKER_IMAGE}
 
-LABEL org.opencontainers.image.title="Portainer CE" \
-  org.opencontainers.image.description="Portainer Community Edition server." \
-  org.opencontainers.image.vendor="Portainer.io" \
+LABEL org.opencontainers.image.title="Vessel HQ" \
+  org.opencontainers.image.description="Vessel HQ container management server." \
+  org.opencontainers.image.vendor="TheModCraft" \
   org.opencontainers.image.version=$RELEASE_VERSION \
   org.opencontainers.image.revision=$GIT_COMMIT \
   org.opencontainers.image.created=$BUILD_DATE \

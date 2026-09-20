@@ -10,11 +10,9 @@ import { IconProps } from '@@/Icon';
 import { ExpandableDatatable } from '@@/datatables/ExpandableDatatable';
 import {
   createPersistedStore,
-  refreshableSettings,
   hiddenColumnsSettings,
 } from '@@/datatables/types';
 import { useTableState } from '@@/datatables/useTableState';
-import { useRepeater } from '@@/datatables/useRepeater';
 import { defaultGlobalFilterFn } from '@@/datatables/Datatable';
 import { getColumnVisibilityState } from '@@/datatables/ColumnVisibilityMenu';
 import { mergeOptions } from '@@/datatables/extend-options/mergeOptions';
@@ -33,14 +31,12 @@ export function ServicesDatatable({
   dataset,
   isAddActionVisible,
   isStackColumnVisible,
-  onRefresh,
   tableKey,
 }: {
   dataset: Array<ServiceViewModel> | undefined;
   titleIcon?: IconProps['icon'];
   isAddActionVisible?: boolean;
   isStackColumnVisible?: boolean;
-  onRefresh?(): void;
   tableKey: string;
 }) {
   // use a unique tableKey so that unrelated services datatables don't share state
@@ -48,7 +44,6 @@ export function ServicesDatatable({
     tableKey,
     'name',
     (set) => ({
-      ...refreshableSettings(set),
       ...hiddenColumnsSettings(set),
       expanded: {},
       setExpanded(value) {
@@ -63,7 +58,6 @@ export function ServicesDatatable({
   const apiVersion = useApiVersion(environmentId);
   const tableState = useTableState(store, tableKey);
   const columns = useColumns(isStackColumnVisible);
-  useRepeater(tableState.autoRefreshRateMS, onRefresh);
 
   return (
     <ExpandableDatatable

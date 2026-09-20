@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Formik } from 'formik';
 import { vi } from 'vitest';
@@ -341,7 +341,7 @@ describe('version rollback', () => {
     });
   });
 
-  it('should update stackFileContent when version loaded', () => {
+  it('should update stackFileContent when version loaded', async () => {
     const mockUseVersionedStackFile = vi.mocked(useVersionedStackFile);
     let capturedOnLoad: ((content: string) => void) | undefined;
 
@@ -360,7 +360,9 @@ describe('version rollback', () => {
 
     // Simulate loading a different version
     if (capturedOnLoad) {
-      capturedOnLoad('version: "2"\nservices:\n  db:\n    image: postgres');
+      await act(async () => {
+        capturedOnLoad?.('version: "2"\nservices:\n  db:\n    image: postgres');
+      });
     }
 
     // The form value should be updated through setFieldValue

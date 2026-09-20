@@ -43,7 +43,7 @@ function DeployCode({ code }: DeployCodeProps) {
   return (
     <>
       <TextTip color="blue" className="mb-1">
-        When using the socket, ensure that you have started the Portainer
+        When using the socket, ensure that you have started the Vessel HQ
         container with the following Podman flag:
       </TextTip>
       <Code>{bindMountCode}</Code>

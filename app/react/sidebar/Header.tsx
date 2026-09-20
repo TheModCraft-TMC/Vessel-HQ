@@ -1,12 +1,11 @@
 import clsx from 'clsx';
+import { X } from 'lucide-react';
 
-import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import fullLogo from '@/assets/images/vessel-hq-logo.svg';
+import vesselIcon from '@/assets/ico/vessel-hq-mark.svg';
 
 import { Link } from '@@/Link';
 
-import fullLogoBE from './portainer_logo-BE.svg';
-import fullLogoCE from './portainer_logo-CE.svg';
-import portainerIcon from './portainer-p-icon-white.svg';
 import { useSidebarState } from './useSidebarState';
 import styles from './Header.module.css';
 
@@ -15,12 +14,13 @@ interface Props {
 }
 
 export function Header({ logo: customLogo }: Props) {
-  const { isOpen } = useSidebarState();
+  const { isOpen, toggle } = useSidebarState();
 
   return (
     <div
       className={clsx('flex w-full flex-wrap', {
         'justify-center pr-5': !isOpen,
+        'items-center justify-between': isOpen,
       })}
     >
       <Link
@@ -30,32 +30,15 @@ export function Header({ logo: customLogo }: Props) {
       >
         <Logo customLogo={customLogo} isOpen={isOpen} />
       </Link>
-      {isOpen && customLogo && (
-        <div
-          className={clsx(
-            'space-x-1 pt-3 text-[9.4px] uppercase tracking-[.28em]',
-            'text-gray-3',
-            'th-dark:text-gray-warm-6'
-          )}
+      {isOpen && (
+        <button
+          type="button"
+          className="border-0 bg-transparent p-1 text-white min-[561px]:hidden"
+          aria-label="Close sidebar"
+          onClick={toggle}
         >
-          <span className="font-medium">Powered by</span>
-          <span className="font-semibold">
-            {isBE ? (
-              'portainer business'
-            ) : (
-              <a
-                href="https://www.portainer.io/install"
-                className={clsx(
-                  'hover:underline',
-                  'text-blue-6 hover:text-blue-8',
-                  'th-dark:text-blue-7 th-dark:hover:text-blue-9'
-                )}
-              >
-                portainer community
-              </a>
-            )}
-          </span>
-        </div>
+          <X aria-hidden="true" />
+        </button>
       )}
     </div>
   );
@@ -67,10 +50,10 @@ function getLogo(isOpen: boolean, customLogo?: string) {
   }
 
   if (!isOpen) {
-    return portainerIcon;
+    return vesselIcon;
   }
 
-  return isBE ? fullLogoBE : fullLogoCE;
+  return fullLogo;
 }
 
 function Logo({

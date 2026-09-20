@@ -1,5 +1,4 @@
-import { waitFor } from '@testing-library/react';
-import { renderHook } from '@testing-library/react-hooks';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import type { AnySchema } from 'yup';
 
 import {
@@ -221,7 +220,7 @@ describe('useValidation', () => {
   const currentStackName = 'test-stack';
   const currentEnvironmentId = 1;
 
-  it('should start with both migrate and duplicate as false', () => {
+  it('should start with both migrate and duplicate as false', async () => {
     const { result } = renderHook(() =>
       useValidation({
         values: {
@@ -233,6 +232,8 @@ describe('useValidation', () => {
         currentEnvironmentId,
       })
     );
+
+    await act(async () => {});
 
     expect(result.current.migrate).toBe(false);
     expect(result.current.duplicate).toBe(false);

@@ -24,7 +24,6 @@ export function useConfigMap<T = Configuration>(
     {
       select: options?.select,
       enabled: options?.enabled,
-      refetchInterval: () => options?.autoRefreshRate ?? false,
       // handle error from the callers (some callers shouldn't display an error)
     }
   );

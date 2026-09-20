@@ -71,7 +71,7 @@ function Template({
   color,
   size,
   disabled,
-}: JSX.IntrinsicAttributes & PropsWithChildren<Props>) {
+}: React.JSX.IntrinsicAttributes & PropsWithChildren<Props>) {
   return (
     <Button
       onClick={onClick}

@@ -1,10 +1,11 @@
-import { ComponentType, PropsWithChildren, ReactNode } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { Icon } from '@@/Icon';
+import type { IconSource } from '@@/Icon';
 
 interface Props {
-  icon?: ReactNode | ComponentType<unknown>;
+  icon?: IconSource;
   label: React.ReactNode;
   description?: ReactNode;
   className?: string;

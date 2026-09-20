@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { withError } from '@/react-tools/react-query';
-import {
-  PlatformType,
-  EnvironmentStatus,
-} from '@/react/portainer/environments/types';
+import { PlatformType } from '@/react/portainer/environments/types';
 
 import {
   EnvironmentsQueryParams,
@@ -12,8 +9,6 @@ import {
 } from '../environment.service';
 
 import { environmentQueryKeys } from './query-keys';
-
-export const ENVIRONMENTS_POLLING_INTERVAL = 30000; // in ms
 
 export const SortOptions = [
   'Name',
@@ -49,35 +44,12 @@ export type Query = EnvironmentsQueryParams & {
   order?: 'asc' | 'desc';
 };
 
-type GetEndpointsResponse = Awaited<ReturnType<typeof getEnvironments>>;
-
-export function refetchIfAnyOffline(data?: GetEndpointsResponse) {
-  if (!data) {
-    return false;
-  }
-
-  const hasOfflineEnvironment = data.value.some(
-    (env) => env.Status === EnvironmentStatus.Down
-  );
-
-  if (!hasOfflineEnvironment) {
-    return false;
-  }
-
-  return ENVIRONMENTS_POLLING_INTERVAL;
-}
-
 export function useEnvironmentList(
   { page = 1, pageLimit = 100, sort, order, ...query }: Query = {},
   {
     enabled,
-    refetchInterval,
     staleTime,
   }: {
-    refetchInterval?:
-      | number
-      | false
-      | ((data?: GetEndpointsResponse) => false | number);
     staleTime?: number;
     enabled?: boolean;
   } = {}
@@ -100,7 +72,6 @@ export function useEnvironmentList(
     {
       staleTime,
       keepPreviousData: true,
-      refetchInterval,
       enabled,
       ...withError('Failure retrieving environments'),
     }

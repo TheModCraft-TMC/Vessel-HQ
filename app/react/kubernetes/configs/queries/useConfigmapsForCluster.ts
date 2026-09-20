@@ -26,9 +26,6 @@ export function useConfigMapsForCluster<TData = Configuration[]>(
       }),
     {
       ...withError('Unable to retrieve ConfigMaps for cluster'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
       select,
     }
   );

@@ -26,9 +26,6 @@ export function useSecretsForCluster<TData = Configuration[]>(
       }),
     {
       ...withError('Unable to retrieve secrets for cluster'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
       select,
     }
   );

@@ -15,7 +15,6 @@ import { SystemBadge } from '@@/Badge/SystemBadge';
 import { IngressClassDatatable } from '../../../cluster/ingressClass/IngressClassDatatable';
 import { useIngressControllerClassMapQuery } from '../../../cluster/ingressClass/useIngressControllerClassMap';
 import { CreateNamespaceFormValues } from '../../CreateView/types';
-import { AnnotationsBeTeaser } from '../../../annotations/AnnotationsBeTeaser';
 import { isDefaultNamespace } from '../../isDefaultNamespace';
 import { useIsSystemNamespace } from '../../queries/useIsSystemNamespace';
 
@@ -98,7 +97,6 @@ export function NamespaceInnerForm({
           />
         )}
       </FormControl>
-      <AnnotationsBeTeaser />
       {(values.resourceQuota.enabled || !isEditingDisabled) && (
         <ResourceQuotaFormSection
           isEdit={isEdit}

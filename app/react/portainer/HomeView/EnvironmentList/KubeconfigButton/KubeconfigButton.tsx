@@ -30,7 +30,7 @@ export function KubeconfigButton({ environments, envQueryParams }: Props) {
   let tooltipMessage = '';
   if (isHttp) {
     tooltipMessage =
-      'Kubeconfig download is not available when Portainer is accessed via HTTP. Please use HTTPS';
+      'Kubeconfig download is not available when Vessel HQ is accessed via HTTP. Please use HTTPS';
   } else if (noKubeEnvs) {
     tooltipMessage = 'No Kubernetes environments detected';
   }

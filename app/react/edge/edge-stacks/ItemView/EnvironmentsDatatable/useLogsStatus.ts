@@ -21,13 +21,6 @@ export function useLogsStatus(
     logsStatusQueryKey(edgeStackId, environmentId),
     () => getLogsStatus(edgeStackId, environmentId),
     {
-      refetchInterval(status) {
-        if (status === 'pending') {
-          return 30 * 1000;
-        }
-
-        return false;
-      },
     }
   );
 }

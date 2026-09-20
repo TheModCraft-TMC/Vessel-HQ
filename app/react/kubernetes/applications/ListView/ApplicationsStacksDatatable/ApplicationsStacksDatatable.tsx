@@ -38,7 +38,6 @@ export function ApplicationsStacksDatatable({
   const namespaceListQuery = useNamespacesQuery(environmentId);
   const { authorized: hasWriteAuth } = useAuthorizations('K8sApplicationsW');
   const applicationsQuery = useApplications(environmentId, {
-    refetchInterval: tableState.autoRefreshRateMS,
     namespace: tableState.namespace,
   });
   const ingressesQuery = useIngresses(environmentId);

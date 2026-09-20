@@ -70,7 +70,7 @@ export function EditGitSettingsModal({ stack, onClose }: Props) {
     let repullImageAndRedeploy: boolean | undefined;
     if (values.redeployNow) {
       const result = await confirmStackUpdate(
-        'Any changes to this stack or application made locally in Portainer will be overridden, which may cause service interruption. Do you wish to continue?',
+        'Any changes to this stack or application made locally in Vessel HQ will be overridden, which may cause service interruption. Do you wish to continue?',
         stack.Type === StackType.DockerSwarm
       );
       if (!result) {

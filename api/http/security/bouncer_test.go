@@ -44,6 +44,32 @@ func TestIsMutationRequest(t *testing.T) {
 	}
 }
 
+func TestStatusCapturingResponseWriterWasSuccessful(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name       string
+		statusCode int
+		expected   bool
+	}{
+		{name: "implicit success", expected: true},
+		{name: "created", statusCode: http.StatusCreated, expected: true},
+		{name: "redirect", statusCode: http.StatusTemporaryRedirect, expected: true},
+		{name: "client failure", statusCode: http.StatusBadRequest, expected: false},
+		{name: "server failure", statusCode: http.StatusInternalServerError, expected: false},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			writer := &statusCapturingResponseWriter{
+				ResponseWriter: httptest.NewRecorder(),
+				statusCode:     test.statusCode,
+			}
+			assert.Equal(t, test.expected, writer.wasSuccessful())
+		})
+	}
+}
+
 func tokenLookupSucceed(dataStore dataservices.DataStore, jwtService portainer.JWTService) tokenLookup {
 	return func(r *http.Request) (*portainer.TokenData, error) {
 		uid := portainer.UserID(1)

@@ -4,6 +4,7 @@ import { ServiceUpdateConfig } from '../types';
 
 export function convertServiceToConfig(service: Service): ServiceUpdateConfig {
   return {
+    ...service.Spec,
     Name: service.Spec?.Name || '',
     Labels: service.Spec?.Labels || {},
     TaskTemplate: service.Spec?.TaskTemplate || {},

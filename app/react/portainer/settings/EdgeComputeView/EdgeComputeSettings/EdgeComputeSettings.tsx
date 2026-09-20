@@ -85,7 +85,7 @@ export function EdgeComputeSettings({ settings, onSubmit }: Props) {
                 </FormControl>
 
                 <TextTip color="blue" className="mb-2">
-                  Enable this setting to use Portainer Edge Compute
+                  Enable this setting to use Vessel HQ Edge Compute
                   capabilities.
                 </TextTip>
 
@@ -93,7 +93,7 @@ export function EdgeComputeSettings({ settings, onSubmit }: Props) {
                   <>
                     <PortainerUrlField
                       fieldName="EdgePortainerUrl"
-                      tooltip="URL of this Portainer instance that will be used by Edge agents to initiate the communications."
+                      tooltip="URL of this Vessel HQ instance that Edge agents will use to initiate communication."
                     />
 
                     <PortainerTunnelAddrField fieldName="Edge.TunnelServerAddress" />
@@ -124,7 +124,7 @@ export function EdgeComputeSettings({ settings, onSubmit }: Props) {
 
                 <FormControl
                   inputId="edge_enforce_id"
-                  label="Enforce use of Portainer generated Edge ID"
+                  label="Enforce use of Vessel HQ generated Edge ID"
                   size="small"
                   tooltip="This setting only applies to manually created environments."
                   errors={errors.EnforceEdgeID}

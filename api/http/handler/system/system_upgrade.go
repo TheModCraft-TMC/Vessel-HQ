@@ -58,7 +58,7 @@ func (handler *Handler) systemUpgrade(w http.ResponseWriter, r *http.Request) *h
 	}
 
 	if err := handler.upgradeService.Upgrade(platform, environment, payload.License); err != nil {
-		return httperror.InternalServerError("Failed to upgrade Portainer", err)
+		return httperror.InternalServerError("Failed to upgrade Vessel HQ", err)
 	}
 
 	return response.Empty(w)

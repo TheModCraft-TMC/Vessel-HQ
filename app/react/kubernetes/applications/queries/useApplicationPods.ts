@@ -36,9 +36,6 @@ export function useApplicationPods(
     {
       ...withError(`Unable to get pods for ${appName}`),
       enabled: !!app,
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

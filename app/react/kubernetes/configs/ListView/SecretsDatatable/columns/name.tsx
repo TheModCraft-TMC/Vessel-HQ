@@ -68,7 +68,7 @@ function Cell({ row }: CellContext<SecretRowData, string>) {
           {!row.original.inUse && !isSystemSecret && <UnusedBadge />}
           {row.original.registryId && (
             <RegistryBadge registryId={row.original.registryId}>
-              <Tooltip message="This registry secret was created by Portainer to allow pulling images." />
+              <Tooltip message="This registry secret was created by Vessel HQ to allow pulling images." />
             </RegistryBadge>
           )}
         </div>

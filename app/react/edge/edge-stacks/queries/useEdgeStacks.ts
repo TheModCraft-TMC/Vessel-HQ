@@ -14,15 +14,12 @@ type QueryParams = {
 
 export function useEdgeStacks<T extends EdgeStack[] = EdgeStack[]>({
   params,
-  refetchInterval,
 }: {
   params?: QueryParams;
-  refetchInterval?: number | false | ((data?: T) => false | number);
 } = {}) {
   return useQuery({
     queryKey: queryKeys.base(),
     queryFn: () => getEdgeStacks<T>(params),
-    refetchInterval,
     ...withError('Failed loading Edge stack'),
   });
 }

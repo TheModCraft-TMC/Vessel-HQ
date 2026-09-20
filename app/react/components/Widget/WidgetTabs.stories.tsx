@@ -12,7 +12,7 @@ import {
 import { WidgetTabs, Tab } from './WidgetTabs';
 
 // Create a UIRouter instance with a dummy state so `Link to="."` works
-function withRouter(Story: () => JSX.Element) {
+function withRouter(Story: () => React.JSX.Element) {
   const router = new UIRouterReact();
   router.plugin(servicesPlugin);
   router.plugin(hashLocationPlugin);

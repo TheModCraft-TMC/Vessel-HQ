@@ -62,7 +62,7 @@ export function DeploymentScripts({
 
       <div className="form-group">
         <span className="col-sm-12 text-muted small">
-          Ensure that you have deployed the Portainer agent in your cluster
+          Ensure that you have deployed the Vessel HQ agent in your cluster
           first. Refer to the platform related command below to deploy it.
         </span>
       </div>

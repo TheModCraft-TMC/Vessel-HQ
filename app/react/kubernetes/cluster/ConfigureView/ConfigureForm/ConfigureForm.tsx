@@ -174,7 +174,7 @@ function InnerForm({
         <FormSection title="Networking - Ingresses">
           <IngressClassDatatable
             onChange={onChangeControllers}
-            description="Enabling ingress controllers in your cluster allows them to be available in the Portainer UI for users to publish applications over HTTP/HTTPS. A controller must have a class name for it to be included here."
+            description="Enabling ingress controllers in your cluster makes them available in the Vessel HQ UI for publishing applications over HTTP/HTTPS. A controller must have a class name to be included here."
             values={values.ingressClasses}
             initialValues={initialValues.ingressClasses}
             isLoading={isIngressClassesLoading}
@@ -314,7 +314,7 @@ function InnerForm({
             insightCloseId="resourceOverCommit"
             className="mb-4"
             header="Allow resource over-commit - UI-only change in 2.20"
-            content="Resource over-commit has always been ENABLED in Portainer CE. However, the toggle was incorrectly shown as OFF. This has now been corrected but please note that no functionality has been removed."
+            content="Resource over-commit has always been enabled. The toggle was previously shown as off incorrectly; no functionality has been removed."
           />
           <div className="form-group">
             <div className="col-sm-12">

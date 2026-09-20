@@ -11,8 +11,6 @@ import { notifyError } from '@/portainer/services/notifications';
 import { isAxiosError } from '@/react/portainer/services/axios/utils/isAxiosError';
 import { parseAxiosError } from '@/react/portainer/services/axios/utils/parseAxiosError';
 
-import { startRealtimeQuerySync } from './realtime-query-sync';
-
 export function withError(fallbackMessage?: string, title = 'Failure') {
   return {
     meta: {
@@ -129,4 +127,3 @@ function extractErrorMeta(errorMeta?: unknown) {
 }
 
 export const queryClient = createQueryClient();
-startRealtimeQuerySync(queryClient);

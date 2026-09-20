@@ -129,7 +129,7 @@ export function createValidationSchema(
       )
       .test(
         'portainer-drain',
-        'Cannot drain node where the Portainer instance is running',
+        'Cannot drain the node where Vessel HQ is running',
         (value) => {
           if (value === 'Drain' && containsPortainer) {
             return false;

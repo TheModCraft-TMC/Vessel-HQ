@@ -189,7 +189,7 @@ function ExternalOrphanedWarning({
             <Icon icon={AlertTriangle} mode="warning" className="!mr-0" />
             {isExternal && (
               <span>
-                This stack was created outside of Portainer. Control over this
+                This stack was created outside of Vessel HQ. Control over this
                 stack is limited.
               </span>
             )}

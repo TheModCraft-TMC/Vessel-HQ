@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { DropdownMenu } from './DropdownMenu';
@@ -115,7 +115,9 @@ describe('DropdownMenu', () => {
     expect(screen.getByRole('menu', { name: /Group/i })).toBeVisible();
 
     await user.click(document.body);
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+    });
   });
 
   test('highlights the selected option', async () => {

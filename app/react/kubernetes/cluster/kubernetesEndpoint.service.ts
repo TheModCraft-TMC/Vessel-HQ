@@ -27,9 +27,6 @@ export function useKubernetesEndpointsQuery(
     () => getKubernetesEndpoints(environmentId),
     {
       ...withError('Unable to retrieve Kubernetes endpoints'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

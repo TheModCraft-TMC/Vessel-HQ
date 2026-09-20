@@ -20,7 +20,7 @@ const asyncIntervalFieldSettings = {
   ping: {
     label: 'Edge agent default ping frequency',
     tooltip:
-      'Interval used by default by each Edge agent to ping the Portainer instance. Affects Edge environment management and Edge compute features.',
+      'Interval used by default by each Edge agent to ping the Vessel HQ instance. Affects Edge environment management and Edge compute features.',
   },
   snapshot: {
     label: 'Edge agent default snapshot frequency',
@@ -76,7 +76,7 @@ export function DeploymentSyncOptions() {
                     }
                     isDefaultHidden
                     label="Edge agent default poll frequency"
-                    tooltip="Interval used by default by each Edge agent to check in with the Portainer instance. Affects Edge environment management and Edge compute features."
+                    tooltip="Interval used by default by each Edge agent to check in with the Vessel HQ instance. Affects Edge environment management and Edge compute features."
                   />
                 </FormSection>
 

@@ -1,12 +1,14 @@
 import clsx from 'clsx';
-import { ComponentType, ReactNode } from 'react';
+import { ElementType, ReactNode } from 'react';
 import * as lucideIcons from 'lucide-react';
 import { isValidElementType } from 'react-is';
 
 import Svg, { SvgIcons } from './Svg';
 
+export type IconSource = ReactNode | ElementType;
+
 export interface IconProps {
-  icon: ReactNode | ComponentType<unknown>;
+  icon: IconSource;
   iconClass?: string;
 }
 
@@ -26,7 +28,7 @@ export type IconMode =
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface Props {
-  icon: ReactNode | ComponentType<{ size?: string | number }>;
+  icon: IconSource;
   className?: string;
   size?: IconSize;
   mode?: IconMode;
@@ -49,7 +51,7 @@ export function Icon({ icon, className, mode, size, spin }: Props) {
 
     return (
       <span className={classes} aria-hidden="true" role="img">
-        {icon}
+        {icon as ReactNode}
       </span>
     );
   }

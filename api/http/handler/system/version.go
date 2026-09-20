@@ -53,11 +53,11 @@ type versionResponse struct {
 func (handler *Handler) version(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
 	isAdmin, err := security.IsAdmin(r)
 	if err != nil {
-		return httperror.Forbidden("Permission denied to access Portainer", err)
+		return httperror.Forbidden("Permission denied to access Vessel HQ", err)
 	}
 
 	result := &versionResponse{
-		ServerVersion:   serverVersion(build.ImageTag, portainer.APIVersion),
+		ServerVersion:   serverVersion(build.ImageTag, build.ReleaseVersion),
 		VersionSupport:  portainer.APIVersionSupport,
 		DatabaseVersion: portainer.APIVersion,
 		ServerEdition:   portainer.Edition.GetEditionLabel(),
@@ -97,7 +97,7 @@ func refreshLatestVersion(versionCheckURL string) {
 
 	body, err := client.Get(versionCheckURL, 5)
 	if err != nil {
-		log.Debug().Err(err).Msg("couldn't fetch latest Portainer release version")
+		log.Debug().Err(err).Msg("couldn't fetch latest maintained image version")
 		return
 	}
 
@@ -108,7 +108,7 @@ func refreshLatestVersion(versionCheckURL string) {
 	}
 
 	if err := json.Unmarshal(body, &data); err != nil {
-		log.Debug().Err(err).Msg("couldn't parse latest Portainer version")
+		log.Debug().Err(err).Msg("couldn't parse latest maintained image version")
 		return
 	}
 
@@ -124,7 +124,7 @@ func refreshLatestVersion(versionCheckURL string) {
 	}
 
 	if latestVersion == "" {
-		log.Debug().Msg("couldn't find a valid maintained Portainer version")
+		log.Debug().Msg("couldn't find a valid maintained image version")
 		return
 	}
 
@@ -143,14 +143,14 @@ func GetLatestVersion() string {
 func HasNewerVersion(currentVersion, latestVersion string) bool {
 	currentParts, valid := parseNumericVersion(currentVersion)
 	if !valid {
-		log.Debug().Str("version", currentVersion).Msg("current Portainer version isn't a numeric release version")
+		log.Debug().Str("version", currentVersion).Msg("current Vessel HQ version isn't a numeric release version")
 
 		return false
 	}
 
 	latestParts, valid := parseNumericVersion(latestVersion)
 	if !valid {
-		log.Debug().Str("version", latestVersion).Msg("latest Portainer version isn't a numeric release version")
+		log.Debug().Str("version", latestVersion).Msg("latest Vessel HQ version isn't a numeric release version")
 
 		return false
 	}
@@ -173,12 +173,16 @@ func HasNewerVersion(currentVersion, latestVersion string) bool {
 	return false
 }
 
-func serverVersion(imageTag, apiVersion string) string {
+func serverVersion(imageTag, releaseVersion string) string {
 	if _, valid := parseNumericVersion(imageTag); valid {
 		return strings.TrimPrefix(strings.TrimSpace(imageTag), "v")
 	}
 
-	return apiVersion
+	if _, valid := parseNumericVersion(releaseVersion); valid {
+		return strings.TrimPrefix(strings.TrimSpace(releaseVersion), "v")
+	}
+
+	return "development"
 }
 
 func parseNumericVersion(version string) ([]uint64, bool) {

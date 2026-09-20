@@ -224,7 +224,7 @@ function DefaultItem({
         readOnly={readOnly}
         data-cy={`${dataCy}RemoveButton_${index}`}
       />
-      {error && <FormError>{error}</FormError>}
+      {typeof error === 'string' && <FormError>{error}</FormError>}
     </>
   );
 }

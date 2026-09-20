@@ -23,9 +23,6 @@ export function useEnvironment<T = Environment>(
       ...withError('Failed loading environment'),
       staleTime: 50,
       enabled: !!environmentId,
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

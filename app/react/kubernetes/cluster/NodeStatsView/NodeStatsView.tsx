@@ -62,7 +62,7 @@ export function NodeStatsView() {
       <div className="mx-4 mb-4 space-y-4">
         {metricsState === 'unavailable' && (
           <Alert color="warn" title="Unable to retrieve node metrics">
-            Portainer was unable to retrieve any metrics associated to that
+            Vessel HQ was unable to retrieve any metrics associated with that
             node. Please contact your administrator to ensure that the
             Kubernetes metrics feature is properly configured.
           </Alert>

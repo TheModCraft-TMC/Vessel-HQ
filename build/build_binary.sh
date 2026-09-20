@@ -2,13 +2,26 @@
 set -euo pipefail
 
 BUILD_SOURCESDIRECTORY=${BUILD_SOURCESDIRECTORY:-$(pwd)}
+RELEASE_VERSION_FILE="$BUILD_SOURCESDIRECTORY/RELEASE_VERSION"
+
+if [ ! -f "$RELEASE_VERSION_FILE" ]; then
+  echo "Missing release version file: $RELEASE_VERSION_FILE" >&2
+  exit 1
+fi
+
+RELEASE_VERSION=${RELEASE_VERSION:-$(tr -d '[:space:]' < "$RELEASE_VERSION_FILE")}
+
+if [[ ! "$RELEASE_VERSION" =~ ^v?[0-9]+(\.[0-9]+)+$ ]]; then
+  echo "Invalid maintained release version: $RELEASE_VERSION" >&2
+  exit 1
+fi
 
 mkdir -p dist
 
 # populate tool versions
 
 BUILDNUMBER=${BUILDNUMBER:-"N/A"}
-CONTAINER_IMAGE_TAG=${CONTAINER_IMAGE_TAG:-"N/A"}
+CONTAINER_IMAGE_TAG=${CONTAINER_IMAGE_TAG:-$RELEASE_VERSION}
 NODE_VERSION=${NODE_VERSION:-$(node -v)}
 PNPM_VERSION=${PNPM_VERSION:-$(pnpm -v)}
 WEBPACK_VERSION=${WEBPACK_VERSION:-$(pnpm list webpack --depth=0 | grep webpack | awk '{print $2}')}
@@ -41,6 +54,7 @@ fi
 ldflags="-s -X 'github.com/portainer/liblicense.LicenseServerBaseURL=https://api.portainer.io' \
 -X 'github.com/portainer/portainer/pkg/build.BuildNumber=${BUILDNUMBER}' \
 -X 'github.com/portainer/portainer/pkg/build.ImageTag=${CONTAINER_IMAGE_TAG}' \
+-X 'github.com/portainer/portainer/pkg/build.ReleaseVersion=${RELEASE_VERSION}' \
 -X 'github.com/portainer/portainer/pkg/build.NodejsVersion=${NODE_VERSION}' \
 -X 'github.com/portainer/portainer/pkg/build.PnpmVersion=${PNPM_VERSION}' \
 -X 'github.com/portainer/portainer/pkg/build.WebpackVersion=${WEBPACK_VERSION}' \

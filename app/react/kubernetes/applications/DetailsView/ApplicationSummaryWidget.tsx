@@ -209,8 +209,10 @@ export function ApplicationSummaryWidget() {
                         {!!applicationRequests?.memoryBytes && (
                           <div data-cy="k8sAppDetail-memoryReservation">
                             Memory{' '}
-                            {bytesToReadableFormat(
-                              applicationRequests.memoryBytes
+                            {String(
+                              bytesToReadableFormat(
+                                applicationRequests.memoryBytes
+                              )
                             )}
                           </div>
                         )}

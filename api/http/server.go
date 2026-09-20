@@ -224,7 +224,6 @@ func (server *Server) Start(ctx context.Context) error {
 	ldapHandler.LDAPService = server.LDAPService
 
 	motdSvc := motdservice.NewService(portainer.MessageOfTheDayURL)
-	motdSvc.Start(ctx)
 
 	var motdHandler = motd.NewHandler(requestBouncer, motdSvc)
 

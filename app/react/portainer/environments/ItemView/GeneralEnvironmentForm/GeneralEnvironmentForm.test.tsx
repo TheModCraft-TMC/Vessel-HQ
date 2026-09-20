@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DefaultBodyType, http, HttpResponse } from 'msw';
 import { describe, it, expect, vi, test } from 'vitest';
@@ -141,8 +141,10 @@ describe('GeneralEnvironmentForm', () => {
     await userEvent.type(publicUrlInput, '1.2.3.4');
 
     // Wait for debounce to complete (NameField uses useDebounce)
-    await new Promise((resolve) => {
-      setTimeout(resolve, 500);
+    await act(async () => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
     });
 
     const submitButton = screen.getByRole('button', {
@@ -381,8 +383,10 @@ describe('GeneralEnvironmentForm', () => {
         await userEvent.type(urlInput, inputUrl);
 
         // Wait for debounce to complete (NameField uses useDebounce)
-        await new Promise((resolve) => {
-          setTimeout(resolve, 500);
+        await act(async () => {
+          await new Promise((resolve) => {
+            setTimeout(resolve, 500);
+          });
         });
 
         const submitButton = screen.getByRole('button', {

@@ -10,7 +10,6 @@ import { parseKubernetesAxiosError } from '@/react/kubernetes/axiosError';
 export function usePersistentVolumes<T = PersistentVolume>(
   environmentId: EnvironmentId,
   queryOptions?: {
-    refetchInterval?: number;
     select?: (volumes: PersistentVolume[]) => T[];
   }
 ) {
@@ -18,7 +17,6 @@ export function usePersistentVolumes<T = PersistentVolume>(
     queryKeys.volumes(environmentId),
     () => getPersistentVolumes(environmentId, { withApplications: true }),
     {
-      refetchInterval: queryOptions?.refetchInterval,
       select: queryOptions?.select,
       ...withError('Unable to retrieve persistent volumes'),
     }

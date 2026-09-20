@@ -21,9 +21,6 @@ export function useClusterRoleBindings(
     },
     {
       ...withError('Unable to get cluster role bindings'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

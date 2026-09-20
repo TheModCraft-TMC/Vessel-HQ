@@ -3,9 +3,10 @@ import clsx from 'clsx';
 
 import { Widget } from '@@/Widget';
 import { Alert } from '@@/Alert';
+import { Icon, type IconSource } from '@@/Icon';
 
 interface Props {
-  icon: ReactNode;
+  icon: IconSource;
   iconBackgroundClassName?: string;
 
   subtitleLabel?: string;
@@ -66,7 +67,7 @@ export function ResourceDetailHeader({
 }
 
 interface HeaderIconProps {
-  icon: ReactNode;
+  icon: IconSource;
   iconBackgroundClassName: string;
 }
 
@@ -78,7 +79,7 @@ function HeaderIcon({ icon, iconBackgroundClassName }: HeaderIconProps) {
         iconBackgroundClassName
       )}
     >
-      {icon}
+      <Icon icon={icon} />
     </div>
   );
 }

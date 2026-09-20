@@ -9,6 +9,7 @@ const Dotenv = require('dotenv-webpack');
 
 const CopyPlugin = require('copy-webpack-plugin');
 const pkg = require('../package.json');
+const { renderSsrShell } = require('./ssr-shell');
 const projectRoot = path.resolve(__dirname, '..');
 
 /** @type {import('webpack').Configuration} */
@@ -32,26 +33,7 @@ module.exports = {
       {
         test: /\.(js|ts)(x)?$/,
         exclude: /node_modules/,
-        use: ['babel-loader', 'auto-ngtemplate-loader'],
-      },
-      {
-        test: /\.html$/,
-        exclude: path.resolve(projectRoot, './app/index.html'),
-        use: [
-          {
-            loader: 'ngtemplate-loader',
-            options: {
-              relativeTo: projectRoot + '/',
-            },
-          },
-          {
-            loader: 'html-loader',
-            options: {
-              esModule: false, // Keep CommonJS format for ngtemplate-loader compatibility
-              minimize: false, // Match old behavior, disable auto-minification
-            },
-          },
-        ],
+        use: ['babel-loader'],
       },
 
       {
@@ -126,6 +108,7 @@ module.exports = {
       templateParameters: {
         name: pkg.name,
         author: pkg.author,
+        ssrShell: renderSsrShell(),
       },
       manifest: './assets/ico/manifest.json',
     }),
@@ -138,7 +121,7 @@ module.exports = {
       },
     }),
     new WebpackBuildNotifierPlugin({
-      title: 'Portainer build',
+      title: 'Vessel HQ build',
       logo: path.resolve('./assets/favicon-32x32.png'),
       suppressSuccess: true,
     }),

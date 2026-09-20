@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
 import type { Meta } from '@storybook/react-webpack5';
 import { User } from 'lucide-react';
+
+import type { IconSource } from '../Icon';
 
 import { Widget } from './Widget';
 import { WidgetBody } from './WidgetBody';
@@ -11,14 +12,13 @@ import { WidgetTaskbar } from './WidgetTaskbar';
 interface WidgetProps {
   loading: boolean;
   title: string;
-  icon: ReactNode;
+  icon: IconSource;
   bodyText: string;
   footerText: string;
 }
 
 const meta: Meta<WidgetProps> = {
   title: 'Components/Widget',
-  component: Widget,
   args: {
     loading: false,
     title: 'Title',

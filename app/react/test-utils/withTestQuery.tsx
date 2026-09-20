@@ -1,10 +1,10 @@
-import { ComponentType } from 'react';
+import { ComponentType, PropsWithChildren } from 'react';
 import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
 
 import { withReactQuery } from '@/react-tools/withReactQuery';
 
-export function withTestQueryProvider<T>(
-  WrappedComponent: ComponentType<T & JSX.IntrinsicAttributes>,
+export function withTestQueryProvider<T extends object = object>(
+  WrappedComponent: ComponentType<PropsWithChildren<T>>,
   {
     onMutationError,
     onQueryError,
@@ -21,5 +21,5 @@ export function withTestQueryProvider<T>(
     }),
   });
 
-  return withReactQuery(WrappedComponent, testQueryClient);
+  return withReactQuery<PropsWithChildren<T>>(WrappedComponent, testQueryClient);
 }

@@ -2,13 +2,35 @@ import {
   StateDeclaration,
   StateService,
   Transition,
-} from '@uirouter/angularjs';
+} from '@uirouter/react';
 
 import { get, keyBuilder } from '@/react/hooks/useLocalStorage';
+import { hasAuthorizations } from '@/react/hooks/useUser';
+import {
+  getAuthenticatedUser,
+  initializeAuthentication,
+  isAdministrator,
+  isEdgeAdministrator,
+} from '@/react/portainer/auth/auth.service';
 import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
 
 import { checkAuthorizations } from './authorization-guard';
-import { IAuthenticationService } from './services/types';
+
+vi.mock('@/react/portainer/auth/auth.service', () => ({
+  getAuthenticatedUser: vi.fn(),
+  initializeAuthentication: vi.fn(),
+  isAdministrator: vi.fn(),
+  isEdgeAdministrator: vi.fn(),
+}));
+
+vi.mock('@/react/hooks/useUser', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/react/hooks/useUser')>()),
+  hasAuthorizations: vi.fn(),
+}));
+
+vi.mock('@/react-tools/realtime-query-sync', () => ({
+  startRealtimeQuerySync: vi.fn(),
+}));
 
 let restoreConsole: () => void;
 beforeEach(() => {
@@ -19,14 +41,6 @@ afterEach(() => {
 });
 
 describe('checkAuthorizations', () => {
-  let authService = {
-    init: vi.fn(),
-    isPureAdmin: vi.fn(),
-    isAdmin: vi.fn(),
-    hasAuthorizations: vi.fn(),
-    getUserDetails: vi.fn(),
-    isAuthenticated: vi.fn(),
-  } satisfies IAuthenticationService;
   let transition: Transition;
   const stateTo: StateDeclaration = {
     data: {
@@ -38,20 +52,9 @@ describe('checkAuthorizations', () => {
   } as unknown as StateService;
 
   beforeEach(() => {
-    authService = {
-      init: vi.fn(),
-      isPureAdmin: vi.fn(),
-      isAdmin: vi.fn(),
-      hasAuthorizations: vi.fn(),
-      getUserDetails: vi.fn(),
-      isAuthenticated: vi.fn(),
-    };
-
     transition = {
-      injector: vi.fn().mockReturnValue({
-        get: vi.fn().mockReturnValue(authService),
-      }),
       to: vi.fn().mockReturnValue(stateTo),
+      params: vi.fn().mockReturnValue({}),
       router: {
         stateService: $state,
       } as Transition['router'],
@@ -59,6 +62,11 @@ describe('checkAuthorizations', () => {
 
     stateTo.data.access = 'restricted';
     localStorage.removeItem(keyBuilder('RETURN_URL'));
+    vi.mocked(initializeAuthentication).mockResolvedValue(false);
+    vi.mocked(getAuthenticatedUser).mockReturnValue(undefined);
+    vi.mocked(isAdministrator).mockReturnValue(false);
+    vi.mocked(isEdgeAdministrator).mockReturnValue(false);
+    vi.mocked(hasAuthorizations).mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -74,7 +82,7 @@ describe('checkAuthorizations', () => {
 
   it('should return undefined if user is not authenticated and route access is defined', async () => {
     stateTo.data.access = 'something';
-    authService.init.mockResolvedValue(false);
+    vi.mocked(initializeAuthentication).mockResolvedValue(false);
 
     const result = await checkAuthorizations(transition);
     expect(result).toBeUndefined();
@@ -88,7 +96,7 @@ describe('checkAuthorizations', () => {
   });
 
   it('should store the current URL in localStorage when the user is not authenticated', async () => {
-    authService.init.mockResolvedValue(false);
+    vi.mocked(initializeAuthentication).mockResolvedValue(false);
 
     await checkAuthorizations(transition);
 
@@ -98,7 +106,7 @@ describe('checkAuthorizations', () => {
   });
 
   it('should not store a returnUrl when the user is authenticated', async () => {
-    authService.init.mockResolvedValue(true);
+    vi.mocked(initializeAuthentication).mockResolvedValue(true);
 
     await checkAuthorizations(transition);
 
@@ -106,8 +114,8 @@ describe('checkAuthorizations', () => {
   });
 
   it('should return undefined if user is an admin and access is "admin"', async () => {
-    authService.init.mockResolvedValue(true);
-    authService.isPureAdmin.mockReturnValue(true);
+    vi.mocked(initializeAuthentication).mockResolvedValue(true);
+    vi.mocked(isAdministrator).mockReturnValue(true);
     stateTo.data.access = 'admin';
 
     const result = await checkAuthorizations(transition);
@@ -116,8 +124,8 @@ describe('checkAuthorizations', () => {
   });
 
   it('should return undefined if user is an admin and access is "edge-admin"', async () => {
-    authService.init.mockResolvedValue(true);
-    authService.isAdmin.mockReturnValue(true);
+    vi.mocked(initializeAuthentication).mockResolvedValue(true);
+    vi.mocked(isEdgeAdministrator).mockReturnValue(true);
     stateTo.data.access = 'edge-admin';
 
     const result = await checkAuthorizations(transition);
@@ -126,8 +134,9 @@ describe('checkAuthorizations', () => {
   });
 
   it('should return undefined if user has the required authorizations', async () => {
-    authService.init.mockResolvedValue(true);
-    authService.hasAuthorizations.mockReturnValue(true);
+    vi.mocked(initializeAuthentication).mockResolvedValue(true);
+    vi.mocked(getAuthenticatedUser).mockReturnValue({ Id: 1 } as never);
+    vi.mocked(hasAuthorizations).mockReturnValue(true);
     stateTo.data.access = ['permission1', 'permission2'];
 
     const result = await checkAuthorizations(transition);
@@ -136,8 +145,9 @@ describe('checkAuthorizations', () => {
   });
 
   it('should redirect to home if user does not have the required authorizations', async () => {
-    authService.init.mockResolvedValue(true);
-    authService.hasAuthorizations.mockReturnValue(false);
+    vi.mocked(initializeAuthentication).mockResolvedValue(true);
+    vi.mocked(getAuthenticatedUser).mockReturnValue({ Id: 1 } as never);
+    vi.mocked(hasAuthorizations).mockReturnValue(false);
     stateTo.data.access = ['permission1', 'permission2'];
 
     const result = await checkAuthorizations(transition);

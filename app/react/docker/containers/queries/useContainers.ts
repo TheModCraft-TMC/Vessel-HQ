@@ -40,7 +40,6 @@ export function useContainers<T = ContainerListViewModel[]>(
     () => getContainers(environmentId!, params),
     {
       ...withError('Unable to retrieve containers'),
-      refetchInterval: autoRefreshRate ?? false,
       select,
       enabled: enabled && !!environmentId,
     }

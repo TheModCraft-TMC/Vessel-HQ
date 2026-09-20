@@ -10,16 +10,13 @@ import { queryKeys } from './query-keys';
 
 export function useCronJobs(
   environmentId: EnvironmentId,
-  options?: { refetchInterval?: number; enabled?: boolean }
+  options?: { enabled?: boolean }
 ) {
   return useQuery(
     queryKeys.list(environmentId),
     async () => getAllCronJobs(environmentId),
     {
       ...withError('Unable to get cron jobs'),
-      refetchInterval() {
-        return options?.refetchInterval ?? false;
-      },
       enabled: options?.enabled,
     }
   );

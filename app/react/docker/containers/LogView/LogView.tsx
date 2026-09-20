@@ -2,14 +2,18 @@ import { useCurrentStateAndParams } from '@uirouter/react';
 
 import { useContainer } from '@/react/docker/containers/queries/useContainer';
 import { ContainerDetailsViewModel } from '@/docker/models/containerDetails';
+import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { DockerLogsView } from '@/react/docker/logs/DockerLogsView';
 
 import { InformationPanel } from '@@/InformationPanel';
 import { TextTip } from '@@/Tip/TextTip';
 import { Link } from '@@/Link';
+import { PageHeader } from '@@/PageHeader';
 
 export function LogView() {
+  const environmentId = useEnvironmentId();
   const {
-    params: { endpointId: environmentId, id: containerId, nodeName },
+    params: { id: containerId, nodeName },
   } = useCurrentStateAndParams();
 
   const containerQuery = useContainer(
@@ -26,7 +30,37 @@ export function LogView() {
     containerQuery.data.HostConfig?.LogConfig?.Type && // if a portion of the object path doesn't exist, logging is likely disabled
     containerQuery.data.HostConfig.LogConfig.Type !== 'none'; // if type === none logging is disabled
 
-  return <>{!logsEnabled && <LogsDisabledInfoPanel />}</>;
+  const container = containerQuery.data;
+  const containerName = (container.Name || containerId).replace(/^\//, '');
+
+  return (
+    <>
+      <PageHeader
+        title="Container logs"
+        breadcrumbs={[
+          { label: 'Containers', link: 'docker.containers' },
+          {
+            label: containerName,
+            link: 'docker.containers.container',
+            linkParams: { id: container.Id },
+          },
+          'Logs',
+        ]}
+      />
+      {!logsEnabled ? (
+        <LogsDisabledInfoPanel />
+      ) : (
+        <DockerLogsView
+          environmentId={environmentId}
+          resource="containers"
+          resourceId={containerId}
+          resourceName={containerName}
+          nodeName={nodeName}
+          multiplexed={!container.Config?.Tty}
+        />
+      )}
+    </>
+  );
 }
 
 function LogsDisabledInfoPanel() {

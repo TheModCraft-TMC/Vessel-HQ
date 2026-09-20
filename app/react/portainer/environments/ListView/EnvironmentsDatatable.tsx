@@ -40,7 +40,7 @@ export function EnvironmentsDatatable({
         : undefined,
       order: tableState.sortBy?.desc ? 'desc' : 'asc',
     },
-    { enabled: groupsQuery.isSuccess, refetchInterval: 30 * 1000 }
+    { enabled: groupsQuery.isSuccess }
   );
 
   const environmentsWithGroups = environments.map<EnvironmentListItem>(

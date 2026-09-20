@@ -36,7 +36,6 @@ export function useClusterServices<T = Service[]>(
     async () => getClusterServices(environmentId, options?.withApplications),
     {
       ...withError('Unable to get services.'),
-      refetchInterval: options?.autoRefreshRate,
       select: options?.select,
     }
   );

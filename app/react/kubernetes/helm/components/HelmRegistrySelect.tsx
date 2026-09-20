@@ -148,7 +148,7 @@ function CreateGlobalRepoMessage() {
         data-cy="portainer-settings-link"
         target="_blank"
       >
-        Portainer settings
+        Vessel HQ settings
       </Link>
       .
     </>

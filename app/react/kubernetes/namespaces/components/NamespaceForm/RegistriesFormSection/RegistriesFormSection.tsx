@@ -40,7 +40,7 @@ export function RegistriesFormSection({
       <FormControl
         inputId="registries"
         label={isEditingDisabled ? 'Selected registries' : 'Select registries'}
-        errors={errors}
+        errors={typeof errors === 'string' ? errors : undefined}
       >
         {registriesQuery.isLoading && (
           <InlineLoader>Loading registries...</InlineLoader>

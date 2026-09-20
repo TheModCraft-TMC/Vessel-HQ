@@ -1,13 +1,13 @@
 import { ComponentType, Suspense } from 'react';
 
-export function withI18nSuspense<T>(
+export function withI18nSuspense<T extends object>(
   WrappedComponent: ComponentType<T>
 ): ComponentType<T> {
   // Try to create a nice displayName for React Dev Tools.
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     return (
       <Suspense fallback="Loading translations...">
         <WrappedComponent {...props} />

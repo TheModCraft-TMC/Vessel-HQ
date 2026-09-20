@@ -58,7 +58,7 @@ export function ExperimentalFeaturesSettingsForm({ settings }: Props) {
           <br />
 
           <div className="form-group col-sm-12 text-muted small">
-            In Portainer releases, we may introduce features that we&apos;re
+            In Vessel HQ releases, we may introduce features that we&apos;re
             experimenting with. These will be items in the early phases of
             development with limited testing.
             <br />

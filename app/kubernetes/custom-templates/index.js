@@ -1,8 +1,7 @@
-import angular from 'angular';
+import { CreateCustomTemplateRoute, CustomTemplatesListRoute, EditCustomTemplateRoute } from '@/portainer/react/views/route-components';
+import { registerReactState } from '@/react-tools/registerReactState';
 
-export default angular.module('portainer.kubernetes.custom-templates', []).config(config).name;
-
-function config($stateRegistryProvider) {
+export function registerKubernetesTemplateStates($stateRegistryProvider) {
   const templates = {
     name: 'kubernetes.templates',
     url: '/templates',
@@ -15,7 +14,7 @@ function config($stateRegistryProvider) {
 
     views: {
       'content@': {
-        component: 'customTemplatesView',
+        component: CustomTemplatesListRoute,
       },
     },
     data: {
@@ -29,7 +28,7 @@ function config($stateRegistryProvider) {
 
     views: {
       'content@': {
-        component: 'createCustomTemplatesView',
+        component: CreateCustomTemplateRoute,
       },
     },
     params: {
@@ -46,13 +45,13 @@ function config($stateRegistryProvider) {
 
     views: {
       'content@': {
-        component: 'editCustomTemplatesView',
+        component: EditCustomTemplateRoute,
       },
     },
   };
 
-  $stateRegistryProvider.register(templates);
-  $stateRegistryProvider.register(customTemplates);
-  $stateRegistryProvider.register(customTemplatesNew);
-  $stateRegistryProvider.register(customTemplatesEdit);
+  registerReactState($stateRegistryProvider, templates);
+  registerReactState($stateRegistryProvider, customTemplates);
+  registerReactState($stateRegistryProvider, customTemplatesNew);
+  registerReactState($stateRegistryProvider, customTemplatesEdit);
 }

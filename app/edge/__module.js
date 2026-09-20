@@ -1,12 +1,20 @@
-import angular from 'angular';
-
 import { AccessHeaders } from '@/portainer/authorization-guard';
-import { reactModule } from './react';
+import { registerReactState } from '@/react-tools/registerReactState';
+import { AppTemplatesRoute, CreateCustomTemplateRoute, CustomTemplatesListRoute, EditCustomTemplateRoute } from '@/portainer/react/views/route-components';
+import {
+  EdgeGroupCreateRoute,
+  EdgeGroupItemRoute,
+  EdgeGroupsListRoute,
+  EdgeJobCreateRoute,
+  EdgeJobItemRoute,
+  EdgeJobsListRoute,
+  EdgeStackCreateRoute,
+  EdgeStackItemRoute,
+  EdgeStacksListRoute,
+  WaitingRoomRoute,
+} from '@/edge/react/views/route-components';
 
-angular
-  .module('portainer.edge', [reactModule])
-
-  .config(function config($stateRegistryProvider) {
+export function registerEdgeStates($stateRegistryProvider) {
     const edge = {
       name: 'edge',
       url: '/edge',
@@ -22,7 +30,7 @@ angular
       url: '/groups',
       views: {
         'content@': {
-          component: 'edgeGroupsView',
+          component: EdgeGroupsListRoute,
         },
       },
       data: {
@@ -35,7 +43,7 @@ angular
       url: '/new',
       views: {
         'content@': {
-          component: 'edgeGroupsCreateView',
+          component: EdgeGroupCreateRoute,
         },
       },
     };
@@ -45,7 +53,7 @@ angular
       url: '/:groupId',
       views: {
         'content@': {
-          component: 'edgeGroupsItemView',
+          component: EdgeGroupItemRoute,
         },
       },
     };
@@ -55,7 +63,7 @@ angular
       url: '/stacks',
       views: {
         'content@': {
-          component: 'edgeStacksView',
+          component: EdgeStacksListRoute,
         },
       },
       data: {
@@ -68,7 +76,7 @@ angular
       url: '/new?templateId&templateType',
       views: {
         'content@': {
-          component: 'edgeStacksCreateView',
+          component: EdgeStackCreateRoute,
         },
       },
       data: {
@@ -85,7 +93,7 @@ angular
       url: '/:stackId?tab&status',
       views: {
         'content@': {
-          component: 'edgeStacksItemView',
+          component: EdgeStackItemRoute,
         },
       },
       params: {
@@ -100,7 +108,7 @@ angular
       url: '/jobs',
       views: {
         'content@': {
-          component: 'edgeJobsView',
+          component: EdgeJobsListRoute,
         },
       },
       data: {
@@ -113,7 +121,7 @@ angular
       url: '/:id?tab',
       views: {
         'content@': {
-          component: 'edgeJobsItemView',
+          component: EdgeJobItemRoute,
         },
       },
     };
@@ -123,24 +131,24 @@ angular
       url: '/new',
       views: {
         'content@': {
-          component: 'edgeJobsCreateView',
+          component: EdgeJobCreateRoute,
         },
       },
     };
 
-    $stateRegistryProvider.register({
+    registerReactState($stateRegistryProvider, {
       name: 'edge.devices',
       url: '/devices',
       abstract: true,
     });
 
     if (process.env.PORTAINER_EDITION === 'BE') {
-      $stateRegistryProvider.register({
+      registerReactState($stateRegistryProvider, {
         name: 'edge.devices.waiting-room',
         url: '/waiting-room',
         views: {
           'content@': {
-            component: 'waitingRoomView',
+            component: WaitingRoomRoute,
           },
         },
         data: {
@@ -149,12 +157,12 @@ angular
       });
     }
 
-    $stateRegistryProvider.register({
+    registerReactState($stateRegistryProvider, {
       name: 'edge.templates',
       url: '/templates?template',
       views: {
         'content@': {
-          component: 'appTemplatesView',
+          component: AppTemplatesRoute,
         },
       },
       data: {
@@ -162,12 +170,12 @@ angular
       },
     });
 
-    $stateRegistryProvider.register({
+    registerReactState($stateRegistryProvider, {
       name: 'edge.templates.custom',
       url: '/custom',
       views: {
         'content@': {
-          component: 'customTemplatesView',
+          component: CustomTemplatesListRoute,
         },
       },
       data: {
@@ -175,39 +183,39 @@ angular
       },
     });
 
-    $stateRegistryProvider.register({
+    registerReactState($stateRegistryProvider, {
       name: 'edge.templates.custom.new',
       url: '/new?appTemplateId&type',
 
       views: {
         'content@': {
-          component: 'createCustomTemplatesView',
+          component: CreateCustomTemplateRoute,
         },
       },
     });
 
-    $stateRegistryProvider.register({
+    registerReactState($stateRegistryProvider, {
       name: 'edge.templates.custom.edit',
       url: '/:id',
 
       views: {
         'content@': {
-          component: 'editCustomTemplatesView',
+          component: EditCustomTemplateRoute,
         },
       },
     });
 
-    $stateRegistryProvider.register(edge);
+    registerReactState($stateRegistryProvider, edge);
 
-    $stateRegistryProvider.register(groups);
-    $stateRegistryProvider.register(groupsNew);
-    $stateRegistryProvider.register(groupsEdit);
+    registerReactState($stateRegistryProvider, groups);
+    registerReactState($stateRegistryProvider, groupsNew);
+    registerReactState($stateRegistryProvider, groupsEdit);
 
-    $stateRegistryProvider.register(stacks);
-    $stateRegistryProvider.register(stacksNew);
-    $stateRegistryProvider.register(stacksEdit);
+    registerReactState($stateRegistryProvider, stacks);
+    registerReactState($stateRegistryProvider, stacksNew);
+    registerReactState($stateRegistryProvider, stacksEdit);
 
-    $stateRegistryProvider.register(edgeJobs);
-    $stateRegistryProvider.register(edgeJob);
-    $stateRegistryProvider.register(edgeJobCreation);
-  });
+    registerReactState($stateRegistryProvider, edgeJobs);
+    registerReactState($stateRegistryProvider, edgeJob);
+    registerReactState($stateRegistryProvider, edgeJobCreation);
+}

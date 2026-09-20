@@ -14,12 +14,12 @@ export function BackupSettingsPanel() {
 
   return (
     <Widget>
-      <WidgetTitle icon={Download} title="Back up Portainer" />
+      <WidgetTitle icon={Download} title="Back up Vessel HQ" />
       <WidgetBody>
         <div className="form-horizontal">
           <FormSection title="Backup configuration">
             <div className="form-group col-sm-12 text-muted small">
-              This will back up your Portainer server configuration and does not
+              This will back up your Vessel HQ server configuration and does not
               include containers.
             </div>
             <BoxSelector

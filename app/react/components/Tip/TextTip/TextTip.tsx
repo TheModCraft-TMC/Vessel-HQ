@@ -2,12 +2,12 @@ import { ReactNode } from 'react';
 import { AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
 
-import { Icon, IconMode } from '@@/Icon';
+import { Icon, IconMode, type IconSource } from '@@/Icon';
 
 type Color = 'orange' | 'blue' | 'red' | 'green';
 
 export interface Props {
-  icon?: React.ReactNode;
+  icon?: IconSource;
   color?: Color;
   className?: string;
   childrenWrapperClassName?: string;

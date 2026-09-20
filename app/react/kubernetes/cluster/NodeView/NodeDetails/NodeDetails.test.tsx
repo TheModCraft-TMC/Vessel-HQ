@@ -233,7 +233,7 @@ describe('NodeDetails', () => {
     });
   });
 
-  it('prevents submission when Portainer is running on node', async () => {
+  it('prevents submission when Vessel HQ is running on node', async () => {
     const user = userEvent.setup();
     setupMocks({ applications: mockPortainerApplications });
 
@@ -248,7 +248,7 @@ describe('NodeDetails', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/cannot drain node where.*portainer.*running/i)
+        screen.getByLabelText(/cannot drain the node where Vessel HQ is running/i)
       ).toBeInTheDocument();
     });
 

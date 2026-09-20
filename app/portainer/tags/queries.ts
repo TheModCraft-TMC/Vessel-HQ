@@ -7,7 +7,7 @@ import {
 } from '@/react-tools/react-query';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 
-import { createTag, getTags } from './tags.service';
+import { createTag, deleteTag, getTags } from './tags.service';
 import { Tag, TagId } from './types';
 
 export const tagKeys = {
@@ -44,6 +44,18 @@ export function useCreateTagMutation() {
     createTag,
     mutationOptions(
       withError('Unable to create tag'),
+      withInvalidate(queryClient, [tagKeys.all])
+    )
+  );
+}
+
+export function useDeleteTagsMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (tagIds: TagId[]) => Promise.all(tagIds.map((id) => deleteTag(id))),
+    mutationOptions(
+      withError('Unable to remove tag'),
       withInvalidate(queryClient, [tagKeys.all])
     )
   );

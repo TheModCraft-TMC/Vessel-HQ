@@ -60,15 +60,6 @@ export const success = notifySuccess;
 export const error = notifyError;
 export const warning = notifyWarning;
 
-/* @ngInject */
-export function Notifications() {
-  return {
-    success: notifySuccess,
-    warning: notifyWarning,
-    error: notifyError,
-  };
-}
-
 function pickErrorMsg(e?: unknown) {
   if (!e) {
     return '';

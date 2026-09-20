@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
+import { PortainerResponse } from '@/react/docker/types';
 import {
   mutationOptions,
   withError,
@@ -37,7 +38,7 @@ export async function createService({
   registryId?: number;
 }) {
   try {
-    const { data } = await axios.post<Service>(
+    const { data } = await axios.post<PortainerResponse<Service>>(
       buildUrl(environmentId, 'create'),
       config,
       {

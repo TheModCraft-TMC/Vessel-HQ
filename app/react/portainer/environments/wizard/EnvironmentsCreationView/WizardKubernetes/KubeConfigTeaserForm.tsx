@@ -41,7 +41,7 @@ export function KubeConfigTeaserForm() {
                   </a>{' '}
                   of an existing Kubernetes cluster located on-premise or on a
                   cloud platform. This will create a corresponding environment
-                  in Portainer and install the agent on the cluster. Please
+                  in Vessel HQ and install the agent on the cluster. Please
                   ensure:
                 </span>
               </TextTip>

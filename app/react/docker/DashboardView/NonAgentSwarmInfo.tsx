@@ -26,7 +26,7 @@ export function NonAgentSwarmInfo() {
       <TextTip color="blue">
         {isManager ? (
           <>
-            Portainer is connected to a node that is part of a Swarm cluster.
+            Vessel HQ is connected to a node that is part of a Swarm cluster.
             Some resources located on other nodes in the cluster might not be
             available for management, have a look at{' '}
             <HelpLink
@@ -39,7 +39,7 @@ export function NonAgentSwarmInfo() {
           </>
         ) : (
           <>
-            Portainer is connected to a worker node. Swarm management features
+            Vessel HQ is connected to a worker node. Swarm management features
             will not be available.
           </>
         )}

@@ -56,7 +56,6 @@ export function ImagesDatatable({
     [isHostColumnVisible]
   );
   const imagesQuery = useImages(environmentId, true, {
-    refetchInterval: tableState.autoRefreshRateMS,
   });
 
   return (

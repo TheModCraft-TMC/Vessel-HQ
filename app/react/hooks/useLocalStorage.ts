@@ -14,7 +14,7 @@ export function useLocalStorage<T>(
   const [value, setValue] = useState(get<T>(key, defaultValue, storage));
 
   const handleChange = useCallback(
-    (value) => {
+    (value: T) => {
       setValue(value);
       set<T>(key, value, storage);
     },

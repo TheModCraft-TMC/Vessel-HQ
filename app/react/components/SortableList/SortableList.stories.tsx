@@ -423,7 +423,7 @@ function getProduceGroupKeys(sortBy: string): string[] {
   return [];
 }
 
-function getProduceGroupIcon(key: string): JSX.Element {
+function getProduceGroupIcon(key: string): React.JSX.Element {
   return (
     <span
       className={`inline-block h-2.5 w-2.5 rounded-full ${

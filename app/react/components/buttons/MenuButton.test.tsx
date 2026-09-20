@@ -53,7 +53,7 @@ vi.mock('@reach/menu-button', () => {
   type Ctx = {
     isOpen: boolean;
     setOpen: (v: boolean) => void;
-    menuRef: React.RefObject<HTMLDivElement>;
+    menuRef: React.RefObject<HTMLDivElement | null>;
   };
   const MenuCtx = createContext<Ctx | null>(null);
 
@@ -216,7 +216,7 @@ function createMockMenuItem({
 }: {
   id: string;
   label: string;
-  icon?: ComponentType<unknown>;
+  icon?: React.ElementType;
   onClick?: () => void;
   disabled?: boolean;
 }): MockMenuButtonItem {

@@ -43,7 +43,7 @@ export function EdgeAgentDeploymentWidget({
           <TextTip color="blue">
             Refer to the platform related command below to deploy the Edge agent
             in your remote cluster. <br />
-            The agent will communicate with Portainer via{' '}
+            The agent will communicate with Vessel HQ via{' '}
             <u>{edgeKeyDetails.instanceURL}</u> and{' '}
             <u>tcp://{edgeKeyDetails.tunnelServerAddr}</u>
           </TextTip>

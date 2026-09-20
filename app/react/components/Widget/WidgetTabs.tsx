@@ -2,12 +2,13 @@ import { RawParams, useCurrentStateAndParams } from '@uirouter/react';
 import { ReactNode } from 'react';
 
 import { Icon } from '@@/Icon';
+import type { IconSource } from '@@/Icon';
 import { Link } from '@@/Link';
 import { Tabs } from '@@/primitives/Tabs/Tabs';
 
 export interface Tab {
   name: ReactNode;
-  icon?: ReactNode;
+  icon?: IconSource;
   widget: ReactNode;
   selectedTabParam: string;
 }

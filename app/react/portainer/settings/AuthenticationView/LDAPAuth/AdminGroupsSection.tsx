@@ -11,7 +11,6 @@ import { useInputList } from '@@/form-components/InputList/useInputList';
 import { Widget, WidgetBody } from '@@/Widget';
 import { FormSection } from '@@/form-components/FormSection';
 import { FormError } from '@@/form-components/FormError';
-import { BEFeatureIndicator } from '@@/BEFeatureIndicator';
 
 import { LDAPGroupSearchSettings } from '../../types';
 
@@ -89,20 +88,15 @@ export function AdminGroupsSection({
     }),
   });
 
+  if (isLimited) {
+    return null;
+  }
+
   const enableAssignAdminGroup = groups !== null && groups.length > 0;
   const groupOptions = (groups ?? []).map((g) => ({ label: g, value: g }));
 
   return (
-    <FormSection
-      title={
-        <>
-          Auto-populate team admins
-          {isLimitedFeatureSelfContained && limitedFeatureId && (
-            <BEFeatureIndicator featureId={limitedFeatureId} className="ml-2" />
-          )}
-        </>
-      }
-    >
+    <FormSection title="Auto-populate team admins">
       <div className="space-y-3">
         {searchSettings.map((config, index) => (
           <Widget

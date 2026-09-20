@@ -37,7 +37,7 @@ export function KubernetesSummaryView({
       setIsDefaultFolded={(isFolded) => setIsExpanded(!isFolded)}
     >
       <TextTip color="blue">
-        Portainer will execute the following Kubernetes actions.
+        Vessel HQ will execute the following Kubernetes actions.
       </TextTip>
       <ul className="small text-muted ml-5 w-full">
         {actions.map((action, idx) => {

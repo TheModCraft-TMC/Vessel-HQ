@@ -29,9 +29,6 @@ export function useApplication<T extends Application | string = Application>(
       getApplication<T>(environmentId, namespace, name, appKind, options?.yaml),
     {
       ...withError('Unable to retrieve application'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
     }
   );
 }

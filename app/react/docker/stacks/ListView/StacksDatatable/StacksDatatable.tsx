@@ -5,7 +5,6 @@ import { useAuthorizations, useIsEdgeAdmin } from '@/react/hooks/useUser';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 
 import { Datatable } from '@@/datatables';
-import { useRepeater } from '@@/datatables/useRepeater';
 import { defaultGlobalFilterFn } from '@@/datatables/Datatable';
 import { withGlobalFilter } from '@@/datatables/extend-options/withGlobalFilter';
 import { mergeOptions } from '@@/datatables/extend-options/mergeOptions';
@@ -21,17 +20,14 @@ import { DecoratedStack } from './types';
 
 export function StacksDatatable({
   onRemove,
-  onReload,
   isImageNotificationEnabled,
   dataset,
 }: {
   onRemove: (items: Array<DecoratedStack>) => void;
-  onReload: () => void;
   isImageNotificationEnabled: boolean;
   dataset: Array<DecoratedStack>;
 }) {
   const tableState = useStore();
-  useRepeater(tableState.autoRefreshRateMS, onReload);
   const isAdminQuery = useIsEdgeAdmin();
   const { authorized: canManageStacks } = useAuthorizations([
     'PortainerStackCreate',

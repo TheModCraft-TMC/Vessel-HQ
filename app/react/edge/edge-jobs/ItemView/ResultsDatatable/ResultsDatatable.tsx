@@ -7,7 +7,7 @@ import { useTableState } from '@@/datatables/useTableState';
 import { withMeta } from '@@/datatables/extend-options/withMeta';
 import { mergeOptions } from '@@/datatables/extend-options/mergeOptions';
 
-import { EdgeJob, LogsStatus } from '../../types';
+import { EdgeJob } from '../../types';
 import { useJobResults } from '../../queries/jobResults/useJobResults';
 
 import { columns, sortOptions } from './columns';
@@ -21,17 +21,6 @@ export function ResultsDatatable({ jobId }: { jobId: EdgeJob['Id'] }) {
 
   const jobResultsQuery = useJobResults(jobId, {
     ...queryOptionsFromTableState({ ...tableState }, sortOptions),
-    refetchInterval(dataset) {
-      const anyCollecting = dataset?.data?.some(
-        (r) => r.LogsStatus === LogsStatus.Pending
-      );
-
-      if (anyCollecting) {
-        return 5000;
-      }
-
-      return tableState.autoRefreshRateMS;
-    },
   });
 
   const dataset = jobResultsQuery.data?.data || [];

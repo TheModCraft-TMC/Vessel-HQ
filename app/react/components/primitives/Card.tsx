@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 import { cva, type VariantProps } from 'class-variance-authority';
 import {
-  ComponentType,
   createContext,
   PropsWithChildren,
   ReactNode,
@@ -117,7 +116,7 @@ function CardBody({ className, children }: PropsWithChildren<CardBodyProps>) {
 interface CardHeaderProps {
   title: ReactNode;
   subtitle?: ReactNode;
-  icon?: ComponentType<unknown>;
+  icon?: React.ElementType;
   actions?: ReactNode;
 }
 

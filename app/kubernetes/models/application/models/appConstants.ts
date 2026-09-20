@@ -5,7 +5,7 @@ import {
 } from '@/react/kubernetes/applications/types';
 import { ServiceType } from '@/react/kubernetes/services/types';
 
-// The following constants are used by angular views and can be removed once they are no longer referenced
+// Constants shared by application model adapters.
 export const KubernetesApplicationTypes: Record<AppType, AppType> = {
   Deployment: 'Deployment',
   StatefulSet: 'StatefulSet',

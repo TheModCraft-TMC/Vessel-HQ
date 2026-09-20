@@ -48,7 +48,7 @@ function TitleContent({ isComposeFormat }: { isComposeFormat?: boolean }) {
       {isComposeFormat && (
         <TextTip color="orange">
           <p>
-            Portainer no longer supports{' '}
+            Vessel HQ no longer supports{' '}
             <a
               href="https://docs.docker.com/reference/compose-file/"
               target="_blank"

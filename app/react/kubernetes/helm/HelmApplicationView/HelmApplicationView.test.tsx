@@ -12,8 +12,7 @@ import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
 
 import { HelmApplicationView } from './HelmApplicationView';
 
-// Prevent importing @uirouter/react-hybrid (via withUIRouter), which replaces
-// UIView with AngularUIView and breaks the pure-React test router.
+// Keep the modal root isolated from this view-level router test.
 vi.mock('./ChartActions/UpgradeHelmModal', () => ({
   openUpgradeHelmModal: vi.fn(() => Promise.resolve(undefined)),
 }));

@@ -9,7 +9,7 @@ export type Filters = {
   name?: string[];
 };
 
-export interface ServiceUpdateConfig {
+export type ServiceUpdateConfig = ServiceSpec & {
   Name: string;
   Labels: Record<string, string>;
   TaskTemplate: TaskSpec;
@@ -17,4 +17,4 @@ export interface ServiceUpdateConfig {
   UpdateConfig: ServiceSpec['UpdateConfig'];
   Networks: ServiceSpec['Networks'];
   EndpointSpec: ServiceSpec['EndpointSpec'];
-}
+};

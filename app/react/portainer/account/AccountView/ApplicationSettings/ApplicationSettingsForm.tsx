@@ -34,7 +34,7 @@ export function ApplicationSettingsForm() {
         <Form className="form-horizontal">
           <TextTip color="orange" className="mb-3">
             Enabling front-end data caching can mean that changes to Kubernetes
-            clusters made by other users or outside of Portainer may take up to
+            clusters made by other users or outside of Vessel HQ may take up to
             five minutes to show in your session. This caching only applies to
             Kubernetes environments.
           </TextTip>

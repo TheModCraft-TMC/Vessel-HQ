@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { Formik } from 'formik';
 import { http, HttpResponse } from 'msw';
 
@@ -64,16 +64,9 @@ function renderConnectionTest(gitValues: FormValues['git']) {
 }
 
 describe('ConnectionTest', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
-  it('renders nothing when git URL is empty', () => {
+  it('renders nothing when git URL is empty', async () => {
     renderConnectionTest(invalidGitValues);
+    await act(async () => {});
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -91,12 +84,9 @@ describe('ConnectionTest', () => {
     expect(screen.getByText('Testing connection...')).toBeInTheDocument();
     expect(screen.queryByText('Connection successful')).not.toBeInTheDocument();
 
-    // Advance past the debounce
-    await vi.advanceTimersByTimeAsync(600);
-
     await waitFor(() => {
       expect(screen.getByText('Connection successful')).toBeVisible();
-    });
+    }, { timeout: 2000 });
     expect(screen.queryByText('Testing connection...')).not.toBeInTheDocument();
   });
 
@@ -109,11 +99,9 @@ describe('ConnectionTest', () => {
 
     renderConnectionTest(baseGitValues);
 
-    await vi.advanceTimersByTimeAsync(600);
-
     await waitFor(() => {
       expect(screen.getByText('Connection successful')).toBeVisible();
-    });
+    }, { timeout: 2000 });
   });
 
   it('shows failure alert when gitOpsSourcesTest returns success:false', async () => {
@@ -125,11 +113,9 @@ describe('ConnectionTest', () => {
 
     renderConnectionTest(baseGitValues);
 
-    await vi.advanceTimersByTimeAsync(600);
-
     await waitFor(() => {
       expect(screen.getByText('Repository not found')).toBeVisible();
-    });
+    }, { timeout: 2000 });
   });
 
   it('shows failure alert when the API returns an error', async () => {
@@ -143,11 +129,9 @@ describe('ConnectionTest', () => {
 
     renderConnectionTest(baseGitValues);
 
-    await vi.advanceTimersByTimeAsync(600);
-
     await waitFor(() => {
       expect(screen.getByText('Connection failed')).toBeVisible();
-    });
+    }, { timeout: 2000 });
 
     restoreConsole();
   });

@@ -1,15 +1,14 @@
 import { AccessHeaders } from '../authorization-guard';
+import { RegistriesListRoute, RegistryCreateRoute, RegistryItemRoute, RegistryRepositoriesRoute, RegistryRepositoryRoute } from '../react/views/route-components';
+import { registerReactState } from '../../react-tools/registerReactState';
 
-angular.module('portainer.registrymanagement', []).config(config);
-
-/* @ngInject */
-function config($stateRegistryProvider) {
+export function registerRegistryStates($stateRegistryProvider) {
   const registries = {
     name: 'portainer.registries',
     url: '/registries',
     views: {
       'content@': {
-        component: 'registriesView',
+        component: RegistriesListRoute,
       },
     },
     data: {
@@ -23,7 +22,7 @@ function config($stateRegistryProvider) {
     url: '/new',
     views: {
       'content@': {
-        component: 'createRegistry',
+        component: RegistryCreateRoute,
       },
     },
     data: {
@@ -36,7 +35,7 @@ function config($stateRegistryProvider) {
     url: '/:id',
     views: {
       'content@': {
-        component: 'editRegistry',
+        component: RegistryItemRoute,
       },
     },
     data: {
@@ -49,7 +48,7 @@ function config($stateRegistryProvider) {
     url: '/repositories?endpointId',
     views: {
       'content@': {
-        component: 'registryRepositoriesView',
+        component: RegistryRepositoriesRoute,
       },
     },
     data: {
@@ -62,7 +61,7 @@ function config($stateRegistryProvider) {
     url: '/repository?repository&endpointId',
     views: {
       'content@': {
-        component: 'registryRepositoryView',
+        component: RegistryRepositoryRoute,
       },
     },
     data: {
@@ -70,9 +69,9 @@ function config($stateRegistryProvider) {
     },
   };
 
-  $stateRegistryProvider.register(registries);
-  $stateRegistryProvider.register(registry);
-  $stateRegistryProvider.register(registryRepositories);
-  $stateRegistryProvider.register(registryRepository);
-  $stateRegistryProvider.register(registryCreation);
+  registerReactState($stateRegistryProvider, registries);
+  registerReactState($stateRegistryProvider, registry);
+  registerReactState($stateRegistryProvider, registryRepositories);
+  registerReactState($stateRegistryProvider, registryRepository);
+  registerReactState($stateRegistryProvider, registryCreation);
 }

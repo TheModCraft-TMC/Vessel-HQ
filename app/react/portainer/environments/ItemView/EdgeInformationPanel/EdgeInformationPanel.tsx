@@ -61,10 +61,10 @@ export function EdgeInformationPanel({
           Edge key: <code>{edgeKey}</code>
         </p>
         <p>
-          Portainer API server: <code>{edgeServerAddress}</code>
+          Vessel HQ API server: <code>{edgeServerAddress}</code>
         </p>
         <p>
-          Portainer tunnel address: <code>{edgeTunnelAddress}</code>
+          Vessel HQ tunnel address: <code>{edgeTunnelAddress}</code>
         </p>
         <p>
           Edge identifier: <code>{edgeId}</code>

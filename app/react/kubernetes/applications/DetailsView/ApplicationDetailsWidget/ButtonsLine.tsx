@@ -12,7 +12,6 @@ import { applicationIsKind } from '../../utils';
 
 import { EditButtons } from './EditButtons';
 import { RedeployApplicationButton } from './RedeployApplicationButton';
-import { RestartApplicationButton } from './RestartApplicationButton';
 import { RollbackApplicationButton } from './RollbackApplicationButton';
 
 export function ButtonsLine({
@@ -57,15 +56,12 @@ export function ButtonsLine({
         stack={stack}
       />
       {!applicationIsKind<Pod>('Pod', app) && (
-        <>
-          <RestartApplicationButton />
-          <RedeployApplicationButton
-            environmentId={environmentId}
-            namespace={namespace}
-            appName={name}
-            app={app}
-          />
-        </>
+        <RedeployApplicationButton
+          environmentId={environmentId}
+          namespace={namespace}
+          appName={name}
+          app={app}
+        />
       )}
       {!externalApp && (
         <RollbackApplicationButton

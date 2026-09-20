@@ -5,7 +5,7 @@ import { FilesTable } from '@/react/docker/components/FilesTable';
 import { createPersistedStore } from '@@/datatables/types';
 import { useTableState } from '@@/datatables/useTableState';
 
-const tableKey = 'host-browser';
+const tableKey = 'docker-volume-browser';
 
 const settingsStore = createPersistedStore(tableKey, 'Name');
 

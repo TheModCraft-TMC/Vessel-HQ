@@ -30,9 +30,6 @@ export function useNamespacesQuery<T = PortainerNamespace[]>(
       ),
     {
       ...withError('Unable to get namespaces.'),
-      refetchInterval() {
-        return options?.autoRefreshRate ?? false;
-      },
       select: options?.select,
     }
   );

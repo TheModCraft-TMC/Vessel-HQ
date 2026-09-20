@@ -13,9 +13,11 @@ export function useStacks() {
   });
 }
 
-export async function getStacks() {
+export async function getStacks(filters?: Record<string, unknown>) {
   try {
-    const { data } = await axios.get<Stack[]>(buildStackUrl());
+    const { data } = await axios.get<Stack[]>(buildStackUrl(), {
+      params: filters ? { filters: JSON.stringify(filters) } : undefined,
+    });
     return data;
   } catch (e) {
     throw parseAxiosError(e as Error);

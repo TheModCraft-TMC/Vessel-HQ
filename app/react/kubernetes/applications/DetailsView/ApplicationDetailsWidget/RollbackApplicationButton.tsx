@@ -69,7 +69,6 @@ export function RollbackApplicationButton({
 
   const rollbackButton = (
     <Button
-      ng-if="!ctrl.isExternalApplication()"
       type="button"
       color="light"
       size="small"

@@ -40,7 +40,6 @@ export function ResourcesTable() {
   const tableState = useTableState(settingsStore, storageKey);
   const helmReleaseQuery = useHelmRelease(environmentId, name, namespace, {
     showResources: true,
-    refetchInterval: tableState.autoRefreshRateMS,
     revision: revisionNumber,
   });
   const rows = useResourceRows(helmReleaseQuery.data?.info?.resources);

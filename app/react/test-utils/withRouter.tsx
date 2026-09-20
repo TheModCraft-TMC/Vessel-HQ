@@ -13,7 +13,7 @@ import {
  *
  * should only be used in tests
  */
-export function withTestRouter<T>(
+export function withTestRouter<T extends object>(
   WrappedComponent: ComponentType<T>,
   {
     route = '/',
@@ -34,7 +34,7 @@ export function withTestRouter<T>(
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     return (
       <UIRouter router={router}>
         <UIView />

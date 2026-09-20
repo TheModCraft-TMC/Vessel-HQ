@@ -28,7 +28,6 @@ export function NamespaceAppsDatatable({ namespace }: { namespace: string }) {
   );
 
   const applicationsQuery = useApplications(environmentId, {
-    refetchInterval: tableState.autoRefreshRateMS,
     namespace,
   });
   const applications = applicationsQuery.data ?? [];

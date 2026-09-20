@@ -26,8 +26,8 @@ export function HiddenContainersPanel() {
       <Widget.Body>
         <div className="mb-3">
           <TextTip color="blue">
-            You can hide containers with specific labels from Portainer UI. You
-            need to specify the label name and value.
+            You can hide containers with specific labels from the Vessel HQ UI.
+            You need to specify the label name and value.
           </TextTip>
         </div>
 

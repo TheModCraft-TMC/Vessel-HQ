@@ -3,14 +3,14 @@ import { ComponentType } from 'react';
 /**
  * Hides the wrapped component if portainer is running as a docker extension.
  */
-export function withHideOnExtension<T>(
+export function withHideOnExtension<T extends object>(
   WrappedComponent: ComponentType<T>
 ): ComponentType<T> {
   // Try to create a nice displayName for React Dev Tools.
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     if (window.ddExtension) {
       return null;
     }

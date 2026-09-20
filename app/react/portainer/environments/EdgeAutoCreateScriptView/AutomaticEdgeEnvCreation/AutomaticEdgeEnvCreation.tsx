@@ -174,7 +174,7 @@ function EdgeKeyInfo({
         showMetaFields
       >
         <TextTip color="blue">
-          Portainer Server URL{' '}
+          Vessel HQ server URL{' '}
           {!asyncMode ? 'and tunnel server address are' : 'is'} set{' '}
           <Link
             to="portainer.settings.edgeCompute"
@@ -188,7 +188,7 @@ function EdgeKeyInfo({
         </FormControl>
 
         {!asyncMode && (
-          <FormControl label="Portainer tunnel server address">
+          <FormControl label="Vessel HQ tunnel server address">
             <Input
               value={tunnelUrl}
               readOnly

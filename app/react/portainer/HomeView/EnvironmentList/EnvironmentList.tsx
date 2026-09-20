@@ -7,7 +7,6 @@ import {
   EnvironmentHealth,
 } from '@/react/portainer/environments/types';
 import {
-  refetchIfAnyOffline,
   SortType,
   useEnvironmentList,
 } from '@/react/portainer/environments/queries/useEnvironmentList';
@@ -148,7 +147,7 @@ export function EnvironmentList({ onClickBrowse }: Props) {
         order: sortOrder,
         ...listQueryParams,
       },
-      { refetchInterval: refetchIfAnyOffline }
+      {}
     );
 
   const environmentRows = useMemo<EnvironmentRow[]>(() => {

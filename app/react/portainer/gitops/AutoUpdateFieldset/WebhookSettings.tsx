@@ -23,7 +23,7 @@ export function WebhookSettings({
           <>
             See{' '}
             <HelpLink docLink={docsLink}>
-              Portainer documentation on webhook usage
+              documentation on webhook usage
             </HelpLink>
             .
           </>

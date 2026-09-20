@@ -2,7 +2,7 @@ import { ComponentType } from 'react';
 
 import { FeatureFlag, useFeatureFlag } from './useFeatureFlag';
 
-export function withFeatureFlag<T>(
+export function withFeatureFlag<T extends object>(
   WrappedComponent: ComponentType<T>,
   flag: FeatureFlag
 ): ComponentType<T> {
@@ -10,7 +10,7 @@ export function withFeatureFlag<T>(
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     const featureFlagQuery = useFeatureFlag(flag);
 
     if (!featureFlagQuery.data) {

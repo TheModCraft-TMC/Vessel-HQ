@@ -32,17 +32,15 @@ export function useImages<T = Array<ImagesListResponse>>(
   {
     select,
     enabled,
-    refetchInterval,
   }: {
     select?(data: Array<ImagesListResponse>): T;
     enabled?: boolean;
-    refetchInterval?: number;
   } = {}
 ) {
   return useQuery(
     queryKeys.list(environmentId, { withUsage }),
     () => getImages(environmentId, { withUsage }),
-    { select, enabled, refetchInterval }
+    { select, enabled }
   );
 }
 

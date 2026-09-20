@@ -4,9 +4,9 @@ This fork has two distinct version concepts and intentionally keeps them separat
 
 ## Fork release version
 
-`RELEASE_VERSION` is the authoritative TheModCraft release identifier. The build script injects it into `pkg/build.ImageTag`; released images use tags such as `2.39.3.2.16`.
+`RELEASE_VERSION` is the authoritative TheModCraft release identifier. The build script injects it into both `pkg/build.ReleaseVersion` and, by default, `pkg/build.ImageTag`; released images use tags such as `2.39.3.2.16`.
 
-The authenticated `GET /api/system/version` response exposes this build tag as `ServerVersion` when it is a valid numeric release. Development builds without a release tag fall back to the upstream API version.
+The authenticated `GET /api/system/version` response exposes the numeric image tag as `ServerVersion`, falling back to the maintained fork release when required. It never uses the upstream API/schema version as the installed image version.
 
 The sidebar footer and build-information dialog display this server version. They no longer display the upstream `2.45.0 LTS` string as the installed fork release.
 

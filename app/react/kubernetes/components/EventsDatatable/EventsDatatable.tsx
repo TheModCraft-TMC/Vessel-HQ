@@ -6,6 +6,7 @@ import { IndexOptional } from '@/react/kubernetes/configs/types';
 import { TableSettings } from '@/react/kubernetes/datatables/DefaultDatatableSettings';
 
 import { Datatable, TableSettingsMenu } from '@@/datatables';
+import type { IconSource } from '@@/Icon';
 import { TableSettingsMenuAutoRefresh } from '@@/datatables/TableSettingsMenuAutoRefresh';
 import { TableState } from '@@/datatables/useTableState';
 
@@ -18,7 +19,7 @@ type Props = {
   'data-cy': string;
   noWidget?: boolean;
   title?: ReactNode;
-  titleIcon?: ReactNode;
+  titleIcon?: IconSource;
 };
 
 export function EventsDatatable({

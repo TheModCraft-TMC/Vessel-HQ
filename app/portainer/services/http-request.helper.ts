@@ -87,16 +87,3 @@ export function resetAgentHeaders() {
   headers.agentManagerOperation = false;
   delete headers.registryAuthentication;
 }
-
-/* @ngInject */
-export function HttpRequestHelperAngular() {
-  return {
-    registryAuthenticationHeader,
-    setRegistryAuthenticationHeader,
-    portainerAgentTargetHeader,
-    setPortainerAgentTargetHeader,
-    setPortainerAgentManagerOperation,
-    portainerAgentManagerOperation,
-    resetAgentHeaders,
-  };
-}

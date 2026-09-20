@@ -46,7 +46,6 @@ export function PersistentVolumesDatatable() {
   const envId = useEnvironmentId();
   const deleteVolumesMutation = useDeletePersistentVolumes(envId);
   const volumesQuery = usePersistentVolumes(envId, {
-    refetchInterval: tableState.autoRefreshRateMS,
   });
   const volumes = volumesQuery.data ?? [];
   const columns = createPersistentVolumesColumns((volume) =>

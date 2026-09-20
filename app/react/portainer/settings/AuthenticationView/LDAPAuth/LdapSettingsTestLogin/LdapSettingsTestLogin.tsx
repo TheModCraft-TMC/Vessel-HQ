@@ -5,7 +5,6 @@ import { FeatureId } from '@/react/portainer/feature-flags/enums';
 import { isLimitedToBE } from '@/react/portainer/feature-flags/feature-flags.service';
 import { LDAPSettings } from '@/react/portainer/settings/types';
 
-import { BEFeatureIndicator } from '@@/BEFeatureIndicator';
 import { FormSection } from '@@/form-components/FormSection';
 import { FormControl } from '@@/form-components/FormControl';
 import { Input } from '@@/form-components/Input';
@@ -16,7 +15,6 @@ import { useTestLdapMutation } from '../../../queries/auth/useTestLdap';
 interface Props {
   settings: LDAPSettings;
   limitedFeatureId?: FeatureId;
-  showBeIndicatorIfNeeded?: boolean;
   isLimitedFeatureSelfContained?: boolean;
 }
 
@@ -25,12 +23,15 @@ const initialValues = { username: '', password: '' };
 export function LdapSettingsTestLogin({
   settings,
   limitedFeatureId,
-  showBeIndicatorIfNeeded = false,
   isLimitedFeatureSelfContained = false,
 }: Props) {
   const isDisabled =
     isLimitedFeatureSelfContained || isLimitedToBE(limitedFeatureId);
   const mutation = useTestLdapMutation();
+
+  if (isDisabled) {
+    return null;
+  }
 
   return (
     <FormSection title="Test login">
@@ -99,10 +100,6 @@ export function LdapSettingsTestLogin({
                 {(mutation.isError ||
                   (mutation.isSuccess && !mutation.data?.valid)) && (
                   <X className="icon-danger" aria-hidden="true" />
-                )}
-
-                {showBeIndicatorIfNeeded && limitedFeatureId && (
-                  <BEFeatureIndicator featureId={limitedFeatureId} />
                 )}
               </div>
             </div>

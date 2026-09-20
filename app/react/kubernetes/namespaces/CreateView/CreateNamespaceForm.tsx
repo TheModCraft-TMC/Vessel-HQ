@@ -74,7 +74,15 @@ export function CreateNamespaceForm() {
             namespaceNames
           )}
         >
-          {NamespaceInnerForm}
+          {(formikProps) => (
+            <NamespaceInnerForm
+              // Formik intentionally forwards its complete render-prop contract.
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...formikProps}
+              isEdit={false}
+              isUpdating={createNamespaceMutation.isLoading}
+            />
+          )}
         </Formik>
       </WidgetBody>
     </Widget>

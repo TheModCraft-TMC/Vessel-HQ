@@ -1,18 +1,20 @@
 import { ComponentType } from 'react';
-import { UIRouterContextComponent } from '@uirouter/react-hybrid';
+import { UIRouterContext } from '@uirouter/react';
 
-export function withUIRouter<T>(
+import { router } from '@/router';
+
+export function withUIRouter<T extends object>(
   WrappedComponent: ComponentType<T>
 ): ComponentType<T> {
   // Try to create a nice displayName for React Dev Tools.
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || 'Component';
 
-  function WrapperComponent(props: T & JSX.IntrinsicAttributes) {
+  function WrapperComponent(props: T) {
     return (
-      <UIRouterContextComponent>
+      <UIRouterContext.Provider value={router}>
         <WrappedComponent {...props} />
-      </UIRouterContextComponent>
+      </UIRouterContext.Provider>
     );
   }
 

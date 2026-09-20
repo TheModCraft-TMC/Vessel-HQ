@@ -4,13 +4,13 @@ import {
   forwardRef,
   MouseEventHandler,
   PropsWithChildren,
-  ReactNode,
 } from 'react';
 import clsx from 'clsx';
 
 import { AutomationTestingProps } from '@/types';
 
 import { Icon } from '@@/Icon';
+import type { IconSource } from '@@/Icon';
 import './Button.css';
 
 type Type = 'submit' | 'button' | 'reset';
@@ -31,7 +31,7 @@ type Size = 'xsmall' | 'small' | 'medium' | 'large';
 
 export interface Props<TasProps = unknown>
   extends AriaAttributes, AutomationTestingProps {
-  icon?: ReactNode | ComponentType<unknown>;
+  icon?: IconSource;
 
   color?: Color;
   size?: Size;

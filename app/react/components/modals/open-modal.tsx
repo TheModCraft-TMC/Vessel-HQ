@@ -1,5 +1,5 @@
 import { ComponentType } from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import '@reach/dialog/styles.css';
 import { OnSubmit } from './Modal/types';
@@ -15,16 +15,16 @@ export async function openModal<TProps, TResult>(
   counter += 1;
   modal.id = `dialog-${counter}`;
   document.body.appendChild(modal);
+  const root = createRoot(modal);
 
   const result = await new Promise<TResult | undefined>((resolve) => {
-    render(
+    root.render(
       // eslint-disable-next-line react/jsx-props-no-spreading
-      <Modal {...props} onSubmit={(result) => resolve(result)} />,
-      modal
+      <Modal {...props} onSubmit={(result) => resolve(result)} />
     );
   });
 
-  unmountComponentAtNode(modal);
+  root.unmount();
   document.body.removeChild(modal);
 
   return result;

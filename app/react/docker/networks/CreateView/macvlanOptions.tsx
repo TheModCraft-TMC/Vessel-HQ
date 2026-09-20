@@ -4,7 +4,7 @@ import { BoxSelectorOption } from '@@/BoxSelector';
 
 export function getOptions(
   hasNetworks: boolean
-): ReadonlyArray<BoxSelectorOption<string>> {
+): ReadonlyArray<BoxSelectorOption<'local' | 'swarm'>> {
   return [
     {
       id: 'network_config',

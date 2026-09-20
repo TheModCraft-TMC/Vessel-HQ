@@ -3,6 +3,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { ImageId, ImageName } from '@/docker/models/image';
 
 import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
+import { withAgentTargetHeader } from '../utils';
 
 /**
  * Raw docker API proxy
@@ -15,13 +16,17 @@ export async function tagImage(
   environmentId: EnvironmentId,
   id: ImageId | ImageName,
   repo: string,
-  tag?: string
+  tag?: string,
+  { nodeName }: { nodeName?: string } = {}
 ) {
   try {
     const { data } = await axios.post(
       buildDockerProxyUrl(environmentId, 'images', id, 'tag'),
       {},
-      { params: { repo, tag } }
+      {
+        params: { repo, tag },
+        headers: { ...withAgentTargetHeader(nodeName) },
+      }
     );
     return data;
   } catch (e) {
