@@ -4,9 +4,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel/AccessControlPanel';
 import { ResourceControlType } from '@/react/portainer/access-control/types';
-import { ContainerListViewModel } from '@/features/containers/types';
+import { ContainerListViewModel } from '@/domains/containers/types';
 import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
-import { useContainers } from '@/features/containers/queries/useContainers';
+import { useContainers } from '@/domains/containers/queries/useContainers';
 import { notifySuccess } from '@/portainer/services/notifications';
 
 import { PageHeader } from '@@/PageHeader';

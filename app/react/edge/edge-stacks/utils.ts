@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 
 import { EditorType } from './types';
 

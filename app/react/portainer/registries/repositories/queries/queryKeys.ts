@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { queryKeys as registriesQueryKeys } from '../../queries/query-keys';
 import { RegistryId } from '../../types/registry';

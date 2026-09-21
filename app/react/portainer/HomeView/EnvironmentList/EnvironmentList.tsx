@@ -5,7 +5,7 @@ import {
   EnvironmentStatus,
   PlatformType,
   EnvironmentHealth,
-} from '@/features/environments';
+} from '@/domains/environments';
 import {
   SortType,
   useEnvironmentList,

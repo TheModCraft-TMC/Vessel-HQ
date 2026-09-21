@@ -8,7 +8,7 @@ import {
   createMockEnvironment,
   createMockEnvironmentGroup,
 } from '@/react-tools/test-mocks';
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 import { EnvSelector, getEnvironmentOptions } from './EnvSelector';
 

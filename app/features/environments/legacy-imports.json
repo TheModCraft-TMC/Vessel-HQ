@@ -1,4 +1,0 @@
-{
-  "maxImports": 2,
-  "modules": ["@/portainer/tags/types", "@/react/docker/snapshots/types"]
-}

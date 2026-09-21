@@ -5,7 +5,7 @@ import { object } from 'yup';
 
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { confirm } from '@@/modals/confirm';
 import { Button } from '@@/buttons';

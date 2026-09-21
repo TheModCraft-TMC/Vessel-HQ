@@ -4,7 +4,7 @@ import {
   getEnvironmentTypeIcon,
   getPlatformTypeName,
 } from '@/react/portainer/environments/utils';
-import { EnvironmentType, ContainerEngine } from '@/features/environments';
+import { EnvironmentType, ContainerEngine } from '@/domains/environments';
 
 import { Icon } from '@@/Icon';
 

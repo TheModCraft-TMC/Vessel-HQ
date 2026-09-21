@@ -5,7 +5,7 @@ import {
 } from 'kubernetes-types/apps/v1';
 
 import { withError } from '@/core/query/query-client';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 
 import { AppKind } from '../types';

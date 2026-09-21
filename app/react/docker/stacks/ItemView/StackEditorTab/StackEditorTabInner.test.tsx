@@ -7,7 +7,7 @@ import { JSONSchema7 } from 'json-schema';
 import { http, HttpResponse } from 'msw';
 
 import { StackType } from '@/react/common/stacks/types';
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { createMockUser, createMockUsers } from '@/react-tools/test-mocks';

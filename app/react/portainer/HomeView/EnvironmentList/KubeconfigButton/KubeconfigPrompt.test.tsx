@@ -8,7 +8,7 @@ import { UserViewModel } from '@/portainer/models/user';
 import {
   Environment,
   EnvironmentType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import * as notifications from '@/portainer/services/notifications';
 import { usePublicSettings } from '@/react/portainer/settings/queries';
 import { usePaginationLimitState } from '@/react/hooks/usePaginationLimitState';

@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import {
   Environment,
   EnvironmentStatus,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { isEdgeEnvironment } from '@/react/portainer/environments/utils';
 
 interface Props {

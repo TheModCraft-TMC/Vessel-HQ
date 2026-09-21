@@ -8,7 +8,7 @@ import {
   PlatformType,
   EnvironmentId,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { getPlatformType } from '@/react/portainer/environments/utils';
 import { useEnvironment } from '@/react/portainer/environments/queries/useEnvironment';
 import { environmentStore } from '@/react/hooks/current-environment-store';

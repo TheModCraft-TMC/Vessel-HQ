@@ -5,7 +5,7 @@ import { Network, Plug2 } from 'lucide-react';
 
 import { useCreateAzureEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 import { EnvironmentMetadata } from '@/react/portainer/environments/environment.service/create';
 import {
   NameField,

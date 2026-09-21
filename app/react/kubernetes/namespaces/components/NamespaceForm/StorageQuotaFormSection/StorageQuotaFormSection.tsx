@@ -1,4 +1,4 @@
-import { StorageClass } from '@/features/environments';
+import { StorageClass } from '@/domains/environments';
 
 import { FormSection } from '@@/form-components/FormSection';
 import { TextTip } from '@@/Tip/TextTip';

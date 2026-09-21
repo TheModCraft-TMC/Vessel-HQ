@@ -3,7 +3,7 @@ import { Deployment, DaemonSet, StatefulSet } from 'kubernetes-types/apps/v1';
 import { Pod } from 'kubernetes-types/core/v1';
 
 import { queryClient } from '@/core/query/query-client';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 
 import type { AppKind, ApplicationPatch, Application } from '../types';

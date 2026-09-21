@@ -3,7 +3,7 @@ import { SchemaOf, object } from 'yup';
 
 import { accessControlFormValidation } from '@/react/portainer/access-control/AccessControlForm';
 import { useNameValidation } from '@/react/docker/stacks/common/NameField';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { envVarsFieldsetValidation } from '../EnvVarsFieldset';
 import { TemplateEnv } from '../../types';

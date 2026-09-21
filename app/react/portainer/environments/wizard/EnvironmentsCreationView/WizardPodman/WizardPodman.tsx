@@ -5,7 +5,7 @@ import _ from 'lodash';
 import {
   ContainerEngine,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { commandsTabs } from '@/react/edge/components/EdgeScriptForm/scripts';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 import EdgeAgentStandardIcon from '@/react/edge/components/edge-agent-standard.svg?c';

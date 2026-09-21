@@ -20,7 +20,7 @@ import {
   GitFormModel,
   RelativePathModel,
 } from '@/react/portainer/gitops/types';
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 
 import { envVarValidation } from '@@/form-components/EnvironmentVariablesFieldset';
 import { file } from '@@/form-components/yup-file-validation';

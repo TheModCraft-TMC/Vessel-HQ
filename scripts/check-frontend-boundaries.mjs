@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const appRoot = join(repoRoot, 'app');
-const architectureRoots = ['core', 'design-system', 'features', 'layouts'];
+const canonicalRoots = ['core', 'domains', 'providers', 'shared', 'ui'];
+const transitionalRoots = ['design-system', 'layouts'];
+const architectureRoots = [...canonicalRoots, ...transitionalRoots];
 const sourceExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
 const importPattern = /(?:\bfrom\s*|\bimport\s*\(\s*|\brequire\s*\(\s*|\bimport\s*)['"]([^'"]+)['"]/g;
 const legacyImportPolicies = loadLegacyImportPolicies();
@@ -25,7 +27,9 @@ for (const file of files) {
   }
 }
 
-checkFeaturePublicApis();
+checkDeprecatedFeatureRoot();
+checkDomainPublicApis();
+checkProviderPublicApis();
 checkLegacyImportBudgets();
 
 if (violations.length > 0) {
@@ -37,8 +41,8 @@ if (violations.length > 0) {
 }
 
 console.log(`Frontend architecture boundaries: ${files.length} source files checked`);
-for (const [feature, count] of legacyImportCounts) {
-  console.log(`Transitional ${feature} legacy imports: ${count}`);
+for (const [domain, count] of legacyImportCounts) {
+  console.log(`Transitional ${domain} legacy imports: ${count}`);
 }
 
 function checkImport(file, specifier) {
@@ -46,12 +50,20 @@ function checkImport(file, specifier) {
   const sourceParts = sourcePath.split('/');
   const sourceLayer = sourceParts[0];
   const targetPath = resolveInternalImport(file, specifier);
+  const targetLayer = targetPath?.split('/')[0];
+  const sourceDomain = sourceLayer === 'domains' ? sourceParts[1] : undefined;
+  const targetDomain = getDomain(targetPath);
+  const sourceProvider = getProvider(sourcePath);
+  const targetProvider = getProvider(targetPath);
 
   if (specifier.startsWith('.') && targetPath) {
-    const targetLayer = targetPath.split('/')[0];
     if (architectureRoots.includes(targetLayer) && targetLayer !== sourceLayer) {
       report(sourcePath, specifier, 'cross-layer imports must use the @/ alias');
     }
+  }
+
+  if (targetLayer === 'features') {
+    report(sourcePath, specifier, 'app/features has been replaced by app/domains');
   }
 
   if (sourceLayer === 'design-system' && targetPath) {
@@ -60,42 +72,60 @@ function checkImport(file, specifier) {
     }
   }
 
-  if (sourceLayer === 'core' || sourceLayer === 'layouts') {
-    if (isPrivateFeatureImport(specifier)) {
-      report(sourcePath, specifier, 'core and layouts may consume a feature only through its public index');
+  if (sourceLayer === 'ui' && targetPath) {
+    if (!['shared', 'ui'].includes(targetLayer)) {
+      report(sourcePath, specifier, 'ui may depend only on ui, shared, and external packages');
     }
   }
 
-  if (sourceLayer !== 'features') {
+  if (targetDomain && targetDomain !== sourceDomain && sourceLayer !== 'ui') {
+    const isPublicAlias = specifier === `@/domains/${targetDomain}`;
+    if (!isPublicAlias) {
+      const targetSection = getDomainSection(targetPath, targetDomain);
+      const providerForbiddenSections = ['components', 'hooks', 'queries', 'routes', 'views'];
+      const message =
+        sourceLayer === 'providers' && providerForbiddenSections.includes(targetSection)
+          ? 'providers cannot depend on domain views, components, hooks, queries, or routes'
+          : 'domains may be consumed only through their public index';
+      report(sourcePath, specifier, message);
+    }
+  }
+
+  if (targetProvider && targetProvider.key !== sourceProvider?.key && sourceLayer !== 'ui') {
+    const isPublicAlias = specifier === `@/providers/${targetProvider.key}`;
+    if (!isPublicAlias) {
+      const message =
+        sourceLayer === 'domains' ? 'domains may consume a provider only through its public index' : 'provider modules may be consumed only through the provider public index';
+      report(sourcePath, specifier, message);
+    }
+  }
+
+  if (sourceLayer === 'providers' && targetPath) {
+    if (!['domains', 'providers', 'shared'].includes(targetLayer)) {
+      report(sourcePath, specifier, 'providers may depend only on shared contracts, domain public APIs, provider internals, and external packages');
+    }
+  }
+
+  if (sourceLayer !== 'domains') {
     return;
   }
 
-  const sourceFeature = sourceParts[1];
-  const targetLayer = targetPath?.split('/')[0];
-  if (targetLayer && !['core', 'design-system', 'features', 'layouts'].includes(targetLayer)) {
-    const policy = legacyImportPolicies.get(sourceFeature);
+  if (targetLayer && !architectureRoots.includes(targetLayer)) {
+    const policy = legacyImportPolicies.get(sourceDomain);
     if (policy?.modules.has(specifier)) {
-      legacyImportCounts.set(sourceFeature, (legacyImportCounts.get(sourceFeature) ?? 0) + 1);
-      const modulesSeen = legacyImportModulesSeen.get(sourceFeature) ?? new Set();
+      legacyImportCounts.set(sourceDomain, (legacyImportCounts.get(sourceDomain) ?? 0) + 1);
+      const modulesSeen = legacyImportModulesSeen.get(sourceDomain) ?? new Set();
       modulesSeen.add(specifier);
-      legacyImportModulesSeen.set(sourceFeature, modulesSeen);
+      legacyImportModulesSeen.set(sourceDomain, modulesSeen);
     } else {
-      report(sourcePath, specifier, 'migrated features cannot add dependencies on the transitional legacy tree');
-    }
-  }
-
-  const targetFeature = getFeature(targetPath);
-  if (targetFeature && targetFeature !== sourceFeature) {
-    const isPublicAlias = specifier === `@/features/${targetFeature}`;
-    if (!isPublicAlias) {
-      report(sourcePath, specifier, 'features may consume another feature only through its public index');
+      report(sourcePath, specifier, 'migrated domains cannot add dependencies on the transitional legacy tree');
     }
   }
 
   const sourceSection = sourceParts[2];
-  const targetSection = getFeatureSection(targetPath, sourceFeature);
+  const targetSection = getDomainSection(targetPath, sourceDomain);
 
-  if (sourceSection === 'components' && ['hooks', 'pages', 'queries', 'services'].includes(targetSection)) {
+  if (sourceSection === 'components' && ['hooks', 'queries', 'services', 'views'].includes(targetSection)) {
     report(sourcePath, specifier, 'presentation components must receive behavior and remote state through props');
   }
 
@@ -104,43 +134,75 @@ function checkImport(file, specifier) {
       report(sourcePath, specifier, 'services are framework-independent API and domain modules');
     }
 
-    if (['components', 'hooks', 'pages', 'queries'].includes(targetSection)) {
-      report(sourcePath, specifier, 'services cannot depend on React-facing feature sections');
+    if (['components', 'hooks', 'queries', 'views'].includes(targetSection)) {
+      report(sourcePath, specifier, 'services cannot depend on React-facing domain sections');
     }
   }
 
-  if (sourceSection === 'models' && ['components', 'hooks', 'pages', 'queries', 'services'].includes(targetSection)) {
+  if (sourceSection === 'models' && ['components', 'hooks', 'queries', 'services', 'views'].includes(targetSection)) {
     report(sourcePath, specifier, 'models must remain dependency-light');
   }
 }
 
-function checkFeaturePublicApis() {
+function checkDeprecatedFeatureRoot() {
   const featuresRoot = join(appRoot, 'features');
-  if (!existsSync(featuresRoot)) {
+  if (existsSync(featuresRoot)) {
+    violations.push('features: app/features has been replaced by app/domains');
+  }
+}
+
+function checkDomainPublicApis() {
+  const domainsRoot = join(appRoot, 'domains');
+  if (!existsSync(domainsRoot)) {
     return;
   }
 
-  for (const entry of readdirSync(featuresRoot)) {
-    const featurePath = join(featuresRoot, entry);
-    if (!statSync(featurePath).isDirectory()) {
+  for (const entry of readdirSync(domainsRoot)) {
+    const domainPath = join(domainsRoot, entry);
+    if (!statSync(domainPath).isDirectory()) {
       continue;
     }
 
-    if (!existsSync(join(featurePath, 'index.ts')) && !existsSync(join(featurePath, 'index.tsx'))) {
-      violations.push(`features/${entry}: each feature requires an index.ts public API`);
+    if (!hasPublicApi(domainPath)) {
+      violations.push(`domains/${entry}: each domain requires an index.ts public API`);
+    }
+  }
+}
+
+function checkProviderPublicApis() {
+  const providersRoot = join(appRoot, 'providers');
+  if (!existsSync(providersRoot)) {
+    return;
+  }
+
+  for (const providerClass of readdirSync(providersRoot)) {
+    const providerClassPath = join(providersRoot, providerClass);
+    if (!statSync(providerClassPath).isDirectory()) {
+      continue;
+    }
+
+    for (const provider of readdirSync(providerClassPath)) {
+      const providerPath = join(providerClassPath, provider);
+      if (!statSync(providerPath).isDirectory()) {
+        continue;
+      }
+
+      if (!hasPublicApi(providerPath)) {
+        violations.push(`providers/${providerClass}/${provider}: each provider requires an index.ts public API`);
+      }
     }
   }
 }
 
 function loadLegacyImportPolicies() {
   const policies = new Map();
-  const featuresRoot = join(appRoot, 'features');
-  if (!existsSync(featuresRoot)) {
+  const domainsRoot = join(appRoot, 'domains');
+  if (!existsSync(domainsRoot)) {
     return policies;
   }
 
-  for (const entry of readdirSync(featuresRoot)) {
-    const policyPath = join(featuresRoot, entry, 'legacy-imports.json');
+  for (const entry of readdirSync(domainsRoot)) {
+    const policyPath = join(domainsRoot, entry, 'legacy-imports.json');
     if (!existsSync(policyPath)) {
       continue;
     }
@@ -156,16 +218,16 @@ function loadLegacyImportPolicies() {
 }
 
 function checkLegacyImportBudgets() {
-  for (const [feature, policy] of legacyImportPolicies) {
-    const actual = legacyImportCounts.get(feature) ?? 0;
+  for (const [domain, policy] of legacyImportPolicies) {
+    const actual = legacyImportCounts.get(domain) ?? 0;
     if (actual !== policy.maxImports) {
-      violations.push(`features/${feature}: transitional legacy import budget is ${policy.maxImports}, but ${actual} remain; update the budget in the same change`);
+      violations.push(`domains/${domain}: transitional legacy import budget is ${policy.maxImports}, but ${actual} remain; update the budget in the same change`);
     }
 
-    const modulesSeen = legacyImportModulesSeen.get(feature) ?? new Set();
+    const modulesSeen = legacyImportModulesSeen.get(domain) ?? new Set();
     const unusedModules = [...policy.modules].filter((module) => !modulesSeen.has(module));
     if (unusedModules.length > 0) {
-      violations.push(`features/${feature}: remove unused legacy allowlist modules: ${unusedModules.join(', ')}`);
+      violations.push(`domains/${domain}: remove unused legacy allowlist modules: ${unusedModules.join(', ')}`);
     }
   }
 }
@@ -190,18 +252,39 @@ function resolveInternalImport(file, specifier) {
   return undefined;
 }
 
-function isPrivateFeatureImport(specifier) {
-  return /^@\/features\/[^/]+\/.+/.test(specifier);
-}
-
-function getFeature(targetPath) {
-  const match = targetPath?.match(/^features\/([^/]+)(?:\/|$)/);
+function getDomain(targetPath) {
+  const match = targetPath?.match(/^domains\/([^/]+)(?:\/|$)/);
   return match?.[1];
 }
 
-function getFeatureSection(targetPath, feature) {
-  const match = targetPath?.match(new RegExp(`^features/${escapeRegExp(feature)}/([^/]+)(?:/|$)`));
-  return match?.[1];
+function getDomainSection(targetPath, domain) {
+  if (!domain) {
+    return undefined;
+  }
+
+  const match = targetPath?.match(new RegExp(`^domains/${escapeRegExp(domain)}/([^/]+)(?:/|$)`));
+  return stripSourceExtension(match?.[1]);
+}
+
+function getProvider(targetPath) {
+  const match = targetPath?.match(/^providers\/([^/]+)\/([^/]+)(?:\/|$)/);
+  if (!match) {
+    return undefined;
+  }
+
+  return {
+    className: match[1],
+    name: match[2],
+    key: `${match[1]}/${match[2]}`,
+  };
+}
+
+function hasPublicApi(directory) {
+  return existsSync(join(directory, 'index.ts')) || existsSync(join(directory, 'index.tsx'));
+}
+
+function stripSourceExtension(value) {
+  return value?.replace(/\.(?:js|jsx|ts|tsx)$/, '');
 }
 
 function walk(directory) {

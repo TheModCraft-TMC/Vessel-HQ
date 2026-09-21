@@ -5,7 +5,7 @@ import { NameField } from '@/react/portainer/environments/common/NameField/NameF
 import { PublicUrlField } from '@/react/portainer/environments/common/PublicUrlField/PublicUrlField';
 import { EdgeIntervalsFieldset } from '@/react/portainer/environments/common/EdgeIntervalsFieldset/EdgeIntervalsFieldset';
 import { useUpdateEnvironmentMutation } from '@/react/portainer/environments/queries/useUpdateEnvironmentMutation';
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 import { Widget } from '@@/Widget';
 import { TextTip } from '@@/Tip/TextTip';

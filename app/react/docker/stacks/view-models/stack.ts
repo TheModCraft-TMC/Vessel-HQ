@@ -1,6 +1,6 @@
 import { Stack, StackStatus, StackType } from '@/react/common/stacks/types';
 import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import {
   AutoUpdateResponse,
   RepoConfigResponse,

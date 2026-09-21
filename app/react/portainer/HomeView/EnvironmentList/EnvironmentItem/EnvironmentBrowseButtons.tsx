@@ -1,7 +1,7 @@
 import { History, Wifi, WifiOff, X } from 'lucide-react';
 import clsx from 'clsx';
 
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 import {
   getDashboardRoute,
   isEdgeAsync as checkEdgeAsync,

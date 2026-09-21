@@ -1,6 +1,6 @@
 import { Box } from 'lucide-react';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { DashboardLink } from '../items/DashboardLink';
 import { SidebarItem } from '../SidebarItem';

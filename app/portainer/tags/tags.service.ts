@@ -1,6 +1,6 @@
-import axios, { parseAxiosError } from '../services/axios/axios';
+import { Tag, TagId } from '@/domains/tags';
 
-import { Tag, TagId } from './types';
+import axios, { parseAxiosError } from '../services/axios/axios';
 
 export async function getTags() {
   try {

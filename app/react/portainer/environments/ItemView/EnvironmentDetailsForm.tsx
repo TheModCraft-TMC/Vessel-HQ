@@ -1,7 +1,7 @@
 import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 
 import { notifySuccess } from '@/portainer/services/notifications';
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 import { isAzureEnvironment, isEdgeEnvironment } from '../utils';
 

@@ -1,4 +1,4 @@
-import { EnvironmentStatus } from '@/features/environments';
+import { EnvironmentStatus } from '@/domains/environments';
 
 import { Link } from '@@/Link';
 

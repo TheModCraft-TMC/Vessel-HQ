@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { withError } from '@/core/query/query-client';
-import { PlatformType } from '@/features/environments';
+import { PlatformType } from '@/domains/environments';
 
 import {
   EnvironmentsQueryParams,

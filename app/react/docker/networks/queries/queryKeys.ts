@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { queryKeys as dockerQueryKeys } from '../../queries/utils';
 import { NetworkId } from '../types';

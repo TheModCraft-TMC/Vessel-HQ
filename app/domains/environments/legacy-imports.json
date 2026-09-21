@@ -1,0 +1,4 @@
+{
+  "maxImports": 1,
+  "modules": ["@/react/docker/snapshots/types"]
+}

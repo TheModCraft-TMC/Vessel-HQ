@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { notifySuccess } from '@/portainer/services/notifications';
 
 import { InformationPanel } from '@@/InformationPanel';

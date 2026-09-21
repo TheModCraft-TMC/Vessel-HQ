@@ -1,6 +1,6 @@
 import { round } from 'lodash';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { parseCPU } from '@/react/kubernetes/utils';
 
 import { useNamespaceQuery } from '../../../queries/useNamespaceQuery';

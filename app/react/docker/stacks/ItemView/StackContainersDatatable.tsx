@@ -1,13 +1,13 @@
 import { Box } from 'lucide-react';
 
-import { ContainerListViewModel } from '@/features/containers/types';
-import { createStore } from '@/features/containers/ListView/ContainersDatatable/datatable-store';
-import { useColumns } from '@/features/containers/ListView/ContainersDatatable/columns';
-import { ContainersDatatableActions } from '@/features/containers/ListView/ContainersDatatable/ContainersDatatableActions';
-import { ContainersDatatableSettings } from '@/features/containers/ListView/ContainersDatatable/ContainersDatatableSettings';
-import { useShowGPUsColumn } from '@/features/containers/utils';
+import { ContainerListViewModel } from '@/domains/containers/types';
+import { createStore } from '@/domains/containers/ListView/ContainersDatatable/datatable-store';
+import { useColumns } from '@/domains/containers/ListView/ContainersDatatable/columns';
+import { ContainersDatatableActions } from '@/domains/containers/ListView/ContainersDatatable/ContainersDatatableActions';
+import { ContainersDatatableSettings } from '@/domains/containers/ListView/ContainersDatatable/ContainersDatatableSettings';
+import { useShowGPUsColumn } from '@/domains/containers/utils';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { RowProvider } from '@/features/containers/ListView/ContainersDatatable/RowContext';
+import { RowProvider } from '@/domains/containers/ListView/ContainersDatatable/RowContext';
 
 import { Datatable, Table } from '@@/datatables';
 import {

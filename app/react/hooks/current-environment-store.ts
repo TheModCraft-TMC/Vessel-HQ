@@ -2,7 +2,7 @@ import { createStore } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 
 import { keyBuilder } from '@/react/hooks/useLocalStorage';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 export const environmentStore = createStore<{
   environmentId?: number;

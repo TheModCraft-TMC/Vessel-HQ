@@ -7,8 +7,8 @@ import {
   type EnvironmentGroupId,
   ContainerEngine,
   EnvironmentCreationTypes,
-} from '@/features/environments';
-import { type TagId } from '@/portainer/tags/types';
+} from '@/domains/environments';
+import { type TagId } from '@/domains/tags';
 import { EdgeAsyncIntervalsValues } from '@/react/edge/components/EdgeAsyncIntervalsForm';
 
 import { toEnvironment } from './utils';

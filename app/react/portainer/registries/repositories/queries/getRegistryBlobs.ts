@@ -1,5 +1,5 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { RegistryId } from '../../types/registry';
 import { buildProxyUrl } from '../../queries/build-url';

@@ -1,7 +1,7 @@
 import {
   ContainerEngine,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { AgentForm } from '../../shared/AgentForm/AgentForm';
 

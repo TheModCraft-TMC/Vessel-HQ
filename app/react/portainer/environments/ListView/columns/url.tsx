@@ -5,7 +5,7 @@ import {
   EnvironmentStatus,
   EnvironmentStatusMessage,
   EnvironmentType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { notifySuccess } from '@/portainer/services/notifications';
 
 import { TooltipWithChildren } from '@@/Tip/TooltipWithChildren';

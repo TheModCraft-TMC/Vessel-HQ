@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import { useRouter } from '@uirouter/react';
 
 import { notifySuccess } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { useEnvironmentDeploymentOptions } from '@/react/portainer/environments/queries/useEnvironment';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { isKubernetesEnvironment } from '@/react/portainer/environments/utils';

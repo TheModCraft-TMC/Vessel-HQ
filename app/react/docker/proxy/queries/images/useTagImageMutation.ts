@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { ImageId, ImageName } from '@/docker/models/image';
 

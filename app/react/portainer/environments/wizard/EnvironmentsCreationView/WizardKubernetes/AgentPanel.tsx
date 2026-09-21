@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 import { AgentForm } from '../shared/AgentForm';
 

@@ -1,7 +1,7 @@
 import { Volume, VolumeCreateOptions } from 'docker-types';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { buildUrl } from './build-url';
 

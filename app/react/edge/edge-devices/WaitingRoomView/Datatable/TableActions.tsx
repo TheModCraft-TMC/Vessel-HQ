@@ -2,7 +2,7 @@ import { Check, CheckCircle } from 'lucide-react';
 
 import { notifySuccess } from '@/portainer/services/notifications';
 import { useDeleteEnvironmentsMutation } from '@/react/portainer/environments/ListView/useDeleteEnvironmentsMutation';
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 import { withReactQuery } from '@/core/query/withReactQuery';
 import { useIsPureAdmin } from '@/react/hooks/useUser';
 

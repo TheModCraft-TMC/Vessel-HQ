@@ -5,7 +5,7 @@ import { useTags } from '@/portainer/tags/queries';
 import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
-import { EdgeTypes } from '@/features/environments';
+import { EdgeTypes } from '@/domains/environments';
 import {
   Query,
   getSortType,

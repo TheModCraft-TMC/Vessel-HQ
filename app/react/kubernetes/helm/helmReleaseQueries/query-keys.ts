@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { environmentQueryKeys } from '@/react/portainer/environments/queries/query-keys';
 
 import { UpdateHelmReleasePayload } from '../types';

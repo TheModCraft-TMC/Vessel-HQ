@@ -1,6 +1,6 @@
 import { notifySuccess } from '@/portainer/services/notifications';
 import { useParamState } from '@/react/hooks/useParamState';
-import { ContainerEngine } from '@/features/environments';
+import { ContainerEngine } from '@/domains/environments';
 
 import { PageHeader } from '@@/PageHeader';
 import { confirmDelete } from '@@/modals/confirm';

@@ -4,7 +4,7 @@ import {
   PlatformType,
   KubernetesSnapshot,
   ContainerEngine,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { getPlatformType } from '@/react/portainer/environments/utils';
 import { getDockerEnvironmentType } from '@/react/portainer/environments/utils/getDockerEnvironmentType';
 

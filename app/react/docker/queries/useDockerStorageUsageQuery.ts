@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 /**
  * Disk storage snapshot for the partition backing Docker's data directory.

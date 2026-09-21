@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { notifyError } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { PortainerNamespace } from '../types';
 

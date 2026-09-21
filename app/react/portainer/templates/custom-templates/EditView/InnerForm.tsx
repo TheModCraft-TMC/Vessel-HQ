@@ -12,7 +12,7 @@ import { EdgeTemplateSettings } from '@/react/portainer/templates/custom-templat
 import { EdgeSettingsFieldset } from '@/react/portainer/templates/custom-templates/CreateView/EdgeSettingsFieldset';
 import { StackType } from '@/react/common/stacks/types';
 import { textByType } from '@/react/common/stacks/common/form-texts';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { AccessControlForm } from '@/react/portainer/access-control';
 import { AccessControlFormData } from '@/react/portainer/access-control/types';
 

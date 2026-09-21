@@ -1,7 +1,7 @@
 import { Service } from 'kubernetes-types/core/v1';
 import { ExternalLink } from 'lucide-react';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 
 import { Icon } from '@@/Icon';

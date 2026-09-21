@@ -1,4 +1,4 @@
-import { KubernetesSnapshot } from '@/features/environments';
+import { KubernetesSnapshot } from '@/domains/environments';
 import { humanize } from '@/portainer/filters/filters';
 
 import { CPUStats, GpuStats, MemoryStats, NodeStats } from '@@/StatsItem';

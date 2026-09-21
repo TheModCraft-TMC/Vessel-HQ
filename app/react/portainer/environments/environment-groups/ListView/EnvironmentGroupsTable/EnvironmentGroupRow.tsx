@@ -2,7 +2,7 @@ import { LayoutGrid, Columns3Cog, Users } from 'lucide-react';
 import clsx from 'clsx';
 import { useRouter } from '@uirouter/react';
 
-import { Tag } from '@/portainer/tags/types';
+import { Tag } from '@/domains/tags';
 
 import { Link } from '@@/Link';
 import { Badge } from '@@/Badge';

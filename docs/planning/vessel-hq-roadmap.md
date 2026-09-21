@@ -52,34 +52,33 @@ The migration established the baseline for future product work:
 - Business Edition advertising and upgrade prompts were removed.
 - Release discovery uses the maintained image repository and fork image version.
 - Environment navigation was repaired after route migration.
-- Roles/User and Tags/Environment content containers were aligned with the shared page grid.
+- Roles/User and Tags/Environment content containers were aligned with the shared view grid.
 - The migration checkpoint passed the frontend test suite, type checking, linting, modernization guard, production build, and targeted backend tests.
 
 The upstream API and datastore compatibility version remains `2.45.0`. That value is not the Vessel HQ image release number and must not be changed merely for branding.
 
 ## Target React architecture
 
-The enforced module contract and incremental migration procedure are documented in [Frontend module architecture](frontend-architecture.md). Application boot and routing now live in `app/core`, the application shell lives in `app/layouts`, and `pnpm check:frontend-boundaries` protects new feature slices and design-system code from invalid dependencies.
+The enforced module contract and incremental migration procedure are documented in [Frontend module architecture](frontend-architecture.md). The canonical destination is defined in [Frontend domain and provider architecture](frontend-domain-provider-architecture.md): application boot and routing live in `app/core`, product behavior lives in `app/domains`, external-system adapters live in `app/providers`, and shared presentation converges in `app/ui`. `pnpm check:frontend-boundaries` protects those boundaries from invalid dependencies.
 
 Containers is the first migrated vertical slice. Its implementation, lazy routes, public API, and shrinking transitional dependency budget are described in [Containers vertical-slice migration](containers-vertical-slice.md).
 
 The future server-state and streaming model is documented in [Realtime state architecture](realtime-state-architecture.md): TanStack Query remains the authoritative server cache, authorized lifecycle events evolve toward scoped and batched invalidation, and high-frequency logs, terminals, and metrics remain isolated bounded streams. Redux and RTK Query are not planned.
 
-The next refactor will organize code into pages, components, services, models, hooks, and queries. These names resemble Angular conventions, but the useful service principle is framework-independent. Services must remain explicit TypeScript modules rather than hidden global state containers.
+The next refactor organizes each product domain into views, components, models, mappers, services, hooks, and queries. `views` replaces the superseded `pages` term because route-level application surfaces are not limited to a browser page. Services remain explicit TypeScript modules rather than hidden global state containers.
 
 Prefer domain-owned vertical slices:
 
 ```text
 app/
-  core/                    application boot, router, providers, auth, realtime
-  design-system/           tokens and shared UI primitives
-  layouts/                 shell, navigation, and page layouts
-  features/
+  core/                    application boot, composition, routing, session, realtime
+  domains/
     containers/
-      pages/
+      views/
       components/
-      services/
       models/
+      mappers/
+      services/
       hooks/
       queries/
       tests/
@@ -88,18 +87,33 @@ app/
     images/
     users/
     settings/
+  providers/
+    infrastructure/
+      docker/
+      podman/
+      kubernetes/
+      azure-aci/
+    remotes/
+      docker-hub/
+      ghcr/
+      aws-ecr/
+      azure-acr/
+  ui/                      reusable components, layouts, and tokens
+  shared/                  dependency-light contracts and utilities
 ```
 
 ### Dependency rules
 
-- Pages coordinate routes, permissions, and screen-level composition.
+- Views coordinate routes, permissions, and application-surface composition.
 - Components are presentation-focused and receive explicit props.
-- Services contain API access and domain operations but do not own React state.
+- Services contain domain operations but do not own React state.
+- Providers contain external protocol clients, native DTOs, capability detection, error normalization, and adapter mappers.
 - React Query owns remote state, initial fetching, cache lifetime, and invalidation.
 - WebSocket handlers update or invalidate the smallest authorized query scope.
-- Models distinguish backend DTOs from normalized domain and view models where their shapes differ.
-- Feature code may depend on `core`, layouts, and the design system. Features must not reach into another feature's private implementation.
-- A component becomes shared only after it has a stable cross-feature use case.
+- Models are domain-owned; provider DTOs remain behind provider public APIs and mappers translate them into domain contracts.
+- Domain code may depend on core contracts, UI, shared contracts, and provider public APIs. Domains must not reach into another domain or provider's private implementation.
+- Providers must not import domain views, components, hooks, queries, or routes.
+- A component becomes shared only after it has a stable cross-domain use case.
 - New polling, Angular compatibility code, and React-to-Angular adapters remain prohibited.
 
 ## Design and component strategy
@@ -148,10 +162,10 @@ This sequence is planning context and has not been started:
 1. **Foundation complete:** document module boundaries, move boot/shell ownership, and enforce new slices with dependency rules.
 2. **Repository inventory complete:** inventory existing UI primitives. External `@themodcraft` candidates remain pending exact package names and versions.
 3. **Compatibility foundation complete:** define semantic color, typography, spacing, elevation, breakpoint, motion, focus, and interaction tokens. Final visual values remain open.
-4. **In progress:** redesign the shell, environment navigation, mobile navigation, and shared page layout. The phone drawer now has a consistent breakpoint, backdrop, safe-area handling, and reduced-motion-aware timing.
+4. **In progress:** redesign the shell, environment navigation, mobile navigation, and shared view layout. The phone drawer now has a consistent breakpoint, backdrop, safe-area handling, and reduced-motion-aware timing.
 5. **Structural move complete; responsive work pending:** refactor Containers as the first vertical slice and responsive reference implementation.
 6. Validate the slice on phone, tablet, desktop, touch, keyboard, slow connections, and reconnect scenarios.
-7. Apply the proven pattern to stacks, images, environments, users, settings, and the remaining domains.
+7. Apply the proven domain/view pattern to stacks, images, environments, users, settings, and the remaining domains while extracting provider-specific adapters.
 8. Continue selective upstream 2.45 security and bug-fix intake without overwriting Vessel HQ frontend architecture or identity.
 
 ## Decisions still open

@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 
 type DockerSwarmMode = {
   provider: 'DOCKER_SWARM_MODE';

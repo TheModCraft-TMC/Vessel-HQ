@@ -4,7 +4,7 @@ import { useTags } from '@/portainer/tags/queries';
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
 import { EnvironmentsQueryParams } from '@/react/portainer/environments/environment.service';
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
-import { EdgeTypes, Environment } from '@/features/environments';
+import { EdgeTypes, Environment } from '@/domains/environments';
 import { AutomationTestingProps } from '@/types';
 import {
   columns,

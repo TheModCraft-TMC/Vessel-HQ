@@ -9,7 +9,7 @@ import {
   initializeAuthentication,
   isAdministrator,
   isEdgeAdministrator,
-} from '@/features/auth';
+} from '@/domains/auth';
 
 export enum AccessHeaders {
   Restricted = 'restricted',

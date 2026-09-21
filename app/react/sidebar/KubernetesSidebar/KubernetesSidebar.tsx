@@ -9,7 +9,7 @@ import {
   Server,
 } from 'lucide-react';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { Authorized } from '@/react/hooks/useUser';
 
 import { DashboardLink } from '../items/DashboardLink';

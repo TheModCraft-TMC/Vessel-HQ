@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import _ from 'lodash';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { useStacks } from '@/react/common/stacks/queries/useStacks';
-import { useContainers } from '@/features/containers/queries/useContainers';
+import { useContainers } from '@/domains/containers/queries/useContainers';
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
 
 import { getValidationSchema } from './validation';

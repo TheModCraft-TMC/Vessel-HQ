@@ -1,4 +1,4 @@
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 export interface StateManager {
   updateEndpointState(endpoint: Environment): Promise<void>;

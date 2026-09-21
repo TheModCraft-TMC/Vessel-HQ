@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 export const queryKeys = {
   volumes: (environmentId: EnvironmentId) => [

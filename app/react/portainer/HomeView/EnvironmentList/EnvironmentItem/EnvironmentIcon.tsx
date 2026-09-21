@@ -6,7 +6,7 @@ import kubeEdge from '@/assets/ico/kubernetes-edge-environment.svg';
 import {
   ContainerEngine,
   EnvironmentType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import azure from '@/assets/ico/vendor/azure.svg';
 import docker from '@/assets/ico/vendor/docker.svg';
 import podman from '@/assets/ico/vendor/podman.svg';

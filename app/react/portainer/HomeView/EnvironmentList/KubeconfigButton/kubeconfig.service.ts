@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 const baseUrl = 'kubernetes';
 

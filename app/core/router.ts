@@ -4,10 +4,10 @@ import {
   servicesPlugin,
 } from '@uirouter/react';
 
-import { registerAzureStates } from '@/features/azure';
+import { registerAzureStates } from '@/domains/azure';
 import { registerDockerStates } from '@/docker/__module';
 import { registerEdgeStates } from '@/edge/__module';
-import { registerContainerStates } from '@/features/containers';
+import { registerContainerStates } from '@/domains/containers';
 import { registerKubernetesStates } from '@/kubernetes/__module';
 import { registerKubernetesTemplateStates } from '@/kubernetes/custom-templates';
 import { registerPortainerStates } from '@/portainer/__module';

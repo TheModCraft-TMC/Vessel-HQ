@@ -10,9 +10,9 @@ import { TaskViewModel } from '@/docker/models/task';
 import { useServices } from '@/react/docker/services/queries/useServices';
 import { queryKeys as servicesQueryKeys } from '@/react/docker/services/queries/query-keys';
 import { ServiceViewModel } from '@/docker/models/service';
-import { useContainers } from '@/features/containers/queries/useContainers';
-import { queryKeys as containersQueryKeys } from '@/features/containers/queries/query-keys';
-import { ContainerListViewModel } from '@/features/containers/types';
+import { useContainers } from '@/domains/containers/queries/useContainers';
+import { queryKeys as containersQueryKeys } from '@/domains/containers/queries/query-keys';
+import { ContainerListViewModel } from '@/domains/containers/types';
 import { SWARM_STACK_NAME_LABEL } from '@/react/constants';
 
 import { associateContainerToTask } from '../../tasks/utils';

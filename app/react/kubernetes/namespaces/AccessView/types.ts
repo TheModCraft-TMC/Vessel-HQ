@@ -1,7 +1,7 @@
 import {
   TeamAccessPolicies,
   UserAccessPolicies,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 export type NamespaceAccess = {
   id: number;

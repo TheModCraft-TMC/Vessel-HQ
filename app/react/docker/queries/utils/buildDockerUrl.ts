@@ -1,6 +1,6 @@
 import { compact } from 'lodash';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 /**
  * Build docker URL for Environment

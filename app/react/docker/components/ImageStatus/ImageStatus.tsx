@@ -2,7 +2,7 @@ import { Loader } from 'lucide-react';
 
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { statusIcon } from '@/react/docker/components/ImageStatus/helpers';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 
 import { Icon } from '@@/Icon';

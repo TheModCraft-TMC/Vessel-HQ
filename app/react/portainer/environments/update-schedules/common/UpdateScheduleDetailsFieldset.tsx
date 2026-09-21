@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 import { semverCompare } from '@/react/common/semver-utils';
 
 import { TextTip } from '@@/Tip/TextTip';

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { buildUrl } from '@/react/docker/services/queries/build-url';
 import { ServiceId } from '@/react/docker/services/types';
 

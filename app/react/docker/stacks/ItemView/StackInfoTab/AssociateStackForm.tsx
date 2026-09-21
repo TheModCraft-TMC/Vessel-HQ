@@ -7,7 +7,7 @@ import { AccessControlForm } from '@/react/portainer/access-control';
 import { AccessControlFormData } from '@/react/portainer/access-control/types';
 import { parseAccessControlFormData } from '@/react/portainer/access-control/utils';
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { validationSchema as accessControlValidation } from '@/react/portainer/access-control/AccessControlForm/AccessControlForm.validation';
 import { useSwarmId } from '@/react/docker/proxy/queries/useSwarm';
 import { notifySuccess } from '@/portainer/services/notifications';

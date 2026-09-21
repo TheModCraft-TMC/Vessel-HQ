@@ -1,12 +1,23 @@
 import { Suspense, useSyncExternalStore } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { UIRouter } from '@uirouter/react';
+import { UIRouter, UIView, useCurrentStateAndParams } from '@uirouter/react';
 
-import { AppShell } from '@/layouts/AppShell';
+import { AppShell } from '@/ui';
 import { queryClient } from '@/core/query/query-client';
-import { SidebarProvider } from '@/react/sidebar/useSidebarState';
+import {
+  SidebarProvider,
+  useSidebarState,
+} from '@/react/sidebar/useSidebarState';
 
 import { router } from './router';
+
+const NO_SIDEBAR_STATES = [
+  'portainer.auth',
+  'portainer.init.admin',
+  'portainer.init.edge',
+  'portainer.logout',
+  'kubernetes.kubectlshell',
+];
 
 export function VesselLoadingShell() {
   return (
@@ -33,10 +44,29 @@ export function ClientApp() {
       <UIRouter router={router}>
         <SidebarProvider>
           <Suspense fallback={<VesselLoadingShell />}>
-            <AppShell />
+            <ApplicationShell />
           </Suspense>
         </SidebarProvider>
       </UIRouter>
     </QueryClientProvider>
+  );
+}
+
+function ApplicationShell() {
+  const { state } = useCurrentStateAndParams();
+  const { isOpen, toggle } = useSidebarState();
+  const stateName = state.name || '';
+  const sidebarVisible = !NO_SIDEBAR_STATES.some((name) =>
+    stateName.startsWith(name)
+  );
+
+  return (
+    <AppShell
+      content={<UIView name="content" />}
+      sidebar={<UIView name="sidebar" />}
+      sidebarVisible={sidebarVisible}
+      sidebarOpen={isOpen}
+      onCloseSidebar={toggle}
+    />
   );
 }

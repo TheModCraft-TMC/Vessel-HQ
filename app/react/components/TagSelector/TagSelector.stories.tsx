@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react-webpack5';
 import { useState } from 'react';
 
-import { TagId } from '@/portainer/tags/types';
+import { TagId } from '@/domains/tags';
 
 import { TagSelector } from './TagSelector';
 

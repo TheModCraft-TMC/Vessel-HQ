@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import {
   queryClient,
   withInvalidate,

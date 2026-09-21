@@ -4,9 +4,9 @@ import { render } from '@testing-library/react';
 import {
   EnvironmentGroupId,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { UserViewModel } from '@/portainer/models/user';
-import { Tag } from '@/portainer/tags/types';
+import { Tag } from '@/domains/tags';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 import { server } from '@/setup-tests/server';
 import { withTestRouter } from '@/react/test-utils/withRouter';

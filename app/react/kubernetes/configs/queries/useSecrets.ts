@@ -3,7 +3,7 @@ import { Secret, SecretList } from 'kubernetes-types/core/v1';
 
 import { withError } from '@/core/query/query-client';
 import axios from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { parseKubernetesAxiosError } from '../../axiosError';
 

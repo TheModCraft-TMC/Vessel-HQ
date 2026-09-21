@@ -9,7 +9,7 @@ import './rdash.css';
 import './app.css';
 
 import './theme.css';
-import '../../design-system/tokens.css';
+import '../../ui/tokens/tokens.css';
 import './vendor-override.css';
 import './bootstrap-override.css';
 import './icon.css';

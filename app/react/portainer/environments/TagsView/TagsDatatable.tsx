@@ -1,7 +1,7 @@
 import { TagIcon } from 'lucide-react';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import { Tag } from '@/portainer/tags/types';
+import { Tag } from '@/domains/tags';
 
 import { Datatable } from '@@/datatables';
 import { createPersistedStore } from '@@/datatables/types';

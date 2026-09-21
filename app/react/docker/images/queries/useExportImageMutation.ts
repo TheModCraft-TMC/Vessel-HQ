@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { saveAs } from 'file-saver';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';

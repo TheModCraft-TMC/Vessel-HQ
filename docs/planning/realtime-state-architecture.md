@@ -21,14 +21,14 @@ This baseline is safe and simple, but global invalidation becomes wasteful as th
 
 ## Target ownership
 
-| State class                                                                              | Owner                                               | Update strategy                                                            |
-| ---------------------------------------------------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------- |
-| Containers, stacks, images, networks, environments, users, and settings                  | TanStack Query                                      | REST snapshot followed by scoped invalidation or authoritative cache patch |
-| WebSocket connection lifecycle, authentication, sequencing, reconnect, and event routing | `app/core/realtime`                                 | One connection coordinator outside feature components                      |
-| Query keys and event-to-cache mapping                                                    | Owning feature query modules                        | Invalidate the smallest authorized list/detail scope                       |
-| Logs and terminal data                                                                   | Dedicated stream adapters                           | Bounded buffers and imperative or throttled publication                    |
-| CPU, memory, network, and I/O samples                                                    | Feature-local external store or bounded ring buffer | Publish at an explicit frame/time budget rather than per packet            |
-| Local interface state                                                                    | Component state or Zustand                          | Fine-grained subscriptions; never a duplicate server cache                 |
+| State class                                                                              | Owner                                              | Update strategy                                                            |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+| Containers, stacks, images, networks, environments, users, and settings                  | TanStack Query                                     | REST snapshot followed by scoped invalidation or authoritative cache patch |
+| WebSocket connection lifecycle, authentication, sequencing, reconnect, and event routing | `app/core/realtime`                                | One connection coordinator outside domain components                       |
+| Query keys and event-to-cache mapping                                                    | Owning domain query modules                        | Invalidate the smallest authorized list/detail scope                       |
+| Logs and terminal data                                                                   | Dedicated stream adapters                          | Bounded buffers and imperative or throttled publication                    |
+| CPU, memory, network, and I/O samples                                                    | Domain-local external store or bounded ring buffer | Publish at an explicit frame/time budget rather than per packet            |
+| Local interface state                                                                    | Component state or Zustand                         | Fine-grained subscriptions; never a duplicate server cache                 |
 
 Zustand is appropriate only when multiple components genuinely share local or telemetry state. A ref plus `useSyncExternalStore` is preferred for a single bounded stream. The choice of store does not replace batching, backpressure, or narrow subscriptions.
 
@@ -53,13 +53,13 @@ The exact schema remains subject to a security review. Resource type, identifier
 
 1. Validate protocol version, sequence, resource type, action, and identifiers.
 2. Reject duplicate or out-of-order event IDs.
-3. Map the event through a feature-owned registry to typed query keys.
+3. Map the event through a domain-owned registry to typed query keys.
 4. Coalesce duplicate keys in a short bounded window, initially 50–100 ms.
 5. Invalidate the smallest affected list and detail scopes.
 6. Use `setQueryData` only when the event is an authoritative complete patch for the cached shape. Partial or ambiguous messages trigger invalidation instead.
 7. Preserve the `ready` barrier and refetch active queries after reconnect, sequence gaps, authorization changes, or buffer overflow.
 
-Features must not open independent lifecycle sockets from React components. They register cache-event mappings with the core coordinator and own the resulting query-key behavior.
+Domains must not open independent lifecycle sockets from React components. They register cache-event mappings with the core coordinator and own the resulting query-key behavior. Provider event adapters normalize Docker, Podman, Kubernetes, cloud, or edge-native events before those mappings consume them.
 
 ## High-frequency stream rules
 
@@ -85,7 +85,7 @@ Features must not open independent lifecycle sockets from React components. They
 2. Add observable connection state and tests for login, logout, reconnect, sequence gaps, and resynchronization.
 3. Design and threat-model protocol version 2, including per-user and per-environment authorization filtering.
 4. Introduce a typed, batched event-to-query-key registry with Containers as the first consumer.
-5. Add native Docker and Kubernetes lifecycle event fan-out, retaining periodic reconciliation as a safety net.
+5. Add native Docker and Kubernetes lifecycle event fan-out through their infrastructure providers, retaining periodic reconciliation as a safety net.
 6. Move container statistics to a bounded telemetry adapter and measure render frequency, memory, and dropped samples.
 7. Apply the proven pattern to stacks, images, networks, environments, and Kubernetes resources.
 

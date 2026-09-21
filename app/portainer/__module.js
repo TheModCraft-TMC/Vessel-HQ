@@ -1,7 +1,7 @@
 import { AccessHeaders } from './authorization-guard';
 import { filterParam, paginationParams } from './helpers/stateParamHelper';
 import { registerReactState } from '@/core/routing/registerReactState';
-import { LoginRoute, LogoutRoute } from '@/features/auth';
+import { LoginRoute, LogoutRoute } from '@/domains/auth';
 import {
   CreateHelmRepositoryRoute,
   AccountRoute,

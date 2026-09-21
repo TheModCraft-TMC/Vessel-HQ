@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
-import { EnvironmentStatus } from '@/features/environments';
+import { EnvironmentStatus } from '@/domains/environments';
 
 import { Datatable } from '@@/datatables';
 import { createPersistedStore } from '@@/datatables/types';

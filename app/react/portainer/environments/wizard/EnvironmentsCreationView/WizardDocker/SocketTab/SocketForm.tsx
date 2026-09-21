@@ -7,7 +7,7 @@ import { notifySuccess } from '@/portainer/services/notifications';
 import {
   ContainerEngine,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 
 import { LoadingButton } from '@@/buttons/LoadingButton';

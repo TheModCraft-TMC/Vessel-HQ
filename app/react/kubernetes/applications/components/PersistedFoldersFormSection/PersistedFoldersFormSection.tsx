@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import uuidv4 from 'uuid/v4';
 
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { StorageClass } from '@/features/environments';
+import { StorageClass } from '@/domains/environments';
 
 import { Option } from '@@/form-components/PortainerSelect';
 import { InlineLoader } from '@@/InlineLoader';

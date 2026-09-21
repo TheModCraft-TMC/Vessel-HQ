@@ -23,7 +23,7 @@ import { DeploymentType, EdgeStack } from '@/react/edge/edge-stacks/types';
 import { EdgeGroupsSelector } from '@/react/edge/edge-stacks/components/EdgeGroupsSelector';
 import { EdgeStackDeploymentTypeSelector } from '@/react/edge/edge-stacks/components/EdgeStackDeploymentTypeSelector';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 import { Registry } from '@/react/portainer/registries/types/registry';
 import { useRegistries } from '@/react/portainer/registries/queries/useRegistries';
 import { RelativePathFieldset } from '@/react/portainer/gitops/RelativePathFieldset/RelativePathFieldset';

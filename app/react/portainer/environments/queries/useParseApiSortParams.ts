@@ -6,7 +6,7 @@ import {
   EdgeTypes,
   EnvironmentStatus,
   PlatformType,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 export function useParseSortGroupApiParams(
   sortGroupFilter: string | null,

@@ -1,7 +1,7 @@
 import {
   ContainerEngine,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { DeploymentScripts } from '../APITab/DeploymentScripts';
 

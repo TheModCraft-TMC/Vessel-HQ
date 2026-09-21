@@ -7,7 +7,7 @@ import { notifySuccess } from '@/portainer/services/notifications';
 import {
   Environment,
   EnvironmentCreationTypes,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { TLSFieldset } from '@/react/components/TLSFieldset/TLSFieldset';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 

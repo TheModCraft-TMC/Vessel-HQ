@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { withError } from '@/core/query/query-client';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 
 import { DockerNetwork, NetworkId } from '../types';

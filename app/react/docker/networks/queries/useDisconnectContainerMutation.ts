@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import {
   mutationOptions,
   withError,
   withInvalidate,
 } from '@/core/query/query-client';
-import { queryKeys as containerQueryKeys } from '@/features/containers/queries/query-keys';
-import { ContainerId } from '@/features/containers/types';
+import { queryKeys as containerQueryKeys } from '@/domains/containers/queries/query-keys';
+import { ContainerId } from '@/domains/containers/types';
 
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';
 import { withAgentTargetHeader } from '../../proxy/queries/utils';

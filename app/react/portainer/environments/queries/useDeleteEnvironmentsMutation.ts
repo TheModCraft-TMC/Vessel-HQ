@@ -6,7 +6,7 @@ import {
   withError,
   withInvalidate,
 } from '@/core/query/query-client';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { deleteEndpoint } from '../environment.service';
 

@@ -1,6 +1,6 @@
 import { object, string, SchemaOf } from 'yup';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { useNameValidation } from '../../common/NameField/NameField';
 import { edgeIntervalsValidation } from '../../common/EdgeIntervalsFieldset/validation';

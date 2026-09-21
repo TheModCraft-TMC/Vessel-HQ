@@ -4,7 +4,7 @@ import { isoDateFromTimestamp } from '@/portainer/filters/filters';
 import {
   type Environment,
   PlatformType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import {
   getDashboardRoute,
   getPlatformType,

@@ -11,8 +11,8 @@ import {
   EnvironmentGroupId,
   PlatformType,
   EdgeGroupId,
-} from '@/features/environments';
-import { type TagId } from '@/portainer/tags/types';
+} from '@/domains/environments';
+import { type TagId } from '@/domains/tags';
 import { UserId } from '@/portainer/users/types';
 import { TeamId } from '@/react/portainer/users/teams/types';
 import {

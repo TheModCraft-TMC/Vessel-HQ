@@ -1,6 +1,6 @@
 import { Move } from 'lucide-react';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { Icon } from '@@/Icon';
 import { TextTip } from '@@/Tip/TextTip';

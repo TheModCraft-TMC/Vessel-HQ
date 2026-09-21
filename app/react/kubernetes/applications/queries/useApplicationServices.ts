@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Pod } from 'kubernetes-types/core/v1';
 
 import { withError } from '@/core/query/query-client';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { getNamespaceServices } from '../../services/service';
 import type { Application } from '../types';

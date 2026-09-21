@@ -1,6 +1,6 @@
 import { Volume } from 'docker-types';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';

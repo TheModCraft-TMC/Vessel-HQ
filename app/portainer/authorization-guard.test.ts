@@ -7,12 +7,12 @@ import {
   initializeAuthentication,
   isAdministrator,
   isEdgeAdministrator,
-} from '@/features/auth';
+} from '@/domains/auth';
 import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
 
 import { checkAuthorizations } from './authorization-guard';
 
-vi.mock('@/features/auth', () => ({
+vi.mock('@/domains/auth', () => ({
   getAuthenticatedUser: vi.fn(),
   initializeAuthentication: vi.fn(),
   isAdministrator: vi.fn(),

@@ -8,7 +8,7 @@ import {
 } from 'react';
 
 import { isEdgeAdmin, isPureAdmin } from '@/portainer/users/user.helpers';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { User } from '@/portainer/users/types';
 import { useLoadCurrentUser } from '@/portainer/users/queries/useLoadCurrentUser';
 

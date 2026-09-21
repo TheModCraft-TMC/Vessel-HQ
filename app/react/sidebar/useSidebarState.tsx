@@ -9,7 +9,7 @@ import {
 } from 'react';
 import _ from 'lodash';
 
-import { breakpoints } from '@/design-system';
+import { breakpoints } from '@/ui';
 
 import { sidebarStore } from './sidebarStore';
 

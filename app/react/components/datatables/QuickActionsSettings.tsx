@@ -1,7 +1,7 @@
 import {
   SettableQuickActionsTableSettings,
   QuickAction,
-} from '@/features/containers/ListView/ContainersDatatable/types';
+} from '@/domains/containers/ListView/ContainersDatatable/types';
 
 import { Checkbox } from '@@/form-components/Checkbox';
 

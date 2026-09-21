@@ -4,7 +4,7 @@ import { useReducer, useState } from 'react';
 import {
   ContainerEngine,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { EdgeScriptForm } from '@/react/edge/components/EdgeScriptForm';
 import { CommandTab } from '@/react/edge/components/EdgeScriptForm/scripts';
 import { OS, EdgeInfo } from '@/react/edge/components/EdgeScriptForm/types';

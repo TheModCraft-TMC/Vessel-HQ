@@ -1,4 +1,4 @@
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 import { isEdgeEnvironment } from '@/react/portainer/environments/utils';
 
 import { Role, User } from './types';

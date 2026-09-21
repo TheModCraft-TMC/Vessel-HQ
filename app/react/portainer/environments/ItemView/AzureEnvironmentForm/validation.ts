@@ -1,7 +1,7 @@
 import { object, SchemaOf, string } from 'yup';
 
 import { useNameValidation } from '@/react/portainer/environments/common/NameField/NameField';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { metadataValidation } from '../../common/MetadataFieldset/validation';
 

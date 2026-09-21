@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { EdgeJob } from '../../types';
 import { buildUrl as buildEdgeJobUrl } from '../build-url';

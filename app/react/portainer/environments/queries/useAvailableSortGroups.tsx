@@ -12,7 +12,7 @@ import { getHealthIcon } from '@/react/portainer/environments/utils/get-health-i
 import {
   EnvironmentHealth,
   PlatformType,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { DropdownOption } from '@@/DropdownMenu/DropdownMenu';
 

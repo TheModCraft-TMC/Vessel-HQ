@@ -1,3 +1,3 @@
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 export type EnvironmentTableData = Pick<Environment, 'Name' | 'Id'>;

@@ -1,7 +1,7 @@
 import { CellContext } from '@tanstack/react-table';
 import { Users } from 'lucide-react';
 
-import { EnvironmentStatus } from '@/features/environments';
+import { EnvironmentStatus } from '@/domains/environments';
 
 import { Button } from '@@/buttons';
 import { Link } from '@@/Link';

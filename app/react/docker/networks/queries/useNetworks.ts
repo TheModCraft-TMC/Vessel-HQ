@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { IPAMConfig, Network } from 'docker-types';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { withError } from '@/core/query/query-client';
 
 import { withFiltersQueryParam } from '../../proxy/queries/utils';

@@ -1,7 +1,7 @@
 import { useRouter } from '@uirouter/react';
 
 import { humanize } from '@/portainer/filters/filters';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { Widget } from '@@/Widget/Widget';
 import { WidgetBody } from '@@/Widget/WidgetBody';

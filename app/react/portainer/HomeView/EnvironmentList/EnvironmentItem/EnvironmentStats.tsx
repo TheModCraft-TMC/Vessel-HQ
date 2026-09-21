@@ -1,7 +1,7 @@
 import {
   Environment,
   PlatformType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { getPlatformType } from '@/react/portainer/environments/utils';
 
 import { EnvironmentStatsDocker } from './EnvironmentStatsDocker';

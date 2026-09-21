@@ -1,5 +1,5 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { promiseSequence } from '@/portainer/helpers/promise-utils';
 
 import { getWebhooks } from './getWebhooks';

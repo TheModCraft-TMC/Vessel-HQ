@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { truncate } from 'lodash';
 
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 export type DecoratedEnvironment = Environment & {
   Tags: string[];

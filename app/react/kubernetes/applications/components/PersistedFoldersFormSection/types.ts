@@ -1,4 +1,4 @@
-import { StorageClass } from '@/features/environments';
+import { StorageClass } from '@/domains/environments';
 
 export type PersistedFolderFormValue = {
   containerPath: string;

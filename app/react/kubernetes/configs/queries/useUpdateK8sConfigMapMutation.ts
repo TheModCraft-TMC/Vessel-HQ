@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ConfigMap } from 'kubernetes-types/core/v1';
 
 import axios from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { withInvalidate } from '@/core/query/query-client';
 
 import { parseKubernetesAxiosError } from '../../axiosError';

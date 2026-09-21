@@ -2,7 +2,7 @@ import { Task } from 'docker-types';
 import { useQuery } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
 import { withFiltersQueryParam } from '../utils';

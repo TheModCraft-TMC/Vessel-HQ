@@ -11,7 +11,7 @@ import {
   EdgeStack,
   StaggerOption,
 } from '@/react/edge/edge-stacks/types';
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 import { WebhookSettings } from '@/react/portainer/gitops/AutoUpdateFieldset/WebhookSettings';
 import {
   baseEdgeStackWebhookUrl,

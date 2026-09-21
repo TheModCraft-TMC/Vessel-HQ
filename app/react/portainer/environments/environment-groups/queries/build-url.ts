@@ -1,4 +1,4 @@
-import { EnvironmentGroupId } from '@/features/environments';
+import { EnvironmentGroupId } from '@/domains/environments';
 
 export function buildUrl(id?: EnvironmentGroupId, action?: string) {
   let url = '/endpoint_groups';

@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-import { breakpoints } from '@/design-system';
+import { breakpoints } from '@/ui';
 import {
   get as getFromStorage,
   set as setToStorage,

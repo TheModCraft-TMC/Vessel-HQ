@@ -1,7 +1,7 @@
 import { Secret } from 'docker-types';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { PortainerResponse } from '@/react/docker/types';
 
 import { buildDockerProxyUrl } from '../buildDockerProxyUrl';

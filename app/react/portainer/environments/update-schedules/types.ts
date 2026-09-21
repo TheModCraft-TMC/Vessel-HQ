@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { UserId } from '@/portainer/users/types';
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
 

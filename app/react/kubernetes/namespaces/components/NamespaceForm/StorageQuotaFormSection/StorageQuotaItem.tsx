@@ -1,6 +1,6 @@
 import { Database } from 'lucide-react';
 
-import { StorageClass } from '@/features/environments';
+import { StorageClass } from '@/domains/environments';
 import { FeatureId } from '@/react/portainer/feature-flags/enums';
 import { Authorized } from '@/react/hooks/useUser';
 

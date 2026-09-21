@@ -3,7 +3,7 @@ import { Volume } from 'docker-types';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { withFiltersQueryParam } from '../../proxy/queries/utils';
 

@@ -11,7 +11,7 @@ import {
   createMockEnvironment,
   createMockEnvironmentGroup,
 } from '@/react-tools/test-mocks';
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 
 import { EdgeEnvironmentForm } from './EdgeEnvironmentForm';
 

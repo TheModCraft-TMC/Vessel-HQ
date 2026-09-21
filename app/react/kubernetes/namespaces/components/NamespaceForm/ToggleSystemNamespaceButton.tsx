@@ -1,5 +1,5 @@
 import { notifySuccess } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { LoadingButton } from '@@/buttons';
 import { confirmUpdate } from '@@/modals/confirm';

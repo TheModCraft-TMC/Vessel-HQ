@@ -14,7 +14,7 @@ import axios from '@/portainer/services/axios/axios';
 import { getAppState, initializeAppState } from '@/react/portainer/app-state';
 import { getSettings } from '@/react/portainer/settings/settings.service';
 import { getSystemStatus } from '@/react/portainer/system/useSystemStatus';
-import { administratorExists, login } from '@/features/auth';
+import { administratorExists, login } from '@/domains/auth';
 
 import { LoadingButton } from '@@/buttons';
 import { FileUploadField } from '@@/form-components/FileUpload';

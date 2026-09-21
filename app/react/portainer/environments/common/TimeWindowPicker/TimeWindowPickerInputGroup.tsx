@@ -2,7 +2,7 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import { FormikErrors } from 'formik';
 
-import { EndpointChangeWindow } from '@/features/environments';
+import { EndpointChangeWindow } from '@/domains/environments';
 
 import { Select } from '@@/form-components/ReactSelect';
 import { Option } from '@@/form-components/PortainerSelect';

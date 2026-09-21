@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { StorageClass } from '@/features/environments';
+import { StorageClass } from '@/domains/environments';
 import { Registry } from '@/react/portainer/registries/types/registry';
 import { parseCPU } from '@/react/kubernetes/utils';
 

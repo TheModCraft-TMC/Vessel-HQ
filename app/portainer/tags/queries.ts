@@ -5,10 +5,10 @@ import {
   withError,
   withInvalidate,
 } from '@/core/query/query-client';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
+import { Tag, TagId } from '@/domains/tags';
 
 import { createTag, deleteTag, getTags } from './tags.service';
-import { Tag, TagId } from './types';
 
 export const tagKeys = {
   // Stable keys let React Query share and invalidate cached tag data.

@@ -5,7 +5,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { withError } from '@/core/query/query-client';
 import { ServiceId } from '@/react/docker/services/types';
 import { queryKeys } from '@/react/docker/services/queries/query-keys';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { buildUrl } from '@/react/docker/services/queries/build-url';
 import { PortainerResponse } from '@/react/docker/types';
 

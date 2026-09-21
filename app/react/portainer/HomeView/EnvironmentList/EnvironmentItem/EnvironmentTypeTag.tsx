@@ -1,7 +1,7 @@
 import {
   Environment,
   EnvironmentType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import {
   isEdgeEnvironment,
   isLocalEnvironment,

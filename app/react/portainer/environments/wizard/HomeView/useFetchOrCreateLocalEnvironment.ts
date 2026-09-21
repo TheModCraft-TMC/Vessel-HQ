@@ -6,7 +6,7 @@ import {
   ContainerEngine,
   Environment,
   EnvironmentType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import {
   createLocalDockerEnvironment,
   createLocalKubernetesEnvironment,

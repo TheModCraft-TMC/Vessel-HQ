@@ -2,12 +2,12 @@ import { object, string } from 'yup';
 import { useMemo } from 'react';
 
 import { accessControlFormValidation } from '@/react/portainer/access-control/AccessControlForm';
-import { hostnameSchema } from '@/features/containers/CreateView/NetworkTab/HostnameField';
-import { hostFileSchema } from '@/features/containers/CreateView/NetworkTab/HostsFileEntries';
-import { labelsTabUtils } from '@/features/containers/CreateView/LabelsTab';
-import { nameValidation } from '@/features/containers/CreateView/BaseForm/NameField';
-import { validationSchema as portSchema } from '@/features/containers/CreateView/BaseForm/PortsMappingField.validation';
-import { volumesTabUtils } from '@/features/containers/CreateView/VolumesTab';
+import { hostnameSchema } from '@/domains/containers/CreateView/NetworkTab/HostnameField';
+import { hostFileSchema } from '@/domains/containers/CreateView/NetworkTab/HostsFileEntries';
+import { labelsTabUtils } from '@/domains/containers/CreateView/LabelsTab';
+import { nameValidation } from '@/domains/containers/CreateView/BaseForm/NameField';
+import { validationSchema as portSchema } from '@/domains/containers/CreateView/BaseForm/PortsMappingField.validation';
+import { volumesTabUtils } from '@/domains/containers/CreateView/VolumesTab';
 
 import { envVarsFieldsetValidation } from '../EnvVarsFieldset';
 import { TemplateEnv } from '../../types';

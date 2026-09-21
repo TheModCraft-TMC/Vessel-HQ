@@ -1,7 +1,7 @@
 import {
   Environment,
   EnvironmentId,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 export interface EdgeJob {
   Id: number;

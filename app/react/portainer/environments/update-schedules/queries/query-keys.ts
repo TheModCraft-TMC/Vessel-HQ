@@ -1,7 +1,7 @@
 import {
   EdgeGroupId,
   EnvironmentId,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { EdgeUpdateSchedule } from '../types';
 

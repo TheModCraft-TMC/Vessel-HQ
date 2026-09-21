@@ -7,11 +7,11 @@ import {
   withInvalidate,
 } from '@/core/query/query-client';
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
-import { TagId } from '@/portainer/tags/types';
+import { TagId } from '@/domains/tags';
 import { queryKeys as edgeGroupQueryKeys } from '@/react/edge/edge-groups/queries/query-keys';
 import { queryKeys as groupQueryKeys } from '@/react/portainer/environments/environment-groups/queries/query-keys';
 import { tagKeys } from '@/portainer/tags/queries';
-import { EnvironmentId, EnvironmentGroupId } from '@/features/environments';
+import { EnvironmentId, EnvironmentGroupId } from '@/domains/environments';
 
 import { buildUrl } from '../environment.service/utils';
 

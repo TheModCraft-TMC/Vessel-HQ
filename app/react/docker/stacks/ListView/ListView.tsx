@@ -9,7 +9,7 @@ import { Stack, StackType } from '@/react/common/stacks/types';
 import { queryKeys } from '@/react/common/stacks/queries/query-keys';
 import { getStacks } from '@/react/common/stacks/queries/useStacks';
 import { useDeleteStackMutation } from '@/react/common/stacks/queries/useDeleteStackMutation';
-import { getContainers } from '@/features/containers/queries/useContainers';
+import { getContainers } from '@/domains/containers/queries/useContainers';
 import { getInfo } from '@/react/docker/proxy/queries/useInfo';
 import { getSwarm } from '@/react/docker/proxy/queries/useSwarm';
 import { getServices } from '@/react/docker/services/queries/useServices';

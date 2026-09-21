@@ -5,7 +5,7 @@ import axios from '@/portainer/services/axios/axios';
 import {
   Environment,
   EnvironmentId,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { withError } from '@/core/query/query-client';
 
 import { parseKubernetesAxiosError } from '../../../axiosError';

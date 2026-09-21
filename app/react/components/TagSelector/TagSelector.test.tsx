@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { Mock } from 'vitest';
 import { render } from '@testing-library/react';
 
-import { Tag, TagId } from '@/portainer/tags/types';
+import { Tag, TagId } from '@/domains/tags';
 import { server } from '@/setup-tests/server';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';

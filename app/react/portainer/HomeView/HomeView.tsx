@@ -3,7 +3,7 @@ import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 import { useEffect, useState } from 'react';
 
 import { environmentStore } from '@/react/hooks/current-environment-store';
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 import { isEdgeEnvironment } from '@/react/portainer/environments/utils';
 
 import { confirm } from '@@/modals/confirm';

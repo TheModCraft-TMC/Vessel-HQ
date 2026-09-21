@@ -1,8 +1,8 @@
 import {
   EdgeGroupId,
   EnvironmentId,
-} from '@/features/environments';
-import { TagId } from '@/portainer/tags/types';
+} from '@/domains/environments';
+import { TagId } from '@/domains/tags';
 
 export interface FormValues {
   edgeGroupId: EdgeGroupId;

@@ -7,13 +7,13 @@ import { isoDateFromTimestamp } from '@/portainer/filters/filters';
 import {
   type Environment,
   PlatformType,
-} from '@/features/environments';
+} from '@/domains/environments';
 import {
   getDashboardRoute,
   getPlatformType,
   isEdgeEnvironment,
 } from '@/react/portainer/environments/utils';
-import type { TagId } from '@/portainer/tags/types';
+import type { TagId } from '@/domains/tags';
 import { useTags } from '@/portainer/tags/queries';
 
 import { EdgeIndicator } from '@@/EdgeIndicator';

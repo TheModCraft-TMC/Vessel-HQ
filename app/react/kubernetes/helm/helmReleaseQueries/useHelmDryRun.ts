@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import PortainerError from '@/portainer/error';
 
 import { HelmRelease, UpdateHelmReleasePayload } from '../types';

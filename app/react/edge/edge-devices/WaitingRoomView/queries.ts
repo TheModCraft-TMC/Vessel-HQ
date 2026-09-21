@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { EdgeTypes, EnvironmentId } from '@/features/environments';
+import { EdgeTypes, EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { promiseSequence } from '@/portainer/helpers/promise-utils';
 import { useIntegratedLicenseInfo } from '@/react/portainer/licenses/use-license.service';

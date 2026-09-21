@@ -15,7 +15,7 @@ import {
 import {
   type Environment,
   type EnvironmentId,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { Authorized, useIsEnvironmentAdmin } from '@/react/hooks/useUser';
 import { useInfo } from '@/react/docker/proxy/queries/useInfo';
 import { useApiVersion } from '@/react/docker/proxy/queries/useVersion';

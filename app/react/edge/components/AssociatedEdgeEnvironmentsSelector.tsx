@@ -1,4 +1,4 @@
-import { EdgeTypes, EnvironmentId } from '@/features/environments';
+import { EdgeTypes, EnvironmentId } from '@/domains/environments';
 import { EdgeEnvironmentsAssociationTable } from '@/react/edge/components/EdgeEnvironmentsAssociationTable';
 
 import { FormError } from '@@/form-components/FormError';

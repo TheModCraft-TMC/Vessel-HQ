@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 export function buildAgentUrl(
   environmentId: EnvironmentId,

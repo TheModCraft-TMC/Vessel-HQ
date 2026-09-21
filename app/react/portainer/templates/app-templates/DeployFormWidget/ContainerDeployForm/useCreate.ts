@@ -2,7 +2,7 @@ import { useRouter } from '@uirouter/react';
 
 import { notifySuccess } from '@/portainer/services/notifications';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { useCreateOrReplaceMutation } from '@/features/containers/CreateView/useCreateMutation';
+import { useCreateOrReplaceMutation } from '@/domains/containers/CreateView/useCreateMutation';
 
 import { TemplateViewModel } from '../../view-model';
 

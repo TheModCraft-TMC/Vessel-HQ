@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 
 import { notifySuccess } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 import { Button } from '@@/buttons';
 import { Icon } from '@@/Icon';

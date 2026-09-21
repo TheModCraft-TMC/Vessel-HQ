@@ -9,7 +9,7 @@ import { getDefaultRelativePathModel } from '@/react/portainer/gitops/RelativePa
 import { useIsStandalone } from '@/react/docker/proxy/queries/useInfo';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { getPlatformType } from '@/react/portainer/environments/utils';
-import { PlatformType } from '@/features/environments';
+import { PlatformType } from '@/domains/environments';
 import { StackName } from '@/react/kubernetes/DeployView/StackName/StackName';
 
 import { Modal } from '@@/modals/Modal';

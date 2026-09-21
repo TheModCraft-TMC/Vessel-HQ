@@ -8,7 +8,7 @@ import { isSortType } from '@/react/portainer/environments/queries/useEnvironmen
 import {
   EnvironmentId,
   EnvironmentGroupId,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { Datatable } from '@@/datatables';
 import { useTableStateWithoutStorage } from '@@/datatables/useTableState';

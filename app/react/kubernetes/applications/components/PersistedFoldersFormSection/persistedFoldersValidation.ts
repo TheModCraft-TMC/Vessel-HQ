@@ -2,7 +2,7 @@ import { SchemaOf, array, boolean, object, string } from 'yup';
 import filesizeParser from 'filesize-parser';
 import _ from 'lodash';
 
-import { StorageClass } from '@/features/environments';
+import { StorageClass } from '@/domains/environments';
 
 import { buildUniquenessTest } from '@@/form-components/validate-unique';
 

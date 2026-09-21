@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 
 import { DeploymentType, EdgeStack } from '../../types';
 

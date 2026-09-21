@@ -1,5 +1,5 @@
 import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 export function buildUrl(
   environmentId: EnvironmentId,

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { FormikErrors } from 'formik';
 
-import { EndpointChangeWindow } from '@/features/environments';
+import { EndpointChangeWindow } from '@/domains/environments';
 
 import { Button } from '@@/buttons';
 import { Alert } from '@@/Alert';

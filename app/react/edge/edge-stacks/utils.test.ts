@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@/features/environments';
+import { EnvironmentType } from '@/domains/environments';
 
 import { EditorType } from './types';
 import { getValidEditorTypes } from './utils';

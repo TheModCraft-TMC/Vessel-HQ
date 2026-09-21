@@ -1,7 +1,7 @@
 import {
   ContainerEngine,
   Environment,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { TextTip } from '@@/Tip/TextTip';
 

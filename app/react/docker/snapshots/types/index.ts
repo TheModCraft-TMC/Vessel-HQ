@@ -1,6 +1,6 @@
 import { PortainerDockerSnapshot } from '@api/types.gen';
 
-import { ContainerListViewModel } from '@/features/containers/types';
+import { ContainerListViewModel } from '@/domains/containers/types';
 
 export type DockerContainerSnapshot = ContainerListViewModel & {
   Env: string[];

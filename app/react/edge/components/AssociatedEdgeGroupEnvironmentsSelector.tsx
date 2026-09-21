@@ -4,7 +4,7 @@ import {
   EdgeGroupId,
   Environment,
   EnvironmentId,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { FormError } from '@@/form-components/FormError';
 import { ArrayError } from '@@/form-components/InputList/InputList';

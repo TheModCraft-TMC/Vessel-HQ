@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import {
   buildImageFullURIFromModel,
@@ -8,7 +8,7 @@ import {
 } from '@/react/docker/images/utils';
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
 import { withError } from '@/core/query/query-client';
-import { queryKeys } from '@/features/containers/queries/query-keys';
+import { queryKeys } from '@/domains/containers/queries/query-keys';
 
 import { buildDockerProxyUrl } from './buildDockerProxyUrl';
 

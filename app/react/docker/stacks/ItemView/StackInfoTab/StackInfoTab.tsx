@@ -1,6 +1,6 @@
 import { AlertTriangle, Loader2 } from 'lucide-react';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import {
   Stack,
   StackDeploymentStatus,

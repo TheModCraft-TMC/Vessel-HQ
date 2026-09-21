@@ -8,11 +8,11 @@ import {
 import { object, string, array, number } from 'yup';
 import { useRef } from 'react';
 
-import { TagId } from '@/portainer/tags/types';
+import { TagId } from '@/domains/tags';
 import {
   EnvironmentId,
   EnvironmentGroupId,
-} from '@/features/environments';
+} from '@/domains/environments';
 import { useIsPureAdmin } from '@/react/hooks/useUser';
 import { useCanExit } from '@/react/hooks/useCanExit';
 

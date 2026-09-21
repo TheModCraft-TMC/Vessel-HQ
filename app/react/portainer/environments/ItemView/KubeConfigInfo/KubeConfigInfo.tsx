@@ -4,7 +4,7 @@ import {
   EnvironmentId,
   EnvironmentType,
   EnvironmentStatus,
-} from '@/features/environments';
+} from '@/domains/environments';
 import {
   isKubernetesEnvironment,
   isEdgeEnvironment,

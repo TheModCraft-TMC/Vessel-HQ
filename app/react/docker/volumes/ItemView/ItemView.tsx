@@ -5,7 +5,7 @@ import { Box, Database, Search, Settings } from 'lucide-react';
 import { VolumeViewModel } from '@/docker/models/volume';
 import { isoDate } from '@/portainer/filters/filters';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { useContainers } from '@/features/containers/queries/useContainers';
+import { useContainers } from '@/domains/containers/queries/useContainers';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { Authorized, useCurrentUser } from '@/react/hooks/useUser';
 import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel';

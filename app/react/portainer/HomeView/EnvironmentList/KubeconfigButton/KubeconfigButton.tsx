@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Download } from 'lucide-react';
 
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 import { isKubernetesEnvironment } from '@/react/portainer/environments/utils';
 import { Query } from '@/react/portainer/environments/queries/useEnvironmentList';
 

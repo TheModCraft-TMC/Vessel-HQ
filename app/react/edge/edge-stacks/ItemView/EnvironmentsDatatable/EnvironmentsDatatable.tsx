@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { EdgeStackStatus, StatusType } from '@/react/edge/edge-stacks/types';
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
 import { useParamState } from '@/react/hooks/useParamState';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 import { useIdParam } from '@/react/hooks/useIdParam';
 

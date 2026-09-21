@@ -5,7 +5,7 @@ import { UseMutationResult } from '@tanstack/react-query';
 
 import { notifyError, notifySuccess } from '@/portainer/services/notifications';
 import { UpdateEnvironmentPayload } from '@/react/portainer/environments/queries/useUpdateEnvironmentMutation';
-import { Environment } from '@/features/environments';
+import { Environment } from '@/domains/environments';
 
 import { ConfigureFormValues, StorageClassFormValues } from './types';
 import { ConfigureClusterPayloads } from './useConfigureClusterMutation';

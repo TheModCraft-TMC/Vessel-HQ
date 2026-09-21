@@ -2,7 +2,7 @@ import { Terminal } from 'lucide-react';
 import clsx from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { baseHref } from '@/portainer/helpers/pathHelper';
 
 import { Button } from '@@/buttons';

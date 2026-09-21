@@ -6,7 +6,7 @@ import {
   LicenseType,
 } from '@/react/portainer/licenses/types';
 import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
-import { Tag } from '@/portainer/tags/types';
+import { Tag } from '@/domains/tags';
 import { StatusResponse } from '@/react/portainer/system/useSystemStatus';
 import { createMockTeams } from '@/react-tools/test-mocks';
 import { UserId } from '@/portainer/users/types';

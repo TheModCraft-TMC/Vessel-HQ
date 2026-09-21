@@ -2,7 +2,7 @@ import { ArrowUp } from 'lucide-react';
 import { useRouter } from '@uirouter/react';
 import { useState } from 'react';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { notifySuccess } from '@/portainer/services/notifications';
 import { semverCompare } from '@/react/common/semver-utils';
 

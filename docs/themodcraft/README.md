@@ -6,15 +6,16 @@ This directory is the maintenance handoff for behavior added by this fork. It ex
 
 - [Feature planning backlog](../planning/README.md): one-month discovery backlog, scoring rubric, and planning-ready gate for possible future fork features.
 - [Vessel HQ product and architecture roadmap](../planning/vessel-hq-roadmap.md): completed migration baseline, repository and image policy, React domain architecture, deeper rebranding, component adoption, and homelab-first responsive plans.
-- [Frontend module architecture](../planning/frontend-architecture.md): enforced boundaries and the incremental feature-slice migration procedure.
-- [Frontend domain schema](../planning/frontend-domain-schema.md): canonical destination tree, dependency direction, and legacy-folder migration map.
+- [Frontend module architecture](../planning/frontend-architecture.md): enforced boundaries and the incremental domain-slice migration procedure.
+- [Frontend domain and provider architecture](../planning/frontend-domain-provider-architecture.md): canonical `domains`, external `providers`, shared `ui`, and route-level `views` terminology.
+- [Frontend domain schema](../planning/frontend-domain-schema.md): superseded feature-era checkpoint and legacy-folder migration history.
 - [UI component inventory](../planning/ui-component-inventory.md): current primitives, styling foundations, adoption candidates, and package-selection gates.
-- [Containers vertical-slice migration](../planning/containers-vertical-slice.md): first feature move, route ownership, dependency ratchet, and cleanup order.
+- [Containers vertical-slice migration](../planning/containers-vertical-slice.md): first domain move, route ownership, dependency ratchet, and cleanup order.
 - [Azure vertical-slice migration](../planning/azure-vertical-slice.md): consolidated Azure ownership, GoLand-assisted route refactor, and cleanup ratchet.
 - [Realtime state architecture](../planning/realtime-state-architecture.md): accepted future cache invalidation, WebSocket, telemetry, security, and backpressure design.
 - [React and realtime frontend modernization](../planning/frontend-modernization.md): implemented React-only baseline and remaining realtime hardening requirements.
 - [Recent features](../recent-features/README.md): table of work added, restored, or consolidated during the last four weeks.
-- [Overview response cache](overview-cache.md): stale-while-revalidate caching for Docker, Podman, and Kubernetes overview pages.
+- [Overview response cache](overview-cache.md): stale-while-revalidate caching for Docker, Podman, and Kubernetes overview views.
 - [Custom versioning](custom-versioning.md): footer version, Docker Hub update checks, and the boundary between the fork release and the upstream API/database version.
 - [Release and deployment](release-and-deployment.md): AMD64/ARM64 image production, Node 4 deployment, and rollback.
 - [Verification](verification.md): focused tests and release checks.
@@ -26,7 +27,7 @@ The broader patch catalog remains in [the maintainer patch guide](../maintainer-
 
 ## Design principles
 
-1. Cache only collection data used by overview pages. Inspect/configuration pages and mutations always reach the runtime.
+1. Cache only collection data used by overview views. Inspect/configuration views and mutations always reach the runtime.
 2. Cache data before Portainer's Docker authorization filter, then filter an independent response copy for each user.
 3. Never share Kubernetes results across users because Kubernetes service-account RBAC is applied upstream.
 4. Keep the upstream API/database compatibility version separate from this fork's release version.

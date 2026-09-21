@@ -1,7 +1,7 @@
 import { useFormikContext } from 'formik';
 
 import { EdgeGroupAssociationTable } from '@/react/edge/components/EdgeGroupAssociationTable';
-import { EdgeTypes } from '@/features/environments';
+import { EdgeTypes } from '@/domains/environments';
 
 import { BoxSelector } from '@@/BoxSelector';
 import { TagSelector } from '@@/TagSelector';

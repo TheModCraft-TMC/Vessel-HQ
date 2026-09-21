@@ -16,7 +16,7 @@ import {
   EnvironmentType,
   KubernetesSettings,
   StorageClass,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 export function buildUrl(id?: EnvironmentId, action?: string) {
   let baseUrl = 'endpoints';

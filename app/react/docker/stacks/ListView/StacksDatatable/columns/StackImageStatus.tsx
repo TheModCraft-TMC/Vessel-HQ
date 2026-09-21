@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { statusIcon } from '@/react/docker/components/ImageStatus/helpers';
 

@@ -13,7 +13,7 @@ import {
 import {
   Environment,
   EnvironmentStatus,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 import { FormSection } from '@@/form-components/FormSection';
 import { Widget } from '@@/Widget/Widget';

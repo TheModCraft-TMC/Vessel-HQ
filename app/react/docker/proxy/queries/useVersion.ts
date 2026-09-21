@@ -1,20 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { SystemVersion } from 'docker-types';
 
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
-import { buildDockerProxyUrl } from './buildDockerProxyUrl';
+import { dockerClient } from './dockerClient';
 
 export async function getVersion(environmentId: EnvironmentId) {
-  try {
-    const { data } = await axios.get<SystemVersion>(
-      buildDockerProxyUrl(environmentId, 'version')
-    );
-    return data;
-  } catch (err) {
-    throw parseAxiosError(err, 'Unable to retrieve version');
-  }
+  return dockerClient.getVersion(environmentId);
 }
 
 export function useVersion<TSelect = SystemVersion>(

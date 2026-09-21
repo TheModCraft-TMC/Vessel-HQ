@@ -5,7 +5,7 @@ import { accessControlFormValidation } from '@/react/portainer/access-control/Ac
 import { useNameValidation } from '@/react/docker/stacks/common/NameField';
 import { variablesFieldValidation } from '@/react/portainer/custom-templates/components/CustomTemplatesVariablesField';
 import { VariableDefinition } from '@/react/portainer/custom-templates/components/CustomTemplatesVariablesDefinitionField';
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 
 export function useValidation({
   environmentId,

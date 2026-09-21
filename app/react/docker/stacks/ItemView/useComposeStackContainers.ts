@@ -1,6 +1,6 @@
-import { EnvironmentId } from '@/features/environments';
+import { EnvironmentId } from '@/domains/environments';
 import { COMPOSE_STACK_NAME_LABEL } from '@/react/constants';
-import { useContainers } from '@/features/containers/queries/useContainers';
+import { useContainers } from '@/domains/containers/queries/useContainers';
 
 export function useComposeStackContainers(
   {

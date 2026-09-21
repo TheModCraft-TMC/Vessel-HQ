@@ -9,7 +9,7 @@ import {
   EnvironmentType,
   ContainerEngine,
   PlatformType,
-} from '@/features/environments';
+} from '@/domains/environments';
 
 export function getPlatformType(
   envType: EnvironmentType,
