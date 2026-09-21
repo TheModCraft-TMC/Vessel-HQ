@@ -1,4 +1,4 @@
-import { PropsWithChildren, AnchorHTMLAttributes } from 'react';
+import { AnchorHTMLAttributes, MouseEvent, PropsWithChildren } from 'react';
 import { UISrefProps, useSref } from '@uirouter/react';
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -12,13 +12,28 @@ export function Link({
   params,
   options,
   title,
+  onClick: onClickProp,
   ...props
 }: PropsWithChildren<Props> & UISrefProps) {
-  const { onClick, href } = useSref(to, params, options);
+  const { onClick: onSrefClick, href } = useSref(to, params, options);
+
+  function handleClick(event: MouseEvent<HTMLAnchorElement>) {
+    onClickProp?.(event);
+
+    if (!event.defaultPrevented) {
+      onSrefClick(event);
+    }
+  }
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <a onClick={onClick} href={href} data-cy={dataCy} title={title} {...props}>
+    <a
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
+      onClick={handleClick}
+      href={href}
+      data-cy={dataCy}
+      title={title}
+    >
       {children}
     </a>
   );
