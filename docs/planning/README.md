@@ -47,6 +47,7 @@ Implementation references:
 - [Frontend module architecture](frontend-architecture.md)
 - [Frontend domain schema](frontend-domain-schema.md)
 - [Frontend domain and provider architecture](frontend-domain-provider-architecture.md)
+- [Frontend refactor execution plan](frontend-refactor-execution-plan.md)
 - [Provider migration inventory](provider-migration-inventory.md)
 - [UI component inventory](ui-component-inventory.md)
 - [Authentication vertical-slice migration](auth-vertical-slice.md)
