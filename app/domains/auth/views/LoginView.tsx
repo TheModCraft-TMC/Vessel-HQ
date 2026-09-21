@@ -33,7 +33,7 @@ import {
   login,
   loginWithOAuth,
   logout,
-} from '../auth.service';
+} from '../services/auth.service';
 
 export function LoginView() {
   const router = useRouter();

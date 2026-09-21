@@ -13,7 +13,7 @@ import { authStorage } from '@/react/portainer/storage';
 
 import { Icon } from '@@/Icon';
 
-import { getAuthenticatedUser, logout } from '../auth.service';
+import { getAuthenticatedUser, logout } from '../services/auth.service';
 
 export function LogoutView() {
   const router = useRouter();

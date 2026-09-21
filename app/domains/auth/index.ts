@@ -8,5 +8,5 @@ export {
   login,
   loginWithOAuth,
   logout,
-} from './auth.service';
+} from './services/auth.service';
 export { LoginRoute, LogoutRoute } from './routes';
