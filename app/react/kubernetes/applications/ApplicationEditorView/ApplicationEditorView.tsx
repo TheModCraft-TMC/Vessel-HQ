@@ -7,7 +7,7 @@ import axios from '@/portainer/services/axios/axios';
 import { notifySuccess } from '@/portainer/services/notifications';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useNamespacesQuery } from '@/react/kubernetes/namespaces/queries/useNamespacesQuery';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Button, LoadingButton } from '@@/buttons';
 import { FormControl } from '@@/form-components/FormControl';

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Secret, SecretList } from 'kubernetes-types/core/v1';
 
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import axios from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 

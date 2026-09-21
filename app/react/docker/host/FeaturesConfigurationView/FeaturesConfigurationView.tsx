@@ -12,7 +12,7 @@ import {
   EnvironmentSecuritySettings,
 } from '@/react/portainer/environments/types';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { LoadingButton } from '@@/buttons';
 import { FormSection } from '@@/form-components/FormSection';

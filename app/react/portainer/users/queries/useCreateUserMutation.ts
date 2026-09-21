@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError, withInvalidate } from '@/react-tools/react-query';
+import { withError, withInvalidate } from '@/core/query/query-client';
 import { userQueryKeys } from '@/portainer/users/queries/queryKeys';
 import { buildUrl } from '@/portainer/users/user.service';
 import { Role, User } from '@/portainer/users/types';

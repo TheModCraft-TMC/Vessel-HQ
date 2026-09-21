@@ -5,14 +5,14 @@ import { Box, Database, Search, Settings } from 'lucide-react';
 import { VolumeViewModel } from '@/docker/models/volume';
 import { isoDate } from '@/portainer/filters/filters';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { useContainers } from '@/react/docker/containers/queries/useContainers';
+import { useContainers } from '@/features/containers/queries/useContainers';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { Authorized, useCurrentUser } from '@/react/hooks/useUser';
 import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel';
 import { ResourceControlType } from '@/react/portainer/access-control/types';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Button } from '@@/buttons';
 import { DeleteButton } from '@@/buttons/DeleteButton';

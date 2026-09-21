@@ -1,0 +1,38 @@
+.root,
+.content,
+.main {
+  min-width: 0;
+}
+
+.content {
+  isolation: isolate;
+}
+
+.main {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.navigationBackdrop {
+  display: none;
+}
+
+@media only screen and (max-width: 560px) {
+  .main {
+    overflow-x: clip;
+  }
+
+  .navigationBackdrop {
+    position: fixed;
+    z-index: 30;
+    display: block;
+    border: 0;
+    inset: 0;
+    background: rgb(15 23 42 / 48%);
+    cursor: default;
+  }
+
+  .navigationBackdrop:focus-visible {
+    outline: 0;
+    box-shadow: var(--vessel-focus-ring);
+  }
+}

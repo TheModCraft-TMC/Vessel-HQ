@@ -7,9 +7,9 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
+import { queryKeys as containerQueryKeys } from '@/features/containers/queries/query-keys';
 
-import { queryKeys as containerQueryKeys } from '../../containers/queries/query-keys';
 import { withAgentTargetHeader } from '../../proxy/queries/utils';
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';
 

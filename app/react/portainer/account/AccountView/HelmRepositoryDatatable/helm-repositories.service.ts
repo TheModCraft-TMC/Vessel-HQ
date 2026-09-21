@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { success as notifySuccess } from '@/portainer/services/notifications';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { pluralize } from '@/portainer/helpers/strings';
 import { queryKeys } from '@/react/kubernetes/helm/helmChartSourceQueries/query-keys';
 import { useCurrentUser } from '@/react/hooks/useUser';

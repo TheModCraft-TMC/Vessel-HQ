@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import axios from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
-import { withError, withInvalidate } from '@/react-tools/react-query';
+import { withError, withInvalidate } from '@/core/query/query-client';
 
 import { queryKeys } from './queryKeys';
 

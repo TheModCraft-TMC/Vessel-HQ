@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import { useStacks } from '@/react/common/stacks/queries/useStacks';
-import { useContainers } from '@/react/docker/containers/queries/useContainers';
+import { useContainers } from '@/features/containers/queries/useContainers';
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
 
 import { getValidationSchema } from './validation';

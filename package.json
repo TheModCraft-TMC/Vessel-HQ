@@ -22,7 +22,7 @@
     "build": "webpack",
     "format": "prettier --log-level warn --write  \"**/*.{js,css,html,jsx,tsx,ts}\"",
     "lint": "eslint --cache --fix \"./**/*.{js,jsx,ts,tsx}\"",
-    "lint:ci": "./scripts/check-frontend-modernization.sh && eslint --cache \"./**/*.{js,jsx,ts,tsx}\"",
+    "lint:ci": "./scripts/check-frontend-modernization.sh && node ./scripts/check-frontend-boundaries.mjs && eslint --cache \"./**/*.{js,jsx,ts,tsx}\"",
     "test": "vitest run",
     "sb": "pnpm run storybook",
     "storybook": "storybook dev -p 6006",
@@ -30,6 +30,7 @@
     "analyze-webpack": "webpack --config ./webpack/webpack.analyze.js",
     "typecheck": "tsc --noEmit",
     "check:frontend-modernization": "./scripts/check-frontend-modernization.sh",
+    "check:frontend-boundaries": "node ./scripts/check-frontend-boundaries.mjs",
     "generate-api": "openapi-ts",
     "postgenerate-api": "pnpm format"
   },

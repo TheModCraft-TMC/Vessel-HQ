@@ -6,7 +6,7 @@ import { AccessControlFormData } from '@/react/portainer/access-control/types';
 import axios from '@/portainer/services/axios/axios';
 import { buildStackUrl } from '@/react/common/stacks/queries/buildUrl';
 import { Stack } from '@/react/common/stacks/types';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 export function useAssociateStackToEnvironmentMutation() {
   return useMutation({

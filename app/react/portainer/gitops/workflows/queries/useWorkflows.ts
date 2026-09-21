@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { gitOpsWorkflowsList } from '@api/sdk.gen';
 import { GitOpsWorkflowsListData } from '@api/types.gen';
 
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import {
   withPaginationHeaders,
   PaginatedResults,

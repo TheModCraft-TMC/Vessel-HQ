@@ -1,7 +1,7 @@
 import { commandStringToArray } from '@/docker/helpers/containers';
-import { parsePortBindingRequest } from '@/react/docker/containers/CreateView/BaseForm/PortsMappingField.requestModel';
-import { volumesTabUtils } from '@/react/docker/containers/CreateView/VolumesTab';
-import { CreateContainerRequest } from '@/react/docker/containers/CreateView/types';
+import { parsePortBindingRequest } from '@/features/containers/CreateView/BaseForm/PortsMappingField.requestModel';
+import { volumesTabUtils } from '@/features/containers/CreateView/VolumesTab';
+import { CreateContainerRequest } from '@/features/containers/CreateView/types';
 
 import { TemplateViewModel } from '../../view-model';
 

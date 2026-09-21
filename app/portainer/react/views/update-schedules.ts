@@ -1,12 +1,12 @@
 import { StateRegistry } from '@uirouter/react';
 
-import { registerReactState } from '@/react-tools/registerReactState';
+import { registerReactState } from '@/core/routing/registerReactState';
 import {
   ListView,
   CreateView,
   ItemView,
 } from '@/react/portainer/environments/update-schedules';
-import { withCurrentUser } from '@/react-tools/withCurrentUser';
+import { withCurrentUser } from '@/core/routing/withCurrentUser';
 
 const UpdateSchedulesListRoute = withCurrentUser(ListView);
 const UpdateScheduleCreateRoute = withCurrentUser(CreateView);

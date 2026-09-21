@@ -3,7 +3,7 @@ import { ConfigMap, ConfigMapList } from 'kubernetes-types/core/v1';
 
 import axios from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { parseKubernetesAxiosError } from '../../axiosError';
 

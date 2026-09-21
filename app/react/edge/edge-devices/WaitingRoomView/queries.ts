@@ -9,7 +9,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 import { queryKey as nodesCountQueryKey } from '@/react/portainer/system/useNodesCount';
 import { LicenseType } from '@/react/portainer/licenses/types';
 import { environmentQueryKeys } from '@/react/portainer/environments/queries/query-keys';

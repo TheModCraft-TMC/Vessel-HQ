@@ -6,7 +6,7 @@ import { processItemsInBatches } from '@/react/common/processItemsInBatches';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { getSecrets } from '@/react/docker/proxy/queries/secrets/useSecrets';
 import { removeSecret } from '@/react/docker/proxy/queries/secrets/useRemoveSecretMutation';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { PageHeader } from '@@/PageHeader';
 

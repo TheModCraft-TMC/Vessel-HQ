@@ -1,6 +1,6 @@
 import { ServiceViewModel } from '@/docker/models/service';
 import { TaskViewModel } from '@/docker/models/task';
-import { useContainers } from '@/react/docker/containers/queries/useContainers';
+import { useContainers } from '@/features/containers/queries/useContainers';
 import { useServices } from '@/react/docker/services/queries/useServices';
 import { associateServiceTasks } from '@/react/docker/services/utils';
 import { associateContainerToTask } from '@/react/docker/tasks/utils';

@@ -3,7 +3,7 @@ import { compact } from 'lodash';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { UserId } from '@/portainer/users/types';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { useCurrentUser } from '@/react/hooks/useUser';
 import { Option } from '@/react/components/form-components/PortainerSelect';
 

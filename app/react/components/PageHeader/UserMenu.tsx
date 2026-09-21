@@ -8,7 +8,7 @@ import { UISrefProps, useSref } from '@uirouter/react';
 import clsx from 'clsx';
 import { UserIcon, ChevronDown } from 'lucide-react';
 
-import { queryClient } from '@/react-tools/react-query';
+import { queryClient } from '@/core/query/query-client';
 import { AutomationTestingProps } from '@/types';
 import { useCurrentUser } from '@/react/hooks/useUser';
 

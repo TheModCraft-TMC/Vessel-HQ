@@ -4,7 +4,7 @@ import { useCurrentStateAndParams } from '@uirouter/react';
 import { listRegistryCatalogs } from '@/react/portainer/registries/registry.service';
 import { useRegistry } from '@/react/portainer/registries/queries/useRegistry';
 import { queryKeys } from '@/react/portainer/registries/queries/query-keys';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { PageHeader } from '@@/PageHeader';
 

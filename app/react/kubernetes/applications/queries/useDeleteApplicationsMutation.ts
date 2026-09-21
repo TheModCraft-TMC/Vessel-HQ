@@ -4,7 +4,7 @@ import { HorizontalPodAutoscaler } from 'kubernetes-types/autoscaling/v2';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { getAllSettledItems } from '@/portainer/helpers/promise-utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { notifyError, notifySuccess } from '@/portainer/services/notifications';
 import { pluralize } from '@/portainer/helpers/strings';
 import { uninstallHelmApplication } from '@/react/kubernetes/helm/helmReleaseQueries/useUninstallHelmAppMutation';

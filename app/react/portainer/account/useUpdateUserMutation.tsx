@@ -6,7 +6,7 @@ import {
   mutationOptions,
   withInvalidate,
   queryClient,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 import { userQueryKeys } from '@/portainer/users/queries/queryKeys';
 import { useCurrentUser } from '@/react/hooks/useUser';
 

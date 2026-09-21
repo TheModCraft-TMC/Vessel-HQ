@@ -4,7 +4,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import { Registry } from '@/react/portainer/registries/types/registry';
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
-import { withError, withInvalidate } from '@/react-tools/react-query';
+import { withError, withInvalidate } from '@/core/query/query-client';
 
 import { buildImageFullURI } from '../utils';
 import {

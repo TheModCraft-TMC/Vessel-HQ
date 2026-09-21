@@ -13,7 +13,7 @@ import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useCurrentUser } from '@/react/hooks/useUser';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { PageHeader } from '@@/PageHeader';
 

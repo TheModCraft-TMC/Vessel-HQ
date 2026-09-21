@@ -5,7 +5,7 @@ import {
   queryClient,
   withInvalidate,
   withError,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 import axios from '@/portainer/services/axios/axios';
 import { queryKeys as applicationsQueryKeys } from '@/react/kubernetes/applications/queries/query-keys';
 

@@ -4,7 +4,7 @@ import filesizeParser from 'filesize-parser';
 
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import { getMetricsForAllNodes } from '@/react/kubernetes/metrics/metrics';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { NodeMetrics } from '@/react/kubernetes/metrics/types';
 import { getMebibytes, parseCPU } from '@/react/kubernetes/utils';
 

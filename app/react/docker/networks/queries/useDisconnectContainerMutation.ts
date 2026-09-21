@@ -6,12 +6,12 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
+import { queryKeys as containerQueryKeys } from '@/features/containers/queries/query-keys';
+import { ContainerId } from '@/features/containers/types';
 
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';
-import { queryKeys as containerQueryKeys } from '../../containers/queries/query-keys';
 import { withAgentTargetHeader } from '../../proxy/queries/utils';
-import { ContainerId } from '../../containers/types';
 import { NetworkId } from '../types';
 
 import { queryKeys } from './queryKeys';

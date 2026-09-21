@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 type DescribeAPIParams = {
   name: string;

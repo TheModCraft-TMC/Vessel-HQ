@@ -1,5 +1,11 @@
 # Release and deployment
 
+## Registry transition policy
+
+The image references below document the transitional `2.39.3.2.26` WIP release. Keep the existing `themodcrafttmc/portainer` repository and its tags intact.
+
+A dedicated Vessel HQ Docker Hub repository is planned but has not been created or selected yet. Future publishing must not switch registries, retag historical images, or change update discovery until that repository name and its migration plan are explicitly approved. Once approved, update the build script, release workflow, update checker, UI links, and this document together.
+
 ## Build and publish
 
 The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`.

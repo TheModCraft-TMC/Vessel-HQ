@@ -1,5 +1,5 @@
-import { withCurrentUser } from '@/react-tools/withCurrentUser';
-import { lazyRoute } from '@/react-tools/lazyRoute';
+import { withCurrentUser } from '@/core/routing/withCurrentUser';
+import { lazyRoute } from '@/core/routing/lazyRoute';
 
 const CreateUserAccessToken = lazyRoute(
   () => import('@/react/portainer/account/CreateAccessTokenView'),
@@ -155,14 +155,6 @@ const UserView = lazyRoute(
   'UserView'
 );
 const Sidebar = lazyRoute(() => import('@/react/sidebar/Sidebar'), 'Sidebar');
-const LogoutView = lazyRoute(
-  () => import('@/react/portainer/auth/LogoutView'),
-  'LogoutView'
-);
-const LoginView = lazyRoute(
-  () => import('@/react/portainer/auth/LoginView'),
-  'LoginView'
-);
 const AuthenticationView = lazyRoute(
   () => import('@/react/portainer/settings/AuthenticationView'),
   'AuthenticationView'
@@ -172,8 +164,6 @@ const AuthenticationView = lazyRoute(
 // components. The user wrapper also supplies the shared React Query client.
 export const HomeRoute = withCurrentUser(HomeView);
 export const AccountRoute = withCurrentUser(AccountView);
-export const LogoutRoute = LogoutView;
-export const LoginRoute = LoginView;
 export const SidebarRoute = withCurrentUser(Sidebar);
 export const CreateUserAccessTokenRoute = withCurrentUser(
   CreateUserAccessToken

@@ -9,7 +9,7 @@ import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useNamespacesQuery } from '@/react/kubernetes/namespaces/queries/useNamespacesQuery';
 import { useResourceYAML } from '@/react/kubernetes/queries/useResourceYAML';
 import { queryKeys } from '@/react/kubernetes/queries/query-keys';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Button, LoadingButton } from '@@/buttons';
 import { DeleteButton } from '@@/buttons/DeleteButton';

@@ -5,7 +5,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
 import { TagId } from '@/portainer/tags/types';
 import { queryKeys as edgeGroupQueryKeys } from '@/react/edge/edge-groups/queries/query-keys';

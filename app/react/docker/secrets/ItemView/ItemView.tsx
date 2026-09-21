@@ -5,7 +5,7 @@ import { Lock } from 'lucide-react';
 import { SecretViewModel } from '@/docker/models/secret';
 import { isoDate } from '@/portainer/filters/filters';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { getSecret } from '@/react/docker/proxy/queries/secrets/useSecret';
 import { removeSecret } from '@/react/docker/proxy/queries/secrets/useRemoveSecretMutation';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';

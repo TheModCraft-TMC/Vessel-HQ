@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '@/portainer/services/axios/axios';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { withPaginationHeaders } from '@/react/common/api/pagination.types';
 
 import { Source, SourceStatus, SourceType } from '../types';

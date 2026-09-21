@@ -1,6 +1,8 @@
 # React and realtime frontend modernization
 
-Status: accepted direction; implementation is incremental.
+Status: React-only migration baseline completed on September 20, 2026; realtime scope refinement remains incremental.
+
+The original delivery phases below are retained as architecture history and as the specification for remaining realtime hardening. AngularJS, hybrid routing, React-to-Angular adapters, legacy route ownership, and production frontend polling have reached zero. Current product and refactor plans are maintained in [Vessel HQ product and architecture roadmap](vessel-hq-roadmap.md).
 
 ## Outcomes
 

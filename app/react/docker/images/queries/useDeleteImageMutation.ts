@@ -1,7 +1,7 @@
 import { RawAxiosRequestHeaders } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { withInvalidate } from '@/react-tools/react-query';
+import { withInvalidate } from '@/core/query/query-client';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 

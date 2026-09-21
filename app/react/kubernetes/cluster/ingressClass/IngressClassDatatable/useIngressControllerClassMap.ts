@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import PortainerError from '@/portainer/error';
 import axios from '@/portainer/services/axios/axios';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { IngressControllerClassMapRowData } from './types';
 

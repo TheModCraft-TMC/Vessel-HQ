@@ -1,7 +1,7 @@
 import { Transition, TransitionService } from '@uirouter/react';
 
-import { queryClient } from '@/react-tools/react-query';
-import { startRealtimeQuerySync } from '@/react-tools/realtime-query-sync';
+import { queryClient } from '@/core/query/query-client';
+import { startRealtimeQuerySync } from '@/core/realtime/query-sync';
 import { storeReturnUrl } from '@/react/portainer/helpers/returnUrl';
 import { hasAuthorizations } from '@/react/hooks/useUser';
 import {
@@ -9,7 +9,7 @@ import {
   initializeAuthentication,
   isAdministrator,
   isEdgeAdministrator,
-} from '@/react/portainer/auth/auth.service';
+} from '@/features/auth';
 
 export enum AccessHeaders {
   Restricted = 'restricted',

@@ -1,5 +1,5 @@
 import { AccessHeaders } from '@/portainer/authorization-guard';
-import { registerReactState } from '@/react-tools/registerReactState';
+import { registerReactState } from '@/core/routing/registerReactState';
 import { AppTemplatesRoute, CreateCustomTemplateRoute, CustomTemplatesListRoute, EditCustomTemplateRoute } from '@/portainer/react/views/route-components';
 import {
   EdgeGroupCreateRoute,

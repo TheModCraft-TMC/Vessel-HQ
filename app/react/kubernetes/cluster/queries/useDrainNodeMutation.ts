@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { drainNode as drainNodeApi } from '@api/sdk.gen';
 
 import { EnvironmentId } from '@/react/portainer/environments/types';
-import { withInvalidate, withError } from '@/react-tools/react-query';
+import { withInvalidate, withError } from '@/core/query/query-client';
 
 import { queryKeys as applicationQueryKeys } from '../../applications/queries/query-keys';
 import { DrainOptions } from '../NodeView/NodeDetails/types';

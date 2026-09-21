@@ -8,7 +8,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 
 import { ServiceUpdateConfig } from '../types';
 import { withRegistryAuthHeader } from '../../proxy/queries/utils';

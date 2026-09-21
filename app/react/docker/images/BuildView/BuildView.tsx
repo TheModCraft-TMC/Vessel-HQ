@@ -14,7 +14,7 @@ import {
 } from '@/react/docker/images/queries/useBuildImageMutation';
 import { queryKeys } from '@/react/docker/images/queries/queryKeys';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { BoxSelector } from '@@/BoxSelector';
 import {

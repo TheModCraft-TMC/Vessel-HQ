@@ -22,7 +22,7 @@ import {
 } from '@/react/portainer/access-control/types';
 import { defaultValues } from '@/react/portainer/access-control/utils';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { BoxSelector } from '@@/BoxSelector';
 import { Button, LoadingButton } from '@@/buttons';

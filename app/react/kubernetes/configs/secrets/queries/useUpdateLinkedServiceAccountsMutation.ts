@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { getAllSettledItems } from '@/portainer/helpers/promise-utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { notifyError, notifySuccess } from '@/portainer/services/notifications';
 import { pluralize } from '@/portainer/helpers/strings';
 import { queryKeys } from '@/react/kubernetes/more-resources/ServiceAccountsView/queries/query-keys';

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { withError, withInvalidate } from '@/react-tools/react-query';
+import { withError, withInvalidate } from '@/core/query/query-client';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import { disassociateEndpoint } from '@/react/portainer/environments/environment.service';
 

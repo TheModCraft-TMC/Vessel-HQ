@@ -10,7 +10,7 @@ import {
   createMockEnvironment,
   createMockEnvironmentGroup,
 } from '@/react-tools/test-mocks';
-import { withCurrentUser } from '@/react-tools/withCurrentUser';
+import { withCurrentUser } from '@/core/routing/withCurrentUser';
 
 import { AzureEnvironmentForm } from './AzureEnvironmentForm';
 

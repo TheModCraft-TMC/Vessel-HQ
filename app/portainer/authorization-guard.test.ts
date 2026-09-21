@@ -1,8 +1,4 @@
-import {
-  StateDeclaration,
-  StateService,
-  Transition,
-} from '@uirouter/react';
+import { StateDeclaration, StateService, Transition } from '@uirouter/react';
 
 import { get, keyBuilder } from '@/react/hooks/useLocalStorage';
 import { hasAuthorizations } from '@/react/hooks/useUser';
@@ -11,12 +7,12 @@ import {
   initializeAuthentication,
   isAdministrator,
   isEdgeAdministrator,
-} from '@/react/portainer/auth/auth.service';
+} from '@/features/auth';
 import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
 
 import { checkAuthorizations } from './authorization-guard';
 
-vi.mock('@/react/portainer/auth/auth.service', () => ({
+vi.mock('@/features/auth', () => ({
   getAuthenticatedUser: vi.fn(),
   initializeAuthentication: vi.fn(),
   isAdministrator: vi.fn(),
@@ -28,7 +24,7 @@ vi.mock('@/react/hooks/useUser', async (importOriginal) => ({
   hasAuthorizations: vi.fn(),
 }));
 
-vi.mock('@/react-tools/realtime-query-sync', () => ({
+vi.mock('@/core/realtime/query-sync', () => ({
   startRealtimeQuerySync: vi.fn(),
 }));
 

@@ -7,7 +7,7 @@ import {
 import { gitOpsSourcesTestById } from '@api/sdk.gen';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Source } from '../types';
 

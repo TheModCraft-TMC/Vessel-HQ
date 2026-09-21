@@ -17,7 +17,7 @@ import {
   ResourceControlOwnership,
 } from '@/react/portainer/access-control/types';
 import { defaultValues } from '@/react/portainer/access-control/utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Button, LoadingButton } from '@@/buttons';
 import { FormControl } from '@@/form-components/FormControl';

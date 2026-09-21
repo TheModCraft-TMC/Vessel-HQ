@@ -6,7 +6,7 @@ import {
 } from '@api/types.gen';
 import { gitOpsSourceGet } from '@api/sdk.gen';
 
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Source } from '../types';
 

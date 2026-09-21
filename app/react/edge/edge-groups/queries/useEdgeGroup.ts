@@ -5,7 +5,7 @@ import {
   EnvironmentId,
   EnvironmentType,
 } from '@/react/portainer/environments/types';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { EdgeGroup } from '../types';
 

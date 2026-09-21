@@ -8,19 +8,13 @@ import fullLogo from '@/assets/images/vessel-hq-logo.svg';
 import darkLogo from '@/assets/images/vessel-hq-logo-dark.svg';
 import { getEnvironments } from '@/react/portainer/environments/environment.service';
 import { usePublicSettings } from '@/react/portainer/settings/queries';
-import {
-  notifyError,
-  notifySuccess,
-} from '@/portainer/services/notifications';
+import { notifyError, notifySuccess } from '@/portainer/services/notifications';
 import { PublicSettingsResponse } from '@/react/portainer/settings/types';
 import axios from '@/portainer/services/axios/axios';
 import { getAppState, initializeAppState } from '@/react/portainer/app-state';
 import { getSettings } from '@/react/portainer/settings/settings.service';
 import { getSystemStatus } from '@/react/portainer/system/useSystemStatus';
-import {
-  administratorExists,
-  login,
-} from '@/react/portainer/auth/auth.service';
+import { administratorExists, login } from '@/features/auth';
 
 import { LoadingButton } from '@@/buttons';
 import { FileUploadField } from '@@/form-components/FileUpload';
@@ -137,9 +131,7 @@ export function InitAdminView() {
                     id="confirm-password"
                     type="password"
                     value={confirmPassword}
-                    onChange={(event) =>
-                      setConfirmPassword(event.target.value)
-                    }
+                    onChange={(event) => setConfirmPassword(event.target.value)}
                     autoComplete="new-password"
                     data-cy="init-confirmPassword"
                   />
@@ -275,11 +267,7 @@ export function InitAdminView() {
       );
     } catch (error) {
       if (!handleInitError(error)) {
-        notifyError(
-          'Failure',
-          error,
-          'Unable to create administrator user'
-        );
+        notifyError('Failure', error, 'Unable to create administrator user');
       }
     } finally {
       setCreating(false);
@@ -358,11 +346,7 @@ function FormRow({
   );
 }
 
-async function uploadBackup(
-  file: File,
-  password: string,
-  setupToken: string
-) {
+async function uploadBackup(file: File, password: string, setupToken: string) {
   const body = new FormData();
   body.append('file', file);
   body.append('password', password);
@@ -377,7 +361,10 @@ function handleInitError(error: unknown) {
     response?: { headers?: Record<string, string> };
   };
   if (response.status === 303) {
-    if (response.response?.headers?.['redirect-reason'] === REDIRECT_REASON_TIMEOUT) {
+    if (
+      response.response?.headers?.['redirect-reason'] ===
+      REDIRECT_REASON_TIMEOUT
+    ) {
       window.location.href = '/timeout.html';
     }
     return true;

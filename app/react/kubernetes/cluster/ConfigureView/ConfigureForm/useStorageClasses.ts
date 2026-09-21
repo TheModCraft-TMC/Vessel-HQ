@@ -6,7 +6,7 @@ import {
   Environment,
   EnvironmentId,
 } from '@/react/portainer/environments/types';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { parseKubernetesAxiosError } from '../../../axiosError';
 

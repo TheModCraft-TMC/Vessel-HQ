@@ -5,7 +5,7 @@ import { updateGitStack } from '@/react/portainer/gitops/queries/useUpdateGitSta
 import { updateGitStackSettings } from '@/react/portainer/gitops/queries/useUpdateGitStackSettings';
 import { queryKeys } from '@/react/common/stacks/queries/query-keys';
 import { transformAutoUpdateViewModel } from '@/react/portainer/gitops/AutoUpdateFieldset/utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { FormValues } from './types';
 

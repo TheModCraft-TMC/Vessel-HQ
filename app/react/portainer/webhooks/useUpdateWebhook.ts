@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { RegistryId } from '@/react/portainer/registries/types/registry';
 import { Webhook } from '@/react/portainer/webhooks/types';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { queryKeys } from './query-keys';
 

@@ -1,5 +1,5 @@
-import { withCurrentUser } from '@/react-tools/withCurrentUser';
-import { lazyRoute } from '@/react-tools/lazyRoute';
+import { withCurrentUser } from '@/core/routing/withCurrentUser';
+import { lazyRoute } from '@/core/routing/lazyRoute';
 
 const WaitingRoomView = lazyRoute(
   () => import('@/react/edge/edge-devices/WaitingRoomView'),

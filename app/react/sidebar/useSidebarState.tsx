@@ -9,10 +9,9 @@ import {
 } from 'react';
 import _ from 'lodash';
 
-import { sidebarStore } from './sidebarStore';
+import { breakpoints } from '@/design-system';
 
-// using bootstrap breakpoint - https://getbootstrap.com/docs/5.0/layout/breakpoints/#min-width
-const mobileWidth = 992;
+import { sidebarStore } from './sidebarStore';
 
 interface State {
   isOpen: boolean;
@@ -75,5 +74,5 @@ export function TestSidebarProvider({ children }: PropsWithChildren<unknown>) {
 }
 
 function isMobile() {
-  return window.innerWidth < mobileWidth;
+  return window.innerWidth <= breakpoints.phone;
 }

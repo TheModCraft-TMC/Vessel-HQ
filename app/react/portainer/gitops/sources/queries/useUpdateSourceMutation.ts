@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { gitOpsSourcesUpdateGit } from '@api/sdk.gen';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { SourcesGitSourceUpdatePayload } from '@/react/portainer/generated-api/portainer/types.gen';
 
 import { Source } from '../types';

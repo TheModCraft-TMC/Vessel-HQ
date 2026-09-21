@@ -5,7 +5,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 import { StackType } from '@/react/common/stacks/types';
 import { VariableDefinition } from '@/react/portainer/custom-templates/components/CustomTemplatesVariablesDefinitionField/CustomTemplatesVariablesDefinitionField';
 import { AccessControlFormData } from '@/react/portainer/access-control/types';

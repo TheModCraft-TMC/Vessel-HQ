@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Registry } from '../types/registry';
 

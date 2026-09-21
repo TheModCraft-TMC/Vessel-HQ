@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Operation } from 'fast-json-patch';
 import _ from 'lodash';
 
-import { withError, withInvalidate } from '@/react-tools/react-query';
+import { withError, withInvalidate } from '@/core/query/query-client';
 import { environmentQueryKeys } from '@/react/portainer/environments/queries/query-keys';
 import {
   UpdateEnvironmentPayload,

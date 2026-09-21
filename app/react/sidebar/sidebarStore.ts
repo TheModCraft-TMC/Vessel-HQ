@@ -1,16 +1,16 @@
 import create from 'zustand';
 
+import { breakpoints } from '@/design-system';
 import {
   get as getFromStorage,
   set as setToStorage,
 } from '@/react/hooks/useLocalStorage';
 
 const storageKey = 'toolbar_toggle';
-const mobileWidth = 992;
 
 function getInitialIsOpen() {
   if (window.ddExtension) return false;
-  if (window.innerWidth < mobileWidth) return false;
+  if (window.innerWidth <= breakpoints.phone) return false;
   return getFromStorage<boolean>(storageKey, true);
 }
 

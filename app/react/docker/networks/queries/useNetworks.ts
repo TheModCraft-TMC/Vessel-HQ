@@ -3,7 +3,7 @@ import { IPAMConfig, Network } from 'docker-types';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { withFiltersQueryParam } from '../../proxy/queries/utils';
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';

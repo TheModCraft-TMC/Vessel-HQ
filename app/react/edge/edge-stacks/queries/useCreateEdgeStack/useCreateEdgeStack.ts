@@ -8,7 +8,7 @@ import {
   GitFormModel,
   RelativePathModel,
 } from '@/react/portainer/gitops/types';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { DeploymentType, StaggerConfig } from '../../types';
 

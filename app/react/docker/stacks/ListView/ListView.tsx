@@ -3,13 +3,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@uirouter/react';
 
 import { notifySuccess } from '@/portainer/services/notifications';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { processItemsInBatches } from '@/react/common/processItemsInBatches';
 import { Stack, StackType } from '@/react/common/stacks/types';
 import { queryKeys } from '@/react/common/stacks/queries/query-keys';
 import { getStacks } from '@/react/common/stacks/queries/useStacks';
 import { useDeleteStackMutation } from '@/react/common/stacks/queries/useDeleteStackMutation';
-import { getContainers } from '@/react/docker/containers/queries/useContainers';
+import { getContainers } from '@/features/containers/queries/useContainers';
 import { getInfo } from '@/react/docker/proxy/queries/useInfo';
 import { getSwarm } from '@/react/docker/proxy/queries/useSwarm';
 import { getServices } from '@/react/docker/services/queries/useServices';

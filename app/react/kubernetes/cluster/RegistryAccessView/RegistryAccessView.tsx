@@ -9,7 +9,7 @@ import { useNamespacesQuery } from '@/react/kubernetes/namespaces/queries/useNam
 import { updateEnvironmentRegistryAccess } from '@/react/portainer/environments/environment.service/registries';
 import { useRegistry } from '@/react/portainer/registries/queries/useRegistry';
 import { queryKeys } from '@/react/portainer/registries/queries/query-keys';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { LoadingButton } from '@@/buttons';
 import { DetailsTable } from '@@/DetailsTable';

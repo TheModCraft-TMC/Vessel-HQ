@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
 import { EnvironmentId } from '@/react/portainer/environments/types';
-import { withInvalidate } from '@/react-tools/react-query';
+import { withInvalidate } from '@/core/query/query-client';
 
 import { queryKeys } from '../query-keys';
 

@@ -5,7 +5,7 @@ import {
   PortainerEndpoint,
 } from '@api/types.gen';
 
-import { withError, withInvalidate } from '@/react-tools/react-query';
+import { withError, withInvalidate } from '@/core/query/query-client';
 import {
   EnvironmentId,
   EnvironmentStatusMessage,

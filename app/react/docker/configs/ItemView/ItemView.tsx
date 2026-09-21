@@ -4,7 +4,7 @@ import { Clipboard, Code, Copy } from 'lucide-react';
 
 import { isoDate } from '@/portainer/filters/filters';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { Authorized } from '@/react/hooks/useUser';
 import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel/AccessControlPanel';

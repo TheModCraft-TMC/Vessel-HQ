@@ -1,6 +1,6 @@
 import { AccessHeaders } from '../authorization-guard';
 import { RegistriesListRoute, RegistryCreateRoute, RegistryItemRoute, RegistryRepositoriesRoute, RegistryRepositoryRoute } from '../react/views/route-components';
-import { registerReactState } from '../../react-tools/registerReactState';
+import { registerReactState } from '@/core/routing/registerReactState';
 
 export function registerRegistryStates($stateRegistryProvider) {
   const registries = {

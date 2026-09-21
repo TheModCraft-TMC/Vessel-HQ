@@ -1,5 +1,5 @@
 import { AccessHeaders } from '../authorization-guard';
-import { registerReactState } from '@/react-tools/registerReactState';
+import { registerReactState } from '@/core/routing/registerReactState';
 import { RolesRoute } from '@/portainer/react/views/route-components';
 
 export function registerRbacStates($stateRegistryProvider) {

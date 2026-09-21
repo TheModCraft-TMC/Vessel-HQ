@@ -1,12 +1,13 @@
 import { Box } from 'lucide-react';
 
-import { ContainerListViewModel } from '@/react/docker/containers/types';
-import { createStore } from '@/react/docker/containers/ListView/ContainersDatatable/datatable-store';
-import { useColumns } from '@/react/docker/containers/ListView/ContainersDatatable/columns';
-import { ContainersDatatableActions } from '@/react/docker/containers/ListView/ContainersDatatable/ContainersDatatableActions';
-import { ContainersDatatableSettings } from '@/react/docker/containers/ListView/ContainersDatatable/ContainersDatatableSettings';
-import { useShowGPUsColumn } from '@/react/docker/containers/utils';
+import { ContainerListViewModel } from '@/features/containers/types';
+import { createStore } from '@/features/containers/ListView/ContainersDatatable/datatable-store';
+import { useColumns } from '@/features/containers/ListView/ContainersDatatable/columns';
+import { ContainersDatatableActions } from '@/features/containers/ListView/ContainersDatatable/ContainersDatatableActions';
+import { ContainersDatatableSettings } from '@/features/containers/ListView/ContainersDatatable/ContainersDatatableSettings';
+import { useShowGPUsColumn } from '@/features/containers/utils';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
+import { RowProvider } from '@/features/containers/ListView/ContainersDatatable/RowContext';
 
 import { Datatable, Table } from '@@/datatables';
 import {
@@ -20,7 +21,6 @@ import {
 import { TableSettingsProvider } from '@@/datatables/useTableSettings';
 import { useTableState } from '@@/datatables/useTableState';
 
-import { RowProvider } from '../../containers/ListView/ContainersDatatable/RowContext';
 
 import { useComposeStackContainers } from './useComposeStackContainers';
 

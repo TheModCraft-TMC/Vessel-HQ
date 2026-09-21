@@ -10,7 +10,7 @@ import {
 } from '@/docker/helpers/logHelper';
 import { FormattedLine } from '@/docker/helpers/logHelper/types';
 import { notifyError } from '@/portainer/services/notifications';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 
 import { Button } from '@@/buttons';

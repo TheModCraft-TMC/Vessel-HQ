@@ -7,9 +7,8 @@ import {
   fullURIIntoRepoAndTag,
 } from '@/react/docker/images/utils';
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
-import { withError } from '@/react-tools/react-query';
-
-import { queryKeys } from '../../containers/queries/query-keys';
+import { withError } from '@/core/query/query-client';
+import { queryKeys } from '@/features/containers/queries/query-keys';
 
 import { buildDockerProxyUrl } from './buildDockerProxyUrl';
 

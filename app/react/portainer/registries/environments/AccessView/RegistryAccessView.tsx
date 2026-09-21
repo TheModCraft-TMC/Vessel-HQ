@@ -14,7 +14,7 @@ import { useAccesses } from '@/react/portainer/access-control/AccessManagement/u
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { useGroup } from '@/react/portainer/environments/environment-groups/queries/useGroup';
 import { updateEnvironmentRegistryAccess } from '@/react/portainer/environments/environment.service/registries';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { PageHeader } from '@@/PageHeader';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';

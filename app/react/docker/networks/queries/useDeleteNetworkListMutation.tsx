@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { processItemsInBatches } from '@/react/common/processItemsInBatches';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { notifyError, notifySuccess } from '@/portainer/services/notifications';
-import { withInvalidate } from '@/react-tools/react-query';
+import { withInvalidate } from '@/core/query/query-client';
 
 import { queryKeys } from './queryKeys';
 import { deleteNetwork } from './useDeleteNetworkMutation';

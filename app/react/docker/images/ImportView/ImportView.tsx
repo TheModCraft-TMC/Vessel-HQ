@@ -15,7 +15,7 @@ import {
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { Authorized } from '@/react/hooks/useUser';
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Button, LoadingButton } from '@@/buttons';
 import { ImageConfigFieldset, ImageConfigValues } from '@@/ImageConfigFieldset';

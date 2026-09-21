@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { getEdgeStackFile } from '@/react/edge/edge-stacks/queries/useEdgeStackFile';
 import { getStackFile } from '@/react/common/stacks/queries/useStackFile';
 

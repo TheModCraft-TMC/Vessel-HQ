@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { gitOpsWorkflowGet } from '@api/sdk.gen';
 
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { Workflow } from '../types';
 import { workflowQueryKeys } from '../../queries/query-keys';

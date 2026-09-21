@@ -9,7 +9,7 @@ import {
 import { applyResourceControl } from '@/react/portainer/access-control/access-control.service';
 import { AccessControlFormData } from '@/react/portainer/access-control/types';
 import PortainerError from '@/portainer/error';
-import { withError, withInvalidate } from '@/react-tools/react-query';
+import { withError, withInvalidate } from '@/core/query/query-client';
 import { transformAutoUpdateViewModel } from '@/react/portainer/gitops/AutoUpdateFieldset/utils';
 import { RegistryId } from '@/react/portainer/registries/types/registry';
 import { StackSecretMapping } from '@/react/common/stacks/types';

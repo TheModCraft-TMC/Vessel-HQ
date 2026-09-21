@@ -7,11 +7,11 @@ import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { Stack } from '@/react/common/stacks/types';
 import { useStackFile } from '@/react/common/stacks/queries/useStackFile';
 import { isGitConfigDiverged } from '@/react/portainer/gitops/utils';
+import { useContainers } from '@/features/containers/queries/useContainers';
 
 import { WidgetBody, Widget } from '@@/Widget';
 import { Tab, useCurrentTabIndex, WidgetTabs } from '@@/Widget/WidgetTabs';
 
-import { useContainers } from '../../containers/queries/useContainers';
 import { validateYAML } from '../common/stackYamlValidation';
 import { extractContainerNames } from '../common/container-names';
 

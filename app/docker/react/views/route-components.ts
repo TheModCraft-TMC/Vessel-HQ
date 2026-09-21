@@ -1,5 +1,5 @@
-import { withCurrentUser } from '@/react-tools/withCurrentUser';
-import { lazyRoute } from '@/react-tools/lazyRoute';
+import { withCurrentUser } from '@/core/routing/withCurrentUser';
+import { lazyRoute } from '@/core/routing/lazyRoute';
 
 const ConfigsListView = lazyRoute(
   () => import('@/react/docker/configs/ListView/ListView'),
@@ -12,38 +12,6 @@ const ConfigItemView = lazyRoute(
 const ConfigCreateView = lazyRoute(
   () => import('@/react/docker/configs/CreateView/CreateView'),
   'CreateView'
-);
-const ContainerCreateView = lazyRoute(
-  () => import('@/react/docker/containers/CreateView'),
-  'CreateView'
-);
-const ContainerInspectView = lazyRoute(
-  () => import('@/react/docker/containers/InspectView/InspectView'),
-  'InspectView'
-);
-const ContainerItemView = lazyRoute(
-  () => import('@/react/docker/containers/ItemView/ItemView'),
-  'ItemView'
-);
-const ContainersListView = lazyRoute(
-  () => import('@/react/docker/containers/ListView'),
-  'ListView'
-);
-const ContainerStatsView = lazyRoute(
-  () => import('@/react/docker/containers/StatsView/StatsView'),
-  'StatsView'
-);
-const ContainerLogView = lazyRoute(
-  () => import('@/react/docker/containers/LogView/LogView'),
-  'LogView'
-);
-const ContainerAttachView = lazyRoute(
-  () => import('@/react/docker/containers/ConsoleView/ConsoleView'),
-  'AttachConsoleView'
-);
-const ContainerExecView = lazyRoute(
-  () => import('@/react/docker/containers/ConsoleView/ConsoleView'),
-  'ExecConsoleView'
 );
 const DashboardView = lazyRoute(
   () => import('@/react/docker/DashboardView/DashboardView'),
@@ -183,14 +151,6 @@ const VolumeBrowseView = lazyRoute(
 export const ConfigsListRoute = withCurrentUser(ConfigsListView);
 export const ConfigItemRoute = withCurrentUser(ConfigItemView);
 export const ConfigCreateRoute = withCurrentUser(ConfigCreateView);
-export const ContainerCreateRoute = withCurrentUser(ContainerCreateView);
-export const ContainerInspectRoute = withCurrentUser(ContainerInspectView);
-export const ContainerItemRoute = withCurrentUser(ContainerItemView);
-export const ContainersListRoute = withCurrentUser(ContainersListView);
-export const ContainerStatsRoute = withCurrentUser(ContainerStatsView);
-export const ContainerLogsRoute = withCurrentUser(ContainerLogView);
-export const ContainerAttachRoute = withCurrentUser(ContainerAttachView);
-export const ContainerExecRoute = withCurrentUser(ContainerExecView);
 export const DockerDashboardRoute = withCurrentUser(DashboardView);
 export const EventsListRoute = withCurrentUser(EventsListView);
 export const ImagesListRoute = withCurrentUser(ImagesListView);

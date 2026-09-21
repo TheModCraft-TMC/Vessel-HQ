@@ -1,6 +1,6 @@
 :global(#page-wrapper) {
   padding-left: var(--sidebar-closed-width);
-  transition: all 0.4s ease 0s;
+  transition: padding-left var(--vessel-motion-standard) ease;
 }
 
 @media only screen and (min-width: 561px) {
@@ -9,9 +9,8 @@
   }
 }
 :global(#page-wrapper) {
-  --sidebar-width: 300px;
-  /* 32px for collapsed items + 20px padding on each side */
-  --sidebar-closed-width: 72px;
+  --sidebar-width: var(--vessel-size-sidebar-expanded);
+  --sidebar-closed-width: var(--vessel-size-sidebar-collapsed);
 }
 
 @media only screen and (max-width: 560px) {
@@ -29,7 +28,7 @@
 
   :global(#page-wrapper.open) .root {
     width: min(var(--sidebar-width), 85vw);
-    box-shadow: 4px 0 20px rgb(0 0 0 / 35%);
+    box-shadow: var(--vessel-shadow-overlay);
   }
 }
 
@@ -47,7 +46,7 @@
   /* Keep the mobile drawer above page controls (many use z-10), but below
      sheets (z-50) and modals (z-60). */
   z-index: 40;
-  transition: all 0.4s ease 0s;
+  transition: width var(--vessel-motion-standard) ease;
 }
 
 .nav {

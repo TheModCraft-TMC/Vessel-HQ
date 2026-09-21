@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { mutationOptions, withError } from '@/react-tools/react-query';
+import { mutationOptions, withError } from '@/core/query/query-client';
 
 export function useUpdateSSLConfigMutation() {
   return useMutation(

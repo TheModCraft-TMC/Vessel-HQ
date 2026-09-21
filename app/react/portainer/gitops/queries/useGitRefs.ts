@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios from '@/portainer/services/axios/axios';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 interface RefsPayload {
   force?: boolean;

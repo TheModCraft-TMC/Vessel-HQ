@@ -1,5 +1,6 @@
 import { AccessHeaders } from '@/portainer/authorization-guard';
-import { registerReactState } from '@/react-tools/registerReactState';
+import { registerReactState } from '@/core/routing/registerReactState';
+import { ContainerItemRoute } from '@/features/containers';
 import {
   AppTemplatesRoute,
   CreateCustomTemplateRoute,
@@ -11,7 +12,6 @@ import {
   ConfigsListRoute,
   ConfigCreateRoute,
   ConfigItemRoute,
-  ContainerItemRoute,
   DockerDashboardRoute,
   EventsListRoute,
   ImagesListRoute,

@@ -4,9 +4,9 @@ import { useRouter } from '@uirouter/react';
 import { SecretSpec } from 'docker-types';
 
 import { notifyError, notifySuccess } from '@/portainer/services/notifications';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { createSecret } from '@/react/docker/proxy/queries/secrets/useCreateSecretMutation';
-import { LabelsTab } from '@/react/docker/containers/CreateView/LabelsTab/LabelsTab';
+import { LabelsTab } from '@/features/containers/CreateView/LabelsTab/LabelsTab';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
 import { AccessControlForm } from '@/react/portainer/access-control/AccessControlForm';

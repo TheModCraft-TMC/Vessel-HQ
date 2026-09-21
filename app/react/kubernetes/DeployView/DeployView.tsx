@@ -24,7 +24,7 @@ import {
 import { useCustomTemplate } from '@/react/portainer/templates/custom-templates/queries/useCustomTemplate';
 import { useCustomTemplateFile } from '@/react/portainer/templates/custom-templates/queries/useCustomTemplateFile';
 import { useTemplateInitialization } from '@/react/docker/stacks/CreateView/CreateStackForm/TemplateSection/useTemplateInitialization';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { BoxSelector, BoxSelectorOption } from '@@/BoxSelector';
 import {

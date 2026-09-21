@@ -1,7 +1,7 @@
 import { compact } from 'lodash';
 import { useQuery } from '@tanstack/react-query';
 
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 

@@ -10,7 +10,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 import { processItemsInBatches } from '@/react/common/processItemsInBatches';
 import { useCurrentUser } from '@/react/hooks/useUser';
 import { userQueryKeys } from '@/portainer/users/queries/queryKeys';

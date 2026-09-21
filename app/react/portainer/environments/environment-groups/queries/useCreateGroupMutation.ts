@@ -6,7 +6,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 
 import { EnvironmentId } from '../../types';
 import { EnvironmentGroup } from '../types';

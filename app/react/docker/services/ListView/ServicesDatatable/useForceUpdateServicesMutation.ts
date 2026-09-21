@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { promiseSequence } from '@/portainer/helpers/promise-utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { forceUpdateService } from '@/react/portainer/environments/environment.service';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 

@@ -5,7 +5,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 import { AutoUpdateResponse } from '@/react/portainer/gitops/types';
 import { buildUrl } from '@/react/edge/edge-stacks/queries/buildUrl';
 import { DeploymentType, EdgeStack } from '@/react/edge/edge-stacks/types';

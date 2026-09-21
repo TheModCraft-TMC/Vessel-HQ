@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 
-import { withReactQuery } from '@/react-tools/withReactQuery';
-import { withCurrentUser } from '@/react-tools/withCurrentUser';
+import { withReactQuery } from '@/core/query/withReactQuery';
+import { withCurrentUser } from '@/core/routing/withCurrentUser';
 import { ChartVersion } from '@/react/kubernetes/helm/helmChartSourceQueries/useHelmRepoVersions';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 import { K8sRegistryAccessNotice } from '@/react/kubernetes/components/K8sRegistryAccessNotice';
-import { withUIRouter } from '@/react-tools/withUIRouter';
+import { withUIRouter } from '@/core/routing/withUIRouter';
 
 import { Modal, OnSubmit, openModal } from '@@/modals';
 import { confirm } from '@@/modals/confirm';

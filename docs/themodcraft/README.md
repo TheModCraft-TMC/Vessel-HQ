@@ -1,10 +1,18 @@
-# TheModCraft Portainer customizations
+# Vessel HQ customizations
 
 This directory is the maintenance handoff for behavior added by this fork. It explains the design, security boundaries, release identity, verification, and deployment process without requiring readers to reconstruct the changes from Git history.
 
 ## Contents
 
 - [Feature planning backlog](../planning/README.md): one-month discovery backlog, scoring rubric, and planning-ready gate for possible future fork features.
+- [Vessel HQ product and architecture roadmap](../planning/vessel-hq-roadmap.md): completed migration baseline, repository and image policy, React domain architecture, deeper rebranding, component adoption, and homelab-first responsive plans.
+- [Frontend module architecture](../planning/frontend-architecture.md): enforced boundaries and the incremental feature-slice migration procedure.
+- [Frontend domain schema](../planning/frontend-domain-schema.md): canonical destination tree, dependency direction, and legacy-folder migration map.
+- [UI component inventory](../planning/ui-component-inventory.md): current primitives, styling foundations, adoption candidates, and package-selection gates.
+- [Containers vertical-slice migration](../planning/containers-vertical-slice.md): first feature move, route ownership, dependency ratchet, and cleanup order.
+- [Azure vertical-slice migration](../planning/azure-vertical-slice.md): consolidated Azure ownership, GoLand-assisted route refactor, and cleanup ratchet.
+- [Realtime state architecture](../planning/realtime-state-architecture.md): accepted future cache invalidation, WebSocket, telemetry, security, and backpressure design.
+- [React and realtime frontend modernization](../planning/frontend-modernization.md): implemented React-only baseline and remaining realtime hardening requirements.
 - [Recent features](../recent-features/README.md): table of work added, restored, or consolidated during the last four weeks.
 - [Overview response cache](overview-cache.md): stale-while-revalidate caching for Docker, Podman, and Kubernetes overview pages.
 - [Custom versioning](custom-versioning.md): footer version, Docker Hub update checks, and the boundary between the fork release and the upstream API/database version.

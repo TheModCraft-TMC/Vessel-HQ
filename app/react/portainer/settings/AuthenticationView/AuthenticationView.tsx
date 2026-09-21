@@ -4,7 +4,7 @@ import YAML from 'yaml';
 
 import axios from '@/portainer/services/axios/axios';
 import { notifySuccess } from '@/portainer/services/notifications';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { useTeams } from '@/react/portainer/users/teams/queries';
 
 import { BoxSelector, BoxSelectorOption } from '@@/BoxSelector';

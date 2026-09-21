@@ -6,7 +6,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/react-tools/react-query';
+} from '@/core/query/query-client';
 
 import { buildUrl } from '../../queries/build-url';
 import { queryKeys } from '../../queries/query-keys';

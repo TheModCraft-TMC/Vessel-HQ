@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Pod } from 'kubernetes-types/core/v1';
 
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 
 import { applicationIsKind, matchLabelsToLabelSelectorValue } from '../utils';

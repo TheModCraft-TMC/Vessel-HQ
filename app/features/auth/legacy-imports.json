@@ -1,0 +1,22 @@
+{
+  "maxImports": 27,
+  "modules": [
+    "@/assets/images/vessel-hq-logo-dark.svg",
+    "@/assets/images/vessel-hq-logo.svg",
+    "@/portainer/helpers/url-utils",
+    "@/portainer/services/http-request.helper",
+    "@/portainer/services/notifications",
+    "@/portainer/users/queries/useLoadCurrentUser",
+    "@/portainer/users/user.helpers",
+    "@/react/portainer/app-state",
+    "@/react/portainer/environments/environment.service",
+    "@/react/portainer/helpers/returnUrl",
+    "@/react/portainer/services/applyTheme",
+    "@/react/portainer/services/axios/utils/isAxiosError",
+    "@/react/portainer/settings/settings.service",
+    "@/react/portainer/storage",
+    "@@/Icon",
+    "@@/buttons",
+    "@@/form-components/Input"
+  ]
+}

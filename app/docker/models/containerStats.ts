@@ -1,6 +1,6 @@
 import { values } from 'lodash';
 
-import { ContainerStats } from '@/react/docker/containers/queries/useContainerStats';
+import { ContainerStats } from '@/features/containers/queries/useContainerStats';
 import { ValueOf } from '@/types';
 
 /**

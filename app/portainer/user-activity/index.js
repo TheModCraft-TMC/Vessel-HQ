@@ -1,4 +1,4 @@
-import { registerReactState } from '@/react-tools/registerReactState';
+import { registerReactState } from '@/core/routing/registerReactState';
 import { AccessHeaders } from '../authorization-guard';
 import {
   ActivityLogsRoute,

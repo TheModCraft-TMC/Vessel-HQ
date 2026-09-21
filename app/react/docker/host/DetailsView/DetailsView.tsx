@@ -10,7 +10,7 @@ import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { PageHeader } from '@@/PageHeader';
 

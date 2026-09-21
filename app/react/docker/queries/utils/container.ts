@@ -1,4 +1,4 @@
-import { ContainerListViewModel } from '@/react/docker/containers/types';
+import { ContainerListViewModel } from '@/features/containers/types';
 import { EdgeStack } from '@/react/edge/edge-stacks/types';
 import { EnvironmentId } from '@/react/portainer/environments/types';
 

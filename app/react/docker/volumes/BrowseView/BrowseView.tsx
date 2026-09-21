@@ -9,7 +9,7 @@ import { FileData } from '@/react/docker/components/FilesTable/types';
 import { useApiVersion } from '@/react/docker/agent/queries/useApiVersion';
 import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { withError } from '@/react-tools/react-query';
+import { withError } from '@/core/query/query-client';
 
 import { PageHeader } from '@@/PageHeader';
 import { confirmDelete } from '@@/modals/confirm';

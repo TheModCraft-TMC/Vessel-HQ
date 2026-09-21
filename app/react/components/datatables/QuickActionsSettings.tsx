@@ -1,7 +1,7 @@
 import {
   SettableQuickActionsTableSettings,
   QuickAction,
-} from '@/react/docker/containers/ListView/ContainersDatatable/types';
+} from '@/features/containers/ListView/ContainersDatatable/types';
 
 import { Checkbox } from '@@/form-components/Checkbox';
 

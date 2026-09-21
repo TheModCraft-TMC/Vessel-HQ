@@ -1,0 +1,42 @@
+:root {
+  /* Compatibility mappings preserve the current themes while new code adopts
+     semantic Vessel HQ names. Replace the mapped values only through a
+     reviewed visual-language decision. */
+  --vessel-color-canvas: var(--bg-body-color, #f6f7f9);
+  --vessel-color-surface: var(--bg-widget-color, #ffffff);
+  --vessel-color-text: var(--text-body-color, #1f2937);
+  --vessel-color-text-muted: var(--text-muted-color, #64748b);
+  --vessel-color-border: var(--border-widget, #d8dee9);
+  --vessel-color-focus: var(--blue-9, #3ea6ff);
+
+  --vessel-font-sans: 'Inter', Arial, Helvetica, sans-serif;
+  --vessel-font-size-sm: 0.875rem;
+  --vessel-font-size-md: 1rem;
+  --vessel-font-size-lg: 1.125rem;
+
+  --vessel-space-1: 0.25rem;
+  --vessel-space-2: 0.5rem;
+  --vessel-space-3: 0.75rem;
+  --vessel-space-4: 1rem;
+  --vessel-space-5: 1.5rem;
+  --vessel-space-6: 2rem;
+
+  --vessel-radius-sm: 0.375rem;
+  --vessel-radius-md: 0.75rem;
+  --vessel-radius-lg: 1rem;
+  --vessel-shadow-overlay: 0 1rem 3rem rgb(15 23 42 / 24%);
+
+  --vessel-size-touch-target: 2.75rem;
+  --vessel-size-sidebar-collapsed: 4.5rem;
+  --vessel-size-sidebar-expanded: 18.75rem;
+  --vessel-motion-fast: 120ms;
+  --vessel-motion-standard: 240ms;
+  --vessel-focus-ring: 0 0 0 3px color-mix(in srgb, var(--vessel-color-focus) 35%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --vessel-motion-fast: 1ms;
+    --vessel-motion-standard: 1ms;
+  }
+}
