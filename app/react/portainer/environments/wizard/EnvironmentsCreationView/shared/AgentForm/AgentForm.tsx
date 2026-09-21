@@ -7,7 +7,7 @@ import { notifySuccess } from '@/portainer/services/notifications';
 import {
   ContainerEngine,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { CreateAgentEnvironmentValues } from '@/react/portainer/environments/environment.service/create';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 import { EnvironmentUrlField } from '@/react/portainer/environments/common/EnvironmentUrlField/EnvironmentUrlField';

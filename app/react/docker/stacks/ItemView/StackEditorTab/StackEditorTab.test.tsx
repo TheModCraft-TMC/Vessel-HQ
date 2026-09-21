@@ -13,7 +13,7 @@ import {
   createMockStack,
   createMockEnvironment,
 } from '@/react-tools/test-mocks';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 import { Role } from '@/portainer/users/types';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { confirmStackUpdate } from '@/react/common/stacks/common/confirm-stack-update';

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import axios from '@/portainer/services/axios/axios';
 import { ServiceId } from '@/react/docker/services/types';
 import { ContainerId } from '@/features/containers/types';

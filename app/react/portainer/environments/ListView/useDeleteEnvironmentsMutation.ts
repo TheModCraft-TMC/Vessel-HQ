@@ -4,9 +4,9 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { withError } from '@/core/query/query-client';
 import { notifyError, notifySuccess } from '@/portainer/services/notifications';
 import { pluralize } from '@/portainer/helpers/strings';
+import { EnvironmentId } from '@/features/environments';
 
 import { buildUrl } from '../environment.service/utils';
-import { EnvironmentId } from '../types';
 
 export function useDeleteEnvironmentsMutation() {
   const queryClient = useQueryClient();

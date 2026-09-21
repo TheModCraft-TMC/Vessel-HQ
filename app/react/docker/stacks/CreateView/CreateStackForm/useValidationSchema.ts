@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import _ from 'lodash';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useStacks } from '@/react/common/stacks/queries/useStacks';
 import { useContainers } from '@/features/containers/queries/useContainers';
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';

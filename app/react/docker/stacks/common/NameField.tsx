@@ -3,7 +3,7 @@ import { SchemaOf, string } from 'yup';
 import { useMemo } from 'react';
 
 import { STACK_NAME_VALIDATION_REGEX } from '@/react/constants';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useStacks } from '@/react/common/stacks/queries/useStacks';
 import { Stack } from '@/react/common/stacks/types';
 

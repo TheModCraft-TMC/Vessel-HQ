@@ -1,5 +1,5 @@
 {
-  "maxImports": 546,
+  "maxImports": 492,
   "modules": [
     "@/constants",
     "@/docker/filters/utils",
@@ -52,7 +52,6 @@
     "@/react/portainer/environments/queries/useEnvironment",
     "@/react/portainer/environments/queries/useEnvironmentRegistries",
     "@/react/portainer/environments/queries/useIsPodman",
-    "@/react/portainer/environments/types",
     "@/react/portainer/environments/utils",
     "@/react/portainer/feature-flags/enums",
     "@/react/portainer/registries/types/registry",

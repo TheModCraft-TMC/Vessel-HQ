@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { ContainerId } from '@/features/containers/types';
 import { useAuthorizations } from '@/react/hooks/useUser';
 import { dockerWebhookUrl } from '@/portainer/helpers/webhookHelper';

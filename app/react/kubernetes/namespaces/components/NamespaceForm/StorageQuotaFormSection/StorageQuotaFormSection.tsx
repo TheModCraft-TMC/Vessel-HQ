@@ -1,4 +1,4 @@
-import { StorageClass } from '@/react/portainer/environments/types';
+import { StorageClass } from '@/features/environments';
 
 import { FormSection } from '@@/form-components/FormSection';
 import { TextTip } from '@@/Tip/TextTip';

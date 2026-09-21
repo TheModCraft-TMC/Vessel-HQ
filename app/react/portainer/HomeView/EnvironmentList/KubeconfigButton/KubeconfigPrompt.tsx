@@ -6,7 +6,7 @@ import * as notifications from '@/portainer/services/notifications';
 import {
   Environment,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { usePaginationLimitState } from '@/react/hooks/usePaginationLimitState';
 import { usePublicSettings } from '@/react/portainer/settings/queries';
 import {

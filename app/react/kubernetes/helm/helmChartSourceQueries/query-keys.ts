@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { UserId } from '@/portainer/users/types';
 
 export const queryKeys = {

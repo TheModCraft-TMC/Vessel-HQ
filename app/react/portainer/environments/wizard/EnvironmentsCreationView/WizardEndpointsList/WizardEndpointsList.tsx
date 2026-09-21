@@ -7,7 +7,7 @@ import {
   getEnvironmentTypeIcon,
   isEdgeEnvironment,
 } from '@/react/portainer/environments/utils';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useEnvironmentList } from '@/react/portainer/environments/queries/useEnvironmentList';
 
 import { EdgeIndicator } from '@@/EdgeIndicator';

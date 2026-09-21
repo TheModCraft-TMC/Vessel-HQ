@@ -1,7 +1,7 @@
 import { Service } from 'kubernetes-types/core/v1';
 import { useMemo } from 'react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useIngresses } from '@/react/kubernetes/ingresses/queries';
 import { Ingress } from '@/react/kubernetes/ingresses/types';
 import { Authorized } from '@/react/hooks/useUser';

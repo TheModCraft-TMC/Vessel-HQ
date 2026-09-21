@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
 
 import { RbacRole } from '../types';

@@ -1,7 +1,7 @@
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useIsSwarmManager } from '@/react/docker/proxy/queries/useInfo';
 import { StackType } from '@/react/common/stacks/types';
-import { ContainerEngine } from '@/react/portainer/environments/types';
+import { ContainerEngine } from '@/features/environments';
 
 import { PageHeader } from '@@/PageHeader';
 import { Widget } from '@@/Widget';

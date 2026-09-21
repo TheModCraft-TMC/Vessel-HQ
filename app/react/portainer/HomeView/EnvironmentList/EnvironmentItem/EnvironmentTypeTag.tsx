@@ -1,7 +1,7 @@
 import {
   Environment,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   isEdgeEnvironment,
   isLocalEnvironment,

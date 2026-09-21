@@ -5,7 +5,7 @@ import { useEnvironmentRegistries } from '@/react/portainer/environments/queries
 import { useIsPureAdmin, useIsEnvironmentAdmin } from '@/react/hooks/useUser';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useDebouncedValue } from '@/react/hooks/useDebouncedValue';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { pluralize } from '@/react/common/string-utils';
 
 import { TextTip } from '@@/Tip/TextTip';

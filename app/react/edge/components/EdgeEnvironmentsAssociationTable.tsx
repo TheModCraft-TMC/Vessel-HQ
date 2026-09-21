@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
-import { EdgeTypes, Environment } from '@/react/portainer/environments/types';
+import { EdgeTypes, Environment } from '@/features/environments';
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
 import { useTags } from '@/portainer/tags/queries';
 import { EnvironmentsQueryParams } from '@/react/portainer/environments/environment.service';

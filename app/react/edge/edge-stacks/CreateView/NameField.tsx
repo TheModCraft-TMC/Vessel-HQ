@@ -3,7 +3,7 @@ import { SchemaOf, string } from 'yup';
 import { useMemo } from 'react';
 
 import { STACK_NAME_VALIDATION_REGEX } from '@/react/constants';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 
 import { FormControl } from '@@/form-components/FormControl';
 import { Input } from '@@/form-components/Input';

@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import { useState } from 'react';
 import { ListIcon } from 'lucide-react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useAuthorizations } from '@/react/hooks/useUser';
 import { notifySuccess } from '@/portainer/services/notifications';
 import { useCommitContainerMutation } from '@/react/docker/proxy/queries/useCommitContainerMutation';

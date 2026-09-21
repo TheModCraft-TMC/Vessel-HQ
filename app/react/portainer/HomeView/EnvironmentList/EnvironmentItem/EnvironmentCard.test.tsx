@@ -6,7 +6,7 @@ import {
   Environment,
   EnvironmentStatus,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { UserViewModel } from '@/portainer/models/user';
 import { server } from '@/setup-tests/server';
 import { withTestRouter } from '@/react/test-utils/withRouter';

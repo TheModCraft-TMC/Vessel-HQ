@@ -2,7 +2,7 @@ import { CellContext } from '@tanstack/react-table';
 import { Users } from 'lucide-react';
 
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 
 import { Link } from '@@/Link';
 import { Button } from '@@/buttons';

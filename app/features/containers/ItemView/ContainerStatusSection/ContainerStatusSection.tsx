@@ -1,7 +1,7 @@
 import {
   EnvironmentId,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { ContainerDetailsViewModel } from '@/docker/models/containerDetails';
 import { useEnvironment } from '@/react/portainer/environments/queries/useEnvironment';
 import { isoDate } from '@/portainer/filters/filters';

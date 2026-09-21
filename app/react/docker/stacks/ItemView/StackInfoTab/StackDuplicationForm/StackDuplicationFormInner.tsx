@@ -1,7 +1,7 @@
 import { Field, Form, useFormikContext } from 'formik';
 import { Copy, ArrowRight } from 'lucide-react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { LoadingButton } from '@@/buttons/LoadingButton';
 import { Input } from '@@/form-components/Input';

@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 import { useMutation } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { mutationOptions, withError } from '@/core/query/query-client';
 

@@ -1,5 +1,5 @@
 import { useEnvironmentList } from '@/react/portainer/environments/queries/useEnvironmentList';
-import { EdgeGroupId, EdgeTypes } from '@/react/portainer/environments/types';
+import { EdgeGroupId, EdgeTypes } from '@/features/environments';
 
 export function useEnvironments(edgeGroupIds: Array<EdgeGroupId>) {
   const environmentsQuery = useEnvironmentList(

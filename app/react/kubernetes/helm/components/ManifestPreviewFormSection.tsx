@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 import { useDebouncedValue } from '@/react/hooks/useDebouncedValue';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { ExpandableMessageByLines } from '@@/ExpandableMessageByLines';
 import { FormSection } from '@@/form-components/FormSection';

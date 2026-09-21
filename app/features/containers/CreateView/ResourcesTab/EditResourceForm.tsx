@@ -9,7 +9,7 @@ import { notifySuccess } from '@/portainer/services/notifications';
 import { mutationOptions, withError } from '@/core/query/query-client';
 import { useSystemLimits } from '@/react/docker/proxy/queries/useInfo';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { LoadingButton } from '@@/buttons';
 import { TextTip } from '@@/Tip/TextTip';

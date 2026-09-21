@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 
 import { formatURL, buildInitialValues, buildUpdatePayload } from './helpers';

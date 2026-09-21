@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { queryKeys } from '@/react/kubernetes/volumes/queries/query-keys';
 import { withError } from '@/core/query/query-client';
 import { PersistentVolume } from '@/react/kubernetes/volumes/ListView/types';

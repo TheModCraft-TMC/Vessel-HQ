@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { deleteContainerGroup } from '@/features/azure/services/container-groups.service';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { notifyError, notifySuccess } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { promiseSequence } from '@/portainer/helpers/promise-utils';
 import { useContainerGroups } from '@/features/azure/queries/useContainerGroups';
 import { useSubscriptions } from '@/features/azure/queries/useSubscriptions';

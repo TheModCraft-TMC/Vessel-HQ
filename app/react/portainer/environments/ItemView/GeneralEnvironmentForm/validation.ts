@@ -4,7 +4,7 @@ import { tlsConfigValidation } from '@/react/components/TLSFieldset/TLSFieldset'
 import {
   EnvironmentId,
   EnvironmentStatus,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { useNameValidation } from '../../common/NameField/NameField';
 import { metadataValidation } from '../../common/MetadataFieldset/validation';

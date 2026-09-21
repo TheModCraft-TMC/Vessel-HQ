@@ -4,11 +4,11 @@ import {
   getEnvironmentTypeIcon,
   getPlatformTypeName,
 } from '@/react/portainer/environments/utils';
+import { EnvironmentType, ContainerEngine } from '@/features/environments';
 
 import { Icon } from '@@/Icon';
 
 import { EnvironmentListItem } from '../types';
-import { EnvironmentType, ContainerEngine } from '../../types';
 
 import { columnHelper } from './helper';
 

@@ -1,7 +1,7 @@
 import { Bomb } from 'lucide-react';
 
 import { Authorized } from '@/react/hooks/useUser';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { notifySuccess } from '@/portainer/services/notifications';
 
 import { LoadingButton } from '@@/buttons';

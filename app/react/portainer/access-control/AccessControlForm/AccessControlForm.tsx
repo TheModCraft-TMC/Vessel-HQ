@@ -1,13 +1,13 @@
 import { FormikErrors } from 'formik';
 
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
+import { EnvironmentId } from '@/features/environments';
 
 import { FormSectionTitle } from '@@/form-components/FormSectionTitle';
 import { SwitchField } from '@@/form-components/SwitchField';
 
 import { EditDetails } from '../EditDetails';
 import { ResourceControlOwnership, AccessControlFormData } from '../types';
-import { EnvironmentId } from '../../environments/types';
 
 export interface Props {
   values: AccessControlFormData;

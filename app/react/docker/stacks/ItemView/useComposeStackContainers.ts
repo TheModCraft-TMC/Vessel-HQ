@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { COMPOSE_STACK_NAME_LABEL } from '@/react/constants';
 import { useContainers } from '@/features/containers/queries/useContainers';
 

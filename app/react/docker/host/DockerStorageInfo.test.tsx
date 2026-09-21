@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
 

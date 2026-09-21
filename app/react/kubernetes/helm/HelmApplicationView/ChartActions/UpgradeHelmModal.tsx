@@ -4,7 +4,7 @@ import { ArrowUp } from 'lucide-react';
 import { withReactQuery } from '@/core/query/withReactQuery';
 import { withCurrentUser } from '@/core/routing/withCurrentUser';
 import { ChartVersion } from '@/react/kubernetes/helm/helmChartSourceQueries/useHelmRepoVersions';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { K8sRegistryAccessNotice } from '@/react/kubernetes/components/K8sRegistryAccessNotice';
 import { withUIRouter } from '@/core/routing/withUIRouter';
 

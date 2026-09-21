@@ -4,7 +4,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import {
   EdgeGroupId,
   EnvironmentId,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { queryKeys } from './query-keys';
 import { buildUrl } from './urls';

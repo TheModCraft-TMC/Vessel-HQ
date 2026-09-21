@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Edit } from 'lucide-react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { ContainerId } from '@/features/containers/types';
 import { Authorized } from '@/react/hooks/useUser';
 import { trimContainerName } from '@/docker/filters/utils';

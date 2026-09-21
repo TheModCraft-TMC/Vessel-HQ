@@ -12,7 +12,7 @@ import {
   Environment,
   EnvironmentType,
   EnvironmentStatus,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   createMockEnvironment,
   createMockEnvironmentGroup,

@@ -6,7 +6,7 @@ import {
   EdgeTypes,
   EnvironmentStatus,
   PlatformType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 export function useParseSortGroupApiParams(
   sortGroupFilter: string | null,

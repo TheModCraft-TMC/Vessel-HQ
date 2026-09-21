@@ -8,7 +8,7 @@ import { buildUrl } from '@/react/portainer/environments/environment.service/uti
 import {
   Environment,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   isAgentEnvironment,
   isLocalEnvironment,

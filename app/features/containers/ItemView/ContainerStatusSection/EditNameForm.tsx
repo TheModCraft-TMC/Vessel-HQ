@@ -3,7 +3,7 @@ import { Check, X } from 'lucide-react';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { trimContainerName } from '@/docker/filters/utils';
 import { notifySuccess } from '@/portainer/services/notifications';
 

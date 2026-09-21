@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 
 import { EditorType } from './types';
 

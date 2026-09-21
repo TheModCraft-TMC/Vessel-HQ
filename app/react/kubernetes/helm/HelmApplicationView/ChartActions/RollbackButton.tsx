@@ -1,7 +1,7 @@
 import { RotateCcw } from 'lucide-react';
 import { useRouter } from '@uirouter/react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { notifySuccess } from '@/portainer/services/notifications';
 
 import { LoadingButton } from '@@/buttons';

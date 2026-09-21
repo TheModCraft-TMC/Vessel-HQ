@@ -1,6 +1,6 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { AutoUpdateResponse } from '@/react/portainer/gitops/types';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { Stack } from '../../types';
 

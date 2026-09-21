@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { ContainerStatsViewModel } from '@/docker/models/containerStats';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { useContainerStats } from '../queries/useContainerStats';
 import { ContainerId } from '../types';

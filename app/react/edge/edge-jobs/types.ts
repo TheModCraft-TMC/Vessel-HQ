@@ -1,7 +1,7 @@
 import {
   Environment,
   EnvironmentId,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 export interface EdgeJob {
   Id: number;

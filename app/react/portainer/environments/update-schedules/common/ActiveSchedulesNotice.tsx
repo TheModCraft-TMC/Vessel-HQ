@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Clock } from 'lucide-react';
 
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
 

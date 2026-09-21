@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
+import { EnvironmentStatus } from '@/features/environments';
 
 import { Datatable } from '@@/datatables';
 import { createPersistedStore } from '@@/datatables/types';
@@ -11,7 +12,6 @@ import { useTableState } from '@@/datatables/useTableState';
 
 import { isBE } from '../../feature-flags/feature-flags.service';
 import { isSortType } from '../queries/useEnvironmentList';
-import { EnvironmentStatus } from '../types';
 
 import { columns } from './columns';
 import { EnvironmentListItem } from './types';

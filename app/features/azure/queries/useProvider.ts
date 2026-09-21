@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { useQueries } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { withError } from '@/core/query/query-client';
 

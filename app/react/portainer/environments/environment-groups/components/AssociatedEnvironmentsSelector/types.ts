@@ -1,3 +1,3 @@
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 
 export type EnvironmentTableData = Pick<Environment, 'Name' | 'Id'>;

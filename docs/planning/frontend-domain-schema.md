@@ -82,6 +82,7 @@ design-system -X-> application features or legacy app code
 | `app/react/portainer/auth` + authentication routes      | `app/features/auth`                                                                                                             | Complete structural move; all consumers use its public API and its frozen legacy budget can only decrease.          |
 | `app/react/azure` + `app/azure`                         | `app/features/azure`                                                                                                            | Complete structural move; reduce its frozen legacy imports next.                                                    |
 | `app/react/docker/containers` + container routes        | `app/features/containers`                                                                                                       | Complete structural move; reduce its frozen legacy imports and make views responsive.                               |
+| `app/react/portainer/environments/types.ts`             | `app/features/environments`                                                                                                     | Shared contract extracted; all consumers use the public API while queries, services, routes, and screens migrate.   |
 | Remaining `app/react/docker/*` + `app/docker/*`         | Docker domains such as `images`, `networks`, `volumes`, `stacks`, `services`, `configs`, `secrets`, and `swarm`                 | Move one complete workflow at a time; do not create a new `features/docker` umbrella.                               |
 | `app/react/edge` + `app/edge`                           | `app/features/edge` initially                                                                                                   | Preserve the platform boundary, then split devices, groups, jobs, and stacks when their public contracts are clear. |
 | `app/react/kubernetes` + `app/kubernetes`               | `app/features/kubernetes` initially                                                                                             | Preserve the platform boundary, then split applications, cluster, namespaces, access, and storage internally.       |
@@ -92,7 +93,7 @@ design-system -X-> application features or legacy app code
 ## Execution order
 
 1. Continue Azure, Containers, and Authentication dependency reduction without behavior changes.
-2. Extract environment and access-control contracts because most other domains depend on them.
+2. Continue extracting environment and access-control contracts because most other domains depend on them.
 3. Migrate Docker workflows individually, starting with the lowest-coupled domain.
 4. Migrate account, users, teams, registries, templates, settings, and GitOps out of the Portainer umbrella.
 5. Move Edge, then Kubernetes, retaining internal platform subdivisions until their contracts stabilize.

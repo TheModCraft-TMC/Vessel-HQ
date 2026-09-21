@@ -18,7 +18,7 @@ import {
   startContainer,
   stopContainer,
 } from '@/features/containers/containers.service';
-import type { EnvironmentId } from '@/react/portainer/environments/types';
+import type { EnvironmentId } from '@/features/environments';
 
 import { ButtonGroup, Button, AddButton } from '@@/buttons';
 

@@ -5,7 +5,7 @@ import { withTestRouter } from '@/react/test-utils/withRouter';
 import {
   Environment,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 
 import { EnvironmentDetailsForm } from './EnvironmentDetailsForm';

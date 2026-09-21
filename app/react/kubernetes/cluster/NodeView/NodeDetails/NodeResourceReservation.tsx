@@ -1,7 +1,7 @@
 import { Node } from 'kubernetes-types/core/v1';
 
 import { ResourceReservation } from '@/react/kubernetes/components/ResourceReservation';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useNodeMetricsQuery } from '@/react/kubernetes/metrics/queries/useNodeMetricsQuery';
 import { useMetricsForApplicationsQuery } from '@/react/kubernetes/metrics/queries/useMetricsForApplications';
 import {

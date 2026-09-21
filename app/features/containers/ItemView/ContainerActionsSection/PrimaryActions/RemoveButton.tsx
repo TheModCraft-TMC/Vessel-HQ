@@ -1,7 +1,7 @@
 import { Trash2 } from 'lucide-react';
 
 import { Authorized } from '@/react/hooks/useUser';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { confirmContainerDeletion } from '@/features/containers/common/confirm-container-delete-modal';
 import { notifySuccess } from '@/portainer/services/notifications';
 

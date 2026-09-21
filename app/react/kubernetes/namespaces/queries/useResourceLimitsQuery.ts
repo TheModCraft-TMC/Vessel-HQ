@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { notifyError } from '@/portainer/services/notifications';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 

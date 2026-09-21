@@ -1,4 +1,4 @@
-import { StorageClass } from '@/react/portainer/environments/types';
+import { StorageClass } from '@/features/environments';
 
 export type PersistedFolderFormValue = {
   containerPath: string;

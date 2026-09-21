@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useAuthorizations } from '@/react/hooks/useUser';
 import { ContainerDetailsViewModel } from '@/docker/models/containerDetails';
 import { isPartOfSwarmService } from '@/docker/helpers/containers';

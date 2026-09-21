@@ -4,7 +4,7 @@ import { Stack, StackType } from '@/react/common/stacks/types';
 import { isWorkflowManagedStack } from '@/react/common/stacks/isWorkflowManagedStack';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useStacks } from '@/react/common/stacks/queries/useStacks';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { Application } from '../ListView/ApplicationsDatatable/types';
 

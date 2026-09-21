@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 
 import { createMockEnvironment } from '@/react-tools/test-mocks';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 
 import { EnvironmentURL } from './EnvironmentURL';
 

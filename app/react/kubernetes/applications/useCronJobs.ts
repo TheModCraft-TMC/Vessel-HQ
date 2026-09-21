@@ -1,7 +1,7 @@
 import { CronJob, CronJobList } from 'kubernetes-types/batch/v1';
 import { useQuery } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { withError } from '@/core/query/query-client';
 import axios from '@/portainer/services/axios/axios';
 

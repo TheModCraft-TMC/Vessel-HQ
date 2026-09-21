@@ -50,6 +50,7 @@ Implementation references:
 - [Authentication vertical-slice migration](auth-vertical-slice.md)
 - [Containers vertical-slice migration](containers-vertical-slice.md)
 - [Azure vertical-slice migration](azure-vertical-slice.md)
+- [Environments domain contract](environments-domain-contract.md)
 - [Realtime state architecture](realtime-state-architecture.md)
 
 The September 12, 2026 source snapshot is already predominantly React and TypeScript by non-generated production source volume, but the application runtime is still AngularJS-first:

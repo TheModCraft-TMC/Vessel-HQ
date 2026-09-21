@@ -3,7 +3,7 @@ import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 import { useState } from 'react';
 import uuidv4 from 'uuid/v4';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import {
   useCreateStack,
   CreateStackPayload,

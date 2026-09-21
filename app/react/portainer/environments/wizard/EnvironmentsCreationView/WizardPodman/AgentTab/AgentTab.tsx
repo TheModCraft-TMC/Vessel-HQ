@@ -1,7 +1,7 @@
 import {
   ContainerEngine,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { AgentForm } from '../../shared/AgentForm/AgentForm';
 

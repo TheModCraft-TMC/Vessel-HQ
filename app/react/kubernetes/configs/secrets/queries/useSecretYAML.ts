@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { queryKeys as environmentQueryKeys } from '@/react/kubernetes/queries/query-keys';
 import axios from '@/portainer/services/axios/axios';
 

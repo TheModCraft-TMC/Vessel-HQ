@@ -1,8 +1,9 @@
-import { TLSConfiguration } from '../../settings/types';
 import {
   TeamAccessPolicies,
   UserAccessPolicies,
-} from '../../environments/types';
+} from '@/features/environments';
+
+import { TLSConfiguration } from '../../settings/types';
 
 export type Catalog = {
   repositories: string[];

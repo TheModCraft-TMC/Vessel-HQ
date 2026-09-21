@@ -1,7 +1,7 @@
 import { CellContext } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { Link } from '@@/Link';
 import { Button } from '@@/buttons';

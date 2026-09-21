@@ -7,7 +7,7 @@ import { nodeStatusBadge } from '@/docker/filters/utils';
 import { notifySuccess } from '@/portainer/services/notifications';
 import { queryKeys } from '@/react/docker/proxy/queries/nodes/query-keys';
 import { updateNode } from '@/react/docker/proxy/queries/nodes/useUpdateNodeMutation';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { withError } from '@/core/query/query-client';
 
 import { Button } from '@@/buttons';

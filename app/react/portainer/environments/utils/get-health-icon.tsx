@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react';
 
-import { EnvironmentHealth } from '@/react/portainer/environments/types';
+import { EnvironmentHealth } from '@/features/environments';
 import { IconSize } from '@/react/portainer/environments/utils/index';
 
 export const IconSizeClass: Record<IconSize, string> = {

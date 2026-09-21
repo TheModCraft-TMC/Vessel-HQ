@@ -2,11 +2,12 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import { FormikErrors } from 'formik';
 
+import { EndpointChangeWindow } from '@/features/environments';
+
 import { Select } from '@@/form-components/ReactSelect';
 import { Option } from '@@/form-components/PortainerSelect';
 import { FormError } from '@@/form-components/FormError';
 
-import { EndpointChangeWindow } from '../../types';
 
 import { timeZoneToUtc, utcToTimeZone } from './utils';
 import { TimePickerInput } from './TimePickerInput';

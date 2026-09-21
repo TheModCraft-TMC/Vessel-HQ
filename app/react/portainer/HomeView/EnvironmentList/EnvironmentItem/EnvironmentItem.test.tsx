@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import {
   EnvironmentGroupId,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { UserViewModel } from '@/portainer/models/user';
 import { Tag } from '@/portainer/tags/types';
 import { createMockEnvironment } from '@/react-tools/test-mocks';

@@ -2,7 +2,7 @@ import { Box } from 'lucide-react';
 
 import { ContainerListViewModel } from '@/features/containers/types';
 import { useShowGPUsColumn } from '@/features/containers/utils';
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 
 import { Datatable, Table } from '@@/datatables';
 import {

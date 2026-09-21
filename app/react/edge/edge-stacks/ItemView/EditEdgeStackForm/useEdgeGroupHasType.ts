@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 
 export function useEdgeGroupHasType(groupIds: Array<EdgeGroup['Id']>) {
   const edgeGroupsQuery = useEdgeGroups();

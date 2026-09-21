@@ -7,8 +7,8 @@ import {
   withError,
   withInvalidate,
 } from '@/core/query/query-client';
+import { EnvironmentId } from '@/features/environments';
 
-import { EnvironmentId } from '../../types';
 import { EnvironmentGroup } from '../types';
 
 import { buildUrl } from './build-url';

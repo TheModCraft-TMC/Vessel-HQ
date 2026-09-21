@@ -1,6 +1,6 @@
 import { TagId } from '@/portainer/tags/types';
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
-import { EnvironmentGroupId } from '@/react/portainer/environments/types';
+import { EnvironmentGroupId } from '@/features/environments';
 
 export interface FormValues {
   group: EnvironmentGroupId | null;

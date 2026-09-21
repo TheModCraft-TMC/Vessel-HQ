@@ -6,7 +6,7 @@ import { Role, User, UserId } from '@/portainer/users/types';
 import {
   ContainerEngine,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { Stack, StackStatus, StackType } from '@/react/common/stacks/types';
 import { ContainerDetailsViewModel } from '@/docker/models/containerDetails';
 import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';

@@ -1,4 +1,4 @@
-import { EnvironmentStatus } from '@/react/portainer/environments/types';
+import { EnvironmentStatus } from '@/features/environments';
 
 import { Link } from '@@/Link';
 

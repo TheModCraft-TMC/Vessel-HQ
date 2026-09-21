@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { withError } from '@/core/query/query-client';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { Role } from '../types';
 

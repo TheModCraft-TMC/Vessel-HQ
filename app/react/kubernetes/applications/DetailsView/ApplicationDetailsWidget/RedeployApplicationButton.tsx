@@ -2,7 +2,7 @@ import { RotateCw } from 'lucide-react';
 import { Pod } from 'kubernetes-types/core/v1';
 import { useRouter } from '@uirouter/react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { notifySuccess, notifyError } from '@/portainer/services/notifications';
 import { Authorized } from '@/react/hooks/useUser';
 

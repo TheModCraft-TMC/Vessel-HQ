@@ -3,7 +3,7 @@ import { sortBy } from 'lodash';
 
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
 
 import {

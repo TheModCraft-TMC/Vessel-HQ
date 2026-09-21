@@ -5,7 +5,7 @@ import {
   Environment,
   ContainerEngine,
   EnvironmentSecuritySettings,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createContainerGroup } from '@/features/azure/services/container-groups.service';
 import { queryKeys } from '@/features/azure/queries/query-keys';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import PortainerError from '@/portainer/error';
 import {
   ContainerGroup,

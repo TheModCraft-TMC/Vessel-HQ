@@ -10,7 +10,7 @@ import {
 } from 'yup';
 
 import { accessControlFormValidation } from '@/react/portainer/access-control/AccessControlForm';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { nameValidation } from '@/react/docker/stacks/common/NameField';
 import { Stack } from '@/react/common/stacks/types';
 

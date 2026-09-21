@@ -12,7 +12,7 @@ import { TagId } from '@/portainer/tags/types';
 import {
   EnvironmentId,
   EnvironmentGroupId,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { useIsPureAdmin } from '@/react/hooks/useUser';
 import { useCanExit } from '@/react/hooks/useCanExit';
 

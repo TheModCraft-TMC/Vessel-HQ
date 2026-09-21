@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Node } from 'kubernetes-types/core/v1';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { getTotalResourcesForAllApplications } from '@/react/kubernetes/metrics/queries/useMetricsForApplications';
 import { getMebibytes, safeFilesizeParser } from '@/react/kubernetes/utils';
 

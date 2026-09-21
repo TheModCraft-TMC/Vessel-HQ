@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { EdgeJob } from '../../types';
 import { buildUrl as buildEdgeJobUrl } from '../build-url';

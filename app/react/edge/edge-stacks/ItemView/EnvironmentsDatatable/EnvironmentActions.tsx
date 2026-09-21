@@ -1,7 +1,7 @@
 import { Search } from 'lucide-react';
 import { useCurrentStateAndParams } from '@uirouter/react';
 
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 
 import { Button } from '@@/buttons';
 import { Link } from '@@/Link';

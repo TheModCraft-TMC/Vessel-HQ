@@ -1,8 +1,9 @@
 import { object, string, SchemaOf } from 'yup';
 
+import { EnvironmentId } from '@/features/environments';
+
 import { useNameValidation } from '../../common/NameField/NameField';
 import { edgeIntervalsValidation } from '../../common/EdgeIntervalsFieldset/validation';
-import { EnvironmentId } from '../../types';
 import { metadataValidation } from '../../common/MetadataFieldset/validation';
 
 import { EdgeEnvironmentFormValues } from './types';

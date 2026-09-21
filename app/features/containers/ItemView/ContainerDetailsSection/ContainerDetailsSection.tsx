@@ -1,7 +1,7 @@
 import { List } from 'lucide-react';
 
 import { ContainerDetailsViewModel } from '@/docker/models/containerDetails';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { joinCommand } from '@/docker/filters/utils';
 
 import { DetailsTable } from '@@/DetailsTable';

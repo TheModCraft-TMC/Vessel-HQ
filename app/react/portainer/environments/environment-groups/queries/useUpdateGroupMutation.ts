@@ -5,8 +5,8 @@ import { TagId } from '@/portainer/tags/types';
 import { withError } from '@/core/query/query-client';
 import { environmentQueryKeys } from '@/react/portainer/environments/queries/query-keys';
 import { notifySuccess } from '@/portainer/services/notifications';
+import { EnvironmentGroupId, EnvironmentId } from '@/features/environments';
 
-import { EnvironmentGroupId, EnvironmentId } from '../../types';
 import { EnvironmentGroup } from '../types';
 
 import { buildUrl } from './build-url';

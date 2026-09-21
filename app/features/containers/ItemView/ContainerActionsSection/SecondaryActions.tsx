@@ -1,5 +1,5 @@
 import { Authorized } from '@/react/hooks/useUser';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { ButtonGroup } from '@@/buttons';
 

@@ -1,7 +1,7 @@
 import { Form, useFormikContext } from 'formik';
 
 import { applySetStateAction } from '@/react-tools/apply-set-state-action';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 
 import { EnvironmentVariablesPanel } from '@@/form-components/EnvironmentVariablesFieldset';

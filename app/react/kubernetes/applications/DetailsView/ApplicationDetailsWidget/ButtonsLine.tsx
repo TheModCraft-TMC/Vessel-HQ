@@ -1,7 +1,7 @@
 import { Pod } from 'kubernetes-types/core/v1';
 
 import { Stack } from '@/react/common/stacks/types';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { isGitConfigDiverged } from '@/react/portainer/gitops/utils';
 
 import { AddButton } from '@@/buttons';

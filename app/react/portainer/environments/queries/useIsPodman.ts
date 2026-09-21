@@ -1,4 +1,4 @@
-import { ContainerEngine, EnvironmentId } from '../types';
+import { ContainerEngine, EnvironmentId } from '@/features/environments';
 
 import { useEnvironment } from './useEnvironment';
 

@@ -1,7 +1,7 @@
 import { Activity } from 'lucide-react';
 
 import { isoDateFromTimestamp } from '@/portainer/filters/filters';
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 
 import { EnvironmentStatusBadgeItem } from './EnvironmentStatusBadgeItem';
 

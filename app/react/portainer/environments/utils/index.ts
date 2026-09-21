@@ -4,13 +4,12 @@ import Kube from '@/assets/ico/kube.svg?c';
 import PodmanIcon from '@/assets/ico/vendor/podman-icon.svg?c';
 import DockerIcon from '@/assets/ico/vendor/docker-icon.svg?c';
 import MicrosoftIcon from '@/assets/ico/vendor/microsoft-icon.svg?c';
-
 import {
   Environment,
   EnvironmentType,
   ContainerEngine,
   PlatformType,
-} from '../types';
+} from '@/features/environments';
 
 export function getPlatformType(
   envType: EnvironmentType,

@@ -1,7 +1,7 @@
 import { RefreshCw } from 'lucide-react';
 import { useRouter } from '@uirouter/react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { confirmContainerRecreation } from '@/features/containers/ItemView/ConfirmRecreationModal';
 import { notifySuccess } from '@/portainer/services/notifications';
 

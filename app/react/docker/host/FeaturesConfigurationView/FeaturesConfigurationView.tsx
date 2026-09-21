@@ -10,7 +10,7 @@ import { environmentQueryKeys } from '@/react/portainer/environments/queries/que
 import {
   Environment,
   EnvironmentSecuritySettings,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
 import { withError } from '@/core/query/query-client';
 

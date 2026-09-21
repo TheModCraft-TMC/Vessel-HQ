@@ -7,7 +7,6 @@ import {
 } from '@api/types.gen';
 
 import { DockerSnapshot } from '@/react/docker/snapshots/types';
-
 import {
   ContainerEngine,
   Environment,
@@ -17,7 +16,7 @@ import {
   EnvironmentType,
   KubernetesSettings,
   StorageClass,
-} from '../types';
+} from '@/features/environments';
 
 export function buildUrl(id?: EnvironmentId, action?: string) {
   let baseUrl = 'endpoints';

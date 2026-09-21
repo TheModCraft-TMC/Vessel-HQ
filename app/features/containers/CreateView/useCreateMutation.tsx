@@ -5,7 +5,7 @@ import {
   Environment,
   EnvironmentId,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   Registry,
   RegistryId,

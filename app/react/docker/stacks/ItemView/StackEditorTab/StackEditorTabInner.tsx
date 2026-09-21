@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 
 import { Stack, StackType } from '@/react/common/stacks/types';
 import { PruneField } from '@/react/common/stacks/PruneField';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 import { useAuthorizations } from '@/react/hooks/useUser';
 
 import { CodeEditor } from '@@/CodeEditor';

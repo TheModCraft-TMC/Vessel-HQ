@@ -9,7 +9,7 @@ import { createMockEnvironment } from '@/react-tools/test-mocks';
 import {
   Environment,
   EnvironmentId,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { EnvironmentGroup } from '../../types';
 

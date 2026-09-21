@@ -1,4 +1,5 @@
-import { EnvironmentId } from '../../environments/types';
+import { EnvironmentId } from '@/features/environments';
+
 import { RegistryId } from '../types/registry';
 
 export const queryKeys = {

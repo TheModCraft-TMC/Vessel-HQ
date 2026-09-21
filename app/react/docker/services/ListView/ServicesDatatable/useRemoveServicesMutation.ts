@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { promiseSequence } from '@/portainer/helpers/promise-utils';
 import { withError } from '@/core/query/query-client';

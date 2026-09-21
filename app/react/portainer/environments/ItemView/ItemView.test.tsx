@@ -9,7 +9,7 @@ import {
   Environment,
   EnvironmentType,
   EnvironmentStatus,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 
 import { ItemView } from './ItemView';

@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { getSwarm } from '@/react/docker/proxy/queries/useSwarm';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 
 import { StackType } from '../../../../../common/stacks/types';

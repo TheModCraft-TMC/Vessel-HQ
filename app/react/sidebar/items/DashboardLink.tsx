@@ -1,6 +1,6 @@
 import { Layout } from 'lucide-react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { AutomationTestingProps } from '@/types';
 
 import { SidebarItem } from '../SidebarItem';

@@ -1,5 +1,5 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { Registry } from '@/react/portainer/registries/types/registry';
 import PortainerError from '@/portainer/error';
 import { jsonObjectsToArrayHandler } from '@/portainer/helpers/json';

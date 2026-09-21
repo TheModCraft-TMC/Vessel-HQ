@@ -5,7 +5,7 @@ import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
 import { ContainerDetailsViewModel } from '@/docker/models/containerDetails';
-import { ContainerEngine } from '@/react/portainer/environments/types';
+import { ContainerEngine } from '@/features/environments';
 import { server } from '@/setup-tests/server';
 import {
   createMockEnvironment,

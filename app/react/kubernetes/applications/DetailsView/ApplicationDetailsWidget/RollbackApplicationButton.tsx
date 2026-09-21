@@ -4,7 +4,7 @@ import { useRouter } from '@uirouter/react';
 
 import { Authorized } from '@/react/hooks/useUser';
 import { notifySuccess, notifyError } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { Button } from '@@/buttons';
 import { Icon } from '@@/Icon';

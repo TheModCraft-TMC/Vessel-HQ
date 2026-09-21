@@ -1,5 +1,5 @@
 import { queryKeys as proxyQueryKeys } from '@/react/docker/proxy/queries/query-keys';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 export const queryKeys = {
   base: (environmentId: EnvironmentId) =>

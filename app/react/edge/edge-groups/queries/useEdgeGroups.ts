@@ -4,7 +4,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import {
   EnvironmentId,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { EdgeGroup } from '../types';
 

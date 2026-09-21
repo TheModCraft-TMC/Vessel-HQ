@@ -4,7 +4,7 @@ import { Plug2 } from 'lucide-react';
 import {
   ContainerEngine,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { useCreateEdgeAgentEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
 import { Settings } from '@/react/portainer/settings/types';
 import { EdgeCheckinIntervalField } from '@/react/edge/components/EdgeCheckInIntervalField';

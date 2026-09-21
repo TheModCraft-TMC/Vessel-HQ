@@ -1,7 +1,7 @@
 import {
   ContainerEngine,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { DeploymentScripts } from '../APITab/DeploymentScripts';
 

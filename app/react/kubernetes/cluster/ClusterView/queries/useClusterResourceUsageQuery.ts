@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Node } from 'kubernetes-types/core/v1';
 import filesizeParser from 'filesize-parser';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { getMetricsForAllNodes } from '@/react/kubernetes/metrics/metrics';
 import { withError } from '@/core/query/query-client';
 import { NodeMetrics } from '@/react/kubernetes/metrics/types';

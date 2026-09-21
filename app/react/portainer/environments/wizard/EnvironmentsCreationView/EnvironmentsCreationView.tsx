@@ -7,7 +7,7 @@ import { notifyError } from '@/portainer/services/notifications';
 import {
   Environment,
   EnvironmentId,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { Stepper } from '@@/Stepper/Stepper';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';

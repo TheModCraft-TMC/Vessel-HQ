@@ -1,6 +1,5 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-
-import { EnvironmentGroupId } from '../types';
+import { EnvironmentGroupId } from '@/features/environments';
 
 import { buildUrl } from './queries/build-url';
 import { EnvironmentGroup } from './types';

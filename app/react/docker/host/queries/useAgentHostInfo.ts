@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 export type AgentHostInfo = {
   PCIDevices: Array<{ Name: string; Vendor: string }>;

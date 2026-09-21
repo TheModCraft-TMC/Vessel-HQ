@@ -3,7 +3,7 @@ import { Asterisk, Box, Boxes, Database } from 'lucide-react';
 import { Container, Pod, Volume } from 'kubernetes-types/core/v1';
 import { StatefulSet } from 'kubernetes-types/apps/v1';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { Icon } from '@@/Icon';
 import { TextTip } from '@@/Tip/TextTip';

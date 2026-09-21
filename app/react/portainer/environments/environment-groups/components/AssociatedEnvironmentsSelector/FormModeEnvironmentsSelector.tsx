@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { FormSection } from '@@/form-components/FormSection';
 import { Widget, WidgetBody } from '@@/Widget';

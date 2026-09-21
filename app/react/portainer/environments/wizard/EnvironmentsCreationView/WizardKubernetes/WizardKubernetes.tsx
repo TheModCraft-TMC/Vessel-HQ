@@ -5,7 +5,7 @@ import _ from 'lodash';
 import {
   ContainerEngine,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { commandsTabs } from '@/react/edge/components/EdgeScriptForm/scripts';
 import { FeatureId } from '@/react/portainer/feature-flags/enums';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';

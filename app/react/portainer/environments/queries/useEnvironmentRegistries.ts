@@ -1,7 +1,7 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
+import { EnvironmentId } from '@/features/environments';
 
 import { buildUrl } from '../environment.service/utils';
-import { EnvironmentId } from '../types';
 import { Registry } from '../../registries/types/registry';
 import {
   GenericRegistriesQueryOptions,

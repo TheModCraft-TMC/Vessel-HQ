@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { withError } from '@/core/query/query-client';
+import { Environment, EnvironmentId } from '@/features/environments';
 
 import { getDeploymentOptions, getEndpoint } from '../environment.service';
-import { Environment, EnvironmentId } from '../types';
 
 import { environmentQueryKeys } from './query-keys';
 

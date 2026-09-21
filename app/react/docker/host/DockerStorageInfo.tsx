@@ -1,6 +1,6 @@
 import { isVersionSmaller } from '@/react/common/semver-utils';
 import { humanize } from '@/portainer/filters/filters';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { getPlatformTypeName } from '@/react/portainer/environments/utils';
 

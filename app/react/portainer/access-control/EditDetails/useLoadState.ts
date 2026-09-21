@@ -1,6 +1,6 @@
 import { useTeams } from '@/react/portainer/users/teams/queries';
 import { useUsers } from '@/portainer/users/queries';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
 
 export function useLoadState(environmentId?: EnvironmentId) {

@@ -5,7 +5,7 @@ import {
   EnvironmentStatus,
   EnvironmentType,
   KubernetesSnapshot,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { DockerSnapshot } from '@/react/docker/snapshots/types';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';

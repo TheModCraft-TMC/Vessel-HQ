@@ -4,7 +4,7 @@ import { useRouter } from '@uirouter/react';
 import { StackType } from '@/react/common/stacks/types';
 import { notifySuccess } from '@/portainer/services/notifications';
 import { useCreateTemplateMutation } from '@/react/portainer/templates/custom-templates/queries/useCreateTemplateMutation';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useEnvironmentDeploymentOptions } from '@/react/portainer/environments/queries/useEnvironment';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { isKubernetesEnvironment } from '@/react/portainer/environments/utils';

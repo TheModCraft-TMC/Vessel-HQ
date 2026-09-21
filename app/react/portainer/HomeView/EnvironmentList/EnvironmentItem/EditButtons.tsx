@@ -6,7 +6,7 @@ import { useCurrentUser } from '@/react/hooks/useUser';
 import {
   Environment,
   PlatformType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   isEdgeAsync as checkEdgeAsync,
   getPlatformType,

@@ -72,4 +72,6 @@ The structural Azure move is recorded in [Azure vertical-slice migration](azure-
 
 The structural Authentication move is recorded in [Authentication vertical-slice migration](auth-vertical-slice.md). Login, logout, session operations, and authentication routes now share a public feature boundary while their frozen legacy dependencies are reduced incrementally.
 
+The shared environment model extraction is recorded in [Environments domain contract](environments-domain-contract.md). Environment identity and platform contracts now have one public feature API; queries, services, routes, and screens remain staged follow-up slices.
+
 The accepted future split between TanStack Query server state, scoped lifecycle invalidations, and bounded telemetry streams is documented in [Realtime state architecture](realtime-state-architecture.md).

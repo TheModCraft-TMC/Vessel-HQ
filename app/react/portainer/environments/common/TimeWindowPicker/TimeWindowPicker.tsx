@@ -1,10 +1,11 @@
 import moment from 'moment';
 import { FormikErrors } from 'formik';
 
+import { EndpointChangeWindow } from '@/features/environments';
+
 import { Button } from '@@/buttons';
 import { Alert } from '@@/Alert';
 
-import { EndpointChangeWindow } from '../../types';
 
 import { TimeWindowPickerInputGroup } from './TimeWindowPickerInputGroup';
 import { formatUTCTime, utcToTimeZone } from './utils';

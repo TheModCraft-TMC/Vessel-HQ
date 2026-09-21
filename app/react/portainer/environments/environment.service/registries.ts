@@ -5,8 +5,7 @@ import {
   RegistryId,
   Registry,
 } from '@/react/portainer/registries/types/registry';
-
-import { EnvironmentId } from '../types';
+import { EnvironmentId } from '@/features/environments';
 
 import { buildUrl } from './utils';
 

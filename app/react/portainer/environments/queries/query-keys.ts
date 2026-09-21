@@ -1,4 +1,4 @@
-import { EnvironmentId } from '../types';
+import { EnvironmentId } from '@/features/environments';
 
 export const environmentQueryKeys = {
   base: () => ['environments'] as const,

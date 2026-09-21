@@ -5,7 +5,7 @@ import {
   EnvironmentStatus,
   EnvironmentType,
   PlatformType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
 import { createMockEnvironmentGroup } from '@/react-tools/test-mocks';
 

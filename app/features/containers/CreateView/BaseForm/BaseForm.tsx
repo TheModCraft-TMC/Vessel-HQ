@@ -4,7 +4,7 @@ import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { Authorized } from '@/react/hooks/useUser';
 import { AccessControlForm } from '@/react/portainer/access-control';
 import { AccessControlFormData } from '@/react/portainer/access-control/types';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 import { NodeSelector } from '@/react/docker/agent/NodeSelector';
 import { useIsSwarm } from '@/react/docker/proxy/queries/useInfo';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';

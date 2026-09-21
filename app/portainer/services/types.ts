@@ -1,4 +1,4 @@
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 
 export interface StateManager {
   updateEndpointState(endpoint: Environment): Promise<void>;

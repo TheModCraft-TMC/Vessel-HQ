@@ -11,7 +11,7 @@ import {
 import { PortainerResponse } from '@/react/docker/types';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { ContainerId } from '@/features/containers/types';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { queryClient, withError } from '@/core/query/query-client';
 import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
 import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';

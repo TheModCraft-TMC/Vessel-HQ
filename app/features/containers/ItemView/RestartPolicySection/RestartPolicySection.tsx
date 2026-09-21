@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 
 import { notifySuccess } from '@/portainer/services/notifications';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { Authorized } from '@/react/hooks/useUser';
 
 import { LoadingButton } from '@@/buttons';

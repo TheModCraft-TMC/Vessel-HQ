@@ -7,8 +7,7 @@ import {
 import { endpointGroupUpdate } from '@api/sdk.gen';
 
 import { withError } from '@/core/query/query-client';
-
-import { EnvironmentGroupId } from '../../types';
+import { EnvironmentGroupId } from '@/features/environments';
 
 import { queryKeys } from './query-keys';
 

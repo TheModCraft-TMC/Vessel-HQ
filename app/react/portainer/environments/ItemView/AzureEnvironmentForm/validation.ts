@@ -1,8 +1,8 @@
 import { object, SchemaOf, string } from 'yup';
 
 import { useNameValidation } from '@/react/portainer/environments/common/NameField/NameField';
+import { EnvironmentId } from '@/features/environments';
 
-import { EnvironmentId } from '../../types';
 import { metadataValidation } from '../../common/MetadataFieldset/validation';
 
 import { AzureEnvironmentFormValues } from './types';

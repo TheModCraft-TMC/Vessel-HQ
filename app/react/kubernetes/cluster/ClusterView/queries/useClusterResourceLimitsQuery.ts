@@ -3,7 +3,7 @@ import filesizeParser from 'filesize-parser';
 import { useQuery } from '@tanstack/react-query';
 import { Node } from 'kubernetes-types/core/v1';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { withError } from '@/core/query/query-client';
 import { getMebibytes, parseCPU } from '@/react/kubernetes/utils';
 

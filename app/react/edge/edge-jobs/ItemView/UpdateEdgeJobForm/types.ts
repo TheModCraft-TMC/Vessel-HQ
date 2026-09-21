@@ -1,5 +1,5 @@
 import { EdgeGroup } from '@/react/edge/edge-groups/types';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { timeOptions } from '../../components/EdgeJobForm/RecurringFieldset';
 

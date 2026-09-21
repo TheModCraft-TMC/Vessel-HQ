@@ -7,7 +7,7 @@ import { isoDateFromTimestamp } from '@/portainer/filters/filters';
 import {
   type Environment,
   PlatformType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   getDashboardRoute,
   getPlatformType,

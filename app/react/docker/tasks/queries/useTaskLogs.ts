@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { TaskId, TaskLogsParams } from '@/react/docker/tasks/types';
 
 import { buildDockerProxyUrl } from '../../proxy/queries/buildDockerProxyUrl';

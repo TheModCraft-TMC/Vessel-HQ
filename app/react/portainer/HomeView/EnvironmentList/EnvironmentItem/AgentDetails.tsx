@@ -1,6 +1,6 @@
 import { AlertTriangle } from 'lucide-react';
 
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
 
 import { Tooltip } from '@@/Tip/Tooltip';

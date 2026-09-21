@@ -1,6 +1,6 @@
 import { Form, Formik } from 'formik';
 
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 import { useUpdateEnvironmentMutation } from '@/react/portainer/environments/queries/useUpdateEnvironmentMutation';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 

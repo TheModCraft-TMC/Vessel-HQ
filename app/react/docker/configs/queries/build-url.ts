@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
 
 export function buildUrl(environmentId: EnvironmentId, id = '', action = '') {

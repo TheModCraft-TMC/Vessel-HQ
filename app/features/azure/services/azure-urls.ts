@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 export function buildSubscriptionsUrl(
   environmentId: EnvironmentId,

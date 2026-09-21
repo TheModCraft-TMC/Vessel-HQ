@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import {
   EnvironmentType,
   EnvironmentStatus,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 
 import { KubeConfigInfo } from './KubeConfigInfo';

@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { ContainerId } from '@/features/containers/types';
 import { renameContainer } from '@/features/containers/containers.service';
 import { withError } from '@/core/query/query-client';

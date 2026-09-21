@@ -4,7 +4,7 @@ import { Service } from 'docker-types';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { withError } from '@/core/query/query-client';
 import { queryKeys } from '@/react/docker/services/queries/query-keys';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { buildUrl } from '@/react/docker/services/queries/build-url';
 
 import { Filters } from '../types';

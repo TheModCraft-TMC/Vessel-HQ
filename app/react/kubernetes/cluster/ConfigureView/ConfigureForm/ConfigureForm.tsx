@@ -8,7 +8,7 @@ import { IngressClassDatatable } from '@/react/kubernetes/cluster/ingressClass/I
 import {
   Environment,
   EnvironmentId,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { FeatureId } from '@/react/portainer/feature-flags/enums';
 
 import { FormSection } from '@@/form-components/FormSection';

@@ -1,4 +1,4 @@
-import { ContainerEngine } from '@/react/portainer/environments/types';
+import { ContainerEngine } from '@/features/environments';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 
 import { useCanDuplicateEditContainer } from './useCanDuplicateEditContainer';

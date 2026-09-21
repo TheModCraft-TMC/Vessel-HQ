@@ -1,5 +1,5 @@
 {
-  "maxImports": 91,
+  "maxImports": 78,
   "modules": [
     "@/assets/ico/subscription.svg?c",
     "@/portainer/error",
@@ -20,7 +20,6 @@
     "@/react/portainer/access-control/models/ResourceControlViewModel",
     "@/react/portainer/access-control/types",
     "@/react/portainer/access-control/utils",
-    "@/react/portainer/environments/types",
     "@/react/test-utils/withRouter",
     "@/react/test-utils/withTestQuery",
     "@/react/test-utils/withUserProvider",

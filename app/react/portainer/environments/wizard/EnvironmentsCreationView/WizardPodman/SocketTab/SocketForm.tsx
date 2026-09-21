@@ -7,7 +7,7 @@ import { useCreateLocalDockerEnvironmentMutation } from '@/react/portainer/envir
 import {
   ContainerEngine,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 
 import { LoadingButton } from '@@/buttons/LoadingButton';

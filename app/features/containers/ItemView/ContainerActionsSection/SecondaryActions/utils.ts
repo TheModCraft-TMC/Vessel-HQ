@@ -1,4 +1,4 @@
-import { EnvironmentSecuritySettings } from '@/react/portainer/environments/types';
+import { EnvironmentSecuritySettings } from '@/features/environments';
 
 /**
  * Checks if security settings restrict regular users from container operations

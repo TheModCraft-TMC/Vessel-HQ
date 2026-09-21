@@ -1,4 +1,4 @@
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { queryKeys as namespaceQueryKeys } from '@/react/kubernetes/namespaces/queries/queryKeys';
 import { queryKeys as nodeQueryKeys } from '@/react/kubernetes/cluster/queries/query-keys';
 

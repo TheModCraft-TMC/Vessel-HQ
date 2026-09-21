@@ -9,7 +9,7 @@ import {
   EnvironmentType,
   PlatformType,
   Environment,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { UserViewModel } from '@/portainer/models/user';
 import { server } from '@/setup-tests/server';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';

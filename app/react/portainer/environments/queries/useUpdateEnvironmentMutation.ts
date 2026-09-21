@@ -10,7 +10,7 @@ import {
   EnvironmentId,
   EnvironmentStatusMessage,
   KubernetesSettings,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 
 import { buildUrl, toEnvironment } from '../environment.service/utils';

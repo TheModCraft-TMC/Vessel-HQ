@@ -6,7 +6,7 @@ import uuidv4 from 'uuid/v4';
 import { Formik } from 'formik';
 
 import { server } from '@/setup-tests/server';
-import { EnvironmentType } from '@/react/portainer/environments/types';
+import { EnvironmentType } from '@/features/environments';
 import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { withTestRouter } from '@/react/test-utils/withRouter';

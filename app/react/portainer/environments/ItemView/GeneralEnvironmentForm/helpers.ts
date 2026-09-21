@@ -1,7 +1,7 @@
 import {
   Environment,
   EnvironmentType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import { UpdateEnvironmentPayload } from '@/react/portainer/environments/queries/useUpdateEnvironmentMutation';
 import { stripProtocol } from '@/react/common/string-utils';
 

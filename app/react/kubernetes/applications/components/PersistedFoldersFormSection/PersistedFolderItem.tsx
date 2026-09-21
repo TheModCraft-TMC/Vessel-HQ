@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import { StorageClass } from '@/react/portainer/environments/types';
+import { StorageClass } from '@/features/environments';
 
 import { ItemError } from '@@/form-components/InputList/InputList';
 import { Option } from '@@/form-components/PortainerSelect';

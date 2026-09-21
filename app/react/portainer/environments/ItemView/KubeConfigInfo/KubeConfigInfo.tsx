@@ -4,7 +4,7 @@ import {
   EnvironmentId,
   EnvironmentType,
   EnvironmentStatus,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   isKubernetesEnvironment,
   isEdgeEnvironment,

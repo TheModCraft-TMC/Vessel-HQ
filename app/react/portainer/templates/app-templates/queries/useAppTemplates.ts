@@ -4,7 +4,7 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { useRegistries } from '@/react/portainer/registries/queries/useRegistries';
 import { DockerHubViewModel } from '@/portainer/models/dockerhub';
 import { Registry } from '@/react/portainer/registries/types/registry';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
 
 import { AppTemplate } from '../types';

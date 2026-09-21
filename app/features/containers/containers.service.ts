@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import PortainerError from '@/portainer/error';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';

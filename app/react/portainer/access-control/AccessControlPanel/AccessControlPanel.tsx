@@ -7,7 +7,7 @@ import {
   useIsCurrentUserTeamLeader,
   useUserMembership,
 } from '@/portainer/users/queries';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
 
 import { TableContainer, TableTitle } from '@@/datatables';

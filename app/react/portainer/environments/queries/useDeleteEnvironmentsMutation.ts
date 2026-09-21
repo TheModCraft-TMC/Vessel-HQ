@@ -6,7 +6,7 @@ import {
   withError,
   withInvalidate,
 } from '@/core/query/query-client';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { deleteEndpoint } from '../environment.service';
 

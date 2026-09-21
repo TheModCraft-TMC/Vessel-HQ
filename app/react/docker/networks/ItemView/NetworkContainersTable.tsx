@@ -1,7 +1,7 @@
 import { Server, Trash2 } from 'lucide-react';
 
 import { Authorized } from '@/react/hooks/useUser';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { Icon } from '@/react/components/Icon';
 import { notifySuccess } from '@/portainer/services/notifications';
 

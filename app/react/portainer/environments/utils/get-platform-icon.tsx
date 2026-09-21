@@ -7,7 +7,7 @@ import {
   ContainerEngine,
   EnvironmentType,
   PlatformType,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import Podman from '@/assets/ico/vendor/podman.svg?c';
 
 import Docker from './docker.svg?c';

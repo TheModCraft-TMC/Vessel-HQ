@@ -3,7 +3,7 @@ import { Operation, compare } from 'fast-json-patch';
 import { Node } from 'kubernetes-types/core/v1';
 
 import axios from '@/portainer/services/axios/axios';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { withError, withInvalidate } from '@/core/query/query-client';
 
 import { parseKubernetesAxiosError } from '../../axiosError';

@@ -7,7 +7,7 @@ import { GitForm } from '@/react/portainer/gitops/GitForm';
 import { isTemplateVariablesEnabled } from '@/react/portainer/custom-templates/components/utils';
 import { TemplateTypeSelector } from '@/react/portainer/custom-templates/components/TemplateTypeSelector';
 import { AccessControlForm } from '@/react/portainer/access-control';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 import { applySetStateAction } from '@/react-tools/apply-set-state-action';
 import { AccessControlFormData } from '@/react/portainer/access-control/types';
 import { textByType } from '@/react/common/stacks/common/form-texts';

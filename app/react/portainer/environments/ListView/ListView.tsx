@@ -2,11 +2,11 @@ import { useStore } from 'zustand';
 
 import { notifySuccess } from '@/portainer/services/notifications';
 import { environmentStore } from '@/react/hooks/current-environment-store';
+import { Environment } from '@/features/environments';
 
 import { PageHeader } from '@@/PageHeader';
 import { confirmDelete } from '@@/modals/confirm';
 
-import { Environment } from '../types';
 
 import { EnvironmentsDatatable } from './EnvironmentsDatatable';
 import { useDeleteEnvironmentsMutation } from './useDeleteEnvironmentsMutation';

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { withError } from '@/core/query/query-client';
-import { EnvironmentId } from '@/react/portainer/environments/types';
+import { EnvironmentId } from '@/features/environments';
 
 import { queryKeys as containerQueryKeys } from '../../../queries/query-keys';
 import { recreateContainer } from '../../../containers.service';

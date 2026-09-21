@@ -1,8 +1,8 @@
 import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 
 import { notifySuccess } from '@/portainer/services/notifications';
+import { Environment } from '@/features/environments';
 
-import { Environment } from '../types';
 import { isAzureEnvironment, isEdgeEnvironment } from '../utils';
 
 import { AzureEnvironmentForm } from './AzureEnvironmentForm/AzureEnvironmentForm';

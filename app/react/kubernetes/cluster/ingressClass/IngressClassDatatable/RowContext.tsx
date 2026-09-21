@@ -1,4 +1,4 @@
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 
 import { createRowContext } from '@@/datatables/RowContext';
 

@@ -13,7 +13,7 @@ import {
 import {
   Environment,
   EnvironmentStatus,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 
 import { FormSection } from '@@/form-components/FormSection';
 import { Widget } from '@@/Widget/Widget';

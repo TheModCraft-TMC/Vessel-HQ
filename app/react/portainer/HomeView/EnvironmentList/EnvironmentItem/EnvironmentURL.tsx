@@ -1,4 +1,4 @@
-import type { Environment } from '@/react/portainer/environments/types';
+import type { Environment } from '@/features/environments';
 import { isEdgeEnvironment } from '@/react/portainer/environments/utils';
 
 export function EnvironmentURL({ environment }: { environment: Environment }) {

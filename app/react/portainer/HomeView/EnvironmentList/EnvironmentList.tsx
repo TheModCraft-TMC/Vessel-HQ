@@ -5,7 +5,7 @@ import {
   EnvironmentStatus,
   PlatformType,
   EnvironmentHealth,
-} from '@/react/portainer/environments/types';
+} from '@/features/environments';
 import {
   SortType,
   useEnvironmentList,

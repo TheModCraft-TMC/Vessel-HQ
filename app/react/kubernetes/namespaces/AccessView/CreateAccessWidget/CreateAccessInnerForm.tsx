@@ -7,7 +7,7 @@ import { useGroup } from '@/react/portainer/environments/environment-groups/quer
 import { useUsers } from '@/portainer/users/queries';
 import { useTeams } from '@/react/portainer/users/teams/queries/useTeams';
 import { User } from '@/portainer/users/types';
-import { Environment } from '@/react/portainer/environments/types';
+import { Environment } from '@/features/environments';
 import { Team } from '@/react/portainer/users/teams/types';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
