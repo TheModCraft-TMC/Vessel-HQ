@@ -1,9 +1,9 @@
-import { imageContainsURL } from '@/react/docker/images/utils';
+import { imageContainsURL } from '@/domains/images/mappers/image';
 import {
   Registry,
   RegistryId,
-} from '@/react/portainer/registries/types/registry';
-import { getURL } from '@/react/portainer/registries/utils/getUrl';
+} from '@/domains/registries';
+import { getURL } from '@/domains/registries/components/utils/getUrl';
 
 import { ImageConfigValues } from '@@/ImageConfigFieldset';
 

@@ -1,17 +1,16 @@
-import { Secret } from 'docker-types';
+import { DockerPortainerResponse, Secret } from '@/providers/infrastructure/docker';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
-import { PortainerResponse } from '@/react/docker/types';
 
-import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 export async function getSecret(
   environmentId: EnvironmentId,
   id: NonNullable<Secret['ID']>
 ) {
   try {
-    const { data } = await axios.get<PortainerResponse<Secret>>(
+    const { data } = await axios.get<DockerPortainerResponse<Secret>>(
       buildDockerProxyUrl(environmentId, 'secrets', id)
     );
     return data;

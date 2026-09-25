@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { vi } from 'vitest';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { server } from '@/setup-tests/server';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 import {
@@ -15,7 +15,7 @@ import { EnvironmentGroup } from '../../types';
 
 import { AssociatedEnvironmentsSelector } from './AssociatedEnvironmentsSelector';
 
-vi.mock('@@/modals/confirm', () => ({
+vi.mock('@/ui/components/dialog/confirm', () => ({
   openConfirm: vi.fn().mockResolvedValue(true),
   confirmDelete: vi.fn().mockResolvedValue(true),
 }));

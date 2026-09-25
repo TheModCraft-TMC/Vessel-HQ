@@ -6,21 +6,21 @@ import { userAdminInit } from '@api/sdk.gen';
 
 import fullLogo from '@/assets/images/vessel-hq-logo.svg';
 import darkLogo from '@/assets/images/vessel-hq-logo-dark.svg';
-import { getEnvironments } from '@/react/portainer/environments/environment.service';
-import { usePublicSettings } from '@/react/portainer/settings/queries';
-import { notifyError, notifySuccess } from '@/portainer/services/notifications';
-import { PublicSettingsResponse } from '@/react/portainer/settings/types';
+import { getEnvironments } from '@/domains/environments';
+import { usePublicSettings } from '@/domains/settings/queries';
+import { notifyError, notifySuccess } from '@/ui/components/toast/notifications';
+import { PublicSettingsResponse } from '@/domains/settings/models/types';
 import axios from '@/portainer/services/axios/axios';
 import { getAppState, initializeAppState } from '@/react/portainer/app-state';
-import { getSettings } from '@/react/portainer/settings/settings.service';
+import { getSettings } from '@/domains/settings/services/settings.service';
 import { getSystemStatus } from '@/react/portainer/system/useSystemStatus';
 import { administratorExists, login } from '@/domains/auth';
 
-import { LoadingButton } from '@@/buttons';
-import { FileUploadField } from '@@/form-components/FileUpload';
-import { Input } from '@@/form-components/Input';
-import { Icon } from '@@/Icon';
-import { TextTip } from '@@/Tip/TextTip';
+import { LoadingButton } from '@/ui/components/buttons';
+import { FileUploadField } from '@/ui/components/forms/FileUpload';
+import { Input } from '@/ui/components/forms/Input';
+import { Icon } from '@/ui/components/icons/Icon';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { SetupTokenTextTip } from './SetupTokenTextTip';
 
@@ -252,7 +252,7 @@ export function InitAdminView() {
         body: { Username: username, Password: password },
         ...(setupToken && { headers: { 'X-Setup-Token': setupToken } }),
       });
-      await login(username, password);
+      await login({ username, password });
       await initializeAppState();
       const environments = await getEnvironments({ limit: 1 });
       if (environments.value.length) {

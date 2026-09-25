@@ -4,16 +4,16 @@ import { useCurrentStateAndParams } from '@uirouter/react';
 import { saveAs } from 'file-saver';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { notifyError, notifySuccess } from '@/portainer/services/notifications';
+import { notifyError, notifySuccess } from '@/ui/components/toast/notifications';
 import { useApiVersion } from '@/react/docker/agent/queries/useApiVersion';
 import { FileData } from '@/react/docker/components/FilesTable/types';
 import { getNode } from '@/react/docker/proxy/queries/nodes/useNode';
 import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 
-import { PageHeader } from '@@/PageHeader';
-import { confirmDelete } from '@@/modals/confirm';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+import { confirmDelete } from '@/ui/components/dialog/confirm';
 
 import { AgentHostBrowser } from './AgentHostBrowser';
 

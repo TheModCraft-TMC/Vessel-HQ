@@ -1,0 +1,32 @@
+{
+  "maxImports": 50,
+  "modules": [
+    "@/portainer/filters/filters",
+    "@/portainer/helpers/array",
+    "@/portainer/services/axios/axios",
+    "@/react/common/processItemsInBatches",
+    "@/react/docker/agent/NodeSelector",
+    "@/react/docker/agent/queries/useApiVersion",
+    "@/react/docker/components/FilesTable",
+    "@/react/docker/components/FilesTable/types",
+    "@/react/docker/components/datatable/createOwnershipColumn",
+    "@/react/docker/proxy/queries/useInfo",
+    "@/react/docker/proxy/queries/useIsSwarmAgent",
+    "@/react/docker/proxy/queries/usePlugins",
+    "@/react/docker/proxy/queries/utils",
+    "@/react/docker/queries/utils/root",
+    "@/react/hooks/useEnvironmentId",
+    "@/react/hooks/useUser",
+    "@/react/portainer/access-control/AccessControlForm",
+    "@/react/portainer/access-control/AccessControlPanel",
+    "@/react/portainer/access-control/access-control.service",
+    "@/react/portainer/access-control/models/ResourceControlViewModel",
+    "@/react/portainer/access-control/types",
+    "@/react/portainer/access-control/utils",
+    "@/react/portainer/environments/queries",
+    "@/react/portainer/environments/utils",
+    "@@/DetailsTable",
+    "@@/Widget",
+    "@@/Widget/WidgetBody"
+  ]
+}

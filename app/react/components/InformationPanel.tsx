@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import { X } from 'lucide-react';
 
 import { Widget, WidgetBody } from './Widget';
-import { Button } from './buttons';
+import { Button } from '@/ui/components/buttons';
 
 interface Props {
   title?: string;

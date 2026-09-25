@@ -3,7 +3,7 @@ import { Eye, EyeOff, Users } from 'lucide-react';
 
 import { ResourceControlOwnership } from '@/react/portainer/access-control/types';
 
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 export interface IResource {
   ResourceControl?: {

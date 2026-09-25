@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
-import { Team } from '@/react/portainer/users/teams/types';
+import { Team } from '@/domains/teams';
 import { ownershipIcon } from '@/react/docker/components/datatable/createOwnershipColumn';
 
 import { BoxSelectorOption, buildOption } from '@@/BoxSelector';
-import { BadgeIcon } from '@@/BadgeIcon';
+import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
 
 import { ResourceControlOwnership } from '../types';
 

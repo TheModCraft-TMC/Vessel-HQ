@@ -1,12 +1,12 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Clock } from 'lucide-react';
-import { EventMessage } from 'docker-types';
+import { EventMessage } from '@/providers/infrastructure/docker';
 
 import { isoDateFromTimestamp } from '@/portainer/filters/filters';
 
-import { Datatable } from '@@/datatables';
-import { createPersistedStore } from '@@/datatables/types';
-import { useTableState } from '@@/datatables/useTableState';
+import { Datatable } from '@/ui/components/data-table';
+import { createPersistedStore } from '@/ui/components/data-table/types';
+import { useTableState } from '@/ui/components/data-table/useTableState';
 
 import { createEventDetails } from './model';
 

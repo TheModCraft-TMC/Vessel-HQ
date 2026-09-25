@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import { localizeDate } from '@/react/common/date-utils';
 
-import { Badge } from '@@/Badge';
+import { Badge } from '@/ui/components/status/Badge';
 
 import { BlocklistItem } from './BlocklistItem';
 

@@ -4,9 +4,9 @@ import { FormikErrors } from 'formik';
 
 import { EndpointChangeWindow } from '@/domains/environments';
 
-import { Select } from '@@/form-components/ReactSelect';
-import { Option } from '@@/form-components/PortainerSelect';
-import { FormError } from '@@/form-components/FormError';
+import { Select } from '@/ui/components/forms/ReactSelect';
+import { Option } from '@/ui/components/forms/PortainerSelect';
+import { FormError } from '@/ui/components/forms/FormError';
 
 
 import { timeZoneToUtc, utcToTimeZone } from './utils';

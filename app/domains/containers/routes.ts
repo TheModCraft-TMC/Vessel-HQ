@@ -1,35 +1,46 @@
-import { StateRegistry } from '@uirouter/react';
-
-import { lazyRoute } from '@/core/routing/lazyRoute';
+import { lazyRoute } from '@/core/routing';
 import { registerReactState } from '@/core/routing/registerReactState';
-import { withCurrentUser } from '@/core/routing/withCurrentUser';
+import type { RouteRegistry } from '@/core/routing/route-contracts';
+import { withCurrentUser } from '@/core/routing';
 
 const ContainerCreateRoute = withCurrentUser(
-  lazyRoute(() => import('./CreateView'), 'CreateView')
+  lazyRoute(() => import('./views/ContainerCreateView'), 'CreateView')
 );
 const ContainerInspectRoute = withCurrentUser(
-  lazyRoute(() => import('./InspectView/InspectView'), 'InspectView')
+  lazyRoute(
+    () => import('./views/ContainerInspectView/InspectView'),
+    'InspectView'
+  )
 );
 export const ContainerItemRoute = withCurrentUser(
-  lazyRoute(() => import('./ItemView/ItemView'), 'ItemView')
+  lazyRoute(
+    () => import('./views/ContainerDetailsView/ContainerDetailsView'),
+    'ContainerDetailsView'
+  )
 );
 const ContainersListRoute = withCurrentUser(
-  lazyRoute(() => import('./ListView'), 'ListView')
+  lazyRoute(() => import('./views/ContainersListView'), 'ContainersListView')
 );
 const ContainerStatsRoute = withCurrentUser(
-  lazyRoute(() => import('./StatsView/StatsView'), 'StatsView')
+  lazyRoute(() => import('./views/ContainerStatsView/StatsView'), 'StatsView')
 );
 const ContainerLogsRoute = withCurrentUser(
-  lazyRoute(() => import('./LogView/LogView'), 'LogView')
+  lazyRoute(() => import('./views/ContainerLogsView/LogView'), 'LogView')
 );
 const ContainerAttachRoute = withCurrentUser(
-  lazyRoute(() => import('./ConsoleView/ConsoleView'), 'AttachConsoleView')
+  lazyRoute(
+    () => import('./views/ContainerConsoleView/ConsoleView'),
+    'AttachConsoleView'
+  )
 );
 const ContainerExecRoute = withCurrentUser(
-  lazyRoute(() => import('./ConsoleView/ConsoleView'), 'ExecConsoleView')
+  lazyRoute(
+    () => import('./views/ContainerConsoleView/ConsoleView'),
+    'ExecConsoleView'
+  )
 );
 
-export function registerContainerStates(registry: StateRegistry) {
+export function registerContainerStates(registry: RouteRegistry) {
   registerReactState(registry, {
     name: 'docker.containers',
     url: '/containers',

@@ -1,7 +1,7 @@
 import { Loader2, Search } from 'lucide-react';
 import { ReactNode } from 'react';
 
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 import { SortableGroup, SortableListGroup } from './SortableListGroup';
 import { SortableListSkeleton } from './SortableListSkeleton';

@@ -3,10 +3,10 @@ import { JSONSchema7 } from 'json-schema';
 
 import { CodeEditor } from '@@/CodeEditor';
 
-import { FormSectionTitle } from './form-components/FormSectionTitle';
-import { FormError } from './form-components/FormError';
-import { usePreventFormExit } from './form-components/usePreventFormExit';
-import { confirmWebEditorDiscard } from './modals/confirm';
+import { FormSectionTitle } from '@/ui/components/forms/FormSectionTitle';
+import { FormError } from '@/ui/components/forms/FormError';
+import { usePreventFormExit } from '@/ui/components/forms/usePreventFormExit';
+import { confirmWebEditorDiscard } from '@/ui/components/dialog/confirm';
 import { ShortcutsTooltip } from './CodeEditor/ShortcutsTooltip';
 
 type CodeEditorProps = ComponentProps<typeof CodeEditor>;

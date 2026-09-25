@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import clsx from 'clsx';
 
-import { Button, ButtonProps } from '@@/buttons';
+import { Button, ButtonProps } from '@/ui/components/buttons';
 
 type Props<TasProps> = Omit<ButtonProps<TasProps>, 'size'>;
 

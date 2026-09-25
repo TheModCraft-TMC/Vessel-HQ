@@ -3,9 +3,8 @@ import { BarChart, FileText, Info, Paperclip, Terminal } from 'lucide-react';
 
 import { ContainerStatus } from '@/domains/containers/types';
 import { Authorized } from '@/react/hooks/useUser';
-
-import { Icon } from '@@/Icon';
-import { Link } from '@@/Link';
+import { Icon } from '@/ui/components/icons/Icon';
+import { Link } from '@/ui/components/links/Link';
 
 import styles from './ContainerQuickActions.module.css';
 

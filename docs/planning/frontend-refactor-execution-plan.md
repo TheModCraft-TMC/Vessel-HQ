@@ -1,6 +1,8 @@
 # Frontend refactor execution plan
 
-Status: approved architecture; execution sequence proposed September 21, 2026.
+Status: approved architecture; repository-wide structural move integrated September 22, 2026.
+
+The original phases below remain as decision history. The current measured state is recorded in [Frontend refactor progress — September 22, 2026](frontend-refactor-progress-2026-09-22.md), and assignable work is maintained in [Frontend refactor plan — September 23, 2026](frontend-refactor-plan-2026-09-23.md).
 
 This plan turns the accepted domain/provider architecture into small, behavior-preserving migration batches. It deliberately prioritizes structural work over product features. URLs, authorization, cache behavior, API payloads, realtime behavior, and supported environments remain unchanged unless a separate decision explicitly changes them.
 
@@ -21,17 +23,17 @@ domain contract/models
 
 This order makes each checkpoint usable and testable. A repository-wide "move all models, then all services" pass would leave temporary coupling everywhere and make regressions difficult to isolate.
 
-## Current baseline
+## September 22 baseline
 
-The canonical roots and boundary checker are in place. The first domain and provider slices are present:
+The canonical roots and boundary checker are in place. The structural move now covers the broad application surface:
 
-- domains: `auth`, `azure`, `containers`, `environments`, and `tags`;
-- infrastructure providers: `docker` and `azure-aci`;
+- domains: the primary Docker, Kubernetes, Edge, administration, GitOps, registry, and configuration feature families;
+- infrastructure providers: `docker`, `podman`, `kubernetes`, `azure-aci`, `edge-agent`, and remote registry adapters;
 - core ownership: query, routing, and realtime coordination;
 - terminology: route-level application surfaces are `views`, not `pages`;
-- transitional import budgets: Environments `1`, Auth `27`, Azure `73`, Containers `492`.
+- transitional imports: exact module snapshots are maintained in 23 domain `legacy-imports.json` files.
 
-The legacy surface is still large: the environment workflow has about 247 files, the React Docker tree about 393 files, the older Docker tree about 35 files, registries about 72 files, and the shared React component tree about 491 files. These counts are migration signals, not success metrics. Success is a smaller dependency surface with unchanged behavior.
+The September 22 integration checkpoint passes typecheck and the production build. The boundary checker reports 570 structural findings that form the active reduction queue. These counts are migration signals, not success metrics. Success is a smaller dependency surface with unchanged behavior.
 
 ## Phase 1: close the environment contract boundary
 
@@ -191,11 +193,4 @@ Run the full frontend suite before pushing a multi-workflow milestone and before
 
 ## Immediate next milestone
 
-The next implementation milestone is:
-
-1. eliminate the one remaining Environments legacy snapshot import;
-2. complete Auth models/session/services/components and reduce its budget to zero;
-3. migrate the environment read path and Home view;
-4. then begin the Docker container-list provider slice.
-
-No new product features or realtime protocol expansion should start before this milestone is complete. Bug fixes remain allowed and should include regression coverage.
+The next milestone is the 12-task September 23 integration plan: close private cross-domain imports, invert invalid UI dependencies, isolate provider contracts, reduce exact legacy snapshots, and restore every verification gate. See [Frontend refactor plan — September 23, 2026](frontend-refactor-plan-2026-09-23.md) for agent ownership and done criteria.

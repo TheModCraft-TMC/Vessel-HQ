@@ -12,17 +12,17 @@ import {
 import {
   useSettings,
   useUpdateSettingsMutation,
-} from '@/react/portainer/settings/queries/useSettings';
-import { EnabledWaitingRoomSwitch } from '@/react/portainer/settings/EdgeComputeView/AutomaticEdgeEnvCreation/EnableWaitingRoomSwitch';
-import { ConnectivityTestModal } from '@/react/edge/components/ConnectivityTestModal/ConnectivityTestModal';
-import { notifySuccess } from '@/portainer/services/notifications';
+} from '@/domains/settings/queries/useSettings';
+import { EnabledWaitingRoomSwitch } from '@/domains/settings/views/EdgeComputeView/AutomaticEdgeEnvCreation/EnableWaitingRoomSwitch';
+import { ConnectivityTestModal } from '@/domains/edge/components/ConnectivityTestModal/ConnectivityTestModal';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 
-import { Switch } from '@@/form-components/SwitchField/Switch';
-import { FormControl } from '@@/form-components/FormControl';
+import { Switch } from '@/ui/components/forms/SwitchField/Switch';
+import { FormControl } from '@/ui/components/forms/FormControl';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
-import { LoadingButton } from '@@/buttons/LoadingButton';
-import { Button } from '@@/buttons';
-import { TextTip } from '@@/Tip/TextTip';
+import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
+import { Button } from '@/ui/components/buttons';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 interface FormValues {
   EnableEdgeComputeFeatures: boolean;

@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest';
 
+import type { DockerContainerDto } from '@/providers/infrastructure/docker';
+
 import { toListViewModel } from './utils';
-import { DockerContainerResponse } from './types/response';
 
 describe('toListViewModel', () => {
   function createMockResponse(
-    overrides: Partial<DockerContainerResponse> = {}
-  ): DockerContainerResponse {
+    overrides: Partial<DockerContainerDto> = {}
+  ): DockerContainerDto {
     return {
       Id: 'container123',
       Names: ['/test-container'],

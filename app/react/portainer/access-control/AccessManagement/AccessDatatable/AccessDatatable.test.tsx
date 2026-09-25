@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
 import { withTestRouter } from '@/react/test-utils/withRouter';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 
 import { AccessDatatable } from './AccessDatatable';
 import { Access } from './types';

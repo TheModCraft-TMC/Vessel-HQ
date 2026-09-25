@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { useDocsUrl } from '@@/PageHeader/ContextHelp';
+import { useDocsUrl } from '@/ui/layouts/view-layout/page-header/ContextHelp';
 
 type HelpLinkProps = {
   docLink: string;

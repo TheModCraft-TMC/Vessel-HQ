@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { SystemVersion } from 'docker-types';
 
 import { EnvironmentId } from '@/domains/environments';
+import { type DockerSystemVersion } from '@/providers/infrastructure/docker';
 
-import { dockerClient } from './dockerClient';
+import { dockerClient } from '@/core/composition/dockerClient';
 
 export async function getVersion(environmentId: EnvironmentId) {
   return dockerClient.getVersion(environmentId);
 }
 
-export function useVersion<TSelect = SystemVersion>(
+export function useVersion<TSelect = DockerSystemVersion>(
   environmentId?: EnvironmentId,
-  select?: (info: SystemVersion) => TSelect
+  select?: (info: DockerSystemVersion) => TSelect
 ) {
   return useQuery(
     ['environment', environmentId!, 'docker', 'version'],

@@ -1,13 +1,13 @@
 import { Suspense, useSyncExternalStore } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { UIRouter, UIView, useCurrentStateAndParams } from '@uirouter/react';
 
-import { AppShell } from '@/ui';
-import { queryClient } from '@/core/query/query-client';
+import { AuthenticatedLayout, PublicLayout } from '@/ui';
 import {
-  SidebarProvider,
-  useSidebarState,
-} from '@/react/sidebar/useSidebarState';
+  ApplicationBindingsProvider,
+  LayoutBindingsProvider,
+} from '@/core/composition';
+import { QueryProvider } from '@/core/query';
+import { SidebarProvider } from '@/ui/layouts/mobile-navigation/useSidebarState';
 
 import { router } from './router';
 
@@ -40,33 +40,37 @@ export function ClientApp() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryProvider>
       <UIRouter router={router}>
-        <SidebarProvider>
-          <Suspense fallback={<VesselLoadingShell />}>
-            <ApplicationShell />
-          </Suspense>
-        </SidebarProvider>
+        <ApplicationBindingsProvider>
+          <LayoutBindingsProvider>
+            <SidebarProvider>
+              <Suspense fallback={<VesselLoadingShell />}>
+                <ApplicationShell />
+              </Suspense>
+            </SidebarProvider>
+          </LayoutBindingsProvider>
+        </ApplicationBindingsProvider>
       </UIRouter>
-    </QueryClientProvider>
+    </QueryProvider>
   );
 }
 
 function ApplicationShell() {
   const { state } = useCurrentStateAndParams();
-  const { isOpen, toggle } = useSidebarState();
   const stateName = state.name || '';
   const sidebarVisible = !NO_SIDEBAR_STATES.some((name) =>
     stateName.startsWith(name)
   );
 
+  if (!sidebarVisible) {
+    return <PublicLayout content={<UIView name="content" />} />;
+  }
+
   return (
-    <AppShell
+    <AuthenticatedLayout
       content={<UIView name="content" />}
       sidebar={<UIView name="sidebar" />}
-      sidebarVisible={sidebarVisible}
-      sidebarOpen={isOpen}
-      onCloseSidebar={toggle}
     />
   );
 }

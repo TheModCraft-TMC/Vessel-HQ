@@ -7,7 +7,7 @@ import { Widget } from '@@/Widget/Widget';
 import { WidgetBody } from '@@/Widget/WidgetBody';
 import { WidgetTitle } from '@@/Widget/WidgetTitle';
 import { DetailsTable } from '@@/DetailsTable/DetailsTable';
-import { Tooltip } from '@@/Tip/Tooltip';
+import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
 
 import { DockerStorageInfo } from '../DockerStorageInfo';
 

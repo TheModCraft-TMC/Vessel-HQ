@@ -1,11 +1,6 @@
-export interface AutomationTestingProps {
-  /**
-   * Used by cypress to identify this property.
-   *
-   * Change with care and communicate this with QA
-   */
-  'data-cy': string;
-}
+import type { AutomationTestingProps } from '@/shared/types';
+
+export type { AutomationTestingProps } from '@/shared/types';
 
 declare module 'react' {
   interface HTMLAttributes<T>

@@ -6,8 +6,8 @@ import {
   EnvironmentTypeSelectView,
   HomeView,
 } from '@/react/portainer/environments/wizard';
-import { withCurrentUser } from '@/core/routing/withCurrentUser';
-import { AccessHeaders } from '@/portainer/authorization-guard';
+import { withCurrentUser } from '@/core/routing';
+import { AccessHeaders } from '@/core/routing';
 
 const EnvironmentCreationRoute = withCurrentUser(EnvironmentCreationView);
 const EnvironmentTypeSelectRoute = withCurrentUser(EnvironmentTypeSelectView);

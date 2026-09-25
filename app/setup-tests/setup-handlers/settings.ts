@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-import { PublicSettingsResponse } from '@/react/portainer/settings/types';
+import type { PublicSettingsResponse } from '@/domains/settings/models/types';
 
 export const settingsHandlers = [
   http.get('/api/ssl', () => HttpResponse.json({})),

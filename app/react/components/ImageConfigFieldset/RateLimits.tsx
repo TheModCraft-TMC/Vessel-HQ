@@ -13,11 +13,11 @@ import {
   isAgentEnvironment,
   isLocalEnvironment,
 } from '@/react/portainer/environments/utils';
-import { RegistryId } from '@/react/portainer/registries/types/registry';
-import { useRegistry } from '@/react/portainer/registries/queries/useRegistry';
+import { RegistryId } from '@/domains/registries';
+import { useRegistry } from '@/domains/registries/queries/useRegistry';
 
-import { Link } from '@@/Link';
-import { TextTip } from '@@/Tip/TextTip';
+import { Link } from '@/ui/components/links/Link';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { getIsDockerHubRegistry } from './utils';
 

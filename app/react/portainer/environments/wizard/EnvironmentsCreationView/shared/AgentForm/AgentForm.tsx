@@ -3,7 +3,7 @@ import { useReducer } from 'react';
 import { Plug2 } from 'lucide-react';
 
 import { useCreateAgentEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import {
   ContainerEngine,
   Environment,
@@ -12,7 +12,7 @@ import { CreateAgentEnvironmentValues } from '@/react/portainer/environments/env
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 import { EnvironmentUrlField } from '@/react/portainer/environments/common/EnvironmentUrlField/EnvironmentUrlField';
 
-import { LoadingButton } from '@@/buttons/LoadingButton';
+import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 
 import { MoreSettingsSection } from '../MoreSettingsSection';
 

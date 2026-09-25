@@ -1,16 +1,23 @@
 import _ from 'lodash';
 import { QueryObserverResult } from '@tanstack/react-query';
 
-import { Team } from '@/react/portainer/users/teams/types';
-import { Role, User, UserId } from '@/portainer/users/types';
+import type { Team } from '@/domains/teams/types';
+import { Role, type User, type UserId } from '@/domains/users/models/types';
 import {
   ContainerEngine,
-  Environment,
-} from '@/domains/environments';
-import { Stack, StackStatus, StackType } from '@/react/common/stacks/types';
-import { ContainerDetailsViewModel } from '@/docker/models/containerDetails';
-import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
-import { DeploymentType, EdgeStack } from '@/react/edge/edge-stacks/types';
+  type Environment,
+} from '@/domains/environments/types';
+import {
+  type Stack,
+  StackStatus,
+  StackType,
+} from '@/domains/stacks/models/types';
+import type { ContainerDetailsViewModel } from '@/domains/containers/models';
+import type { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
+import {
+  DeploymentType,
+  type EdgeStack,
+} from '@/domains/edge/models/edge-stack';
 
 export function createMockUser(overrides: Partial<User> = {}) {
   return {

@@ -2,7 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { buildDefaultValue as buildUrlDefaultValue } from '@/react/portainer/common/PortainerUrlField';
 
@@ -16,7 +16,7 @@ vi.mock('@uirouter/react', async (importOriginal: () => Promise<object>) => ({
 
 const mutate = vi.fn();
 const useSettings = vi.fn();
-vi.mock('@/react/portainer/settings/queries/useSettings', () => ({
+vi.mock('@/domains/settings/queries/useSettings', () => ({
   useUpdateSettingsMutation: () => ({ mutate, isLoading: false }),
   useSettings: () => useSettings(),
 }));

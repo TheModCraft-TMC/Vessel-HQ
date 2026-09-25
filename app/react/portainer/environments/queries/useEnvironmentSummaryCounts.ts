@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 
 import {
   getEnvironmentSummaryCounts,

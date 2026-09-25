@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Environment } from '@/domains/environments';
 import { semverCompare } from '@/react/common/semver-utils';
 
-import { TextTip } from '@@/Tip/TextTip';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { VersionSelect } from './VersionSelect';
 import { ScheduledTimeField } from './ScheduledTimeField';

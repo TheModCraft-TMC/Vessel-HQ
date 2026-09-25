@@ -1,11 +1,11 @@
-import { EventMessage } from 'docker-types';
+import { EventMessage } from '@/providers/infrastructure/docker';
 import { useQuery } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
 import { jsonObjectsToArrayHandler } from '@/portainer/helpers/json';
 
-import { buildDockerProxyUrl } from './buildDockerProxyUrl';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 import { queryKeys } from './query-keys';
 
 type Params = { since?: number; until?: number };

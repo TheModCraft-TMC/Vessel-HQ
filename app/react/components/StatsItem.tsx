@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { PropsWithChildren } from 'react';
 import { Cpu, Gpu, Hexagon, LaptopMinimal, MemoryStick } from 'lucide-react';
 
-import { Icon, IconProps } from '@/react/components/Icon';
+import { Icon, IconProps } from '@/ui/components/icons/Icon';
 
 interface Props extends IconProps {
   title?: string;

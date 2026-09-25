@@ -1,4 +1,4 @@
-import { PorImageRegistryModel } from '@/docker/models/porImageRegistry';
+import { PorImageRegistryModel } from '@/domains/images/models/porImageRegistry';
 import { KubernetesApplicationTypes, KubernetesApplicationDeploymentTypes, KubernetesApplicationDataAccessPolicies } from '@/kubernetes/models/application/models/appConstants';
 
 /**

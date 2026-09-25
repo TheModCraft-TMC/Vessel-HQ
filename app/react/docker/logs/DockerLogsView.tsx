@@ -7,14 +7,14 @@ import {
   openDockerLogsStream,
 } from '@/docker/helpers/logHelper';
 import { FormattedLine } from '@/docker/helpers/logHelper/types';
-import { notifyError } from '@/portainer/services/notifications';
+import { notifyError } from '@/ui/components/toast/notifications';
 
-import { Button } from '@@/buttons';
-import { useCopy } from '@@/buttons/CopyButton/useCopy';
-import { FormControl } from '@@/form-components/FormControl';
-import { Input } from '@@/form-components/Input';
-import { Select } from '@@/form-components/Input/Select';
-import { SwitchField } from '@@/form-components/SwitchField';
+import { Button } from '@/ui/components/buttons';
+import { useCopy } from '@/ui/components/buttons/CopyButton/useCopy';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
+import { Select } from '@/ui/components/forms/Input/Select';
+import { SwitchField } from '@/ui/components/forms/SwitchField';
 import { Widget } from '@@/Widget';
 import { WidgetBody } from '@@/Widget/WidgetBody';
 import { WidgetTitle } from '@@/Widget/WidgetTitle';

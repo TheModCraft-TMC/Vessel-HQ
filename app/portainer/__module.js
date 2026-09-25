@@ -1,4 +1,4 @@
-import { AccessHeaders } from './authorization-guard';
+import { AccessHeaders } from '@/core/routing';
 import { filterParam, paginationParams } from './helpers/stateParamHelper';
 import { registerReactState } from '@/core/routing/registerReactState';
 import { LoginRoute, LogoutRoute } from '@/domains/auth';
@@ -28,7 +28,7 @@ import {
   TagsRoute,
   WorkflowItemRoute,
   WorkflowsListRoute,
-} from './react/views/route-components';
+} from '@/core/routing/lazy-loading/route-components/portainer';
 
 export function registerPortainerStates($stateRegistryProvider) {
   var root = {

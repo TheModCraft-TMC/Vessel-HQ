@@ -56,6 +56,64 @@ describe('azureAciClient', () => {
     );
   });
 
+  test('loads Azure subscriptions, resource groups, and provider metadata', async () => {
+    const subscription = {
+      subscriptionId: 'subscription',
+      displayName: 'Demo',
+    };
+    const resourceGroup = {
+      id: '/subscriptions/subscription/resourceGroups/resource-group',
+      name: 'resource-group',
+      location: 'eastus',
+      subscriptionId: 'subscription',
+    };
+    const provider = {
+      id: 'provider-id',
+      namespace: 'Microsoft.ContainerInstance',
+      resourceTypes: [
+        { resourceType: 'containerGroups', locations: ['eastus'] },
+      ],
+    };
+    httpMocks.get
+      .mockResolvedValueOnce({ data: { value: [subscription] } })
+      .mockResolvedValueOnce({ data: subscription })
+      .mockResolvedValueOnce({ data: { value: [resourceGroup] } })
+      .mockResolvedValueOnce({ data: resourceGroup })
+      .mockResolvedValueOnce({ data: provider });
+
+    await expect(azureAciClient.getSubscriptions(5)).resolves.toEqual([
+      subscription,
+    ]);
+    await expect(
+      azureAciClient.getSubscription(5, 'subscription')
+    ).resolves.toBe(subscription);
+    await expect(
+      azureAciClient.getResourceGroups(5, 'subscription')
+    ).resolves.toEqual([resourceGroup]);
+    await expect(
+      azureAciClient.getResourceGroup(5, 'subscription', 'resource-group')
+    ).resolves.toBe(resourceGroup);
+    await expect(azureAciClient.getProvider(5, 'subscription')).resolves.toBe(
+      provider
+    );
+
+    expect(httpMocks.get).toHaveBeenNthCalledWith(
+      1,
+      '/endpoints/5/azure/subscriptions',
+      { params: { 'api-version': '2016-06-01' } }
+    );
+    expect(httpMocks.get).toHaveBeenNthCalledWith(
+      3,
+      '/endpoints/5/azure/subscriptions/subscription/resourcegroups',
+      { params: { 'api-version': '2018-02-01' } }
+    );
+    expect(httpMocks.get).toHaveBeenNthCalledWith(
+      5,
+      '/endpoints/5/azure/subscriptions/subscription/providers/Microsoft.ContainerInstance',
+      { params: { 'api-version': '2018-02-01' } }
+    );
+  });
+
   test('loads one container group', async () => {
     const response = createContainerGroupResponse();
     httpMocks.get.mockResolvedValue({ data: response });

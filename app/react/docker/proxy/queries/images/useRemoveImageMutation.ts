@@ -1,8 +1,8 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
-import { ImageId, ImageName } from '@/docker/models/image';
+import { ImageId, ImageName } from '@/domains/images/models/image';
 
-import { buildDockerProxyUrl } from '../buildDockerProxyUrl';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 /**
  * Raw docker API proxy

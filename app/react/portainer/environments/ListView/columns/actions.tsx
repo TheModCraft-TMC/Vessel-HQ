@@ -3,8 +3,8 @@ import { Users } from 'lucide-react';
 
 import { EnvironmentStatus } from '@/domains/environments';
 
-import { Button } from '@@/buttons';
-import { Link } from '@@/Link';
+import { Button } from '@/ui/components/buttons';
+import { Link } from '@/ui/components/links/Link';
 
 import { EnvironmentListItem } from '../types';
 

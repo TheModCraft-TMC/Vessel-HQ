@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 
 import { EnvironmentType } from '@/domains/environments';
 import { useEnvironment } from '@/react/portainer/environments/queries';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 
 import { useDockerStorageUsageQuery } from '../queries/useDockerStorageUsageQuery';
 
@@ -21,7 +21,7 @@ vi.mock('@/react/portainer/environments/queries', () => ({
 // Tippy renders tooltip content in a portal which is not accessible without
 // user interaction in jsdom. Mock Tooltip to render its message inline so
 // tests can assert on the message text.
-vi.mock('@@/Tip/Tooltip/Tooltip', () => ({
+vi.mock('@/ui/components/feedback/Tip/Tooltip/Tooltip', () => ({
   Tooltip: ({ message }: { message: ReactNode }) => (
     <span data-cy="tooltip">{message}</span>
   ),

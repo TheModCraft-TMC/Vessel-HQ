@@ -1,28 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
-import { SystemInfo } from 'docker-types';
 
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
+import {
+  getDockerSystemCapabilities,
+  type DockerSystemInfo,
+} from '@/providers/infrastructure/docker';
 
-import { buildDockerProxyUrl } from './buildDockerProxyUrl';
+import { dockerClient } from '@/core/composition/dockerClient';
 
 export async function getInfo(environmentId: EnvironmentId) {
-  try {
-    const { data } = await axios.get<SystemInfo>(
-      buildDockerProxyUrl(environmentId, 'info')
-    );
-    return data;
-  } catch (err) {
-    throw parseAxiosError(err, 'Unable to retrieve system info');
-  }
+  return dockerClient.getInfo(environmentId);
 }
 
-export function useInfo<TSelect = SystemInfo>(
+export function useInfo<TSelect = DockerSystemInfo>(
   environmentId?: EnvironmentId,
   {
     enabled,
     select,
-  }: { select?: (info: SystemInfo) => TSelect; enabled?: boolean } = {}
+  }: { select?: (info: DockerSystemInfo) => TSelect; enabled?: boolean } = {}
 ) {
   return useQuery(
     ['environment', environmentId, 'docker', 'info'],
@@ -36,7 +31,7 @@ export function useInfo<TSelect = SystemInfo>(
 
 export function useIsWindows(environmentId: EnvironmentId) {
   const query = useInfo(environmentId, {
-    select: (info) => info.OSType === 'windows',
+    select: (info) => getDockerSystemCapabilities(info).isWindows,
   });
 
   return !!query.data;
@@ -47,7 +42,7 @@ export function useIsStandalone(
   { enabled }: { enabled?: boolean } = {}
 ) {
   const query = useInfo(environmentId, {
-    select: (info) => !info.Swarm?.NodeID,
+    select: (info) => getDockerSystemCapabilities(info).isStandalone,
     enabled,
   });
 
@@ -59,7 +54,7 @@ export function useIsSwarm(
   { enabled }: { enabled?: boolean } = {}
 ) {
   const query = useInfo(environmentId, {
-    select: (info) => !!info.Swarm?.NodeID,
+    select: (info) => getDockerSystemCapabilities(info).isSwarm,
     enabled,
   });
 
@@ -69,12 +64,14 @@ export function useIsSwarm(
 export function useSystemLimits(environmentId: EnvironmentId) {
   const infoQuery = useInfo(environmentId);
 
-  const maxCpu = infoQuery.data?.NCPU || 32;
-  const maxMemory = infoQuery.data?.MemTotal
-    ? Math.floor(infoQuery.data.MemTotal / 1000 / 1000)
-    : 32768;
+  const capabilities = infoQuery.data
+    ? getDockerSystemCapabilities(infoQuery.data)
+    : undefined;
 
-  return { maxCpu, maxMemory };
+  return {
+    maxCpu: capabilities?.maxCpu ?? 32,
+    maxMemory: capabilities?.maxMemory ?? 32768,
+  };
 }
 
 export function useIsSwarmManager(
@@ -82,7 +79,7 @@ export function useIsSwarmManager(
   { enabled }: { enabled?: boolean } = {}
 ) {
   const query = useInfo(environmentId, {
-    select: (info) => !!info.Swarm?.NodeID && info.Swarm.ControlAvailable,
+    select: (info) => getDockerSystemCapabilities(info).isSwarmManager,
     enabled,
   });
 

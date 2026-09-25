@@ -3,8 +3,8 @@ import { FormikErrors } from 'formik';
 
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 
-import { Option, PortainerSelect } from '@@/form-components/PortainerSelect';
-import { FormControl } from '@@/form-components/FormControl';
+import { Option, PortainerSelect } from '@/ui/components/forms/PortainerSelect';
+import { FormControl } from '@/ui/components/forms/FormControl';
 
 import { useApiVersion } from './queries/useApiVersion';
 import { useAgentNodes } from './queries/useAgentNodes';

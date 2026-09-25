@@ -5,7 +5,7 @@ import {
   PortainerEndpoint,
 } from '@api/types.gen';
 
-import { withError, withInvalidate } from '@/core/query/query-client';
+import { withError, withInvalidate } from '@/core/query';
 import {
   EnvironmentId,
   EnvironmentStatusMessage,

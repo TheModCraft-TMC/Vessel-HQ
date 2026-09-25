@@ -3,8 +3,8 @@ import { History, Search } from 'lucide-react';
 
 import { isoDateFromTimestamp } from '@/portainer/filters/filters';
 
-import { ExpandableDatatable } from '@@/datatables/ExpandableDatatable';
-import { Button } from '@@/buttons';
+import { ExpandableDatatable } from '@/ui/components/data-table/ExpandableDatatable';
+import { Button } from '@/ui/components/buttons';
 import { JsonTree } from '@@/JsonTree';
 
 import { ActivityLog } from './types';

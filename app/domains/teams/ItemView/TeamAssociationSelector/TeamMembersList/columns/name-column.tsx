@@ -1,0 +1,57 @@
+import { MinusCircle } from 'lucide-react';
+import { CellContext } from '@tanstack/react-table';
+
+import { User, UserId } from '@/domains/users';
+import { notifySuccess } from '@/ui/components/toast/notifications';
+import { useRemoveMemberMutation, useTeamMemberships } from '@/domains/teams';
+import { Button } from '@/ui/components/buttons';
+
+import { useRowContext } from '../RowContext';
+
+import { columnHelper } from './helper';
+
+export const name = columnHelper.accessor('Username', {
+  header: 'Name',
+  id: 'name',
+  cell: NameCell,
+});
+
+export function NameCell({
+  getValue,
+  row: { original: user },
+}: CellContext<User, string>) {
+  const name = getValue();
+  const { membershipChangesDisabled, teamId } = useRowContext();
+
+  const membershipsQuery = useTeamMemberships(teamId);
+
+  const removeMemberMutation = useRemoveMemberMutation(
+    teamId,
+    membershipsQuery.data
+  );
+
+  return (
+    <>
+      {name}
+
+      <Button
+        color="link"
+        data-cy={`remove-member-${user.Username}`}
+        className="space-left !p-0"
+        onClick={() => handleRemoveMember(user.Id)}
+        disabled={membershipChangesDisabled}
+        icon={MinusCircle}
+      >
+        Remove
+      </Button>
+    </>
+  );
+
+  function handleRemoveMember(userId: UserId) {
+    removeMemberMutation.mutate([userId], {
+      onSuccess() {
+        notifySuccess('User removed from team', name);
+      },
+    });
+  }
+}

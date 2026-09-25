@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { ChevronUp, ChevronRight, Edit } from 'lucide-react';
 
-import { Button } from '@@/buttons';
-import { FormError } from '@@/form-components/FormError';
+import { Button } from '@/ui/components/buttons';
+import { FormError } from '@/ui/components/forms/FormError';
 
 export type Props = {
   onChange: (value: string) => void;

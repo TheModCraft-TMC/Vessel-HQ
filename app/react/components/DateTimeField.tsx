@@ -4,8 +4,8 @@ import { Calendar, X } from 'lucide-react';
 import { isoDate } from '@/portainer/filters/filters';
 import { AutomationTestingProps } from '@/types';
 
-import { FormControl } from '@@/form-components/FormControl';
-import { Input } from '@@/form-components/Input';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
 
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';

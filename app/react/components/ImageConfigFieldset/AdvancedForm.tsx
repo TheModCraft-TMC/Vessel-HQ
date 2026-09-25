@@ -1,8 +1,8 @@
 import { FormikErrors } from 'formik';
 
-import { FormControl } from '@@/form-components/FormControl';
-import { Input } from '@@/form-components/Input';
-import { TextTip } from '@@/Tip/TextTip';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { Values } from './types';
 

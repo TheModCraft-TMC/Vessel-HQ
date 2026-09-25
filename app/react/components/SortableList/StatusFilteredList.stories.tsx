@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { userEvent, within, expect } from 'storybook/test';
 import { useState } from 'react';
 
-import { buildGroupSortExtras } from '@@/datatables/groupSortState';
+import { buildGroupSortExtras } from '@/ui/components/data-table/groupSortState';
 import {
   StatusSummaryBar,
   StatusSegment,

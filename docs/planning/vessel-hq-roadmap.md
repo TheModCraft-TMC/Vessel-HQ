@@ -2,7 +2,7 @@
 
 Status: refactor foundation in progress; future product and design items in this document are not implementation commitments.
 
-Last updated: September 21, 2026.
+Last updated: September 22, 2026.
 
 This document records why the fork exists, what has already changed, and the direction agreed for future work. It is deliberately explicit about status so that roadmap context is not mistaken for shipped behavior.
 
@@ -62,6 +62,8 @@ The upstream API and datastore compatibility version remains `2.45.0`. That valu
 The enforced module contract and incremental migration procedure are documented in [Frontend module architecture](frontend-architecture.md). The canonical destination is defined in [Frontend domain and provider architecture](frontend-domain-provider-architecture.md): application boot and routing live in `app/core`, product behavior lives in `app/domains`, external-system adapters live in `app/providers`, and shared presentation converges in `app/ui`. `pnpm check:frontend-boundaries` protects those boundaries from invalid dependencies.
 
 Containers is the first migrated vertical slice. Its implementation, lazy routes, public API, and shrinking transitional dependency budget are described in [Containers vertical-slice migration](containers-vertical-slice.md).
+
+The September 22 structural pass expanded the canonical layout across the main Docker, Kubernetes, Edge, administration, GitOps, configuration, and registry folders, together with Docker, Podman, Kubernetes, Azure ACI, edge-agent, and remote providers. Typecheck and the production build pass at the integration checkpoint. Exact legacy-import snapshots now prevent dependency drift while the remaining cross-domain, UI, service, model, and provider boundary findings are removed. Current evidence and the next assignment plan are in [Frontend refactor progress — September 22, 2026](frontend-refactor-progress-2026-09-22.md) and [Frontend refactor plan — September 23, 2026](frontend-refactor-plan-2026-09-23.md).
 
 The future server-state and streaming model is documented in [Realtime state architecture](realtime-state-architecture.md): TanStack Query remains the authoritative server cache, authorized lifecycle events evolve toward scoped and batched invalidation, and high-frequency logs, terminals, and metrics remain isolated bounded streams. Redux and RTK Query are not planned.
 

@@ -2,7 +2,7 @@ import { Meta } from '@storybook/react-webpack5';
 import { useState } from 'react';
 import { Server, Cloud } from 'lucide-react';
 
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 import { SortableListHeader } from './SortableListHeader';
 

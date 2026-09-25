@@ -1,0 +1,44 @@
+import { PropsWithChildren } from 'react';
+import { Loader2 } from 'lucide-react';
+
+import { Icon, type IconSource } from '@/ui/components/icons/Icon';
+
+import { type Props as ButtonProps, Button } from './Button';
+
+interface Props extends ButtonProps {
+  loadingText: string;
+  isLoading: boolean;
+}
+
+export function LoadingButton({
+  loadingText,
+  isLoading,
+  disabled,
+  type = 'submit',
+  children,
+  icon,
+  ...buttonProps
+}: PropsWithChildren<Props>) {
+  return (
+    <Button
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...buttonProps}
+      type={type}
+      disabled={disabled || isLoading}
+      icon={loadingButtonIcon(isLoading, icon)}
+    >
+      {isLoading ? loadingText : children}
+    </Button>
+  );
+}
+
+function loadingButtonIcon(isLoading: boolean, defaultIcon?: IconSource) {
+  if (!isLoading) {
+    return defaultIcon;
+  }
+  return (
+    <span className="flex items-center" role="status" aria-label="loading">
+      <Icon icon={Loader2} className="ml-1 animate-spin-slow" />
+    </span>
+  );
+}

@@ -4,9 +4,9 @@ import { EnvironmentType } from '@/domains/environments';
 import DockerIcon from '@/assets/ico/vendor/docker-icon.svg?c';
 import Kube from '@/assets/ico/kube.svg?c';
 
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
-import { Link } from '@@/Link';
+import { Link } from '@/ui/components/links/Link';
 
 import { Option } from '../components/Option';
 

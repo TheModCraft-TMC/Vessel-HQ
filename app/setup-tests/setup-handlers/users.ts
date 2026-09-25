@@ -1,8 +1,8 @@
 import { http, HttpResponse } from 'msw';
 
-import { TeamMembership } from '@/react/portainer/users/teams/types';
+import type { TeamMembership } from '@/domains/teams/types';
 import { createMockUsers } from '@/react-tools/test-mocks';
-import { Role } from '@/portainer/users/types';
+import { Role } from '@/domains/users/models/types';
 
 export const userHandlers = [
   http.get('/api/users', async () =>

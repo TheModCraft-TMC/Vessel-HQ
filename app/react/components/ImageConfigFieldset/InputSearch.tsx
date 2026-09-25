@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 
 import { AutomationTestingProps } from '@/types';
 
-import { AutocompleteSelect } from '@@/form-components/AutocompleteSelect';
-import { Option } from '@@/form-components/PortainerSelect';
+import { AutocompleteSelect } from '@/ui/components/forms/AutocompleteSelect';
+import { Option } from '@/ui/components/forms/PortainerSelect';
 
 export function InputSearch({
   value,

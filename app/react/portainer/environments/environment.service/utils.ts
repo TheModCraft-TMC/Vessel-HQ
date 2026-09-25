@@ -1,17 +1,16 @@
 import {
   PortainerEndpoint,
-  PortainerDockerSnapshot,
   PortainerKubernetesData,
   PortainerEnvironmentEdgeSettings,
   PortainerKubernetesStorageClassConfig,
 } from '@api/types.gen';
 
-import { DockerSnapshot } from '@/react/docker/snapshots/types';
+import { DockerSnapshot, EnvironmentId } from '@/domains/environments';
+import { DockerSnapshotDto } from '@/providers/infrastructure/docker';
 import {
   ContainerEngine,
   Environment,
   EnvironmentEdge,
-  EnvironmentId,
   EnvironmentStatus,
   EnvironmentType,
   KubernetesSettings,
@@ -58,7 +57,7 @@ export function toEnvironment(endpoint: PortainerEndpoint): Environment {
       overrideGlobalOptions: false,
     },
     EnableImageNotification: false,
-  };
+  } as Environment;
 }
 
 function toKubernetesSettings(
@@ -97,7 +96,7 @@ function toContainerEngine(engine: string): ContainerEngine {
   }
 }
 
-function toDockerSnapshot(snapshot: PortainerDockerSnapshot): DockerSnapshot {
+function toDockerSnapshot(snapshot: DockerSnapshotDto): DockerSnapshot {
   return {
     ...snapshot,
     GpuUseList: snapshot.GpuUseList ?? [],

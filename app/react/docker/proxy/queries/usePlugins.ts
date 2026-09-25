@@ -1,12 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { Plugin, PluginInterfaceType, PluginsInfo } from 'docker-types';
+import {
+  Plugin,
+  PluginInterfaceType,
+  PluginsInfo,
+} from '@/providers/infrastructure/docker';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
 
 import { queryKeys } from '../../queries/utils/root';
 
-import { buildDockerProxyUrl } from './buildDockerProxyUrl';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 import { useInfo } from './useInfo';
 
 const pluginTypeToVersionMap: { [k in keyof PluginsInfo]: string } = {
@@ -96,7 +100,6 @@ export function aggregateData(
 export function useLoggingPlugins(
   environmentId: EnvironmentId,
   systemOnly: boolean,
-  isPodman?: boolean
 ) {
   //  systemOnly false + podman false|undefined -> both
   //  systemOnly true + podman false|undefined -> system
@@ -104,7 +107,7 @@ export function useLoggingPlugins(
   //  systemOnly true + podman true -> system
   return useServicePlugins(
     environmentId,
-    systemOnly || isPodman === true,
+    systemOnly,
     'Log'
   );
 }

@@ -1,4 +1,4 @@
-import { ContainerGroup } from './types';
+import { ContainerGroup } from './models';
 
 export function getPorts(containerGroup: ContainerGroup) {
   const addressPorts = containerGroup.properties.ipAddress

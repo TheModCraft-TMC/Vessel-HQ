@@ -9,7 +9,7 @@ import {
 } from '@/portainer/filters/filters';
 
 import { DateTimeField, FORMAT } from '@@/DateTimeField';
-import { TextTip } from '@@/Tip/TextTip';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { FormValues } from './types';
 

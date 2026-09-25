@@ -1,4 +1,4 @@
-import { AccessHeaders } from '@/portainer/authorization-guard';
+import { AccessHeaders } from '@/core/routing';
 import { registerReactState } from '@/core/routing/registerReactState';
 import { ContainerItemRoute } from '@/domains/containers';
 import {
@@ -7,7 +7,7 @@ import {
   CustomTemplatesListRoute,
   EditCustomTemplateRoute,
   EnvironmentRegistriesListRoute,
-} from '@/portainer/react/views/route-components';
+} from '@/core/routing/lazy-loading/route-components/portainer';
 import {
   ConfigsListRoute,
   ConfigCreateRoute,
@@ -45,7 +45,7 @@ import {
   VolumeItemRoute,
   VolumeCreateRoute,
   VolumeBrowseRoute,
-} from '@/docker/react/views/route-components';
+} from '@/core/routing/lazy-loading/route-components/docker';
 
 export function registerDockerStates($stateRegistryProvider) {
     'use strict';

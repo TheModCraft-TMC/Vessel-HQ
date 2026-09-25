@@ -5,9 +5,9 @@ import {
   TeamAccessViewModel,
   UserAccessViewModel,
 } from '@/portainer/models/access';
-import { useUsers } from '@/portainer/users/queries';
-import { useTeams } from '@/react/portainer/users/teams/queries/useTeams';
-import { useRbacRoles } from '@/react/portainer/users/RolesView/useRbacRoles';
+import { useUsers } from '@/domains/users';
+import { useTeams } from '@/domains/teams';
+import { useRbacRoles } from '@/domains/users/RolesView/useRbacRoles';
 
 import { Access } from './AccessDatatable/types';
 

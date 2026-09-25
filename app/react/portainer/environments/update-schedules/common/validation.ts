@@ -1,7 +1,7 @@
 import { array, object, SchemaOf, string, number } from 'yup';
 
 import { parseIsoDate } from '@/portainer/filters/filters';
-import { EdgeGroup } from '@/react/edge/edge-groups/types';
+import { EdgeGroup } from '@/domains/edge/models/edge-group';
 
 import { EdgeUpdateSchedule, ScheduleType } from '../types';
 

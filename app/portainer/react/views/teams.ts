@@ -1,9 +1,9 @@
 import { StateRegistry } from '@uirouter/react';
 
 import { registerReactState } from '@/core/routing/registerReactState';
-import { ItemView, ListView } from '@/react/portainer/users/teams';
-import { withCurrentUser } from '@/core/routing/withCurrentUser';
-import { AccessHeaders } from '@/portainer/authorization-guard';
+import { ItemView, ListView } from '@/domains/teams';
+import { withCurrentUser } from '@/core/routing';
+import { AccessHeaders } from '@/core/routing';
 
 const TeamItemRoute = withCurrentUser(ItemView);
 const TeamsListRoute = withCurrentUser(ListView);

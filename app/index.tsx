@@ -5,7 +5,7 @@ import { hydrateRoot } from 'react-dom/client';
 
 import { Edition } from '@/react/portainer/feature-flags/enums';
 import { init as initFeatureService } from '@/react/portainer/feature-flags/feature-flags.service';
-import { applyTheme } from '@/react/portainer/services/applyTheme';
+import { applyTheme } from '@/core/theme/applyTheme';
 
 import { ClientApp } from './core/ClientApp';
 

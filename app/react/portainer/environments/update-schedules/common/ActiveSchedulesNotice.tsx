@@ -2,8 +2,8 @@ import _ from 'lodash';
 import { Clock } from 'lucide-react';
 
 import { Environment } from '@/domains/environments';
-import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
-import { EdgeGroup } from '@/react/edge/edge-groups/types';
+import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
+import { EdgeGroup } from '@/domains/edge/models/edge-group';
 
 import { ActiveSchedule } from '../queries/useActiveSchedules';
 import { ScheduleType } from '../types';

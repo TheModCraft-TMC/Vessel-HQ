@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 import type { FeatureId } from '@/react/portainer/feature-flags/enums';
 
-import { IconProps } from '@@/Icon';
+import { IconProps } from '@/ui/components/icons/Icon';
 
 export type Value = number | string | boolean;
 

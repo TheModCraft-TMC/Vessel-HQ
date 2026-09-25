@@ -34,7 +34,14 @@ describe('toContainerGroup', () => {
 
     const model = toContainerGroup(response);
 
-    expect(model).toEqual(response);
+    expect(model).toMatchObject({
+      id: response.id,
+      name: response.name,
+      location: response.location,
+      type: response.type,
+      isPortainer: response.IsPortainer,
+    });
+    expect(model).not.toHaveProperty('Portainer');
     expect(model).not.toBe(response);
     expect(model.properties).not.toBe(response.properties);
     expect(model.properties.containers[0]).not.toBe(

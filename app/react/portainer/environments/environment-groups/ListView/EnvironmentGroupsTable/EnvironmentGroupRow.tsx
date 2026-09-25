@@ -4,9 +4,9 @@ import { useRouter } from '@uirouter/react';
 
 import { Tag } from '@/domains/tags';
 
-import { Link } from '@@/Link';
-import { Badge } from '@@/Badge';
-import { Button } from '@@/buttons';
+import { Link } from '@/ui/components/links/Link';
+import { Badge } from '@/ui/components/status/Badge';
+import { Button } from '@/ui/components/buttons';
 
 import { EnvironmentGroup } from '../../types';
 import { EnvironmentTypeBreakdown } from '../../components/EnvironmentTypeBreakdown';

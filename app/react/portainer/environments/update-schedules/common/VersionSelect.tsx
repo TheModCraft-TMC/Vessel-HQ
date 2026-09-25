@@ -1,9 +1,9 @@
 import { Field, useField } from 'formik';
 import _ from 'lodash';
 
-import { FormControl } from '@@/form-components/FormControl';
-import { Select } from '@@/form-components/Input';
-import { TextTip } from '@@/Tip/TextTip';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Select } from '@/ui/components/forms/Input';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { useSupportedAgentVersions } from '../queries/useSupportedAgentVersions';
 

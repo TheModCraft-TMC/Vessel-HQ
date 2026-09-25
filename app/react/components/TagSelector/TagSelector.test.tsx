@@ -5,7 +5,7 @@ import { render } from '@testing-library/react';
 import { Tag, TagId } from '@/domains/tags';
 import { server } from '@/setup-tests/server';
 import { withTestRouter } from '@/react/test-utils/withRouter';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 
 import { TagSelector } from './TagSelector';
 

@@ -8,6 +8,9 @@ import {
   servicesPlugin,
 } from '@uirouter/react';
 
+import { TestLayoutProvider } from '@/ui/layouts/layout-context';
+import { ApplicationBindingsProvider } from '@/core/composition';
+
 /**
  * A helper function to wrap a component with a UIRouter Provider.
  *
@@ -36,10 +39,14 @@ export function withTestRouter<T extends object>(
 
   function WrapperComponent(props: T) {
     return (
-      <UIRouter router={router}>
-        <UIView />
-        <WrappedComponent {...props} />
-      </UIRouter>
+      <ApplicationBindingsProvider>
+        <TestLayoutProvider>
+          <UIRouter router={router}>
+            <UIView />
+            <WrappedComponent {...props} />
+          </UIRouter>
+        </TestLayoutProvider>
+      </ApplicationBindingsProvider>
     );
   }
 

@@ -1,4 +1,4 @@
-import { DeleteButton } from '@@/buttons/DeleteButton';
+import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
 
 import { Access } from './types';
 

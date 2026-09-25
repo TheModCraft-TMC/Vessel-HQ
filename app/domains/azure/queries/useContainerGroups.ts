@@ -2,12 +2,12 @@ import _ from 'lodash';
 import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 import { EnvironmentId } from '@/domains/environments';
 import { azureAciClient } from '@/providers/infrastructure/azure-aci';
 
 import { toContainerGroup } from '../mappers/container-group';
-import { Subscription } from '../types';
+import { Subscription } from '../models';
 
 import { queryKeys } from './query-keys';
 

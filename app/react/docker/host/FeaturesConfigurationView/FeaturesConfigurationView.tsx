@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { useInfo } from '@/react/docker/proxy/queries/useInfo';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
@@ -12,13 +12,13 @@ import {
   EnvironmentSecuritySettings,
 } from '@/domains/environments';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 
-import { LoadingButton } from '@@/buttons';
-import { FormSection } from '@@/form-components/FormSection';
-import { SwitchField } from '@@/form-components/SwitchField';
-import { PageHeader } from '@@/PageHeader';
-import { TextTip } from '@@/Tip/TextTip';
+import { LoadingButton } from '@/ui/components/buttons';
+import { FormSection } from '@/ui/components/forms/FormSection';
+import { SwitchField } from '@/ui/components/forms/SwitchField';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { Widget } from '@@/Widget/Widget';
 import { WidgetBody } from '@@/Widget/WidgetBody';
 

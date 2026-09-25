@@ -10,7 +10,7 @@ import {
 import KubernetesApplicationHelper from '@/kubernetes/helpers/application';
 import KubernetesResourceReservationHelper from '@/kubernetes/helpers/resourceReservationHelper';
 import KubernetesCommonHelper from '@/kubernetes/helpers/commonHelper';
-import { buildImageFullURIFromModel } from '@/react/docker/images/utils';
+import { buildImageFullURIFromModel } from '@/domains/images/mappers/image';
 
 class KubernetesDaemonSetConverter {
   /**

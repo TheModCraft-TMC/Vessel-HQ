@@ -1,0 +1,28 @@
+import { RegistryId } from '@/domains/registries';
+import { AccessControlFormData } from '@/react/portainer/access-control/types';
+import { StackSecretMapping } from '@/domains/stacks/models/types';
+import { EnvVarValues } from '@/ui/components/forms/EnvironmentVariablesFieldset';
+
+import { EditorFormValues } from './EditorSection/types';
+import { GitFormValues } from './GitSection/types';
+import { TemplateFormValues } from './TemplateSection/types';
+import { UploadFormValues } from './UploadSection/types';
+
+export type BuildMethod = 'editor' | 'upload' | 'repository' | 'template';
+
+export interface BaseFormValues {
+  method: BuildMethod;
+  name: string;
+  env: EnvVarValues;
+  secretMappings: StackSecretMapping[];
+  accessControl: AccessControlFormData;
+  enableWebhook: boolean;
+  registries: Array<RegistryId>;
+}
+
+export interface FormValues extends BaseFormValues {
+  editor: EditorFormValues;
+  upload: UploadFormValues;
+  git: GitFormValues;
+  template: TemplateFormValues;
+}

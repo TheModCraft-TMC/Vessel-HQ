@@ -1,8 +1,8 @@
 import { Save } from 'lucide-react';
 
-import { LoadingButton } from '@@/buttons/LoadingButton';
-import { Button } from '@@/buttons';
-import { Link } from '@@/Link';
+import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
+import { Button } from '@/ui/components/buttons';
+import { Link } from '@/ui/components/links/Link';
 
 interface Props {
   isLoading: boolean;

@@ -3,24 +3,24 @@ import { Formik, Form as FormikForm } from 'formik';
 import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 import { object, SchemaOf } from 'yup';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { withLimitToBE } from '@/react/hooks/useLimitToBE';
-import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
-import { EdgeGroup } from '@/react/edge/edge-groups/types';
+import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
+import { EdgeGroup } from '@/domains/edge/models/edge-group';
 
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Widget } from '@@/Widget';
-import { LoadingButton } from '@@/buttons';
-import { TextTip } from '@@/Tip/TextTip';
+import { LoadingButton } from '@/ui/components/buttons';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { InformationPanel } from '@@/InformationPanel';
-import { Link } from '@@/Link';
+import { Link } from '@/ui/components/links/Link';
 
 import { useItem } from '../queries/useItem';
 import { validation } from '../common/validation';
 import { useUpdateMutation } from '../queries/useUpdateMutation';
 import { useList } from '../queries/list';
 import { NameField, nameValidation } from '../common/NameField';
-import { EdgeGroupsField } from '../common/EdgeGroupsField';
+import { EdgeGroupsField } from '@/domains/edge/views/environments/EdgeGroupsField/EdgeGroupsField';
 import { EdgeUpdateSchedule } from '../types';
 import { FormValues } from '../common/types';
 import { ScheduleTypeSelector } from '../common/ScheduleTypeSelector';

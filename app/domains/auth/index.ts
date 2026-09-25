@@ -1,6 +1,7 @@
+export { administratorExists } from './services/auth.service';
 export {
-  administratorExists,
   getAuthenticatedUser,
+  getSessionUser,
   initializeAuthentication,
   isAdministrator,
   isAuthenticated,
@@ -8,5 +9,12 @@ export {
   login,
   loginWithOAuth,
   logout,
-} from './services/auth.service';
+  restoreSession,
+} from '@/core/session';
+export { authStorage } from '@/core/session';
 export { LoginRoute, LogoutRoute } from './routes';
+export type {
+  AuthenticatedPrincipal,
+  Credentials,
+  SessionResult,
+} from './models';

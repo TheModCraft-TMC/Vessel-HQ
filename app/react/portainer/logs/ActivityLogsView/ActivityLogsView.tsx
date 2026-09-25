@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { PageHeader } from '@@/PageHeader';
-import { useTableStateWithoutStorage } from '@@/datatables/useTableState';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+import { useTableStateWithoutStorage } from '@/ui/components/data-table/useTableState';
 
 import { ActivityLogsTable } from './ActivityLogsTable';
 import { useActivityLogs, getSortType } from './useActivityLogs';

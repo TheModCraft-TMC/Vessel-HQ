@@ -3,9 +3,9 @@ import clsx from 'clsx';
 
 import { AutomationTestingProps } from '@/types';
 
-import { SearchBar } from '@@/datatables/SearchBar';
+import { SearchBar } from '@/ui/components/data-table/SearchBar';
 
-import { DropdownOption } from '../DropdownMenu/DropdownMenu';
+import { DropdownOption } from '@/ui/components/menu';
 
 import { SortByGroup, SortOption } from './SortByGroup';
 

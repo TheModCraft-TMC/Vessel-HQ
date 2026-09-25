@@ -4,16 +4,16 @@ import _ from 'lodash';
 import { Info } from 'lucide-react';
 
 import { truncate } from '@/portainer/filters/filters';
-import { UserId } from '@/portainer/users/types';
-import { TeamId } from '@/react/portainer/users/teams/types';
-import { useTeams } from '@/react/portainer/users/teams/queries';
-import { useUsers } from '@/portainer/users/queries';
+import { UserId } from '@/domains/users';
+import { TeamId } from '@/domains/teams';
+import { useTeams } from '@/domains/teams';
+import { useUsers } from '@/domains/users';
 import { pluralize } from '@/portainer/helpers/strings';
 import { ownershipIcon } from '@/react/docker/components/datatable/createOwnershipColumn';
 
-import { Link } from '@@/Link';
-import { Tooltip } from '@@/Tip/Tooltip';
-import { Icon } from '@@/Icon';
+import { Link } from '@/ui/components/links/Link';
+import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
+import { Icon } from '@/ui/components/icons/Icon';
 
 import {
   ResourceControlOwnership,

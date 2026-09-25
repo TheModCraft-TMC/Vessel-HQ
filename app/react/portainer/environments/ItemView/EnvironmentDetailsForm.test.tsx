@@ -1,11 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
-import {
-  Environment,
-  EnvironmentType,
-} from '@/domains/environments';
+import { Environment, EnvironmentType } from '@/domains/environments';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 
 import { EnvironmentDetailsForm } from './EnvironmentDetailsForm';
@@ -28,22 +25,25 @@ vi.mock('./AzureEnvironmentForm/AzureEnvironmentForm', () => ({
   ),
 }));
 
-vi.mock('./EdgeEnvironmentForm/EdgeEnvironmentForm', () => ({
-  EdgeEnvironmentForm: ({
-    environment,
-    onSuccess,
-  }: {
-    environment: Environment;
-    onSuccess: () => void;
-  }) => (
-    <div data-cy="edge-environment-form">
-      EdgeEnvironmentForm: {environment.Name}
-      <button type="button" onClick={onSuccess}>
-        Submit Edge
-      </button>
-    </div>
-  ),
-}));
+vi.mock(
+  '@/domains/edge/views/environments/EdgeEnvironmentForm/EdgeEnvironmentForm',
+  () => ({
+    EdgeEnvironmentForm: ({
+      environment,
+      onSuccess,
+    }: {
+      environment: Environment;
+      onSuccess: () => void;
+    }) => (
+      <div data-cy="edge-environment-form">
+        EdgeEnvironmentForm: {environment.Name}
+        <button type="button" onClick={onSuccess}>
+          Submit Edge
+        </button>
+      </div>
+    ),
+  })
+);
 
 vi.mock('./GeneralEnvironmentForm/GeneralEnvironmentForm', () => ({
   GeneralEnvironmentForm: ({
@@ -64,7 +64,7 @@ vi.mock('./GeneralEnvironmentForm/GeneralEnvironmentForm', () => ({
 
 // Mock notification service
 const mockNotifySuccess = vi.fn();
-vi.mock('@/portainer/services/notifications', () => ({
+vi.mock('@/ui/components/toast/notifications', () => ({
   notifySuccess: (title: string, message: string) =>
     mockNotifySuccess(title, message),
 }));

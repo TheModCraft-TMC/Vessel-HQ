@@ -3,8 +3,8 @@ import { FormikErrors } from 'formik';
 
 import { EndpointChangeWindow } from '@/domains/environments';
 
-import { Button } from '@@/buttons';
-import { Alert } from '@@/Alert';
+import { Button } from '@/ui/components/buttons';
+import { Alert } from '@/ui/components/feedback/Alert';
 
 
 import { TimeWindowPickerInputGroup } from './TimeWindowPickerInputGroup';

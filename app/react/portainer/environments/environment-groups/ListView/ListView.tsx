@@ -1,5 +1,5 @@
-import { PageHeader } from '@@/PageHeader';
-import { AddButton } from '@@/buttons';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+import { AddButton } from '@/ui/components/buttons';
 
 import { EnvironmentGroupsTable } from './EnvironmentGroupsTable/EnvironmentGroupsTable';
 

@@ -2,16 +2,16 @@ import { ZapIcon } from 'lucide-react';
 
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { getDockerEnvironmentType } from '@/react/portainer/environments/utils/getDockerEnvironmentType';
-import { useIsPodman } from '@/react/portainer/environments/queries/useIsPodman';
+import { usePodmanCapabilities } from '@/providers/infrastructure/podman';
 
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 import { useInfo } from '../proxy/queries/useInfo';
 
 export function DockerInfo({ isAgent }: { isAgent: boolean }) {
   const envId = useEnvironmentId();
   const infoQuery = useInfo(envId);
-  const isPodman = useIsPodman(envId);
+  const podmanCapabilities = usePodmanCapabilities(envId);
 
   if (!infoQuery.data) {
     return null;
@@ -20,7 +20,10 @@ export function DockerInfo({ isAgent }: { isAgent: boolean }) {
   const info = infoQuery.data;
 
   const isSwarm = info.Swarm !== undefined && info.Swarm?.NodeID !== '';
-  const type = getDockerEnvironmentType(isSwarm, isPodman);
+  const type = getDockerEnvironmentType(
+    isSwarm,
+    podmanCapabilities.engine === 'podman'
+  );
 
   return (
     <span className="small text-muted inline-flex gap-x-2">

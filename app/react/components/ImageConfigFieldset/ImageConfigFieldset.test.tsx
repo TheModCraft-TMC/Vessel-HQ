@@ -4,7 +4,7 @@ import { HttpResponse } from 'msw';
 import { render, fireEvent } from '@testing-library/react';
 
 import { http, server } from '@/setup-tests/server';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 
 import { ImageConfigFieldset } from './ImageConfigFieldset';

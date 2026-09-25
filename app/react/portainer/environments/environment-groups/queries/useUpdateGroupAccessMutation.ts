@@ -6,7 +6,7 @@ import {
 } from '@api/types.gen';
 import { endpointGroupUpdate } from '@api/sdk.gen';
 
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 import { EnvironmentGroupId } from '@/domains/environments';
 
 import { queryKeys } from './query-keys';

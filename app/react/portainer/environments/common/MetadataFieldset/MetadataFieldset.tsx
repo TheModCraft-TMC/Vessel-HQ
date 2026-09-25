@@ -4,7 +4,7 @@ import { PropsWithChildren } from 'react';
 import { useCurrentUser } from '@/react/hooks/useUser';
 
 import { TagSelector } from '@@/TagSelector';
-import { FormSection } from '@@/form-components/FormSection';
+import { FormSection } from '@/ui/components/forms/FormSection';
 
 import { GroupField } from './GroupsField';
 

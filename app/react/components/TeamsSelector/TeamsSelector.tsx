@@ -1,6 +1,6 @@
-import { Team, TeamId } from '@/react/portainer/users/teams/types';
+import { Team, TeamId } from '@/domains/teams';
 
-import { PortainerSelect } from '@@/form-components/PortainerSelect';
+import { PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 
 interface Props {
   name?: string;

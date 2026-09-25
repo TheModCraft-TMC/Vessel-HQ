@@ -1,0 +1,12 @@
+{
+  "maxImports": 11,
+  "modules": [
+    "@/assets/ico/route.svg?c",
+    "@/portainer/filters/filters",
+    "@/react/hooks/useEnvironmentId",
+    "@/react/hooks/useIsDeploymentOptionHidden",
+    "@/react/hooks/useUser",
+    "@@/Widget",
+    "@@/primitives/Card"
+  ]
+}

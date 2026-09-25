@@ -1,4 +1,4 @@
-import { useSettings } from '@/react/portainer/settings/queries';
+import { useSettings } from '@/domains/settings/queries';
 import { useSystemStatus } from '@/react/portainer/system/useSystemStatus';
 
 export function useAgentDetails() {

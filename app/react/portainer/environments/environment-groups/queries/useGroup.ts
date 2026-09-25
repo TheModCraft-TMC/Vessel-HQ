@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getEndpointGroupsById } from '@api/sdk.gen';
 import { PortainerEndpointGroup } from '@api/types.gen';
 
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 
 import { queryKeys } from './query-keys';
 

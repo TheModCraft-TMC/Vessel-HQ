@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError, withInvalidate } from '@/core/query/query-client';
+import { withError, withInvalidate } from '@/core/query';
 
 import { EdgeUpdateSchedule } from '../types';
 import { FormValues } from '../common/types';

@@ -1,8 +1,8 @@
 import { Check, Copy } from 'lucide-react';
 
-import { Button } from '@@/buttons';
-import { useCopy } from '@@/buttons/CopyButton/useCopy';
-import { Icon } from '@@/Icon';
+import { Button } from '@/ui/components/buttons';
+import { useCopy } from '@/ui/components/buttons/CopyButton/useCopy';
+import { Icon } from '@/ui/components/icons/Icon';
 
 import styles from './Code.module.css';
 

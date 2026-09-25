@@ -1,4 +1,4 @@
-import { lazyRoute } from '@/core/routing/lazyRoute';
+import { lazyRoute } from '@/core/routing';
 
 export const LogoutRoute = lazyRoute(
   () => import('./views/LogoutView'),

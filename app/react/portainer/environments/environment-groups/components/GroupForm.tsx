@@ -16,11 +16,11 @@ import {
 import { useIsPureAdmin } from '@/react/hooks/useUser';
 import { useCanExit } from '@/react/hooks/useCanExit';
 
-import { FormControl } from '@@/form-components/FormControl';
-import { Input } from '@@/form-components/Input';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
 import { TagSelector } from '@@/TagSelector';
-import { confirmGenericDiscard } from '@@/modals/confirm';
-import { LoadingButton } from '@@/buttons';
+import { confirmGenericDiscard } from '@/ui/components/dialog/confirm';
+import { LoadingButton } from '@/ui/components/buttons';
 import { StickyFooter } from '@@/StickyFooter/StickyFooter';
 
 import { FormModeEnvironmentsSelector } from './AssociatedEnvironmentsSelector/FormModeEnvironmentsSelector';

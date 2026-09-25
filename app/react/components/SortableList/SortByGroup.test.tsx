@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 
 import { SortByGroup, SortOption } from './SortByGroup';

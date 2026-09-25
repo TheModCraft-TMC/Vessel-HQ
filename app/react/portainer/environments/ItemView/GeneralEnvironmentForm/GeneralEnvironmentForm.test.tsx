@@ -14,7 +14,7 @@ import {
   createMockEnvironment,
   createMockUser,
 } from '@/react-tools/test-mocks';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 
 import { GeneralEnvironmentForm } from './GeneralEnvironmentForm';

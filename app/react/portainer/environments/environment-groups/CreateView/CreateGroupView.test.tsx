@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { http, HttpResponse, DefaultBodyType } from 'msw';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { server } from '@/setup-tests/server';
@@ -16,7 +16,7 @@ vi.mock('@/react/hooks/useCanExit', () => ({
   useCanExit: vi.fn(),
 }));
 
-vi.mock('@/portainer/services/notifications', () => ({
+vi.mock('@/ui/components/toast/notifications', () => ({
   notifyError: vi.fn(),
   notifySuccess: vi.fn(),
 }));

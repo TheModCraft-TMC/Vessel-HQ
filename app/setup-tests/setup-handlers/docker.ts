@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import { SystemInfo, SystemVersion } from 'docker-types';
+import { SystemInfo, SystemVersion } from '@/providers/infrastructure/docker';
 
 import { dockerImagesHandlers } from './docker/images';
 

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-webpack5';
 
-import { Button } from '@@/buttons';
+import { Button } from '@/ui/components/buttons';
 
 import { StickyFooter } from './StickyFooter';
 

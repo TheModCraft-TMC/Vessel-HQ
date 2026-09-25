@@ -80,7 +80,8 @@ function checkImport(file, specifier) {
 
   if (targetDomain && targetDomain !== sourceDomain && sourceLayer !== 'ui') {
     const isPublicAlias = specifier === `@/domains/${targetDomain}`;
-    if (!isPublicAlias) {
+    const isRouteManifest = sourcePath === 'core/routing/registry/domain-manifests.ts' && specifier === `@/domains/${targetDomain}/route-manifest`;
+    if (!isPublicAlias && !isRouteManifest) {
       const targetSection = getDomainSection(targetPath, targetDomain);
       const providerForbiddenSections = ['components', 'hooks', 'queries', 'routes', 'views'];
       const message =

@@ -2,11 +2,11 @@ import _ from 'lodash';
 import { useQueries } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
+import { azureAciClient } from '@/providers/infrastructure/azure-aci';
 
-import { ProviderViewModel, Subscription } from '../types';
-import { azureErrorParser } from '../services/utils';
+import { toProviderViewModel } from '../mappers/azure-resources';
+import { Subscription } from '../models';
 
 import { queryKeys } from './query-keys';
 
@@ -19,11 +19,14 @@ export function useProvider(
       queryKey: queryKeys.provider(environmentId, subscription.subscriptionId),
 
       queryFn: async () => {
-        const provider = await getContainerInstanceProvider(
+        const provider = await azureAciClient.getProvider(
           environmentId,
           subscription.subscriptionId
         );
-        return [subscription.subscriptionId, provider] as const;
+        return [
+          subscription.subscriptionId,
+          toProviderViewModel(provider),
+        ] as const;
       },
 
       ...withError('Unable to retrieve Azure providers'),
@@ -44,46 +47,4 @@ export function useProvider(
     ),
     isLoading: queries.some((q) => q.isLoading),
   };
-}
-
-interface ResourceType {
-  resourceType: 'containerGroups' | string;
-  locations: string[];
-}
-
-interface ProviderResponse {
-  id: string;
-  namespace: string;
-  resourceTypes: ResourceType[];
-}
-
-async function getContainerInstanceProvider(
-  environmentId: EnvironmentId,
-  subscriptionId: string
-) {
-  try {
-    const url = `/endpoints/${environmentId}/azure/subscriptions/${subscriptionId}/providers/Microsoft.ContainerInstance`;
-    const { data } = await axios.get<ProviderResponse>(url, {
-      params: { 'api-version': '2018-02-01' },
-    });
-
-    return parseViewModel(data);
-  } catch (error) {
-    throw parseAxiosError(
-      error as Error,
-      'Unable to retrieve provider',
-      azureErrorParser
-    );
-  }
-}
-function parseViewModel({
-  id,
-  namespace,
-  resourceTypes,
-}: ProviderResponse): ProviderViewModel {
-  const containerGroupType = _.find(resourceTypes, {
-    resourceType: 'containerGroups',
-  });
-  const { locations = [] } = containerGroupType || {};
-  return { id, namespace, locations };
 }

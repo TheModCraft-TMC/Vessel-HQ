@@ -2,7 +2,7 @@ import _ from 'lodash-es';
 import { KubernetesConfigMap, KubernetesPortainerAccessConfigMap } from '@/kubernetes/models/config-map/models';
 import { KubernetesConfigMapCreatePayload, KubernetesConfigMapUpdatePayload } from '@/kubernetes/models/config-map/payloads';
 import { KubernetesConfigurationFormValuesEntry } from '@/kubernetes/models/configuration/formvalues';
-import { ConfigurationOwnerUsernameLabel } from '@/react/kubernetes/configs/constants';
+import { ConfigurationOwnerUsernameLabel } from '@/domains/configuration/configs/constants';
 class KubernetesConfigMapConverter {
   static apiToPortainerAccessConfigMap(data) {
     const res = new KubernetesPortainerAccessConfigMap();

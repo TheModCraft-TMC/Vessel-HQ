@@ -1,4 +1,4 @@
-import { Icon, type IconSource } from '@@/Icon';
+import { Icon, type IconSource } from '@/ui/components/icons/Icon';
 
 export function WidgetIcon({ icon }: { icon: IconSource }) {
   return (

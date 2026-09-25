@@ -3,7 +3,7 @@ import { useReducer } from 'react';
 import { Plug2 } from 'lucide-react';
 
 import { useCreateRemoteEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import {
   Environment,
   EnvironmentCreationTypes,
@@ -11,9 +11,9 @@ import {
 import { TLSFieldset } from '@/react/components/TLSFieldset/TLSFieldset';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 
-import { LoadingButton } from '@@/buttons/LoadingButton';
-import { FormControl } from '@@/form-components/FormControl';
-import { Input } from '@@/form-components/Input';
+import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
 
 import { MoreSettingsSection } from '../../shared/MoreSettingsSection';
 

@@ -1,6 +1,5 @@
 import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
-
-import { DockerContainerResponse } from './types/response';
+import type { DockerContainerDto } from '@/providers/infrastructure/docker';
 
 export enum ContainerStatus {
   Paused = 'paused',
@@ -48,7 +47,9 @@ type DecoratedDockerContainer = {
  * Raw details is ContainerDetailsJSON
  */
 export type ContainerListViewModel = DecoratedDockerContainer &
-  Omit<DockerContainerResponse, keyof DecoratedDockerContainer>;
+  Omit<DockerContainerDto, keyof DecoratedDockerContainer | 'Portainer'> & {
+    Portainer?: unknown;
+  };
 
 export type ContainerLogsParams = {
   stdout?: boolean;

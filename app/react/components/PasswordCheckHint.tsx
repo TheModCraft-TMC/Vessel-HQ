@@ -1,8 +1,8 @@
 import { AlertTriangle, Check } from 'lucide-react';
 
-import { usePublicSettings } from '@/react/portainer/settings/queries';
+import { usePublicSettings } from '@/domains/settings/queries';
 
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 interface Props {
   passwordValid: boolean;

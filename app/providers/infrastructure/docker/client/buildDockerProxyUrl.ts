@@ -1,6 +1,6 @@
 import { compact } from 'lodash';
 
-import { EnvironmentId } from '@/domains/environments';
+import type { EnvironmentId } from '../types';
 
 /**
  * Builds the Portainer proxy URL for a Docker Engine operation.

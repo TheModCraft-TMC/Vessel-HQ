@@ -7,8 +7,8 @@ import {
   createPersistedStore,
   createTableStore,
   ZustandSetFunc,
-} from '@@/datatables/types';
-import { useTableState, TableState } from '@@/datatables/useTableState';
+} from '@/ui/components/data-table/types';
+import { useTableState, TableState } from '@/ui/components/data-table/useTableState';
 
 interface SortableListSettings
   extends BasicTableSettings, BackendPaginationTableSettings {

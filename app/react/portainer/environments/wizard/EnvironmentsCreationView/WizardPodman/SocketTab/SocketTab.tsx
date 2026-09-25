@@ -3,7 +3,7 @@ import {
   Environment,
 } from '@/domains/environments';
 
-import { TextTip } from '@@/Tip/TextTip';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { DeploymentScripts } from './DeploymentScripts';
 import { SocketForm } from './SocketForm';

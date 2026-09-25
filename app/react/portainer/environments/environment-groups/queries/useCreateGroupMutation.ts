@@ -6,7 +6,7 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/core/query/query-client';
+} from '@/core/query';
 import { EnvironmentId } from '@/domains/environments';
 
 import { EnvironmentGroup } from '../types';

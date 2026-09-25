@@ -2,12 +2,11 @@ import _ from 'lodash';
 import { useQueries } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/core/query/query-client';
-import { buildResourceGroupUrl } from '@/providers/infrastructure/azure-aci';
+import { withError } from '@/core/query';
+import { azureAciClient } from '@/providers/infrastructure/azure-aci';
 
-import { azureErrorParser } from '../services/utils';
-import { Subscription, ResourceGroup } from '../types';
+import { toResourceGroup } from '../mappers/azure-resources';
+import { Subscription } from '../models';
 
 import { queryKeys } from './query-keys';
 
@@ -23,11 +22,14 @@ export function useResourceGroups(
       ),
 
       queryFn: async () => {
-        const groups = await getResourceGroups(
+        const groups = await azureAciClient.getResourceGroups(
           environmentId,
           subscription.subscriptionId
         );
-        return [subscription.subscriptionId, groups] as const;
+        return [
+          subscription.subscriptionId,
+          groups.map(toResourceGroup),
+        ] as const;
       },
 
       ...withError('Unable to retrieve Azure resource groups'),
@@ -49,26 +51,4 @@ export function useResourceGroups(
     isLoading: queries.some((q) => q.isLoading),
     isError: queries.some((q) => q.isError),
   };
-}
-
-async function getResourceGroups(
-  environmentId: EnvironmentId,
-  subscriptionId: string
-) {
-  try {
-    const {
-      data: { value },
-    } = await axios.get<{ value: ResourceGroup[] }>(
-      buildResourceGroupUrl(environmentId, subscriptionId),
-      { params: { 'api-version': '2018-02-01' } }
-    );
-
-    return value;
-  } catch (err) {
-    throw parseAxiosError(
-      err as Error,
-      'Unable to retrieve resource groups',
-      azureErrorParser
-    );
-  }
 }

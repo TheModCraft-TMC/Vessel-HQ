@@ -2,7 +2,7 @@ import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useInfoPanelState } from '@/react/hooks/useInfoPanelState';
 
 import { InformationPanel } from '@@/InformationPanel';
-import { TextTip } from '@@/Tip/TextTip';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { HelpLink } from '@@/HelpLink';
 
 import { useInfo } from '../proxy/queries/useInfo';

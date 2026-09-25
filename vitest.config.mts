@@ -12,11 +12,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: [
+      './app/setup-tests/setup.ts',
       './app/setup-tests/setup-websocket.ts',
       './app/setup-tests/setup-rtl.ts',
       './app/setup-tests/setup-msw.ts',
       './app/setup-tests/stub-modules.ts',
-      './app/setup-tests/setup.ts',
       './app/setup-tests/setup-codemirror.ts',
       './app/setup-tests/setup-fail-on-console.ts',
     ],

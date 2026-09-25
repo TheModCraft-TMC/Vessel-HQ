@@ -1,0 +1,9 @@
+import { EnvironmentId } from '@/domains/environments';
+import { RegistryId } from '@/domains/registries/models/registry';
+
+export const queryKeys = {
+  base: () => ['registries'] as const,
+  list: (environmentId?: EnvironmentId) =>
+    [...queryKeys.base(), { environmentId }] as const,
+  item: (registryId: RegistryId) => [...queryKeys.base(), registryId] as const,
+};

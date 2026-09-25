@@ -1,6 +1,6 @@
 import { compact } from 'lodash';
 
-import { SortableTableSettings } from '@@/datatables/types';
+import { SortableTableSettings } from '@/ui/components/data-table/types';
 
 export type SortOptions = readonly string[];
 export type SortType<T extends SortOptions> = T[number];

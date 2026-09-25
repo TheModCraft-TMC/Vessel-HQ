@@ -1,1 +1,1 @@
-export { ItemView } from './ItemView';
+export { ItemView } from '@/domains/networks/views/ItemView';

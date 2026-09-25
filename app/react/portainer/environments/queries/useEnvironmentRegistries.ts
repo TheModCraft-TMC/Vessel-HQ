@@ -1,12 +1,12 @@
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
-
-import { buildUrl } from '../environment.service/utils';
-import { Registry } from '../../registries/types/registry';
+import { Registry } from '@/domains/registries';
 import {
   GenericRegistriesQueryOptions,
   useGenericRegistriesQuery,
-} from '../../registries/queries/useRegistries';
+} from '@/domains/registries/queries/useRegistries';
+
+import { buildUrl } from '../environment.service/utils';
 
 import { environmentQueryKeys } from './query-keys';
 

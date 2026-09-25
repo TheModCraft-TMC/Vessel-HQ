@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
-import axios from '@/portainer/services/axios/axios';
-import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
-import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
+import { dockerClient } from '@/core/composition/dockerClient';
 
 import { ContainerId } from '../types';
 
@@ -17,6 +15,10 @@ export function useContainerStats(
   return useQuery({
     queryKey: queryKeys.stats(environmentId, id),
     queryFn: () => containerStats(environmentId, id, nodeName),
+    // Stats are a high-frequency stream of snapshots. Keep one query entry
+    // and let the view own its bounded chart history instead of accumulating
+    // samples in React Query.
+    refetchInterval: refreshRateMS || false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -54,14 +56,9 @@ export async function containerStats(
   id: ContainerId,
   nodeName?: string
 ) {
-  const { data } = await axios.get<ContainerStats>(
-    buildDockerProxyUrl(environmentId, 'containers', id, 'stats'),
-    {
-      params: { stream: false },
-      headers: { ...withAgentTargetHeader(nodeName) },
-    }
-  );
-  return data;
+  return dockerClient.getContainerStats<ContainerStats>(environmentId, id, {
+    nodeName,
+  });
 }
 
 type BlkioStats = {

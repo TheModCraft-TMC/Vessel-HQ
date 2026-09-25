@@ -7,13 +7,13 @@ import {
   UserAccessViewModel,
 } from '@/portainer/models/access';
 
-import { Datatable } from '@@/datatables';
-import { createPersistedStore } from '@@/datatables/types';
-import { useTableState } from '@@/datatables/useTableState';
-import { withMeta } from '@@/datatables/extend-options/withMeta';
-import { LoadingButton } from '@@/buttons';
-import { TextTip } from '@@/Tip/TextTip';
-import { mergeOptions } from '@@/datatables/extend-options/mergeOptions';
+import { Datatable } from '@/ui/components/data-table';
+import { createPersistedStore } from '@/ui/components/data-table/types';
+import { useTableState } from '@/ui/components/data-table/useTableState';
+import { withMeta } from '@/ui/components/data-table/extend-options/withMeta';
+import { LoadingButton } from '@/ui/components/buttons';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
+import { mergeOptions } from '@/ui/components/data-table/extend-options/mergeOptions';
 
 import { useColumns } from './columns/useColumns';
 import { Access } from './types';

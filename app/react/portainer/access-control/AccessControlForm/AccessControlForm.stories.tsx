@@ -2,8 +2,8 @@ import { Meta, StoryFn } from '@storybook/react-webpack5';
 import { useState } from 'react';
 
 import { UserViewModel } from '@/portainer/models/user';
-import { Role, User } from '@/portainer/users/types';
-import { isPureAdmin } from '@/portainer/users/user.helpers';
+import { Role, User } from '@/domains/users';
+import { isPureAdmin } from '@/domains/users';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 
 import { parseAccessControlFormData } from '../utils';

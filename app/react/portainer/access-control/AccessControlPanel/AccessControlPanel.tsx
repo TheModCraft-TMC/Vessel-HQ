@@ -1,17 +1,17 @@
 import { useReducer } from 'react';
 import { Edit, Eye } from 'lucide-react';
 
-import { Icon } from '@/react/components/Icon';
-import { TeamMembership, TeamRole } from '@/react/portainer/users/teams/types';
+import { Icon } from '@/ui/components/icons/Icon';
+import { TeamMembership, TeamRole } from '@/domains/teams';
 import {
   useIsCurrentUserTeamLeader,
   useUserMembership,
-} from '@/portainer/users/queries';
+} from '@/domains/users';
 import { EnvironmentId } from '@/domains/environments';
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
 
-import { TableContainer, TableTitle } from '@@/datatables';
-import { Button } from '@@/buttons';
+import { TableContainer, TableTitle } from '@/ui/components/data-table';
+import { Button } from '@/ui/components/buttons';
 
 import {
   ResourceControlType,

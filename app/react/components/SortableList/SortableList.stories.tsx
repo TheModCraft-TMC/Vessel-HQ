@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Meta } from '@storybook/react-webpack5';
 
-import { DropdownOption } from '../DropdownMenu/DropdownMenu';
+import { DropdownOption } from '@/ui/components/menu';
 
 import { SortableList, SortableGroup, SortableListState } from './SortableList';
 import {

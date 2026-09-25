@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { http, HttpResponse, DefaultBodyType } from 'msw';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { server } from '@/setup-tests/server';
@@ -30,12 +30,12 @@ vi.mock('@/react/hooks/useIdParam', () => ({
   useIdParam: () => 2, // Default to group ID 2 for most tests
 }));
 
-vi.mock('@/portainer/services/notifications', () => ({
+vi.mock('@/ui/components/toast/notifications', () => ({
   notifyError: vi.fn(),
   notifySuccess: vi.fn(),
 }));
 
-vi.mock('@@/Link', () => ({
+vi.mock('@/ui/components/links/Link', () => ({
   Link: ({
     children,
     className,
@@ -50,7 +50,7 @@ vi.mock('@@/Link', () => ({
   ),
 }));
 
-vi.mock('@@/modals/confirm', () => {
+vi.mock('@/ui/components/dialog/confirm', () => {
   const confirmFn = vi.fn(async () => true);
   return {
     confirm: confirmFn,

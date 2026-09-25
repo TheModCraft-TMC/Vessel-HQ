@@ -1,0 +1,1 @@
+export { withTestQueryProvider } from './withTestQuery';

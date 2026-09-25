@@ -1,5 +1,5 @@
 import { ContainerListViewModel } from '@/domains/containers/types';
-import { EdgeStack } from '@/react/edge/edge-stacks/types';
+import { EdgeStack } from '@/domains/edge/models/edge-stack';
 import { EnvironmentId } from '@/domains/environments';
 
 import { buildDockerSnapshotUrl, queryKeys as rootQueryKeys } from './root';

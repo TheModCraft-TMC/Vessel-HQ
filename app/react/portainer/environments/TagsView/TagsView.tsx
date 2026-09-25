@@ -6,13 +6,13 @@ import {
   useDeleteTagsMutation,
   useTags,
 } from '@/portainer/tags/queries';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Widget } from '@@/Widget';
-import { Input } from '@@/form-components/Input';
-import { FormControl } from '@@/form-components/FormControl';
-import { LoadingButton } from '@@/buttons';
+import { Input } from '@/ui/components/forms/Input';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { LoadingButton } from '@/ui/components/buttons';
 
 import { TagsDatatable } from './TagsDatatable';
 

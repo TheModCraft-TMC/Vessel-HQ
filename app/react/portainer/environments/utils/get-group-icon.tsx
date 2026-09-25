@@ -6,7 +6,7 @@ import {
   IconSizeClass,
 } from '@/react/portainer/environments/utils/index';
 
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 export function getGroupIcon(size: IconSize): ReactElement {
   const sizeClass = IconSizeClass[size];

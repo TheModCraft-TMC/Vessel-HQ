@@ -4,14 +4,14 @@ import { useMutation } from '@tanstack/react-query';
 import { object } from 'yup';
 
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { EnvironmentId } from '@/domains/environments';
 
-import { confirm } from '@@/modals/confirm';
-import { Button } from '@@/buttons';
-import { LoadingButton } from '@@/buttons/LoadingButton';
-import { buildConfirmButton } from '@@/modals/utils';
-import { ModalType } from '@@/modals';
+import { confirm } from '@/ui/components/dialog/confirm';
+import { Button } from '@/ui/components/buttons';
+import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
+import { buildConfirmButton } from '@/ui/components/dialog/utils';
+import { ModalType } from '@/ui/components/dialog';
 
 import { EditDetails } from '../EditDetails';
 import { parseAccessControlFormData } from '../utils';

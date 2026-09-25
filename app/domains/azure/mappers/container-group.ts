@@ -1,6 +1,7 @@
 import { AzureContainerGroupDto } from '@/providers/infrastructure/azure-aci';
+import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
 
-import { ContainerGroup } from '../types';
+import { ContainerGroup } from '../models';
 
 export function toContainerGroup(
   containerGroup: AzureContainerGroupDto
@@ -39,16 +40,9 @@ export function toContainerGroup(
       },
       osType: containerGroup.properties.osType,
     },
-    Portainer: containerGroup.Portainer
-      ? {
-          Agent: containerGroup.Portainer.Agent
-            ? { ...containerGroup.Portainer.Agent }
-            : undefined,
-          ResourceControl: containerGroup.Portainer.ResourceControl
-            ? { ...containerGroup.Portainer.ResourceControl }
-            : undefined,
-        }
+    resourceControl: containerGroup.Portainer?.ResourceControl
+      ? new ResourceControlViewModel(containerGroup.Portainer.ResourceControl)
       : undefined,
-    IsPortainer: containerGroup.IsPortainer,
+    isPortainer: containerGroup.IsPortainer,
   };
 }

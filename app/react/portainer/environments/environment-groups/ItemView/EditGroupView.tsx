@@ -2,14 +2,14 @@ import { useMemo, useState } from 'react';
 import { Box, UsersRound } from 'lucide-react';
 import { useRouter } from '@uirouter/react';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { useIdParam } from '@/react/hooks/useIdParam';
 
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
-import { confirm } from '@@/modals/confirm';
-import { ModalType } from '@@/modals/Modal';
-import { buildConfirmButton } from '@@/modals/utils';
+import { confirm } from '@/ui/components/dialog/confirm';
+import { ModalType } from '@/ui/components/dialog/Modal';
+import { buildConfirmButton } from '@/ui/components/dialog/utils';
 
 import { useGroup } from '../queries/useGroup';
 import { useDeleteEnvironmentGroupMutation } from '../queries/useDeleteEnvironmentGroupMutation';

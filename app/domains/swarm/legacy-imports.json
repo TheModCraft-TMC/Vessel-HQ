@@ -1,0 +1,15 @@
+{
+  "maxImports": 17,
+  "modules": [
+    "@/docker/filters/utils",
+    "@/portainer/filters/filters",
+    "@/react/hooks/useEnvironmentId",
+    "@/react/hooks/useLocalStorage",
+    "@/react/hooks/useUser",
+    "@/react/utils/hash",
+    "@@/DetailsTable/DetailsTable",
+    "@@/Widget/Widget",
+    "@@/Widget/WidgetBody",
+    "@@/Widget/WidgetTitle"
+  ]
+}

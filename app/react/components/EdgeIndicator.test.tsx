@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 
 import { createMockEnvironment } from '@/react-tools/test-mocks';
 
-import { withTestQueryProvider } from '../test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support';
 
 import { EdgeIndicator } from './EdgeIndicator';
 

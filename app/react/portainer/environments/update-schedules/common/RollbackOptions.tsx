@@ -2,9 +2,9 @@ import { useFormikContext } from 'formik';
 import _ from 'lodash';
 import { useMemo, useEffect } from 'react';
 
-import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
+import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
 
-import { TextTip } from '@@/Tip/TextTip';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { usePreviousVersions } from '../queries/usePreviousVersions';
 

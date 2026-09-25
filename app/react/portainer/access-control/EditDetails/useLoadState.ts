@@ -1,5 +1,5 @@
-import { useTeams } from '@/react/portainer/users/teams/queries';
-import { useUsers } from '@/portainer/users/queries';
+import { useTeams } from '@/domains/teams';
+import { useUsers } from '@/domains/users';
 import { EnvironmentId } from '@/domains/environments';
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
 

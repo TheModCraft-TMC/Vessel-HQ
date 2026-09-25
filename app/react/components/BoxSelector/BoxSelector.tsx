@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 
-import { FormError } from '@@/form-components/FormError';
-import { FormSectionTitle } from '@@/form-components/FormSectionTitle';
+import { FormError } from '@/ui/components/forms/FormError';
+import { FormSectionTitle } from '@/ui/components/forms/FormSectionTitle';
 
 import { BoxSelectorItem } from './BoxSelectorItem';
 import { BoxSelectorOption, Value } from './types';

@@ -32,20 +32,3 @@ export function removeStoredValue(...names: string[]) {
     names.forEach((name) => window.localStorage.removeItem(key(name)));
   }
 }
-
-export const authStorage = {
-  getLoginState: () => getStoredValue('LOGIN_STATE_UUID', ''),
-  setLoginState: (value: string) => setStoredValue('LOGIN_STATE_UUID', value),
-  getLogoutReason: () => getStoredValue('logout_reason', ''),
-  setLogoutReason: (value: string) => setStoredValue('logout_reason', value),
-  clearLogoutReason: () => removeStoredValue('logout_reason'),
-  setUserId: (value: number) => setStoredValue('USER_ID', value),
-  clear: () =>
-    removeStoredValue(
-      'USER_ID',
-      'APPLICATION_STATE',
-      'LOGIN_STATE_UUID',
-      'ALLOWED_NAMESPACES',
-      'ENDPOINT_STATE'
-    ),
-};

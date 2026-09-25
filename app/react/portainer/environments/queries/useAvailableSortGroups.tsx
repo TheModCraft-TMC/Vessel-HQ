@@ -14,7 +14,7 @@ import {
   PlatformType,
 } from '@/domains/environments';
 
-import { DropdownOption } from '@@/DropdownMenu/DropdownMenu';
+import { DropdownOption } from '@/ui/components/menu/DropdownMenu/DropdownMenu';
 
 export function useAvailableSortGroups(
   summaryQueryData: EnvironmentSummaryCounts | undefined

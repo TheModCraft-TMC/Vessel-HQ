@@ -1,14 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
-import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
+import { dockerClient } from '@/core/composition/dockerClient';
 
 import { ContainerId } from '../types';
+import { toContainerDetails } from '../mappers';
 
 import { queryKeys } from './query-keys';
-import { ContainerDetailsJSON } from './useContainer';
 
 export function useContainerInspect(
   environmentId: EnvironmentId,
@@ -26,13 +24,8 @@ export async function inspectContainer(
   id: ContainerId,
   { nodeName }: { nodeName?: string } = {}
 ) {
-  try {
-    const { data } = await axios.get<ContainerDetailsJSON>(
-      buildDockerProxyUrl(environmentId, 'containers', id, 'json'),
-      { headers: { ...withAgentTargetHeader(nodeName) } }
-    );
-    return data;
-  } catch (e) {
-    throw parseAxiosError(e, 'Failed inspecting container');
-  }
+  const data = await dockerClient.inspectContainer(environmentId, id, {
+    nodeName,
+  });
+  return toContainerDetails(data);
 }

@@ -1,10 +1,7 @@
-import {
-  PortainerEndpoint,
-  PortainerEndpointSecuritySettings,
-} from '@api/types.gen';
-
 import { TagId } from '@/domains/tags';
-import { DockerSnapshot } from '@/react/docker/snapshots/types';
+
+import { DockerSnapshot } from './models/snapshot';
+import type { SortType } from './queries/useEnvironmentList';
 
 export type EnvironmentGroupId = number;
 
@@ -13,6 +10,7 @@ export type EdgeGroupId = number;
 type RoleId = number;
 interface AccessPolicy {
   RoleId: RoleId;
+  Namespaces?: string[];
 }
 
 export type UserAccessPolicies = Record<number, AccessPolicy>; // map[UserID]AccessPolicy
@@ -107,7 +105,37 @@ export type EnvironmentEdge = {
   CommandInterval: number;
 };
 
-export type EnvironmentSecuritySettings = PortainerEndpointSecuritySettings;
+export interface EnvironmentSecuritySettings {
+  allowBindMountsForRegularUsers: boolean;
+  allowContainerCapabilitiesForRegularUsers: boolean;
+  allowDeviceMappingForRegularUsers: boolean;
+  allowHostNamespaceForRegularUsers: boolean;
+  allowPrivilegedModeForRegularUsers: boolean;
+  allowSecurityOptForRegularUsers: boolean;
+  allowStackManagementForRegularUsers: boolean;
+  allowSysctlSettingForRegularUsers: boolean;
+  allowVolumeBrowserForRegularUsers: boolean;
+  enableHostManagementFeatures: boolean;
+}
+
+export interface EnvironmentTlsConfig {
+  TLS: boolean;
+  TLSCACert?: string;
+  TLSCert?: string;
+  TLSKey?: string;
+  TLSSkipVerify: boolean;
+}
+
+export interface EnvironmentGpu {
+  name: string;
+  value: string;
+}
+
+export interface AzureCredentials {
+  ApplicationID: string;
+  AuthenticationKey: string;
+  TenantID: string;
+}
 
 export type DeploymentOptions = {
   overrideGlobalOptions: boolean;
@@ -129,21 +157,36 @@ export interface EnvironmentStatusMessage {
   detail: string;
 }
 
-type EnvironmentBase = Omit<PortainerEndpoint, 'Status'>;
-
-export interface Environment extends EnvironmentBase {
-  Status: EnvironmentStatus;
-  Type: EnvironmentType;
-  ContainerEngine: ContainerEngine;
-
-  TagIds: TagId[];
-  Snapshots: DockerSnapshot[];
+export interface Environment {
   Agent: { Version: string; IsOutdated?: boolean };
+  AzureCredentials?: AzureCredentials;
+  ComposeSyntaxMaxVersion: string;
+  ContainerEngine: ContainerEngine;
   Edge: EnvironmentEdge;
+  EdgeCheckinInterval: number;
+  EdgeID?: string;
+  EdgeKey: string;
   EnableGPUManagement: boolean;
+  Gpus: EnvironmentGpu[];
+  GroupId: number;
+  Heartbeat?: boolean;
+  Id: number;
   Kubernetes: KubernetesSettings;
+  LastCheckInDate: number;
+  Name: string;
+  PublicURL: string;
+  SecuritySettings: EnvironmentSecuritySettings;
+  TLSConfig: EnvironmentTlsConfig;
+  TagIds: TagId[];
+  TeamAccessPolicies?: TeamAccessPolicies;
+  Type: EnvironmentType;
+  URL: string;
+  UserAccessPolicies?: UserAccessPolicies;
+  UserTrusted?: boolean;
+  Status: EnvironmentStatus;
+  Snapshots: DockerSnapshot[];
 
-  // Fields not in CE PortainerEndpoint (EE-only in server)
+  // Fields supplied by the enterprise server.
   LocalTimeZone?: string;
   EnableImageNotification: boolean;
   ChangeWindow: EndpointChangeWindow;
@@ -182,4 +225,21 @@ export enum EnvironmentHealth {
   Outdated,
   Up,
   Heartbeat,
+}
+
+export interface HomeViewTableState {
+  search: string;
+  setSearch(value: string): void;
+  sortBy?: { id: string; desc: boolean };
+  setSortBy(id: string | undefined, desc: boolean): void;
+  groupBy: string | null;
+  setGroupBy(group: string | null): void;
+  groupFilter: string | null;
+  setGroupFilter(value: { group: string; groupValue: string | null }): void;
+  page: number;
+  setPage(page: number): void;
+  pageSize: number;
+  setPageSize(size: number): void;
+  groupKey: SortType;
+  setHeaderFilter(sortBy: SortType, filter: string | null): void;
 }

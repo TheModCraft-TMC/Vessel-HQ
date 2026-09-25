@@ -3,14 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { http, HttpResponse, DefaultBodyType } from 'msw';
 
 import { server } from '@/setup-tests/server';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import {
   createMockUsers,
   createMockEnvironment,
   createMockEnvironmentGroup,
 } from '@/react-tools/test-mocks';
-import { withCurrentUser } from '@/core/routing/withCurrentUser';
+import { withCurrentUser } from '@/core/routing';
 
 import { AzureEnvironmentForm } from './AzureEnvironmentForm';
 

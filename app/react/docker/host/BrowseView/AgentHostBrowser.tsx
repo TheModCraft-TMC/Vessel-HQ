@@ -2,8 +2,8 @@ import { ComponentProps } from 'react';
 
 import { FilesTable } from '@/react/docker/components/FilesTable';
 
-import { createPersistedStore } from '@@/datatables/types';
-import { useTableState } from '@@/datatables/useTableState';
+import { createPersistedStore } from '@/ui/components/data-table/types';
+import { useTableState } from '@/ui/components/data-table/useTableState';
 
 const tableKey = 'host-browser';
 

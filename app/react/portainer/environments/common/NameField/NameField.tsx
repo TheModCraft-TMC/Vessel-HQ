@@ -1,12 +1,12 @@
 import { useField } from 'formik';
 import { string } from 'yup';
 
-import { getEnvironments } from '@/react/portainer/environments/environment.service';
+import { getEnvironments } from '@/domains/environments';
 import { useDebounce } from '@/react/hooks/useDebounce';
 
-import { FormControl } from '@@/form-components/FormControl';
-import { Input } from '@@/form-components/Input';
-import { useCachedValidation } from '@@/form-components/useCachedTest';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
+import { useCachedValidation } from '@/ui/components/forms/useCachedTest';
 
 interface Props {
   readonly?: boolean;

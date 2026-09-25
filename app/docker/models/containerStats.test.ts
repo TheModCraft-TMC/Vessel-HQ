@@ -1,4 +1,4 @@
-import { ContainerStatsViewModel } from './containerStats';
+import { ContainerStatsViewModel } from '@/domains/containers/models';
 
 describe('ContainerStatsViewModel', () => {
   it('extracts CPU fields correctly from Linux cgroups v2 stats', () => {

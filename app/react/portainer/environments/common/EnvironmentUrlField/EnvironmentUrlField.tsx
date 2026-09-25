@@ -1,7 +1,7 @@
 import { Field, useField } from 'formik';
 
-import { FormControl } from '@@/form-components/FormControl';
-import { Input } from '@@/form-components/Input';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
 
 export function EnvironmentUrlField({
   placeholderPort = '9001',

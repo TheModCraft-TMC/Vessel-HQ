@@ -1,0 +1,14 @@
+{
+  "maxImports": 36,
+  "modules": [
+    "@/portainer/helpers/promise-utils",
+    "@/portainer/models/team",
+    "@/portainer/models/user",
+    "@/portainer/services/axios/axios",
+    "@/react-tools/test-mocks",
+    "@/react/hooks/useUser",
+    "@/react/test-utils/withUserProvider",
+    "@@/UsersSelector",
+    "@@/Widget"
+  ]
+}

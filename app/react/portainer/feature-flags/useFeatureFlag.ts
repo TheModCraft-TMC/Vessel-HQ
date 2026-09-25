@@ -1,4 +1,4 @@
-import { usePublicSettings } from '../settings/queries';
+import { usePublicSettings } from '@/domains/settings/queries';
 
 export enum FeatureFlag {}
 

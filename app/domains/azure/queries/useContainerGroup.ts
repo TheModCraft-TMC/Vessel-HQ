@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 import { azureAciClient } from '@/providers/infrastructure/azure-aci';
 
 import { toContainerGroup } from '../mappers/container-group';

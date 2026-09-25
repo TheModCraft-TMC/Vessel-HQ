@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { Settings } from 'lucide-react';
 import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 
-import fullLogo from '@/assets/images/vessel-hq-logo.svg';
-import darkLogo from '@/assets/images/vessel-hq-logo-dark.svg';
-import { dispatchCacheRefreshEvent } from '@/portainer/services/http-request.helper';
-import { cleanReturnUrl } from '@/react/portainer/helpers/returnUrl';
-import { notifyError } from '@/portainer/services/notifications';
-import { getAppState } from '@/react/portainer/app-state';
-import { getPublicSettings } from '@/react/portainer/settings/settings.service';
-import { authStorage } from '@/react/portainer/storage';
+import {
+  cleanReturnUrl,
+  darkLogo,
+  fullLogo,
+  getAppState,
+  getPublicSettings,
+  notifyError,
+} from '@/core/auth';
+import { authStorage, getAuthenticatedUser, logout } from '@/domains/auth';
+import { clearQueryCache, queryClient } from '@/core/query';
 
-import { Icon } from '@@/Icon';
-
-import { getAuthenticatedUser, logout } from '../services/auth.service';
+import { LogoutStatus } from '../components/LogoutStatus';
 
 export function LogoutView() {
   const router = useRouter();
@@ -36,7 +35,7 @@ export function LogoutView() {
       try {
         const settings = await getPublicSettings();
         await logout();
-        dispatchCacheRefreshEvent();
+        clearQueryCache(queryClient);
         cleanReturnUrl();
         authStorage.setLogoutReason(String(error));
 
@@ -75,10 +74,7 @@ export function LogoutView() {
               </>
             )}
           </div>
-          <div className="row text-center">
-            Logout in progress...
-            <Icon icon={Settings} className="space-left animate-spin-slow" />
-          </div>
+          <LogoutStatus />
         </div>
       </div>
     </div>

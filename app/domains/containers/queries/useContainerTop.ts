@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
+import { dockerClient } from '@/core/composition/dockerClient';
 
 import { ContainerId } from '../types';
+import type { ContainerProcesses } from '../models';
+import { toContainerProcesses } from '../mappers';
 
 import { queryKeys } from './query-keys';
-import { ContainerProcesses } from './types';
 
 export function useContainerTop<T = ContainerProcesses>(
   environmentId: EnvironmentId,
@@ -33,12 +33,6 @@ export async function getContainerTop(
   environmentId: EnvironmentId,
   id: ContainerId
 ) {
-  try {
-    const { data } = await axios.get<ContainerProcesses>(
-      buildDockerProxyUrl(environmentId, 'containers', id, 'top')
-    );
-    return data;
-  } catch (err) {
-    throw parseAxiosError(err, 'Unable to retrieve container top');
-  }
+  const data = await dockerClient.getContainerTop(environmentId, id);
+  return toContainerProcesses(data);
 }

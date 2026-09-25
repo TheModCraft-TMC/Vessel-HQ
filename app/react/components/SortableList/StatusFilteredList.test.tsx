@@ -5,11 +5,12 @@ import { useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { withTestRouter } from '@/react/test-utils/withRouter';
 import {
   useTableStateFromUrl,
   asEnum,
-} from '@@/datatables/useTableStateFromUrl';
-import { buildGroupSortExtras } from '@@/datatables/groupSortState';
+} from '@/ui/components/data-table/useTableStateFromUrl';
+import { buildGroupSortExtras } from '@/ui/components/data-table/groupSortState';
 import {
   StatusSummaryBar,
   StatusSegment,
@@ -19,6 +20,10 @@ import { SortableList } from './SortableList';
 import { SortableGroup } from './SortableListGroup';
 
 describe('StatusFilteredList', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('Click "Error" in summary bar → list shows only error items, sort unchanged, summary bar highlights "Error"', async () => {
     const user = userEvent.setup();
     renderList();
@@ -304,7 +309,17 @@ function TestList() {
 }
 
 function renderList() {
-  return render(<TestList />);
+  const Wrapped = withTestRouter(TestList, {
+    route: 'status-list',
+    stateConfig: [
+      {
+        name: 'status-list',
+        url: '/?search&sort&order&groupBy&groupFilter&page&pageSize&status&type&platform',
+        component: () => null,
+      },
+    ],
+  });
+  return render(<Wrapped />);
 }
 
 async function selectSummaryBarOption(

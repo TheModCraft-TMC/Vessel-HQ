@@ -1,10 +1,10 @@
 import { useRouter } from '@uirouter/react';
 import { FormikHelpers } from 'formik';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 
 import { Widget } from '@@/Widget';
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 import { useCreateGroupMutation } from '../queries/useCreateGroupMutation';
 import { GroupForm, GroupFormValues } from '../components/GroupForm';

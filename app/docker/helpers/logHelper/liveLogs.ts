@@ -1,4 +1,6 @@
 import { baseHref } from '@/portainer/helpers/pathHelper';
+import { exponentialBackoff } from '@/core/realtime/reconnect/backoff';
+import { BoundedTextBuffer, createThrottledPublisher } from '@/core/streams';
 
 import { formatLogs } from './formatLogs';
 import { FormattedLine } from './types';
@@ -143,15 +145,19 @@ function openLogsStream(
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
   let updateTimer: ReturnType<typeof setTimeout> | undefined;
   let stopped = false;
-  let rawLogs = '';
   const lineLimit = Math.min(
     normalizeNonNegative(options.tail, 100),
     MAX_LOG_LINES
   );
+  const rawLogs = new BoundedTextBuffer(Math.max(1, lineLimit + 1));
+  const publisher = createThrottledPublisher(
+    () => options.onLogs(formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps })),
+    UPDATE_INTERVAL_MS
+  );
 
   function publish() {
     updateTimer = undefined;
-    options.onLogs(formatLogs(rawLogs, { withTimestamps: options.timestamps }));
+    options.onLogs(formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps }));
   }
 
   function schedulePublish() {
@@ -164,7 +170,8 @@ function openLogsStream(
     if (!value) {
       return;
     }
-    rawLogs = trimToLineLimit(rawLogs + value, lineLimit);
+    rawLogs.append(value);
+    publisher.publish(value);
     schedulePublish();
   }
 
@@ -208,7 +215,7 @@ function openLogsStream(
         reconnectTimer = setTimeout(() => {
           reconnectTimer = undefined;
           connect();
-        }, 1000);
+        }, exponentialBackoff(0, { jitterMs: 0 }));
       }
     });
 
@@ -233,8 +240,9 @@ function openLogsStream(
       }
       if (updateTimer) {
         clearTimeout(updateTimer);
-        publish();
       }
+      publisher.flush();
+      publisher.close();
       socket?.close();
     },
   };
@@ -252,16 +260,6 @@ function appendBytes(left: Uint8Array, right: Uint8Array) {
 
 function normalizeNonNegative(value: number, fallback: number) {
   return Number.isFinite(value) && value >= 0 ? Math.floor(value) : fallback;
-}
-
-function trimToLineLimit(value: string, lineLimit: number) {
-  if (lineLimit === 0) {
-    return '';
-  }
-  const lines = value.split('\n');
-  return lines.length > lineLimit + 1
-    ? lines.slice(-(lineLimit + 1)).join('\n')
-    : value;
 }
 
 function toError(error: unknown) {

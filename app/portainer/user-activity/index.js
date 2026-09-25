@@ -1,9 +1,9 @@
 import { registerReactState } from '@/core/routing/registerReactState';
-import { AccessHeaders } from '../authorization-guard';
+import { AccessHeaders } from '@/core/routing';
 import {
   ActivityLogsRoute,
   NotificationsRoute,
-} from '../react/views/route-components';
+} from '@/core/routing/lazy-loading/route-components/portainer';
 
 export function registerUserActivityStates($stateRegistryProvider) {
   registerReactState($stateRegistryProvider, {

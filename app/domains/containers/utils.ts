@@ -1,11 +1,15 @@
 import _ from 'lodash';
 
 import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
-import { useIsStandalone } from '@/react/docker/proxy/queries/useInfo';
+import { useIsStandalone } from '@/domains/containers/hooks/useDockerSystem';
 import { Environment } from '@/domains/environments';
+import type { DockerContainerDto } from '@/providers/infrastructure/docker';
 
 import { ContainerListViewModel, ContainerStatus } from './types';
-import { DockerContainerResponse } from './types/response';
+
+type ResourceControlResponse = ConstructorParameters<
+  typeof ResourceControlViewModel
+>[0];
 
 /**
  * Transform an item of the raw docker container list reponse to a container list view model
@@ -13,11 +17,12 @@ import { DockerContainerResponse } from './types/response';
  * @returns ContainerListViewModel
  */
 export function toListViewModel(
-  response: DockerContainerResponse
+  response: DockerContainerDto
 ): ContainerListViewModel {
-  const resourceControl =
-    response.Portainer?.ResourceControl &&
-    new ResourceControlViewModel(response?.Portainer?.ResourceControl);
+  const resourceControlData = response.Portainer?.ResourceControl;
+  const resourceControl = isResourceControlResponse(resourceControlData)
+    ? new ResourceControlViewModel(resourceControlData)
+    : undefined;
   const nodeName = response.Portainer?.Agent?.NodeName || '';
 
   const ip =
@@ -65,6 +70,27 @@ export function toListViewModel(
   };
 }
 
+function isResourceControlResponse(
+  value: unknown
+): value is ResourceControlResponse {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const data = value as Record<string, unknown>;
+  return (
+    typeof data.Id === 'number' &&
+    typeof data.Type === 'number' &&
+    (typeof data.ResourceId === 'number' ||
+      typeof data.ResourceId === 'string') &&
+    Array.isArray(data.UserAccesses) &&
+    Array.isArray(data.TeamAccesses) &&
+    typeof data.Public === 'boolean' &&
+    typeof data.AdministratorsOnly === 'boolean' &&
+    typeof data.System === 'boolean'
+  );
+}
+
 function createStatus(state = '', statusText = ''): ContainerStatus {
   const statusLower = statusText.toLowerCase();
 
@@ -104,4 +130,18 @@ export function useShowGPUsColumn(environment: Environment | undefined) {
   const isDockerStandalone = useIsStandalone(environment?.Id);
   const enableGPUManagement = !!environment?.EnableGPUManagement;
   return isDockerStandalone && enableGPUManagement;
+}
+
+export function trimContainerName(name?: string) {
+  return name?.startsWith('/') ? name.slice(1) : name || '';
+}
+
+export function joinCommand(command: string[] | null = []) {
+  return command?.join(' ') || '';
+}
+
+export function isPartOfSwarmService(container: {
+  Config?: { Labels?: Record<string, unknown> };
+}) {
+  return !!container.Config?.Labels?.['com.docker.swarm.service.id'];
 }

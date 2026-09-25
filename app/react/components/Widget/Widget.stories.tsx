@@ -1,7 +1,7 @@
 import type { Meta } from '@storybook/react-webpack5';
 import { User } from 'lucide-react';
 
-import type { IconSource } from '../Icon';
+import type { IconSource } from '@/ui/components/icons/Icon';
 
 import { Widget } from './Widget';
 import { WidgetBody } from './WidgetBody';

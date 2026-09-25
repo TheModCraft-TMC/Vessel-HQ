@@ -1,7 +1,7 @@
 import _ from 'lodash-es';
 import filesizeParser from 'filesize-parser';
 import { KubernetesResourceReservation } from '@/kubernetes/models/resource-reservation/models';
-import { parseCPU } from '@/react/kubernetes/utils';
+import { parseCPU } from '@/domains/clusters/utils';
 
 class KubernetesResourceReservationHelper {
   static computeResourceReservation(pods) {

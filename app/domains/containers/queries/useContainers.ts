@@ -1,15 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/core/query/query-client';
-import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
-import {
-  withFiltersQueryParam,
-  withAgentTargetHeader,
-} from '@/react/docker/proxy/queries/utils';
+import { withError } from '@/core/query';
+import { dockerClient } from '@/core/composition/dockerClient';
 
-import { DockerContainerResponse } from '../types/response';
 import { toListViewModel } from '../utils';
 import { ContainerListViewModel } from '../types';
 
@@ -56,20 +50,14 @@ export async function getContainers(
   environmentId: EnvironmentId,
   { all = true, filters, nodeName }: UseContainers = {}
 ) {
-  try {
-    if (!environmentId) {
-      return [];
-    }
-
-    const { data } = await axios.get<DockerContainerResponse[]>(
-      buildDockerProxyUrl(environmentId, 'containers', 'json'),
-      {
-        params: { all, ...withFiltersQueryParam(filters) },
-        headers: { ...withAgentTargetHeader(nodeName) },
-      }
-    );
-    return data.map((c) => toListViewModel(c));
-  } catch (error) {
-    throw parseAxiosError(error as Error, 'Unable to retrieve containers');
+  if (!environmentId) {
+    return [];
   }
+
+  const data = await dockerClient.listContainers(environmentId, {
+    all,
+    filters,
+    nodeName,
+  });
+  return data.map(toListViewModel);
 }

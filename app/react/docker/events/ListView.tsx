@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 import { useEvents } from '../proxy/queries/useEvents';
 

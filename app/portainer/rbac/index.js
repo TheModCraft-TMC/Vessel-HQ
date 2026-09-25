@@ -1,6 +1,6 @@
-import { AccessHeaders } from '../authorization-guard';
+import { AccessHeaders } from '@/core/routing';
 import { registerReactState } from '@/core/routing/registerReactState';
-import { RolesRoute } from '@/portainer/react/views/route-components';
+import { RolesRoute } from '@/core/routing/lazy-loading/route-components/portainer';
 
 export function registerRbacStates($stateRegistryProvider) {
   const roles = {

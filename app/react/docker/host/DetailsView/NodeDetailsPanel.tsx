@@ -1,18 +1,18 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Node, NodeSpec } from 'docker-types';
+import { Node, NodeSpec } from '@/providers/infrastructure/docker';
 import { Plus, Trash2 } from 'lucide-react';
 
 import { nodeStatusBadge } from '@/docker/filters/utils';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { queryKeys } from '@/react/docker/proxy/queries/nodes/query-keys';
 import { updateNode } from '@/react/docker/proxy/queries/nodes/useUpdateNodeMutation';
 import { EnvironmentId } from '@/domains/environments';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 
-import { Button } from '@@/buttons';
+import { Button } from '@/ui/components/buttons';
 import { DetailsTable } from '@@/DetailsTable/DetailsTable';
-import { Input } from '@@/form-components/Input';
+import { Input } from '@/ui/components/forms/Input';
 import { Widget } from '@@/Widget/Widget';
 import { WidgetBody } from '@@/Widget/WidgetBody';
 import { WidgetTitle } from '@@/Widget/WidgetTitle';

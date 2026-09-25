@@ -1,11 +1,11 @@
 import { useStore } from 'zustand';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { environmentStore } from '@/react/hooks/current-environment-store';
 import { Environment } from '@/domains/environments';
 
-import { PageHeader } from '@@/PageHeader';
-import { confirmDelete } from '@@/modals/confirm';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+import { confirmDelete } from '@/ui/components/dialog/confirm';
 
 
 import { EnvironmentsDatatable } from './EnvironmentsDatatable';

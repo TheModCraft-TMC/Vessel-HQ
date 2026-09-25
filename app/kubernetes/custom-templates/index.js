@@ -1,4 +1,4 @@
-import { CreateCustomTemplateRoute, CustomTemplatesListRoute, EditCustomTemplateRoute } from '@/portainer/react/views/route-components';
+import { CreateCustomTemplateRoute, CustomTemplatesListRoute, EditCustomTemplateRoute } from '@/core/routing/lazy-loading/route-components/portainer';
 import { registerReactState } from '@/core/routing/registerReactState';
 
 export function registerKubernetesTemplateStates($stateRegistryProvider) {

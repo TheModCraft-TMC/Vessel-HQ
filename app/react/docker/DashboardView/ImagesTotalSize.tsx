@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { PieChart } from 'lucide-react';
 
-import { Icon } from '@/react/components/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 import { humanize } from '@/portainer/filters/filters';
 
 interface Props {

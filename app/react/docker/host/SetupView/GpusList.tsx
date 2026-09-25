@@ -1,8 +1,8 @@
 import { array, object, string } from 'yup';
 
-import { InputList } from '@@/form-components/InputList';
-import { ItemProps } from '@@/form-components/InputList/InputList';
-import { InputGroup } from '@@/form-components/InputGroup';
+import { InputList } from '@/ui/components/forms/InputList';
+import { ItemProps } from '@/ui/components/forms/InputList/InputList';
+import { InputGroup } from '@/ui/components/forms/InputGroup';
 
 export interface Gpu {
   value: string;

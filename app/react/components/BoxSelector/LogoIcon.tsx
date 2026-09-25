@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import { Icon, IconProps } from '@@/Icon';
+import { Icon, IconProps } from '@/ui/components/icons/Icon';
 
 type Props = IconProps;
 

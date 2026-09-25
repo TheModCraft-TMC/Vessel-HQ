@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { TagId } from '@/domains/tags';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 import { environmentQueryKeys } from '@/react/portainer/environments/queries/query-keys';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { EnvironmentGroupId, EnvironmentId } from '@/domains/environments';
 
 import { EnvironmentGroup } from '../types';

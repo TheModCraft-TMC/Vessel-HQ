@@ -2,15 +2,15 @@ import { http, HttpResponse } from 'msw';
 
 import {
   Edition,
-  LicenseInfo,
   LicenseType,
+  type LicenseInfo,
 } from '@/react/portainer/licenses/types';
-import { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
-import { Tag } from '@/domains/tags';
-import { StatusResponse } from '@/react/portainer/system/useSystemStatus';
+import type { EnvironmentGroup } from '@/react/portainer/environments/environment-groups/types';
+import type { Tag } from '@/domains/tags';
+import type { StatusResponse } from '@/react/portainer/system/useSystemStatus';
 import { createMockTeams } from '@/react-tools/test-mocks';
-import { UserId } from '@/portainer/users/types';
-import { VersionResponse } from '@/react/portainer/system/useSystemVersion';
+import type { UserId } from '@/domains/users/models/types';
+import type { VersionResponse } from '@/react/portainer/system/useSystemVersion';
 
 import { azureHandlers } from './setup-handlers/azure';
 import { dockerHandlers } from './setup-handlers/docker';

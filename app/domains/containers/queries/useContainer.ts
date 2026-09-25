@@ -1,79 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  ContainerConfig,
-  ContainerState,
-  DriverData,
-  HostConfig,
-  MountPoint,
-  NetworkSettings,
-} from 'docker-types';
 
-import { PortainerResponse } from '@/react/docker/types';
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { ContainerId } from '@/domains/containers/types';
 import { EnvironmentId } from '@/domains/environments';
-import { queryClient, withError } from '@/core/query/query-client';
-import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
-import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
+import { queryClient, withError } from '@/core/query';
+import { dockerClient } from '@/core/composition/dockerClient';
+
+import type { ContainerDetails } from '../models';
+import { toContainerDetails } from '../mappers';
 
 import { queryKeys } from './query-keys';
 
-/**
- * Raw Docker Container Details response
- */
-export interface ContainerDetailsJSON {
-  /**
-   * The ID of the container
-   */
-  Id?: string;
-  /**
-   * The time the container was created
-   */
-  Created?: string;
-  /**
-   * The path to the command being run
-   */
-  Path?: string;
-  /**
-   * The arguments to the command being run
-   */
-  Args?: Array<string>;
-  State?: ContainerState;
-  /**
-   * The container's image ID
-   */
-  Image?: string;
-  ResolvConfPath?: string;
-  HostnamePath?: string;
-  HostsPath?: string;
-  LogPath?: string;
-  Name?: string;
-  RestartCount?: number;
-  Driver?: string;
-  Platform?: string;
-  MountLabel?: string;
-  ProcessLabel?: string;
-  AppArmorProfile?: string;
-  /**
-   * IDs of exec instances that are running in the container.
-   */
-  ExecIDs?: Array<string> | null;
-  HostConfig?: HostConfig;
-  GraphDriver?: DriverData;
-  /**
-   * The size of files that have been created or changed by this
-   * container.
-   *
-   */
-  SizeRw?: number;
-  /**
-   * The total size of all the files in this container.
-   */
-  SizeRootFs?: number;
-  Mounts?: Array<MountPoint>;
-  Config?: ContainerConfig;
-  NetworkSettings?: NetworkSettings;
-}
+/** @deprecated Use ContainerDetails from the domain models. */
+export type ContainerDetailsJSON = ContainerDetails;
 
 export function useContainer<T>(
   {
@@ -108,7 +46,7 @@ export function invalidateContainer(
   );
 }
 
-export type ContainerDetailsResponse = PortainerResponse<ContainerDetailsJSON>;
+export type ContainerDetailsResponse = ContainerDetails;
 
 /**
  * Raw docker API proxy
@@ -122,17 +60,8 @@ export async function getContainer(
   id: ContainerId,
   { nodeName }: { nodeName?: string } = {}
 ) {
-  try {
-    const { data } = await axios.get<ContainerDetailsResponse>(
-      buildDockerProxyUrl(environmentId, 'containers', id, 'json'),
-      {
-        headers: {
-          ...withAgentTargetHeader(nodeName),
-        },
-      }
-    );
-    return data;
-  } catch (error) {
-    throw parseAxiosError(error as Error, 'Unable to retrieve container');
-  }
+  const data = await dockerClient.inspectContainer(environmentId, id, {
+    nodeName,
+  });
+  return toContainerDetails(data);
 }

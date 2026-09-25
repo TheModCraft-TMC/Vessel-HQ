@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { Widget } from '@@/Widget';
-import { Alert } from '@@/Alert';
-import { Icon, type IconSource } from '@@/Icon';
+import { Alert } from '@/ui/components/feedback/Alert';
+import { Icon, type IconSource } from '@/ui/components/icons/Icon';
 
 interface Props {
   icon: IconSource;

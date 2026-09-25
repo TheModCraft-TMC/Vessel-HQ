@@ -17,12 +17,11 @@ The move also lowers existing transition budgets:
 - Azure: 91 to 78 legacy imports.
 - Containers: 546 to 492 legacy imports.
 
-The environment contract has two frozen transitional dependencies:
+The environment contract has one remaining transitional dependency:
 
-- tag identity from `@/portainer/tags/types`;
-- Docker snapshot shape from `@/react/docker/snapshots/types`.
+- tag identity from `@/portainer/tags/types`.
 
-`app/domains/environments/legacy-imports.json` prevents that list or count from growing. Those contracts should move behind stable domain, provider, or shared APIs before the transition file is removed.
+The Docker snapshot summary now belongs to the Environments domain, while Docker raw and transport shapes are exported by the Docker provider. The Environments legacy import budget was removed when this dependency reached zero.
 
 ## Next slices
 

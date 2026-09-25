@@ -1,31 +1,25 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 import { v4 as uuidv4 } from 'uuid';
 
-import fullLogo from '@/assets/images/vessel-hq-logo.svg';
-import darkLogo from '@/assets/images/vessel-hq-logo-dark.svg';
-import { getEnvironments } from '@/react/portainer/environments/environment.service';
-import { dispatchCacheRefreshEvent } from '@/portainer/services/http-request.helper';
 import {
-  isSameDocumentUrl,
-  isValidReturnUrl,
-} from '@/portainer/helpers/url-utils';
-import {
+  applyTheme,
+  darkLogo,
+  fullLogo,
+  getAppState,
+  getEnvironments,
+  getPublicSettings,
+  initializeAppState,
   cleanReturnUrl,
   getReturnUrl,
+  isSameDocumentUrl,
+  isValidReturnUrl,
+  notifyError,
   storeReturnUrl,
-} from '@/react/portainer/helpers/returnUrl';
-import { notifyError } from '@/portainer/services/notifications';
-import { getAppState, initializeAppState } from '@/react/portainer/app-state';
-import { getPublicSettings } from '@/react/portainer/settings/settings.service';
-import { authStorage } from '@/react/portainer/storage';
-
-import { Button, LoadingButton } from '@@/buttons';
-import { Input } from '@@/form-components/Input';
-
+} from '@/core/auth';
 import {
   administratorExists,
+  authStorage,
   getAuthenticatedUser,
   initializeAuthentication,
   isAdministrator,
@@ -33,7 +27,10 @@ import {
   login,
   loginWithOAuth,
   logout,
-} from '../services/auth.service';
+} from '@/domains/auth';
+import { clearQueryCache, queryClient } from '@/core/query';
+
+import { LoginForm } from '../components/LoginForm';
 
 export function LoginView() {
   const router = useRouter();
@@ -92,112 +89,22 @@ export function LoginView() {
 
           <div className="panel panel-default">
             <div className="panel-body">
-              <form
-                className="simple-box-form form-horizontal"
+              <LoginForm
+                authenticationError={authenticationError}
+                loginInProgress={loginInProgress}
+                oAuthLoginUri={oAuthLoginUri}
+                oAuthProvider={oAuthProvider}
+                password={password}
+                showOAuthLogin={showOAuthLogin}
+                showPassword={showPassword}
+                showStandardLogin={showStandardLogin}
+                username={username}
+                onPasswordChange={setPassword}
+                onShowPasswordChange={() => setShowPassword((value) => !value)}
+                onStandardLogin={() => setShowStandardLogin(true)}
                 onSubmit={handleLogin}
-              >
-                {showOAuthLogin && (
-                  <div className="form-group">
-                    <div className="col-sm-12 flex justify-center">
-                      <a
-                        className="btn btn-primary btn-lg btn-block"
-                        href={oAuthLoginUri}
-                        data-cy="auth-oauth-login"
-                      >
-                        <LogIn className="mr-1 inline h-4 w-4" />
-                        Login with {oAuthProvider}
-                      </a>
-                    </div>
-                  </div>
-                )}
-
-                {showOAuthLogin && showStandardLogin && (
-                  <div className="form-group">
-                    <div className="col-sm-12 text-muted text-center">or</div>
-                  </div>
-                )}
-
-                {showOAuthLogin && !showStandardLogin && (
-                  <div className="form-group">
-                    <div className="col-sm-12">
-                      <Button
-                        className="btn-block"
-                        onClick={() => setShowStandardLogin(true)}
-                        data-cy="auth-use-internal"
-                      >
-                        Use internal authentication
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {showStandardLogin && (
-                  <>
-                    <label className="block pb-2" htmlFor="username">
-                      Username
-                    </label>
-                    <Input
-                      id="username"
-                      value={username}
-                      onChange={(event) => setUsername(event.target.value)}
-                      autoComplete="username"
-                      placeholder="Enter your username"
-                      data-cy="auth-usernameInput"
-                    />
-
-                    <label className="block pb-2 pt-4" htmlFor="password">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        className="pr-10"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                        autoComplete="current-password"
-                        placeholder="Enter your password"
-                        data-cy="auth-passwordInput"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((value) => !value)}
-                        className="absolute right-0 top-0 flex h-[34px] w-[50px] items-center justify-center border-none bg-transparent"
-                        aria-label={
-                          showPassword ? 'Hide password' : 'Show password'
-                        }
-                        data-cy="auth-passwordInputToggle"
-                      >
-                        {showPassword ? (
-                          <Eye className="h-4 w-4" />
-                        ) : (
-                          <EyeOff className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="form-group overflow-auto pt-4">
-                      <div className="col-sm-12 flex py-1">
-                        <LoadingButton
-                          className="btn-block"
-                          size="large"
-                          isLoading={loginInProgress}
-                          loadingText="Login in progress..."
-                          data-cy="auth-loginButton"
-                        >
-                          Login
-                        </LoadingButton>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </form>
-
-              {authenticationError && (
-                <p className="text-danger text-right text-sm">
-                  {authenticationError}
-                </p>
-              )}
+                onUsernameChange={setUsername}
+              />
             </div>
           </div>
         </div>
@@ -252,8 +159,12 @@ export function LoginView() {
         authStorage.clearLogoutReason();
       }
 
-      dispatchCacheRefreshEvent();
-      await initializeAuthentication();
+      clearQueryCache(queryClient);
+      const restored = await initializeAuthentication();
+      const user = restored ? getAuthenticatedUser() : undefined;
+      if (user) {
+        applyTheme(user.ThemeSettings.color);
+      }
       if (isAuthenticated()) {
         await postLoginSteps();
         return;
@@ -276,7 +187,7 @@ export function LoginView() {
     setAuthenticationError('');
 
     try {
-      await login(username, password);
+      await login({ username, password });
       await postLoginSteps();
     } catch (error) {
       showError(error, 'Unable to login');

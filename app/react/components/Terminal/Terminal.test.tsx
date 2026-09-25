@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 import { Terminal as XTerm } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 
-import { error as notifyError } from '@/portainer/services/notifications';
+import { error as notifyError } from '@/ui/components/toast/notifications';
 import { server, ws } from '@/setup-tests/server';
 
 import { Terminal } from './Terminal';
@@ -45,7 +45,7 @@ vi.mock('@xterm/addon-fit', () => ({
   ),
 }));
 
-vi.mock('@/portainer/services/notifications', () => ({
+vi.mock('@/ui/components/toast/notifications', () => ({
   error: vi.fn(),
 }));
 

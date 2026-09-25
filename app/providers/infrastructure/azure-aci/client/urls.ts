@@ -44,3 +44,13 @@ export function buildContainerGroupUrl(
 
   return url;
 }
+
+export function buildProviderUrl(
+  environmentId: number,
+  subscriptionId: string
+) {
+  return `${buildSubscriptionsUrl(
+    environmentId,
+    subscriptionId
+  )}/providers/Microsoft.ContainerInstance`;
+}

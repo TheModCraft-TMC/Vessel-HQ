@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { error as notifyError } from '@/portainer/services/notifications';
+import { error as notifyError } from '@/ui/components/toast/notifications';
 import { useNodesCount } from '@/react/portainer/system/useNodesCount';
 
 import { getLicenseInfo } from './license.service';

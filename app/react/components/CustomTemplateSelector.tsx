@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 
-import { useCustomTemplates } from '@/react/portainer/templates/custom-templates/queries/useCustomTemplates';
-import { CustomTemplate } from '@/react/portainer/templates/custom-templates/types';
-import { StackType } from '@/react/common/stacks/types';
+import { useCustomTemplates } from '@/domains/templates';
+import { CustomTemplate } from '@/domains/templates';
+import { StackType } from '@/domains/stacks/models/types';
 
-import { FormControl } from '@@/form-components/FormControl';
-import { PortainerSelect } from '@@/form-components/PortainerSelect';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 
 interface Props {
   value: CustomTemplate['Id'] | undefined;

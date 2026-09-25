@@ -1,6 +1,8 @@
-import { NetworkId } from '@/react/docker/networks/types';
+import { NetworkId } from '@/domains/networks';
 
 import { ContainerStatus } from '../types';
+
+export type { ContainerProcesses } from '../models';
 
 export interface Filters {
   label?: string[];
@@ -9,8 +11,3 @@ export interface Filters {
   status?: ContainerStatus[];
   volume?: string[];
 }
-
-export type ContainerProcesses = {
-  Processes: Array<Array<string>>;
-  Titles: Array<string>;
-};

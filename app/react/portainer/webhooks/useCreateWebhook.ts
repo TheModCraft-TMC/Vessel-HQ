@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 import { EnvironmentId } from '@/domains/environments';
 
-import { RegistryId } from '../registries/types/registry';
+import { RegistryId } from '@/domains/registries';
 
 import { buildUrl } from './build-url';
 import { Webhook, WebhookType } from './types';

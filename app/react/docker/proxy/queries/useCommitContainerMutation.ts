@@ -5,12 +5,12 @@ import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import {
   buildImageFullURIFromModel,
   fullURIIntoRepoAndTag,
-} from '@/react/docker/images/utils';
+} from '@/domains/images/mappers/image';
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
-import { withError } from '@/core/query/query-client';
+import { withError } from '@/core/query';
 import { queryKeys } from '@/domains/containers/queries/query-keys';
 
-import { buildDockerProxyUrl } from './buildDockerProxyUrl';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 type CommitParams = {
   container?: string; //  The ID or name of the container to commit

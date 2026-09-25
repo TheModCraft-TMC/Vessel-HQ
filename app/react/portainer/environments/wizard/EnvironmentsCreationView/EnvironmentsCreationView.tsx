@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import _ from 'lodash';
 import { Wand2 } from 'lucide-react';
 
-import { notifyError } from '@/portainer/services/notifications';
+import { notifyError } from '@/ui/components/toast/notifications';
 import {
   Environment,
   EnvironmentId,
@@ -11,9 +11,9 @@ import {
 
 import { Stepper } from '@@/Stepper/Stepper';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
-import { PageHeader } from '@@/PageHeader';
-import { Button } from '@@/buttons';
-import { FormSection } from '@@/form-components/FormSection';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+import { Button } from '@/ui/components/buttons';
+import { FormSection } from '@/ui/components/forms/FormSection';
 import { StickyFooter } from '@@/StickyFooter/StickyFooter';
 
 import {

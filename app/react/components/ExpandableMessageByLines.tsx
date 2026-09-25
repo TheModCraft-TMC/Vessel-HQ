@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 
-import { Button } from '@@/buttons';
+import { Button } from '@/ui/components/buttons';
 
 // use enum so that the tailwind classes aren't interpolated
 type MaxLines = 2 | 5 | 10 | 20 | 50;

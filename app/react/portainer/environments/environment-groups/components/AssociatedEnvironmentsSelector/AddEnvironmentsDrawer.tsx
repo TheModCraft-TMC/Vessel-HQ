@@ -10,18 +10,18 @@ import {
   EnvironmentGroupId,
 } from '@/domains/environments';
 
-import { Datatable } from '@@/datatables';
-import { useTableStateWithoutStorage } from '@@/datatables/useTableState';
-import { withControlledSelected } from '@@/datatables/extend-options/withControlledSelected';
-import { TableRow } from '@@/datatables/TableRow';
+import { Datatable } from '@/ui/components/data-table';
+import { useTableStateWithoutStorage } from '@/ui/components/data-table/useTableState';
+import { withControlledSelected } from '@/ui/components/data-table/extend-options/withControlledSelected';
+import { TableRow } from '@/ui/components/data-table/TableRow';
 import {
   Sheet,
   SheetContent,
   SheetClose,
   SheetHeader,
   SheetDescription,
-} from '@@/Sheet';
-import { Button, LoadingButton } from '@@/buttons';
+} from '@/ui/components/drawer/Sheet';
+import { Button, LoadingButton } from '@/ui/components/buttons';
 
 import { EnvironmentTableData } from './types';
 

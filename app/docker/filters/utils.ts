@@ -1,4 +1,4 @@
-import { NodeStatus, TaskState } from 'docker-types';
+import { NodeStatus, TaskState } from '@/providers/infrastructure/docker';
 import _ from 'lodash';
 
 export function trimVersionTag(fullName: string) {

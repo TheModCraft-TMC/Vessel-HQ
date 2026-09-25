@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { PropsWithChildren, ReactNode } from 'react';
 
-import type { IconSource } from '../Icon';
+import type { IconSource } from '@/ui/components/icons/Icon';
 
 import { WidgetIcon } from './WidgetIcon';
 import { useWidgetContext } from './Widget';

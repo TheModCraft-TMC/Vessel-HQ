@@ -1,0 +1,28 @@
+import { useQuery } from '@tanstack/react-query';
+import { Node } from 'kubernetes-types/core/v1';
+
+import { EnvironmentId } from '@/domains/environments';
+import { getTotalResourcesForAllApplications } from '@/domains/clusters/metrics/queries/useMetricsForApplications';
+import { getMebibytes, safeFilesizeParser } from '@/domains/clusters/utils';
+
+export function useClusterResourceReservationQuery(
+  environmentId: EnvironmentId,
+  nodes: Node[]
+) {
+  return useQuery(
+    [environmentId, 'clusterResourceReservation'],
+    () => getTotalResourcesForAllApplications(environmentId),
+    {
+      enabled: !!environmentId && nodes.length > 0,
+      select: (data) => ({
+        cpu: data.CpuRequest,
+        // MemoryRequest may be a string like "2Gi"; convert to bytes first
+        memory: getMebibytes(
+          typeof data.MemoryRequest === 'number'
+            ? data.MemoryRequest
+            : safeFilesizeParser(data.MemoryRequest)
+        ),
+      }),
+    }
+  );
+}

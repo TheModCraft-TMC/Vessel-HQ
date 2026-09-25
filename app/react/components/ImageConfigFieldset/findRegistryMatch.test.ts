@@ -2,7 +2,7 @@ import {
   Registry,
   RegistryId,
   RegistryTypes,
-} from '../../portainer/registries/types/registry';
+} from '@/domains/registries';
 
 import { findBestMatchRegistry } from './findRegistryMatch';
 

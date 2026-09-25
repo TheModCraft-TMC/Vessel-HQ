@@ -1,4 +1,4 @@
-import { TextTip } from '@@/Tip/TextTip';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 export function SetupTokenTextTip() {
   return (

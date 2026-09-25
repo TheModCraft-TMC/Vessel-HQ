@@ -5,7 +5,7 @@ import {
   PortainerUserAccessPolicies,
 } from '@api/types.gen';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { stripProtocol } from '@/react/common/string-utils';
 import { useIdParam } from '@/react/hooks/useIdParam';
 import { AccessDatatable } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/AccessDatatable';
@@ -14,8 +14,8 @@ import { CreateAccessWidget } from '@/react/portainer/access-control/AccessManag
 import { Option } from '@/react/portainer/access-control/AccessManagement/PorAccessManagementUsersSelector';
 import { useAccesses } from '@/react/portainer/access-control/AccessManagement/useAccesses';
 
-import { Link } from '@@/Link';
-import { PageHeader } from '@@/PageHeader';
+import { Link } from '@/ui/components/links/Link';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 
 import { useGroup } from '../environment-groups/queries/useGroup';

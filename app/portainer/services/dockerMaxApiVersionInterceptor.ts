@@ -1,8 +1,8 @@
-import { SystemVersion } from 'docker-types';
+import { SystemVersion } from '@/providers/infrastructure/docker';
 import Axios, { InternalAxiosRequestConfig } from 'axios';
 import { setupCache, buildMemoryStorage } from 'axios-cache-interceptor';
 
-import { buildDockerProxyUrl } from '@/react/docker/proxy/queries/buildDockerProxyUrl';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 import { MAX_DOCKER_API_VERSION } from './dockerMaxApiVersion';
 

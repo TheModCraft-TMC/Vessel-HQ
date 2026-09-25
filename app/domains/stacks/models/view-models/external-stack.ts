@@ -1,0 +1,32 @@
+import { StackType } from '@/domains/stacks/models/types';
+import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
+import type { IResource } from '@/domains/containers';
+
+export class ExternalStackViewModel implements IResource {
+  Id: string;
+
+  Name: string;
+
+  ResourceControl?: ResourceControlViewModel;
+
+  Type: StackType;
+
+  CreationDate: number;
+
+  CreatedBy?: string;
+
+  UpdateDate?: number;
+
+  UpdatedBy?: string;
+
+  External: boolean;
+
+  constructor(name: string, type: StackType, creationDate: number) {
+    this.Id = `external-stack_${encodeURIComponent(name)}`;
+    this.Name = name;
+    this.Type = type;
+    this.CreationDate = creationDate;
+
+    this.External = true;
+  }
+}

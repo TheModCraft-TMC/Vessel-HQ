@@ -5,10 +5,10 @@ import {
   mutationOptions,
   withError,
   withInvalidate,
-} from '@/core/query/query-client';
-import { EdgeGroup } from '@/react/edge/edge-groups/types';
+} from '@/core/query';
+import { EdgeGroup } from '@/domains/edge/models/edge-group';
 import { TagId } from '@/domains/tags';
-import { queryKeys as edgeGroupQueryKeys } from '@/react/edge/edge-groups/queries/query-keys';
+import { queryKeys as edgeGroupQueryKeys } from '@/domains/edge/queries/edge-groups/query-keys';
 import { queryKeys as groupQueryKeys } from '@/react/portainer/environments/environment-groups/queries/query-keys';
 import { tagKeys } from '@/portainer/tags/queries';
 import { EnvironmentId, EnvironmentGroupId } from '@/domains/environments';

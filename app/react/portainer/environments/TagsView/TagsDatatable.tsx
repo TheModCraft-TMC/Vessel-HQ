@@ -3,10 +3,10 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import { Tag } from '@/domains/tags';
 
-import { Datatable } from '@@/datatables';
-import { createPersistedStore } from '@@/datatables/types';
-import { useTableState } from '@@/datatables/useTableState';
-import { DeleteButton } from '@@/buttons/DeleteButton';
+import { Datatable } from '@/ui/components/data-table';
+import { createPersistedStore } from '@/ui/components/data-table/types';
+import { useTableState } from '@/ui/components/data-table/useTableState';
+import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
 
 const columnHelper = createColumnHelper<Tag>();
 

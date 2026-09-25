@@ -1,10 +1,10 @@
 import { FormikErrors } from 'formik';
 import { SchemaOf, boolean, object } from 'yup';
 
-import { file, withFileSize } from '@@/form-components/yup-file-validation';
-import { FileUploadField } from '@@/form-components/FileUpload';
-import { SwitchField } from '@@/form-components/SwitchField';
-import { FormControl } from '@@/form-components/FormControl';
+import { file, withFileSize } from '@/ui/components/forms/yup-file-validation';
+import { FileUploadField } from '@/ui/components/forms/FileUpload';
+import { SwitchField } from '@/ui/components/forms/SwitchField';
+import { FormControl } from '@/ui/components/forms/FormControl';
 
 import { TLSConfig } from './types';
 

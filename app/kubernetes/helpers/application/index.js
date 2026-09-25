@@ -21,7 +21,7 @@ import {
   KubernetesApplicationVolumePersistentPayload,
   KubernetesApplicationVolumeSecretPayload,
 } from '@/kubernetes/models/application/payloads';
-import { generatedApplicationConfigVolumeName } from '@/react/kubernetes/volumes/utils';
+import { generatedApplicationConfigVolumeName } from '@/domains/configuration/volumes/utils';
 import { HelmApplication } from '@/kubernetes/models/application/models';
 import { KubernetesApplicationDeploymentTypes, KubernetesApplicationTypes } from '@/kubernetes/models/application/models/appConstants';
 import { KubernetesPodAffinity, KubernetesPodNodeAffinityNodeSelectorRequirementOperators } from '@/kubernetes/pod/models';
@@ -31,7 +31,7 @@ import {
   KubernetesPodNodeAffinityPayload,
   KubernetesPreferredSchedulingTermPayload,
 } from '@/kubernetes/pod/payloads/affinities';
-import { PodKubernetesInstanceLabel, PodManagedByLabel } from '@/react/kubernetes/applications/constants';
+import { PodKubernetesInstanceLabel, PodManagedByLabel } from '@/domains/applications/applications/constants';
 
 class KubernetesApplicationHelper {
   /* #region  UTILITY FUNCTIONS */

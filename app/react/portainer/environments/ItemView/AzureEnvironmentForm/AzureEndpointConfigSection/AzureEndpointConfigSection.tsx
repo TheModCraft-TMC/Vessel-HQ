@@ -1,6 +1,6 @@
-import { FormControl } from '@@/form-components/FormControl';
-import { FormSection } from '@@/form-components/FormSection';
-import { Input } from '@@/form-components/Input';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { FormSection } from '@/ui/components/forms/FormSection';
+import { Input } from '@/ui/components/forms/Input';
 
 interface Values {
   applicationId: string;

@@ -17,7 +17,6 @@ import qs from 'qs';
 
 import {
   CACHE_DURATION,
-  dispatchCacheRefreshEventIfNeeded,
   portainerAgentManagerOperation,
   portainerAgentTargetHeader,
 } from '@/portainer/services/http-request.helper';
@@ -57,11 +56,6 @@ const axios = Axios.create({
     serialize: (params) => qs.stringify(params, { arrayFormat: 'brackets' }),
   },
 });
-axios.interceptors.request.use((req) => {
-  dispatchCacheRefreshEventIfNeeded(req);
-  return req;
-});
-
 // type guard the axios instance
 function isAxiosCacheInstance(
   a: AxiosInstance | AxiosCacheInstance

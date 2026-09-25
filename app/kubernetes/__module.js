@@ -1,4 +1,4 @@
-import { EnvironmentRegistriesListRoute } from '@/portainer/react/views/route-components';
+import { EnvironmentRegistriesListRoute } from '@/core/routing/lazy-loading/route-components/portainer';
 import { registerReactState } from '@/core/routing/registerReactState';
 import {
   ApplicationDetailsRoute,
@@ -34,8 +34,8 @@ import {
   ServiceAccountsRoute,
   ServicesRoute,
   VolumesRoute,
-} from '@/kubernetes/react/views/route-components';
-import { AccessHeaders } from '../portainer/authorization-guard';
+} from '@/core/routing/lazy-loading/route-components/kubernetes';
+import { AccessHeaders } from '../core/routing/guards/authorization-guard';
 
 import './views/kubernetes.css';
 

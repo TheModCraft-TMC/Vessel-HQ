@@ -4,10 +4,10 @@ import { render } from '@testing-library/react';
 
 import { createMockTeams, createMockUsers } from '@/react-tools/test-mocks';
 import { server } from '@/setup-tests/server';
-import { Role } from '@/portainer/users/types';
+import { Role } from '@/domains/users';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { withTestRouter } from '@/react/test-utils/withRouter';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 
 import {
   ResourceControlOwnership,

@@ -7,10 +7,10 @@ import clsx from 'clsx';
 
 import { AutomationTestingProps } from '@/types';
 
-import { CopyButton } from '@@/buttons/CopyButton';
+import { CopyButton } from '@/ui/components/buttons/CopyButton';
 
 import { useDebounce } from '../../hooks/useDebounce';
-import { TextTip } from '../Tip/TextTip';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { StackVersionSelector } from '../StackVersionSelector';
 
 import styles from './CodeEditor.module.css';

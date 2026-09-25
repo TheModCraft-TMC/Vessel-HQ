@@ -2,8 +2,8 @@ import {
   Registry,
   RegistryId,
   RegistryTypes,
-} from '../../portainer/registries/types/registry';
-import { getURL } from '../../portainer/registries/utils/getUrl';
+} from '@/domains/registries';
+import { getURL } from '@/domains/registries/components/utils/getUrl';
 
 /**
  *  findBestMatchRegistry finds out the best match registry for repository

@@ -1,0 +1,100 @@
+import { useMemo, useState } from 'react';
+import { Users, UserX } from 'lucide-react';
+
+import { User, UserId } from '@/domains/users';
+import { TeamId, TeamRole } from '@/domains/teams';
+import { useIsPureAdmin } from '@/react/hooks/useUser';
+import { notifySuccess } from '@/ui/components/toast/notifications';
+import { useRemoveMemberMutation, useTeamMemberships } from '@/domains/teams';
+import { Button } from '@/ui/components/buttons';
+import { Datatable } from '@/ui/components/data-table';
+
+import { RowContext, RowProvider } from './RowContext';
+import { columns } from './columns';
+
+interface Props {
+  users: User[];
+  roles: Record<UserId, TeamRole>;
+  membershipChangesDisabled?: boolean;
+  roleChangesDisabled?: boolean;
+  teamId: TeamId;
+}
+
+export function TeamMembersList({
+  users,
+  roles,
+  membershipChangesDisabled,
+  roleChangesDisabled,
+  teamId,
+}: Props) {
+  const membershipsQuery = useTeamMemberships(teamId);
+
+  const removeMemberMutation = useRemoveMemberMutation(
+    teamId,
+    membershipsQuery.data
+  );
+
+  const [search, setSearch] = useState('');
+  const [pageSize, setPageSize] = useState(10);
+  const [sortBy, setSortBy] = useState<
+    { id: string; desc: boolean } | undefined
+  >({ id: 'name', desc: false });
+
+  const isPureAdmin = useIsPureAdmin();
+  const rowContext = useMemo<RowContext>(
+    () => ({
+      getRole(userId: UserId) {
+        return roles[userId];
+      },
+      membershipChangesDisabled,
+      roleChangesDisabled,
+      teamId,
+    }),
+    [roles, membershipChangesDisabled, roleChangesDisabled, teamId]
+  );
+
+  return (
+    <RowProvider context={rowContext}>
+      <Datatable<User>
+        dataset={users}
+        columns={columns}
+        titleIcon={Users}
+        title="Team members"
+        renderTableActions={() =>
+          isPureAdmin && (
+            <Button
+              onClick={() => handleRemoveMembers(users.map((user) => user.Id))}
+              disabled={membershipChangesDisabled || users.length === 0}
+              icon={UserX}
+              data-cy="remove-all-users-button"
+            >
+              Remove all users
+            </Button>
+          )
+        }
+        disableSelect
+        settingsManager={{
+          pageSize,
+          setPageSize,
+          sortBy,
+          setSortBy: handleSetSort,
+          search,
+          setSearch,
+        }}
+        data-cy="team-members-datatable"
+      />
+    </RowProvider>
+  );
+
+  function handleSetSort(colId: string | undefined, desc: boolean) {
+    setSortBy(colId ? { id: colId, desc } : undefined);
+  }
+
+  function handleRemoveMembers(userIds: UserId[]) {
+    removeMemberMutation.mutate(userIds, {
+      onSuccess() {
+        notifySuccess('Success', 'All users successfully removed');
+      },
+    });
+  }
+}

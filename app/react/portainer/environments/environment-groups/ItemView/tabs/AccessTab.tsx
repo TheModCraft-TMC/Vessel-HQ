@@ -3,7 +3,7 @@ import {
   PortainerUserAccessPolicies,
 } from '@api/types.gen';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { useIdParam } from '@/react/hooks/useIdParam';
 import { AccessDatatable } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/AccessDatatable';
 import { Access } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/types';

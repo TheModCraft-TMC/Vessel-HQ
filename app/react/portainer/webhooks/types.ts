@@ -1,6 +1,6 @@
 import { EnvironmentId } from '@/domains/environments';
 
-import { RegistryId } from '../registries/types/registry';
+import { RegistryId } from '@/domains/registries';
 
 export enum WebhookType {
   DockerService = 1,

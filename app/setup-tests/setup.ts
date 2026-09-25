@@ -16,6 +16,14 @@ Object.defineProperties(window, {
   sessionStorage: { configurable: true, value: sessionStorage },
 });
 
+// jsdom intentionally leaves canvas rendering unimplemented. Some UI
+// dependencies probe for a 2D context while modules are loading, so provide
+// the browser's nullable contract without emitting a console error per test.
+Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+  configurable: true,
+  value: () => null,
+});
+
 function createMemoryStorage(): Storage {
   const values = new Map<string, string>();
 

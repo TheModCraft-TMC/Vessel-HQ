@@ -15,7 +15,7 @@ import { KubernetesPortainerResourcePoolNameLabel, KubernetesPortainerResourcePo
 import KubernetesResourceReservationHelper from '@/kubernetes/helpers/resourceReservationHelper';
 import KubernetesCommonHelper from '@/kubernetes/helpers/commonHelper';
 import { KubernetesResourcePoolFormValues } from '@/kubernetes/models/resource-pool/formValues';
-import { parseCPU } from '@/react/kubernetes/utils';
+import { parseCPU } from '@/domains/clusters/utils';
 
 class KubernetesResourceQuotaConverter {
   static apiToResourceQuota(data, yaml) {

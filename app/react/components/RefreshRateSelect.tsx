@@ -1,5 +1,5 @@
-import { FormControl } from '@@/form-components/FormControl';
-import { Select } from '@@/form-components/Input/Select';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Select } from '@/ui/components/forms/Input/Select';
 
 type Props = {
   refreshRateMS: number;

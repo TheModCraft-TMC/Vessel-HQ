@@ -3,9 +3,9 @@ import { type ReactNode, forwardRef, useMemo, useRef, useState } from 'react';
 
 import { pluralize } from '@/react/common/string-utils';
 
-import { Button } from '@@/buttons';
+import { Button } from '@/ui/components/buttons';
 
-import { filterToPattern } from '../form-components/FilePicker/utils';
+import { filterToPattern } from '@/ui/components/forms/FilePicker/utils';
 
 import { globToRegex } from './utils';
 

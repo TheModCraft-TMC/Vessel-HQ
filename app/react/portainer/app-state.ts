@@ -1,4 +1,4 @@
-import { getPublicSettings } from '@/react/portainer/settings/settings.service';
+import { getPublicSettings } from '@/domains/settings/services/settings.service';
 import { getSystemStatus } from '@/react/portainer/system/useSystemStatus';
 
 import { getStoredValue, setStoredValue } from './storage';

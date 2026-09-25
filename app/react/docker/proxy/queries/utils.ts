@@ -1,5 +1,5 @@
 import { agentTargetHeader } from '@/portainer/services/axios/axios';
-import { RegistryId } from '@/react/portainer/registries/types/registry';
+import { RegistryId } from '@/domains/registries';
 
 /**
  * Generates the `filters` query param entry for docker API list actions

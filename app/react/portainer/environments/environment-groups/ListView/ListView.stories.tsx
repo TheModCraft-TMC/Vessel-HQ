@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react-webpack5';
 import { ReactStateDeclaration } from '@uirouter/react';
 import { http, HttpResponse } from 'msw';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 

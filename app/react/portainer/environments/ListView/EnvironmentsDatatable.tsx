@@ -5,10 +5,10 @@ import { useEnvironmentList } from '@/react/portainer/environments/queries';
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
 import { EnvironmentStatus } from '@/domains/environments';
 
-import { Datatable } from '@@/datatables';
-import { createPersistedStore } from '@@/datatables/types';
-import { AddButton, Button } from '@@/buttons';
-import { useTableState } from '@@/datatables/useTableState';
+import { Datatable } from '@/ui/components/data-table';
+import { createPersistedStore } from '@/ui/components/data-table/types';
+import { AddButton, Button } from '@/ui/components/buttons';
+import { useTableState } from '@/ui/components/data-table/useTableState';
 
 import { isBE } from '../../feature-flags/feature-flags.service';
 import { isSortType } from '../queries/useEnvironmentList';

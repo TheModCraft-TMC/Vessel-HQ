@@ -1,10 +1,10 @@
-import '@@/datatables/datatable.css';
+import '@/ui/components/data-table/datatable.css';
 
 import { ReactNode } from 'react';
 
 import { AutomationTestingProps } from '@/types';
 
-import { DropdownOption } from '../DropdownMenu/DropdownMenu';
+import { DropdownOption } from '@/ui/components/menu';
 
 import { SortOption, SortableListHeader } from './SortableListHeader';
 import { SortableGroup } from './SortableListGroup';

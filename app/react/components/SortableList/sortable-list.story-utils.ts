@@ -1,6 +1,6 @@
 import { useMemo, ReactNode } from 'react';
 
-import { DropdownOption } from '../DropdownMenu/DropdownMenu';
+import { DropdownOption } from '@/ui/components/menu';
 
 import { SortableGroup, SortableListState } from './SortableList';
 

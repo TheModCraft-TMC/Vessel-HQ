@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { vi } from 'vitest';
 import { PropsWithChildren } from 'react';
 
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { server } from '@/setup-tests/server';
@@ -13,7 +13,7 @@ import { EnvironmentGroup } from '../../types';
 
 import { EnvironmentGroupsTable } from './EnvironmentGroupsTable';
 
-vi.mock('@@/Link', () => ({
+vi.mock('@/ui/components/links/Link', () => ({
   Link: ({
     children,
     ...props

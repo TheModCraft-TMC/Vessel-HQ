@@ -3,15 +3,15 @@ import { Settings } from 'lucide-react';
 import { Formik, Form as FormikForm } from 'formik';
 import { useRouter } from '@uirouter/react';
 
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { withLimitToBE } from '@/react/hooks/useLimitToBE';
-import { useEdgeGroups } from '@/react/edge/edge-groups/queries/useEdgeGroups';
+import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
 
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Widget } from '@@/Widget';
-import { LoadingButton } from '@@/buttons';
-import { TextTip } from '@@/Tip/TextTip';
-import { Link } from '@@/Link';
+import { LoadingButton } from '@/ui/components/buttons';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
+import { Link } from '@/ui/components/links/Link';
 
 import { ScheduleType } from '../types';
 import { useCreateMutation } from '../queries/create';
@@ -20,7 +20,7 @@ import { validation } from '../common/validation';
 import { ScheduleTypeSelector } from '../common/ScheduleTypeSelector';
 import { useList } from '../queries/list';
 import { NameField } from '../common/NameField';
-import { EdgeGroupsField } from '../common/EdgeGroupsField';
+import { EdgeGroupsField } from '@/domains/edge/views/environments/EdgeGroupsField/EdgeGroupsField';
 import { BetaAlert } from '../common/BetaAlert';
 import { defaultValue } from '../common/ScheduledTimeField';
 

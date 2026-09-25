@@ -1,5 +1,5 @@
-import { AccessHeaders } from '../authorization-guard';
-import { RegistriesListRoute, RegistryCreateRoute, RegistryItemRoute, RegistryRepositoriesRoute, RegistryRepositoryRoute } from '../react/views/route-components';
+import { AccessHeaders } from '@/core/routing';
+import { RegistriesListRoute, RegistryCreateRoute, RegistryItemRoute, RegistryRepositoriesRoute, RegistryRepositoryRoute } from '@/core/routing/lazy-loading/route-components/portainer';
 import { registerReactState } from '@/core/routing/registerReactState';
 
 export function registerRegistryStates($stateRegistryProvider) {

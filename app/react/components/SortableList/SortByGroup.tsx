@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-import { DropdownMenu, DropdownOption } from '../DropdownMenu/DropdownMenu';
+import { DropdownMenu, DropdownOption } from '@/ui/components/menu';
 
 export interface SortOption<TSortKey extends string = string> {
   key: TSortKey;

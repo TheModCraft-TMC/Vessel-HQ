@@ -6,12 +6,12 @@ import {
   EnvironmentStatusMessage,
   EnvironmentType,
 } from '@/domains/environments';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 
-import { TooltipWithChildren } from '@@/Tip/TooltipWithChildren';
-import { Button } from '@@/buttons';
-import { Icon } from '@@/Icon';
-import { Tooltip } from '@@/Tip/Tooltip';
+import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';
+import { Button } from '@/ui/components/buttons';
+import { Icon } from '@/ui/components/icons/Icon';
+import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
 
 import { EnvironmentListItem } from '../types';
 import { useUpdateEnvironmentMutation } from '../../queries/useUpdateEnvironmentMutation';

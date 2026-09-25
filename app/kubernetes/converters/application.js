@@ -28,7 +28,7 @@ import PortainerError from '@/portainer/error';
 import { KubernetesIngressHelper } from '@/kubernetes/ingress/helper';
 import KubernetesCommonHelper from '@/kubernetes/helpers/commonHelper';
 import { KubernetesConfigurationKinds } from '@/kubernetes/models/configuration/models';
-import { parseCPU } from '@/react/kubernetes/utils';
+import { parseCPU } from '@/domains/clusters/utils';
 
 function _apiPortsToPublishedPorts(pList, pRefs) {
   const ports = _.map(pList, (item) => {

@@ -1,5 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
 
+import { exponentialBackoff } from '@/core/realtime/reconnect/backoff';
 import { baseHref } from '@/portainer/helpers/pathHelper';
 
 let socket: WebSocket | undefined;
@@ -9,8 +10,6 @@ let lastEventId = 0;
 let stopped = false;
 
 const EVENT_PROTOCOL_VERSION = 1;
-const MIN_RECONNECT_DELAY = 1000;
-const MAX_RECONNECT_DELAY = 30_000;
 
 type RealtimeEvent = {
   version: number;
@@ -56,7 +55,7 @@ export function startRealtimeQuerySync(queryClient: QueryClient) {
 
     socket = undefined;
     if (!stopped && !reconnectTimer) {
-      const delay = reconnectDelay(reconnectAttempt);
+      const delay = exponentialBackoff(reconnectAttempt);
       reconnectAttempt += 1;
       reconnectTimer = setTimeout(() => {
         reconnectTimer = undefined;
@@ -127,13 +126,4 @@ function parseRealtimeEvent(payload: unknown): RealtimeEvent | undefined {
     // Ignore malformed events and keep the connection alive.
     return undefined;
   }
-}
-
-function reconnectDelay(attempt: number) {
-  const exponentialDelay = Math.min(
-    MAX_RECONNECT_DELAY,
-    MIN_RECONNECT_DELAY * 2 ** attempt
-  );
-  const jitter = Math.floor(Math.random() * Math.min(1000, exponentialDelay));
-  return exponentialDelay + jitter;
 }

@@ -4,7 +4,7 @@ import { object, SchemaOf, string } from 'yup';
 import { Network, Plug2 } from 'lucide-react';
 
 import { useCreateAzureEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
-import { notifySuccess } from '@/portainer/services/notifications';
+import { notifySuccess } from '@/ui/components/toast/notifications';
 import { Environment } from '@/domains/environments';
 import { EnvironmentMetadata } from '@/react/portainer/environments/environment.service/create';
 import {
@@ -13,11 +13,11 @@ import {
 } from '@/react/portainer/environments/common/NameField/NameField';
 import { metadataValidation } from '@/react/portainer/environments/common/MetadataFieldset/validation';
 
-import { LoadingButton } from '@@/buttons/LoadingButton';
-import { Input } from '@@/form-components/Input';
-import { FormControl } from '@@/form-components/FormControl';
+import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
+import { Input } from '@/ui/components/forms/Input';
+import { FormControl } from '@/ui/components/forms/FormControl';
 import { BoxSelector, BoxSelectorOption } from '@@/BoxSelector';
-import { BadgeIcon } from '@@/BadgeIcon';
+import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
 
 import { AnalyticsStateKey } from '../types';
 import { MoreSettingsSection } from '../shared/MoreSettingsSection';

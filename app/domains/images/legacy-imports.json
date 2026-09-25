@@ -1,0 +1,33 @@
+{
+  "maxImports": 79,
+  "modules": [
+    "@/docker/filters/utils",
+    "@/portainer/error",
+    "@/portainer/filters/filters",
+    "@/portainer/helpers/array",
+    "@/portainer/helpers/promise-utils",
+    "@/portainer/helpers/strings",
+    "@/react-tools/test-mocks",
+    "@/react/docker/agent/NodeSelector",
+    "@/react/docker/proxy/queries/useIsSwarmAgent",
+    "@/react/docker/queries/utils",
+    "@/react/hooks/useEnvironmentId",
+    "@/react/hooks/useUser",
+    "@/react/portainer/environments/queries/useEnvironmentRegistries",
+    "@/react/test-utils/withRouter",
+    "@/react/test-utils/withUserProvider",
+    "@/setup-tests/server",
+    "@/setup-tests/suppress-console",
+    "@@/BoxSelector",
+    "@@/BoxSelector/common-options/build-methods",
+    "@@/DetailsTable",
+    "@@/ImageConfigFieldset",
+    "@@/ImageConfigFieldset/findRegistryMatch",
+    "@@/ImageConfigFieldset/getImageConfig",
+    "@@/WebEditorForm",
+    "@@/Widget",
+    "@@/Widget/WidgetBody",
+    "@@/Widget/WidgetTitle",
+    "@@/primitives/Tabs/Tabs"
+  ]
+}

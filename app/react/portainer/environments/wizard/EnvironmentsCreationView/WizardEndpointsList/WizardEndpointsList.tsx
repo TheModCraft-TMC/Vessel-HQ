@@ -12,7 +12,7 @@ import { useEnvironmentList } from '@/react/portainer/environments/queries/useEn
 
 import { EdgeIndicator } from '@@/EdgeIndicator';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 import styles from './WizardEndpointsList.module.css';
 

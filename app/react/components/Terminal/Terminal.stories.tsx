@@ -2,7 +2,7 @@ import { Meta } from '@storybook/react-webpack5';
 import { ws } from 'msw';
 import { useState } from 'react';
 
-import { Button } from '@@/buttons';
+import { Button } from '@/ui/components/buttons';
 
 import { Terminal } from './Terminal';
 import type { ShellState } from './Terminal';

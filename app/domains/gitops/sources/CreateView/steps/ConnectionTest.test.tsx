@@ -1,0 +1,150 @@
+import { act, render, screen, waitFor } from '@testing-library/react';
+import { Formik } from 'formik';
+import { http, HttpResponse } from 'msw';
+
+import { server } from '@/setup-tests/server';
+import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
+import { ResourceControlOwnership } from '@/react/portainer/access-control/types';
+
+import { FormValues } from '../type';
+
+import { ConnectionTest } from './ConnectionTest';
+
+const baseGitValues: FormValues['git'] = {
+  url: 'https://github.com/org/repo.git',
+  tlsSkipVerify: false,
+  connectionOk: false,
+  authentication: {
+    authEnabled: false,
+  },
+  polling: { enabled: false, interval: '' },
+};
+
+const invalidGitValues: FormValues['git'] = {
+  url: '',
+  tlsSkipVerify: false,
+  connectionOk: false,
+  authentication: {
+    authEnabled: false,
+  },
+  polling: { enabled: false, interval: '' },
+};
+
+const baseVaultValues: FormValues['vault'] = {
+  address: '',
+  namespace: '',
+  kvVersion: 2,
+  tlsSkipVerify: false,
+  authentication: {
+    method: 'token',
+    token: '',
+  },
+  connectionOk: false,
+};
+
+function renderConnectionTest(gitValues: FormValues['git']) {
+  const initialValues: FormValues = {
+    name: 'test-source',
+    type: 'git',
+    git: gitValues,
+    vault: baseVaultValues,
+    authorizedTeams: [],
+    authorizedUsers: [],
+    ownership: ResourceControlOwnership.ADMINISTRATORS,
+  };
+
+  const Wrapped = withTestQueryProvider(ConnectionTest);
+
+  return render(
+    <Formik initialValues={initialValues} onSubmit={() => {}}>
+      <Wrapped />
+    </Formik>
+  );
+}
+
+describe('ConnectionTest', () => {
+  it('renders nothing when git URL is empty', async () => {
+    renderConnectionTest(invalidGitValues);
+    await act(async () => {});
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  it('shows "Testing connection…" while debounce is pending, then success', async () => {
+    server.use(
+      http.post('/api/gitops/sources/test', () =>
+        HttpResponse.json({ success: true })
+      )
+    );
+
+    renderConnectionTest(baseGitValues);
+
+    expect(screen.getByText('Testing connection...')).toBeInTheDocument();
+    expect(screen.queryByText('Connection successful')).not.toBeInTheDocument();
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Connection successful')).toBeVisible();
+      },
+      { timeout: 2000 }
+    );
+    expect(screen.queryByText('Testing connection...')).not.toBeInTheDocument();
+  });
+
+  it('shows success alert when gitOpsSourcesTest returns success:true', async () => {
+    server.use(
+      http.post('/api/gitops/sources/test', () =>
+        HttpResponse.json({ success: true })
+      )
+    );
+
+    renderConnectionTest(baseGitValues);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Connection successful')).toBeVisible();
+      },
+      { timeout: 2000 }
+    );
+  });
+
+  it('shows failure alert when gitOpsSourcesTest returns success:false', async () => {
+    server.use(
+      http.post('/api/gitops/sources/test', () =>
+        HttpResponse.json({ success: false, error: 'Repository not found' })
+      )
+    );
+
+    renderConnectionTest(baseGitValues);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Repository not found')).toBeVisible();
+      },
+      { timeout: 2000 }
+    );
+  });
+
+  it('shows failure alert when the API returns an error', async () => {
+    const restoreConsole = suppressConsoleLogs();
+
+    server.use(
+      http.post('/api/gitops/sources/test', () =>
+        HttpResponse.json({ message: 'Internal Server Error' }, { status: 500 })
+      )
+    );
+
+    renderConnectionTest(baseGitValues);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('Connection failed')).toBeVisible();
+      },
+      { timeout: 2000 }
+    );
+
+    restoreConsole();
+  });
+});

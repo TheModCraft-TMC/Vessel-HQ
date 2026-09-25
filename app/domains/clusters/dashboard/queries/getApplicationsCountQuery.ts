@@ -1,0 +1,38 @@
+import { useQuery } from '@tanstack/react-query';
+
+import { withError } from '@/core/query';
+import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
+import { EnvironmentId } from '@/domains/environments';
+
+const queryKeys = {
+  list: (environmentId: EnvironmentId) =>
+    ['environments', environmentId, 'dashboard', 'applicationsCount'] as const,
+};
+
+export function useGetApplicationsCountQuery(
+  environmentId: EnvironmentId,
+  options?: { autoRefreshRate?: number }
+) {
+  return useQuery(
+    queryKeys.list(environmentId),
+    async () => getApplicationsCount(environmentId),
+    {
+      ...withError('Unable to get applications count'),
+    }
+  );
+}
+
+async function getApplicationsCount(environmentId: EnvironmentId) {
+  try {
+    const { data: applicationsCount } = await axios.get<number>(
+      `kubernetes/${environmentId}/applications/count`
+    );
+
+    return applicationsCount;
+  } catch (e) {
+    throw parseAxiosError(
+      e,
+      'Unable to get dashboard stats. Some counts may be inaccurate.'
+    );
+  }
+}

@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { UserPlus, Plus } from 'lucide-react';
 
 import { RoleTypes } from '@/portainer/rbac/models/role';
-import { useRbacRoles } from '@/react/portainer/users/RolesView/useRbacRoles';
+import { useRbacRoles } from '@/domains/users/RolesView/useRbacRoles';
 
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
-import { TextTip } from '@@/Tip/TextTip';
-import { LoadingButton } from '@@/buttons';
-import { FormControl } from '@@/form-components/FormControl';
-import { PortainerSelect } from '@@/form-components/PortainerSelect';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
+import { LoadingButton } from '@/ui/components/buttons';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 
 import {
   Option,

@@ -8,21 +8,21 @@ import { useImages } from '@/react/docker/proxy/queries/images/useImages';
 import {
   imageContainsURL,
   getUniqueTagListFromImages,
-} from '@/react/docker/images/utils';
+} from '@/domains/images/mappers/image';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
 import {
   Registry,
   RegistryId,
   RegistryTypes,
-} from '@/react/portainer/registries/types/registry';
-import { useRegistry } from '@/react/portainer/registries/queries/useRegistry';
+} from '@/domains/registries';
+import { useRegistry } from '@/domains/registries/queries/useRegistry';
 
-import { Button } from '@@/buttons';
-import { FormControl } from '@@/form-components/FormControl';
-import { InputGroup } from '@@/form-components/InputGroup';
-import { PortainerSelect } from '@@/form-components/PortainerSelect';
-import { Input } from '@@/form-components/Input';
+import { Button } from '@/ui/components/buttons';
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { InputGroup } from '@/ui/components/forms/InputGroup';
+import { PortainerSelect } from '@/ui/components/forms/PortainerSelect';
+import { Input } from '@/ui/components/forms/Input';
 
 import { Values } from './types';
 import { InputSearch } from './InputSearch';

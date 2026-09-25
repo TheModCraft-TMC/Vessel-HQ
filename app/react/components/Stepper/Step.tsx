@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { Check } from 'lucide-react';
 
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 
 export interface StepData {
   label: string;

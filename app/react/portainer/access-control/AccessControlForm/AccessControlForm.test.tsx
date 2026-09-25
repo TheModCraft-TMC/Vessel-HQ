@@ -3,11 +3,11 @@ import { render, within } from '@testing-library/react';
 
 import { server } from '@/setup-tests/server';
 import { UserViewModel } from '@/portainer/models/user';
-import { Team, TeamId } from '@/react/portainer/users/teams/types';
+import { Team, TeamId } from '@/domains/teams';
 import { createMockTeams } from '@/react-tools/test-mocks';
-import { UserId } from '@/portainer/users/types';
+import { UserId } from '@/domains/users';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 
 import { ResourceControlOwnership, AccessControlFormData } from '../types';

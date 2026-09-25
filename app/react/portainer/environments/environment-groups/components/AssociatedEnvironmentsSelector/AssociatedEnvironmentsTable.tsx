@@ -6,12 +6,12 @@ import clsx from 'clsx';
 
 import { AutomationTestingProps } from '@/types';
 
-import { useTableStateWithoutStorage } from '@@/datatables/useTableState';
-import { Datatable } from '@@/datatables';
-import { withControlledSelected } from '@@/datatables/extend-options/withControlledSelected';
-import { TableRow } from '@@/datatables/TableRow';
-import { DeleteButton } from '@@/buttons/DeleteButton';
-import { Button } from '@@/buttons';
+import { useTableStateWithoutStorage } from '@/ui/components/data-table/useTableState';
+import { Datatable } from '@/ui/components/data-table';
+import { withControlledSelected } from '@/ui/components/data-table/extend-options/withControlledSelected';
+import { TableRow } from '@/ui/components/data-table/TableRow';
+import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
+import { Button } from '@/ui/components/buttons';
 
 import { EnvironmentTableData } from './types';
 

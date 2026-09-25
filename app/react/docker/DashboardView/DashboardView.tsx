@@ -13,7 +13,7 @@ import { isAgentEnvironment } from '@/react/portainer/environments/utils';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { useIsEnvironmentAdmin } from '@/react/hooks/useUser';
 
-import { PageHeader } from '@@/PageHeader';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { DashboardGrid } from '@@/DashboardItem/DashboardGrid';
 import { DashboardItem } from '@@/DashboardItem';
 

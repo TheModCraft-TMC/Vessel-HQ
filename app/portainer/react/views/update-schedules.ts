@@ -6,7 +6,7 @@ import {
   CreateView,
   ItemView,
 } from '@/react/portainer/environments/update-schedules';
-import { withCurrentUser } from '@/core/routing/withCurrentUser';
+import { withCurrentUser } from '@/core/routing';
 
 const UpdateSchedulesListRoute = withCurrentUser(ListView);
 const UpdateScheduleCreateRoute = withCurrentUser(CreateView);

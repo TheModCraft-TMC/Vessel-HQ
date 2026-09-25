@@ -5,7 +5,7 @@ import { init as initFeatureService } from '@/react/portainer/feature-flags/feat
 import { Edition, FeatureId } from '@/react/portainer/feature-flags/enums';
 import Docker from '@/assets/ico/vendor/docker.svg?c';
 
-import { IconProps } from '@@/Icon';
+import { IconProps } from '@/ui/components/icons/Icon';
 
 import { BoxSelectorItem } from './BoxSelectorItem';
 import { BoxSelectorOption } from './types';
@@ -84,7 +84,7 @@ function IconTemplate({
   icon,
   iconType,
 }: {
-  icon: import('../Icon').IconSource;
+  icon: import('@/ui/components/icons/Icon').IconSource;
   iconType: 'raw' | 'logo' | 'badge';
 }) {
   return (

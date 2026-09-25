@@ -1,4 +1,4 @@
-import { buildNameColumn } from '@@/datatables/buildNameColumn';
+import { buildNameColumn } from '@/ui/components/data-table/buildNameColumn';
 
 import { DecoratedItem } from '../types';
 

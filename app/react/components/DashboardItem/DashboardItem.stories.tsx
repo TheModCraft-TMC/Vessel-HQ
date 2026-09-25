@@ -1,8 +1,8 @@
 import { Meta, StoryFn } from '@storybook/react-webpack5';
 import { List } from 'lucide-react';
 
-import { Link } from '@@/Link';
-import { IconProps } from '@@/Icon';
+import { Link } from '@/ui/components/links/Link';
+import { IconProps } from '@/ui/components/icons/Icon';
 
 import { DashboardItem } from './DashboardItem';
 

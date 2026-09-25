@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-webpack5';
 import { useState } from 'react';
 
-import { Button } from '@@/buttons';
+import { Button } from '@/ui/components/buttons';
 
 import { Step, Stepper } from './Stepper';
 

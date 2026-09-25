@@ -3,7 +3,11 @@ import '@xterm/xterm/css/xterm.css';
 import { FitAddon } from '@xterm/addon-fit';
 import { useEffect, useRef } from 'react';
 
-import { error as notifyError } from '@/portainer/services/notifications';
+import {
+  openWebSocketConnection,
+  WebSocketConnection,
+} from '@/core/realtime/connection';
+import { error as notifyError } from '@/ui/components/toast/notifications';
 
 export type ShellState = 'idle' | 'connecting' | 'connected' | 'disconnected';
 
@@ -51,7 +55,7 @@ export function Terminal({
   initialCommands,
 }: Props) {
   const terminalRef = useRef<HTMLDivElement>(null);
-  const socketRef = useRef<WebSocket | null>(null);
+  const socketRef = useRef<WebSocketConnection | null>(null);
   const termRef = useRef<XTerm | null>(null);
 
   useEffect(() => {
@@ -65,17 +69,18 @@ export function Terminal({
 
     onStateChange('connecting');
 
-    const socket = new WebSocket(url);
+    const socket = openWebSocketConnection({
+      url,
+      onOpen,
+      onMessage,
+      onClose,
+      onError,
+    });
     socketRef.current = socket;
 
     const resizeObserver = new ResizeObserver(() => {
       handleResize();
     });
-
-    socket.addEventListener('open', onOpen);
-    socket.addEventListener('message', onMessage);
-    socket.addEventListener('close', onClose);
-    socket.addEventListener('error', onError);
 
     return cleanup;
 
@@ -127,10 +132,6 @@ export function Terminal({
     function cleanup() {
       if (cleaned) return;
       cleaned = true;
-      socket.removeEventListener('open', onOpen);
-      socket.removeEventListener('message', onMessage);
-      socket.removeEventListener('close', onClose);
-      socket.removeEventListener('error', onError);
       resizeObserver.disconnect();
       socket.close();
       termRef.current?.dispose();

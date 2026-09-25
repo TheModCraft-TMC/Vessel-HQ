@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
 import { EnvironmentGroupId } from '@/domains/environments';
 
-import { openConfirm } from '@@/modals/confirm';
-import { buildConfirmButton } from '@@/modals/utils';
+import { openConfirm } from '@/ui/components/dialog/confirm';
+import { buildConfirmButton } from '@/ui/components/dialog/utils';
 
 import { useGroup } from '../../queries/useGroup';
 import { useUpdateGroupMutation } from '../../queries/useUpdateGroupMutation';

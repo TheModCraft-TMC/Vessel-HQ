@@ -4,9 +4,9 @@ import { EnvironmentId } from '@/domains/environments';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { getPlatformTypeName } from '@/react/portainer/environments/utils';
 
-import { ProgressBar } from '@@/ProgressBar';
-import { Tooltip } from '@@/Tip/Tooltip/Tooltip';
-import { InlineLoader } from '@@/InlineLoader/InlineLoader';
+import { ProgressBar } from '@/ui/components/status/ProgressBar';
+import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip/Tooltip';
+import { InlineLoader } from '@/ui/components/feedback/InlineLoader/InlineLoader';
 
 import { useDockerStorageUsageQuery } from '../queries/useDockerStorageUsageQuery';
 

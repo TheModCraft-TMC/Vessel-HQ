@@ -1,0 +1,7 @@
+{
+  "maxImports": 2,
+  "modules": [
+    "@/portainer/filters/filters",
+    "@/react/hooks/useUser"
+  ]
+}

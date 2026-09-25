@@ -3,11 +3,11 @@ import { Info } from 'lucide-react';
 import { getAgentShortVersion } from '@/portainer/views/endpoints/helpers';
 import { useAgentDetails } from '@/react/portainer/environments/queries/useAgentDetails';
 
-import { CopyButton } from '@@/buttons/CopyButton';
+import { CopyButton } from '@/ui/components/buttons/CopyButton';
 import { Code } from '@@/Code';
-import { FormSectionTitle } from '@@/form-components/FormSectionTitle';
+import { FormSectionTitle } from '@/ui/components/forms/FormSectionTitle';
 import { NavTabs } from '@@/NavTabs';
-import { Icon } from '@@/Icon';
+import { Icon } from '@/ui/components/icons/Icon';
 import { NavContainer } from '@@/NavTabs/NavContainer';
 
 export const deployments = [

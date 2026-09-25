@@ -8,7 +8,7 @@ import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
 import { findSelectedTabIndex, Tab, WidgetTabs } from './WidgetTabs';
 
 // Mock Link component to avoid ui-router relative state resolution in tests
-vi.mock('@@/Link', () => ({
+vi.mock('@/ui/components/links/Link', () => ({
   Link: ({
     children,
     'data-cy': dataCy,

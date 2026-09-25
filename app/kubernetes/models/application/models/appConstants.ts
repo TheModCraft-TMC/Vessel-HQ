@@ -2,8 +2,8 @@ import {
   AppType,
   AppDataAccessPolicy,
   DeploymentType,
-} from '@/react/kubernetes/applications/types';
-import { ServiceType } from '@/react/kubernetes/services/types';
+} from '@/domains/applications/applications/types';
+import type { ServiceType } from '@/domains/configuration';
 
 // Constants shared by application model adapters.
 export const KubernetesApplicationTypes: Record<AppType, AppType> = {

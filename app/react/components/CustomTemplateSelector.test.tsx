@@ -3,9 +3,9 @@ import { render, waitFor } from '@testing-library/react';
 import { Mock } from 'vitest';
 
 import { server } from '@/setup-tests/server';
-import { withTestQueryProvider } from '@/react/test-utils/withTestQuery';
-import { CustomTemplate } from '@/react/portainer/templates/custom-templates/types';
-import { StackType } from '@/react/common/stacks/types';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
+import { CustomTemplate } from '@/domains/templates';
+import { StackType } from '@/domains/stacks/models/types';
 
 import { CustomTemplateSelector } from './CustomTemplateSelector';
 

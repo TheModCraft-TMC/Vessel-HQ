@@ -1,20 +1,20 @@
-import { withCurrentUser } from '@/core/routing/withCurrentUser';
-import { lazyRoute } from '@/core/routing/lazyRoute';
+import { withCurrentUser } from '@/core/routing/guards/withCurrentUser';
+import { lazyRoute } from '@/core/routing/lazy-loading/lazyRoute';
 
 const CreateView = lazyRoute(
-  () => import('@/domains/azure/container-instances/CreateView'),
+  () => import('@/domains/azure/views/ContainerInstances/CreateView'),
   'CreateView'
 );
 const ItemView = lazyRoute(
-  () => import('@/domains/azure/container-instances/ItemView'),
+  () => import('@/domains/azure/views/ContainerInstances/ItemView'),
   'ItemView'
 );
 const ListView = lazyRoute(
-  () => import('@/domains/azure/container-instances/ListView'),
+  () => import('@/domains/azure/views/ContainerInstances/ListView'),
   'ListView'
 );
 const DashboardView = lazyRoute(
-  () => import('@/domains/azure/DashboardView'),
+  () => import('@/domains/azure/views/DashboardView'),
   'DashboardView'
 );
 

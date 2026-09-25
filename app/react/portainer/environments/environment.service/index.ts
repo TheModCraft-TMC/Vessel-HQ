@@ -13,14 +13,14 @@ import {
   EdgeGroupId,
 } from '@/domains/environments';
 import { type TagId } from '@/domains/tags';
-import { UserId } from '@/portainer/users/types';
-import { TeamId } from '@/react/portainer/users/teams/types';
+import { UserId } from '@/domains/users';
+import { TeamId } from '@/domains/teams';
 import {
   EdgeStack,
   StatusType as EdgeStackStatusType,
-} from '@/react/edge/edge-stacks/types';
+} from '@/domains/edge/models/edge-stack';
 
-import { getPublicSettings } from '../../settings/settings.service';
+import { getPublicSettings } from '@/domains/settings/services/settings.service';
 import { SortType } from '../queries/useEnvironmentList';
 
 import { buildUrl, toEnvironment } from './utils';

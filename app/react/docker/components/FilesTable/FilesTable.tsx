@@ -3,12 +3,12 @@ import { useState } from 'react';
 
 import { Authorized } from '@/react/hooks/useUser';
 
-import { Datatable } from '@@/datatables';
-import { BasicTableSettings } from '@@/datatables/types';
-import { Button } from '@@/buttons';
-import { TableState } from '@@/datatables/useTableState';
-import { withMeta } from '@@/datatables/extend-options/withMeta';
-import { mergeOptions } from '@@/datatables/extend-options/mergeOptions';
+import { Datatable } from '@/ui/components/data-table';
+import { BasicTableSettings } from '@/ui/components/data-table/types';
+import { Button } from '@/ui/components/buttons';
+import { TableState } from '@/ui/components/data-table/useTableState';
+import { withMeta } from '@/ui/components/data-table/extend-options/withMeta';
+import { mergeOptions } from '@/ui/components/data-table/extend-options/mergeOptions';
 
 import { FileData } from './types';
 import { columns } from './columns';

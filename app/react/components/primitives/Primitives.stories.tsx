@@ -2,8 +2,8 @@ import { Meta, StoryFn } from '@storybook/react-webpack5';
 import { Check, Edit2, Layers, RefreshCw, Trash2, Users } from 'lucide-react';
 import { ReactNode } from 'react';
 
-import { Badge } from '@@/Badge';
-import { Button } from '@@/buttons/Button';
+import { Badge } from '@/ui/components/status/Badge';
+import { Button } from '@/ui/components/buttons/Button';
 
 import { Card } from './Card';
 import { StatusDot } from './StatusDot';

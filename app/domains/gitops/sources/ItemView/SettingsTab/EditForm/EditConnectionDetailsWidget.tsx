@@ -1,0 +1,123 @@
+import { LinkIcon } from 'lucide-react';
+import { useFormikContext } from 'formik';
+
+import { FormControl } from '@/ui/components/forms/FormControl';
+import { Input } from '@/ui/components/forms/Input';
+import { Select } from '@/ui/components/forms/ReactSelect';
+import { SwitchField } from '@/ui/components/forms/SwitchField';
+
+import { Card } from '@@/primitives/Card';
+
+import { SettingsFormValues } from './types';
+
+const kvVersionOptions = [
+  { label: 'KV v2', value: 2 },
+  { label: 'KV v1', value: 1 },
+] as const;
+
+export function EditConnectionDetailsWidget() {
+  const { values, errors, setFieldValue } =
+    useFormikContext<SettingsFormValues>();
+  const isVault = values.type === 'vault';
+  const selectedKVVersion =
+    kvVersionOptions.find((option) => option.value === values.kvVersion) ??
+    kvVersionOptions[0];
+
+  return (
+    <Card.Container>
+      <Card.Header
+        icon={LinkIcon}
+        title="Connection Details"
+        subtitle="Source name, URL, and connection settings"
+      />
+      <Card.Body>
+        <FormControl inputId="name" label="Name" errors={errors.name} required>
+          <Input
+            id="name"
+            name="name"
+            value={values.name}
+            onChange={(e) => setFieldValue('name', e.target.value)}
+            data-cy="source-name-input"
+          />
+        </FormControl>
+        <FormControl
+          inputId="url"
+          label={isVault ? 'Public Vault Address' : 'Repository URL'}
+          errors={errors.url}
+          required
+          tooltip={
+            isVault
+              ? 'Enter the stable domain URL of the Vault server, for example https://vault.example.com. Do not paste a Vault UI secret URL here.'
+              : undefined
+          }
+        >
+          <Input
+            id="url"
+            name="url"
+            value={values.url}
+            onChange={(e) => setFieldValue('url', e.target.value)}
+            data-cy="source-url-input"
+          />
+        </FormControl>
+        {isVault && (
+          <>
+            <FormControl
+              inputId="internalAddress"
+              label="Internal Vault Address"
+              errors={errors.internalAddress}
+              tooltip="Optional direct URL reachable from Portainer. It is used first, with the public address as fallback, so Vault access does not depend on the public reverse proxy."
+            >
+              <Input
+                id="internalAddress"
+                name="internalAddress"
+                value={values.internalAddress}
+                placeholder="http://vault:8200"
+                onChange={(e) =>
+                  setFieldValue('internalAddress', e.target.value)
+                }
+                data-cy="source-vault-internal-address-input"
+              />
+            </FormControl>
+            <FormControl
+              inputId="namespace"
+              label="Namespace"
+              errors={errors.namespace}
+              tooltip="Only for Vault Enterprise or HCP namespaces. Leave empty for normal Vault; this is not the KV mount or secret folder."
+            >
+              <Input
+                id="namespace"
+                name="namespace"
+                value={values.namespace}
+                onChange={(e) => setFieldValue('namespace', e.target.value)}
+                data-cy="source-vault-namespace-input"
+              />
+            </FormControl>
+            <FormControl
+              inputId="kvVersion"
+              label="KV engine version"
+              errors={errors.kvVersion}
+              required
+            >
+              <Select
+                inputId="kvVersion"
+                data-cy="source-vault-kv-version"
+                options={kvVersionOptions}
+                value={selectedKVVersion}
+                onChange={(option) =>
+                  setFieldValue('kvVersion', option?.value ?? 2)
+                }
+              />
+            </FormControl>
+          </>
+        )}
+        <SwitchField
+          label="Skip TLS verification"
+          name="tlsSkipVerify"
+          checked={values.tlsSkipVerify}
+          onChange={(checked) => setFieldValue('tlsSkipVerify', checked)}
+          data-cy="source-tls-skip-verify"
+        />
+      </Card.Body>
+    </Card.Container>
+  );
+}
