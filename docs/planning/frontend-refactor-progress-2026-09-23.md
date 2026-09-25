@@ -1,8 +1,8 @@
-# Frontend refactor progress — September 23, 2026
+# Frontend refactor progress — final verification snapshot
 
-Status: application, domain, routing, and UI integration gates are green. The
-final provider/Kubernetes/Docker placement and Git handoff are deferred to the
-next session.
+Status: application, domain, routing, UI integration, provider/Kubernetes
+placement, TypeScript, and full frontend test gates are green. The working tree
+remains intentionally unstaged for review and commit segmentation.
 
 ## Completed
 
@@ -22,15 +22,21 @@ next session.
   test state, icon mocks, and provider-aware stack tests exposed by the move.
 - Added a deterministic nullable canvas context to jsdom setup so xterm's
   import-time capability probe no longer floods every test worker with errors.
+- Moved the remaining Kubernetes resource transport behind
+  `app/providers/infrastructure/kubernetes`, including typed mutation methods,
+  error normalization, and the configuration-service and ingress adapters.
+- Kept Kubernetes provider DTOs and transport contracts behind the provider
+  public index; migrated service and ingress callers no longer import legacy
+  Axios directly.
 
 ## Verification
 
 | Check               | Result                                                        | Evidence                                                     |
 | ------------------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
 | TypeScript          | Passed                                                        | `pnpm run typecheck`                                         |
-| Full frontend tests | Passed: 328 files, 1 skipped; 2,306 tests, 5 skipped, 12 todo | `pnpm exec vitest run --reporter=dot`                        |
+| Full frontend tests | Passed: 330 files, 1 skipped; 2,309 tests, 5 skipped, 12 todo | `pnpm test`                                                  |
 | Production bundle   | Passed with five CSS-order warnings                           | `pnpm run build`                                             |
-| Frontend boundaries | Passed: 2,671 source files, zero violations                   | `pnpm run check:frontend-boundaries`                         |
+| Frontend boundaries | Passed: 2,674 source files, zero violations                   | `pnpm run check:frontend-boundaries`                         |
 | ESLint              | Passed on canonical roots with existing warnings only         | `pnpm exec eslint app/core app/domains app/providers app/ui` |
 | Whitespace          | Passed                                                        | `git diff --check`                                           |
 
@@ -47,41 +53,51 @@ new path, even when a total would otherwise stay unchanged:
 | Domain            | Count | Domain        | Count |
 | ----------------- | ----: | ------------- | ----: |
 | applications      |   145 | azure         |    37 |
-| clusters          |   132 | configuration |   200 |
+| clusters          |   132 | configuration |   199 |
 | containers        |   199 | edge          |   175 |
 | environments      |   109 | gitops        |   123 |
-| images            |    81 | ingress       |    12 |
+| images            |    79 | ingress       |    11 |
 | kubernetes-access |    67 | namespaces    |    67 |
 | networks          |    52 | notifications |     2 |
-| registries        |    52 | services      |   133 |
+| registries        |    52 | services      |   129 |
 | settings          |    83 | stacks        |   170 |
 | swarm             |    17 | teams         |    36 |
 | templates         |    96 | users         |    56 |
-| volumes           |    51 |               |       |
+| volumes           |    50 |               |       |
 
 Do not delete or regenerate a ratchet wholesale. Remove entries only when the
 corresponding compatibility import is removed, and delete a domain ratchet
 only when its exact set reaches zero.
 
-## Deferred final pass
+## Retained compatibility paths
 
-Perform the remaining work in this order:
+The remaining compatibility surface is intentional and measured:
 
-1. Finalize provider placement and public contracts under `app/providers` and
-   `app/core/composition`.
-2. Finalize Kubernetes transport/DTO placement and remaining Kubernetes-owned
-   adapters without moving domain UI into providers.
-3. Finalize Docker and Podman transport/capability placement and remove only
-   the compatibility paths made obsolete by those moves.
-4. Re-run typecheck, the full Vitest suite, the boundary checker, canonical
-   ESLint, the production build, and `git diff --check`.
-5. Smoke test login, Home, environment selection, Docker resources,
+- The 23 domain `legacy-imports.json` files retain exact allowlists for the
+  transitional application tree. The current aggregate is 2,674 checked
+  source files with 2,086 retained legacy imports across those ratchets.
+- `app/shared/http/index.ts` remains the compatibility gateway to the
+  configured legacy Axios client while provider transports are migrated.
+- `app/core/routing/registry/domain-manifests.ts` retains the legacy route
+  definitions that have not yet moved to domain-owned manifests.
+- Provider clients expose stable public indexes; internal DTOs, mappers, and
+  transport adapters are not imported directly by domains.
+
+Each retained path has an explicit removal condition: migrate its callers to
+the canonical public API, remove the allowlist entry, and rerun the boundary
+checker. No compatibility path was broadened to make the final checks pass.
+
+## Handoff
+
+The remaining handoff work is review and release hygiene:
+
+1. Review staged rename detection and split commits by structural area. Do not
+   stage generated build assets or unrelated local files.
+2. Smoke test login, Home, environment selection, Docker resources,
    Kubernetes resources, settings, users, and registries against a running
    backend.
-6. Review staged rename detection and split commits by structural area. Do not
-   stage generated build assets or unrelated local files.
-7. Rebase or fetch as required, run the gates once more on the final commit
-   set, then push `refactor/frontend-domain-boundaries`.
+3. Re-run the gates on the final commit set, then push
+   `refactor/frontend-domain-boundaries`.
 
 No commit or push was performed in this session. The working tree remains
 intentionally unstaged so the provider/Kubernetes/Docker moves can be reviewed
