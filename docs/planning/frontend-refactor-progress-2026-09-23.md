@@ -1,8 +1,10 @@
 # Frontend refactor progress — final verification snapshot
 
 Status: application, domain, routing, UI integration, provider/Kubernetes
-placement, TypeScript, and full frontend test gates are green. The working tree
-remains intentionally unstaged for review and commit segmentation.
+placement, TypeScript, frontend boundary, and production build gates are green.
+The refactor is committed on `refactor/frontend-domain-boundaries`; browser
+smoke testing is blocked by the unavailable local backend and a public-layout
+`UserProvider` runtime error.
 
 ## Completed
 
@@ -93,12 +95,11 @@ The remaining handoff work is review and release hygiene:
 
 1. Review staged rename detection and split commits by structural area. Do not
    stage generated build assets or unrelated local files.
-2. Smoke test login, Home, environment selection, Docker resources,
-   Kubernetes resources, settings, users, and registries against a running
-   backend.
-3. Re-run the gates on the final commit set, then push
+2. Resolve the local backend/runtime blocker, then smoke test login, Home,
+   environment selection, Docker resources, Kubernetes resources, settings,
+   users, and registries.
+3. The final commit set is ready to push on
    `refactor/frontend-domain-boundaries`.
 
-No commit or push was performed in this session. The working tree remains
-intentionally unstaged so the provider/Kubernetes/Docker moves can be reviewed
-and segmented with the rest of the structural rename set.
+The integrated refactor checkpoint is `c669923fb`; the verification snapshot is
+`637554091`. Both are intended for review together.
