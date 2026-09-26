@@ -22,6 +22,9 @@ overrides:
 pnpmfileChecksum: sha256-nVOmFZ6JT8FxIhcN+S5sJXuP1DtIhTre5ZGvjJU+4tk=
 
 patchedDependencies:
+  '@reach/dropdown@0.16.1':
+    hash: cceccc145a53cf8951fe6966791dd9a26e1514f1750dcb850448ee9ce9b113c4
+    path: patches/@reach__dropdown@0.16.1.patch
   '@tippyjs/react@4.2.6':
     hash: cd96316793f98bcaac72363c388cf7fc50549bbdac7300efe7d861c760e5b704
     path: patches/@tippyjs__react@4.2.6.patch
@@ -11149,7 +11152,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@reach/dropdown@0.16.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
+  '@reach/dropdown@0.16.1(patch_hash=cceccc145a53cf8951fe6966791dd9a26e1514f1750dcb850448ee9ce9b113c4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
       '@reach/auto-id': 0.16.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@reach/descendants': 0.16.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -11161,7 +11164,7 @@ snapshots:
 
   '@reach/menu-button@0.16.1(react-dom@19.3.0(react@19.3.0))(react-is@19.3.0)(react@19.3.0)':
     dependencies:
-      '@reach/dropdown': 0.16.1(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      '@reach/dropdown': 0.16.1(patch_hash=cceccc145a53cf8951fe6966791dd9a26e1514f1750dcb850448ee9ce9b113c4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@reach/popover': 0.16.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@reach/utils': 0.16.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       prop-types: 15.8.1

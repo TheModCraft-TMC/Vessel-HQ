@@ -1,6 +1,6 @@
 # Features added in the last four weeks
 
-This catalog covers work added, restored, or consolidated in the TheModCraft Portainer fork from **August 15 through September 12, 2026**. The catalog checkpoint used fork release **2.39.3.2.26**; the next prepared release is described in the [2.39.3.2.27-beta.1 release notes](../releases/2.39.3.2.27-beta.1.md). Upstream API and database compatibility remain at Portainer **2.45.0**.
+This catalog covers work added, restored, or consolidated in the TheModCraft Portainer fork from **August 15 through September 12, 2026**. The catalog checkpoint used fork release **2.39.3.2.26**; the next prepared release is described in the [2.39.3.2.27-beta.2 release notes](../releases/2.39.3.2.27-beta.2.md). Upstream API and database compatibility remain at Portainer **2.45.0**.
 
 ## Feature catalog
 

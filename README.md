@@ -12,7 +12,7 @@ This repository is the TheModCraft Portainer CE fork. It preserves upstream API 
 
 [![TheModCraft release](https://img.shields.io/github/v/release/TheModCraft-TMC/Vessel-HQ?color=%2344cc11&label=TheModCraft%20release&style=for-the-badge)](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/latest)
 
-- [Release 2.39.3.2.27-beta.1 notes](./docs/releases/2.39.3.2.27-beta.1.md)
+- [Release 2.39.3.2.27-beta.2 notes](./docs/releases/2.39.3.2.27-beta.2.md)
 - [Recent feature catalog](./docs/recent-features/README.md)
 - [Next-month feature planning backlog](./docs/planning/README.md)
 - [TheModCraft architecture and operations guide](./docs/themodcraft/README.md)

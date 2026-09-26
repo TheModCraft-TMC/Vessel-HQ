@@ -2,7 +2,7 @@
 
 ## Registry transition policy
 
-The beta release is `2.39.3.2.27-beta.1`; its [release notes](../releases/2.39.3.2.27-beta.1.md) describe the changes since the transitional `.26` WIP release. Keep the existing `themodcrafttmc/portainer` repository and its tags intact.
+The beta release is `2.39.3.2.27-beta.2`; its [release notes](../releases/2.39.3.2.27-beta.2.md) describe the changes since the transitional `.26` WIP release. Keep the existing `themodcrafttmc/portainer` repository and its tags intact.
 
 A dedicated Vessel HQ Docker Hub repository is planned but has not been created or selected yet. Future publishing must not switch registries, retag historical images, or change update discovery until that repository name and its migration plan are explicitly approved. Once approved, update the build script, release workflow, update checker, UI links, and this document together.
 
@@ -20,10 +20,10 @@ The generated `BUILD-IMAGE.txt` contains the exact commands for the release:
 ./scripts/build-release-context.sh
 cd dist/release-context
 docker buildx build --platform linux/amd64,linux/arm64 \
-  -t themodcrafttmc/portainer:2.39.3.2.27-beta.1 --push .
+  -t themodcrafttmc/portainer:2.39.3.2.27-beta.2 --push .
 docker buildx imagetools create \
   -t themodcrafttmc/portainer:beta \
-  themodcrafttmc/portainer:2.39.3.2.27-beta.1
+  themodcrafttmc/portainer:2.39.3.2.27-beta.2
 ```
 
 The immutable version is published and verified before the channel alias is moved. Both registry references must resolve to the same OCI index digest and contain `linux/amd64` and `linux/arm64` manifests.

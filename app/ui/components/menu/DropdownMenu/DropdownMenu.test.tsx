@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { DropdownMenu } from './DropdownMenu';
@@ -118,6 +118,20 @@ describe('DropdownMenu', () => {
     await waitFor(() => {
       expect(screen.queryByRole('menu')).not.toBeInTheDocument();
     });
+  });
+
+  test('closes on the first outside click after the opening event has finished', async () => {
+    const user = userEvent.setup();
+    renderDropdown();
+
+    // Flush the opening update after mouse-down has finished propagating.
+    // The document listener must not treat the next click as the opening one.
+    fireEvent.mouseDown(screen.getByRole('button', { name: /Group/i }));
+    expect(screen.getByRole('menu', { name: /Group/i })).toBeVisible();
+
+    await user.click(document.body);
+
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 
   test('highlights the selected option', async () => {

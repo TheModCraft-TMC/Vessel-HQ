@@ -1,0 +1,27 @@
+diff --git a/dist/reach-dropdown.cjs.dev.js b/dist/reach-dropdown.cjs.dev.js
+--- a/dist/reach-dropdown.cjs.dev.js
++++ b/dist/reach-dropdown.cjs.dev.js
+@@ -790,3 +790,2 @@
+-      if (triggerClickedRef.current) {
+-        triggerClickedRef.current = false;
+-      } else if (!popoverContainsEventTarget(popoverRef.current, event.target)) {
++      if ((!triggerRef.current || !triggerRef.current.contains(event.target)) &&
++          !popoverContainsEventTarget(popoverRef.current, event.target)) {
+diff --git a/dist/reach-dropdown.cjs.prod.js b/dist/reach-dropdown.cjs.prod.js
+--- a/dist/reach-dropdown.cjs.prod.js
++++ b/dist/reach-dropdown.cjs.prod.js
+@@ -774,3 +774,2 @@
+-      if (triggerClickedRef.current) {
+-        triggerClickedRef.current = false;
+-      } else if (!popoverContainsEventTarget(popoverRef.current, event.target)) {
++      if ((!triggerRef.current || !triggerRef.current.contains(event.target)) &&
++          !popoverContainsEventTarget(popoverRef.current, event.target)) {
+diff --git a/dist/reach-dropdown.esm.js b/dist/reach-dropdown.esm.js
+--- a/dist/reach-dropdown.esm.js
++++ b/dist/reach-dropdown.esm.js
+@@ -786,3 +786,2 @@
+-      if (triggerClickedRef.current) {
+-        triggerClickedRef.current = false;
+-      } else if (!popoverContainsEventTarget(popoverRef.current, event.target)) {
++      if ((!triggerRef.current || !triggerRef.current.contains(event.target)) &&
++          !popoverContainsEventTarget(popoverRef.current, event.target)) {
