@@ -2,13 +2,17 @@
 
 ## Registry transition policy
 
-The image references below document the transitional `2.39.3.2.26` WIP release. Keep the existing `themodcrafttmc/portainer` repository and its tags intact.
+The beta release is `2.39.3.2.27-beta.1`; its [release notes](../releases/2.39.3.2.27-beta.1.md) describe the changes since the transitional `.26` WIP release. Keep the existing `themodcrafttmc/portainer` repository and its tags intact.
 
 A dedicated Vessel HQ Docker Hub repository is planned but has not been created or selected yet. Future publishing must not switch registries, retag historical images, or change update discovery until that repository name and its migration plan are explicitly approved. Once approved, update the build script, release workflow, update checker, UI links, and this document together.
 
 ## Build and publish
 
-The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`.
+The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`, with binary checksums in `SHA256SUMS`. Use Node 22.22.1, pnpm 10.26.2, and the Go version in `go.mod`.
+
+The Linux image workflow uses the same release context and runs release-version checks, TypeScript, frontend lint/boundaries, frontend tests, backend tests, and execution checks for both images. Pushes to `develop` validate and build. Publishing runs only for a matching `v<RELEASE_VERSION>` tag or a manual dispatch; a supplied manual version must match the version file. The workflow refuses an existing published tag or a failed registry lookup, publishes the immutable version, verifies its digest and both platforms, then promotes that digest to the matching channel alias and checks the alias digest. Beta versions ending in `-beta.N` use `beta`; numeric stable versions use `latest`.
+
+Commit the release changes before tagging or generating the final publication context so that the embedded Git revision identifies the released source. Never reuse an existing published version tag.
 
 The generated `BUILD-IMAGE.txt` contains the exact commands for the release:
 
@@ -16,13 +20,13 @@ The generated `BUILD-IMAGE.txt` contains the exact commands for the release:
 ./scripts/build-release-context.sh
 cd dist/release-context
 docker buildx build --platform linux/amd64,linux/arm64 \
-  -t themodcrafttmc/portainer:2.39.3.2.26 --push .
+  -t themodcrafttmc/portainer:2.39.3.2.27-beta.1 --push .
 docker buildx imagetools create \
-  -t themodcrafttmc/portainer:latest \
-  themodcrafttmc/portainer:2.39.3.2.26
+  -t themodcrafttmc/portainer:beta \
+  themodcrafttmc/portainer:2.39.3.2.27-beta.1
 ```
 
-The immutable version is published and verified before `latest` is moved. Both registry references must resolve to the same OCI index digest and contain `linux/amd64` and `linux/arm64` manifests.
+The immutable version is published and verified before the channel alias is moved. Both registry references must resolve to the same OCI index digest and contain `linux/amd64` and `linux/arm64` manifests.
 
 ## Node 4 deployment
 

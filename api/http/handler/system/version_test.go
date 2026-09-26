@@ -94,6 +94,13 @@ func Test_HasNewerVersion(t *testing.T) {
 	f("2.39.3.2.9", "2.39.3.2.10", true)
 	f("v2.39.3.2.15", "2.39.3.2.16", true)
 
+	// Beta builds can discover stable upgrades, but stable clients ignore betas.
+	f("2.39.3.2.27-beta.1", "2.39.3.2.26", false)
+	f("2.39.3.2.27-beta.1", "2.39.3.2.27", true)
+	f("2.39.3.2.27-beta.1", "2.39.3.2.28", true)
+	f("2.39.3.2.27", "2.39.3.2.28-beta.1", false)
+	f("2.39.3.2.27-beta.1", "2.39.3.2.27-beta.2", false)
+
 	// current version isn't a valid semver
 	f("not-a-version", "2.20.0", false)
 
@@ -112,6 +119,12 @@ func Test_serverVersion(t *testing.T) {
 	require.Equal(t, "2.39.3.2.15", serverVersion("latest", "2.39.3.2.15"))
 	require.Equal(t, "2.39.3.2.15", serverVersion("N/A", "v2.39.3.2.15"))
 	require.Equal(t, "development", serverVersion("N/A", ""))
+	require.Equal(t, "2.39.3.2.27-beta.1", serverVersion("2.39.3.2.27-beta.1", "2.39.3.2.27"))
+	require.Equal(t, "2.39.3.2.27-beta.1", serverVersion("v2.39.3.2.27-beta.1", "2.39.3.2.27"))
+	require.Equal(t, "2.39.3.2.27-beta.1", serverVersion("beta", "2.39.3.2.27-beta.1"))
+	for _, invalid := range []string{"2.39.3.2.27-beta", "2.39.3.2.27-beta.0", "2.39.3.2.27-beta.01", "2.39.3.2.27-beta.x", "2.39.3.2.27-rc.1"} {
+		require.Equal(t, "development", serverVersion(invalid, ""))
+	}
 }
 
 func TestVersionCheckURLUsesMaintainedImageRepository(t *testing.T) {
@@ -136,7 +149,7 @@ func Test_GetLatestVersion(t *testing.T) {
 
 func Test_refreshLatestVersion(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := w.Write([]byte(`{"results":[{"name":"latest"},{"name":"2.39.3.2.9"},{"name":"2.39.3.2.16"},{"name":"2.39.3.2.15"}]}`))
+		_, err := w.Write([]byte(`{"results":[{"name":"latest"},{"name":"beta"},{"name":"2.99.0.0.99-beta.1"},{"name":"2.39.3.2.9"},{"name":"2.39.3.2.16"},{"name":"2.39.3.2.15"}]}`))
 		assert.NoError(t, err)
 	}))
 	defer server.Close()

@@ -8,10 +8,11 @@ Portainer consists of a single container that can run on any cluster. It can be 
 
 ## TheModCraft maintained fork
 
-This repository is the TheModCraft Portainer CE fork. It preserves upstream API and datastore compatibility while adding maintained GitOps, Vault, access-control, performance, registry, audit, and release-engineering features. The current release is read from [`RELEASE_VERSION`](./RELEASE_VERSION) and published as both an immutable version tag and `latest` at [`themodcrafttmc/portainer`](https://hub.docker.com/r/themodcrafttmc/portainer).
+This repository is the TheModCraft Portainer CE fork. It preserves upstream API and datastore compatibility while adding maintained GitOps, Vault, access-control, performance, registry, audit, and release-engineering features. The current release is read from [`RELEASE_VERSION`](./RELEASE_VERSION) and published as an immutable version tag and its channel alias (`latest` for stable releases, `beta` for prereleases) at [`themodcrafttmc/portainer`](https://hub.docker.com/r/themodcrafttmc/portainer).
 
-[![TheModCraft release](https://img.shields.io/github/v/release/GruenerNinja/portainer?color=%2344cc11&label=TheModCraft%20release&style=for-the-badge)](https://github.com/GruenerNinja/portainer/releases/latest)
+[![TheModCraft release](https://img.shields.io/github/v/release/TheModCraft-TMC/Vessel-HQ?color=%2344cc11&label=TheModCraft%20release&style=for-the-badge)](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/latest)
 
+- [Release 2.39.3.2.27-beta.1 notes](./docs/releases/2.39.3.2.27-beta.1.md)
 - [Recent feature catalog](./docs/recent-features/README.md)
 - [Next-month feature planning backlog](./docs/planning/README.md)
 - [TheModCraft architecture and operations guide](./docs/themodcraft/README.md)

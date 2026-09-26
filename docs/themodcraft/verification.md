@@ -33,10 +33,14 @@ After building an image, verify that `/api/system/version` reports `ServerVersio
 
 ```sh
 bash -n scripts/build-release-context.sh
+bash scripts/check-release-version.test.sh
 git diff --check
 file dist/release-context/amd64/portainer
 file dist/release-context/arm64/portainer
+(cd dist/release-context && shasum -a 256 -c SHA256SUMS)
 docker buildx imagetools inspect themodcrafttmc/portainer:<release-version>
 ```
 
-Execute-check both platform images before publishing and confirm that the immutable tag plus `latest` resolve to the same registry digest.
+Execute-check both platform images before publishing and confirm that the immutable tag plus its channel alias (`beta` for prereleases, `latest` for stable releases) resolve to the same registry digest.
+
+Run `pnpm typecheck`, `pnpm lint:ci`, `pnpm test`, and `go test ./...` before building a release. Backend Compose integration tests require Docker. Kubernetes integration tests require a reachable cluster; if the local kubeconfig points to an inactive cluster, set `KUBECONFIG` to a nonexistent temporary path to run unit tests with the live-cluster tests skipped. Record that limitation in the release verification.

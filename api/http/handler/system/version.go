@@ -141,9 +141,9 @@ func GetLatestVersion() string {
 }
 
 func HasNewerVersion(currentVersion, latestVersion string) bool {
-	currentParts, valid := parseNumericVersion(currentVersion)
+	currentParts, currentIsBeta, valid := parseMaintainedVersion(currentVersion)
 	if !valid {
-		log.Debug().Str("version", currentVersion).Msg("current Vessel HQ version isn't a numeric release version")
+		log.Debug().Str("version", currentVersion).Msg("current Vessel HQ version isn't a maintained release version")
 
 		return false
 	}
@@ -170,19 +170,35 @@ func HasNewerVersion(currentVersion, latestVersion string) bool {
 		}
 	}
 
-	return false
+	// A stable image supersedes the beta with the same numeric version.
+	return currentIsBeta
 }
 
 func serverVersion(imageTag, releaseVersion string) string {
-	if _, valid := parseNumericVersion(imageTag); valid {
+	if _, _, valid := parseMaintainedVersion(imageTag); valid {
 		return strings.TrimPrefix(strings.TrimSpace(imageTag), "v")
 	}
 
-	if _, valid := parseNumericVersion(releaseVersion); valid {
+	if _, _, valid := parseMaintainedVersion(releaseVersion); valid {
 		return strings.TrimPrefix(strings.TrimSpace(releaseVersion), "v")
 	}
 
 	return "development"
+}
+
+func parseMaintainedVersion(version string) ([]uint64, bool, bool) {
+	version = strings.TrimPrefix(strings.TrimSpace(version), "v")
+	base, beta, isBeta := strings.Cut(version, "-beta.")
+	if isBeta {
+		if beta == "" || beta[0] < '1' || beta[0] > '9' {
+			return nil, false, false
+		}
+		if _, err := strconv.ParseUint(beta, 10, 64); err != nil {
+			return nil, false, false
+		}
+	}
+	parts, valid := parseNumericVersion(base)
+	return parts, isBeta, valid
 }
 
 func parseNumericVersion(version string) ([]uint64, bool) {

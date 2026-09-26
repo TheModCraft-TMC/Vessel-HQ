@@ -11,7 +11,7 @@ fi
 
 RELEASE_VERSION=${RELEASE_VERSION:-$(tr -d '[:space:]' < "$RELEASE_VERSION_FILE")}
 
-if [[ ! "$RELEASE_VERSION" =~ ^v?[0-9]+(\.[0-9]+)+$ ]]; then
+if [[ ! "$RELEASE_VERSION" =~ ^v?[0-9]+(\.[0-9]+){2,}(-beta\.[1-9][0-9]*)?$ ]]; then
   echo "Invalid maintained release version: $RELEASE_VERSION" >&2
   exit 1
 fi

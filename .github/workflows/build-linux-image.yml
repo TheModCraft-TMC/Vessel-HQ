@@ -5,27 +5,31 @@ on:
     branches:
       - develop
     tags:
-      - "v*"
+      - 'v*'
   workflow_dispatch:
     inputs:
       version_tag:
-        description: Docker image version tag
-        required: true
-        default: "2.39.3.2.24"
+        description: Release version (blank uses RELEASE_VERSION; must match it)
+        required: false
+        type: string
       compose_unpacker_tag:
         description: Compose unpacker image version tag
         required: true
-        default: "2.39.3.2.3"
+        default: '2.39.3.2.3'
+        type: string
 
 env:
   IMAGE_NAME: themodcrafttmc/portainer
   COMPOSE_UNPACKER_IMAGE_NAME: themodcrafttmc/compose-unpacker
-  DEFAULT_VERSION_TAG: "2.39.3.2.24"
-  DEFAULT_COMPOSE_UNPACKER_TAG: "2.39.3.2.3"
+  DEFAULT_COMPOSE_UNPACKER_TAG: '2.39.3.2.3'
+
+concurrency:
+  group: linux-image-release
+  cancel-in-progress: false
 
 jobs:
   build-linux-image:
-    name: Build and push linux image
+    name: Validate, build, and publish Linux image
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,6 +37,36 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Resolve release version
+        id: image
+        env:
+          REQUESTED_VERSION: ${{ inputs.version_tag }}
+          COMPOSE_UNPACKER_TAG: ${{ inputs.compose_unpacker_tag }}
+        run: |
+          version_tag=$(bash scripts/check-release-version.sh "$REQUESTED_VERSION")
+          compose_unpacker_tag=${COMPOSE_UNPACKER_TAG:-$DEFAULT_COMPOSE_UNPACKER_TAG}
+          [[ "$compose_unpacker_tag" =~ ^[0-9]+(\.[0-9]+)+$ ]]
+          echo "version_tag=$version_tag" >> "$GITHUB_OUTPUT"
+          echo "compose_unpacker_tag=$compose_unpacker_tag" >> "$GITHUB_OUTPUT"
+          channel_tag=latest
+          if [[ "$version_tag" == *-beta.* ]]; then
+            channel_tag=beta
+          fi
+          echo "channel_tag=$channel_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Require an unused immutable tag
+        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        env:
+          VERSION_TAG: ${{ steps.image.outputs.version_tag }}
+        run: |
+          status=$(curl --silent --show-error --retry 3 --connect-timeout 10 --max-time 30 \
+            --output "$RUNNER_TEMP/release-tag.json" --write-out '%{http_code}' \
+            "https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/$VERSION_TAG")
+          if [[ "$status" != 404 ]]; then
+            echo "Refusing to publish $IMAGE_NAME:$VERSION_TAG: tag lookup returned HTTP $status (expected 404)." >&2
+            exit 1
+          fi
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
@@ -42,7 +76,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.22.1
           cache: pnpm
 
       - name: Set up Go
@@ -51,77 +85,81 @@ jobs:
           go-version-file: go.mod
           cache-dependency-path: go.sum
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate release and frontend
+        run: |
+          bash scripts/check-release-version.test.sh
+          pnpm typecheck
+          pnpm lint:ci
+          pnpm test
+
+      - name: Test backend
+        run: go test ./...
+
+      - name: Build release context
+        env:
+          BUILDNUMBER: ${{ github.run_number }}
+          GIT_COMMIT_HASH: ${{ github.sha }}
+        run: ./scripts/build-release-context.sh
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Resolve image tags
-        id: image
-        shell: bash
-        run: |
-          version_tag="${{ github.event.inputs.version_tag }}"
-          if [ -z "$version_tag" ]; then
-            version_tag="$DEFAULT_VERSION_TAG"
-          fi
-          compose_unpacker_tag="${{ github.event.inputs.compose_unpacker_tag }}"
-          if [ -z "$compose_unpacker_tag" ]; then
-            compose_unpacker_tag="$DEFAULT_COMPOSE_UNPACKER_TAG"
-          fi
-
-          {
-            echo "tags<<EOF"
-            echo "$IMAGE_NAME:latest"
-            echo "$IMAGE_NAME:$version_tag"
-            if [ "$GITHUB_REF_TYPE" = "tag" ]; then
-              echo "$IMAGE_NAME:${GITHUB_REF_NAME#v}"
-            fi
-            echo "EOF"
-            echo "version_tag=$version_tag"
-            echo "compose_unpacker_tag=$compose_unpacker_tag"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build frontend
-        run: make build-client ENV=production
-
-      - name: Build Storybook assets
-        run: make build-storybook
-
-      - name: Build Linux binaries
+      - name: Execute-check both platform images
         env:
-          BUILDNUMBER: ${{ github.run_number }}
-          CONTAINER_IMAGE_TAG: ${{ steps.image.outputs.version_tag }}
-          GIT_COMMIT_HASH: ${{ github.sha }}
-          SKIP_GO_GET: "true"
+          COMPOSE_UNPACKER_TAG: ${{ steps.image.outputs.compose_unpacker_tag }}
         run: |
-          make build-server PLATFORM=linux ARCH=amd64
-          mv dist/portainer dist/portainer-amd64
-          make build-server PLATFORM=linux ARCH=arm64
-          mv dist/portainer dist/portainer-arm64
-
-      - name: Set build date
-        id: date
-        run: echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+          for arch in amd64 arm64; do
+            docker buildx build --platform "linux/$arch" --load \
+              --build-arg "COMPOSE_UNPACKER_IMAGE=$COMPOSE_UNPACKER_IMAGE_NAME:$COMPOSE_UNPACKER_TAG" \
+              -t "vessel-release-check:$arch" dist/release-context
+            docker run --rm --platform "linux/$arch" "vessel-release-check:$arch" --version
+          done
 
       - name: Login to Docker Hub
+        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Portainer image
+      - name: Set build date
+        id: date
+        run: echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Publish immutable image
+        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        id: publish
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
+          context: dist/release-context
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ${{ steps.image.outputs.tags }}
+          tags: ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version_tag }}
           build-args: |
+            RELEASE_VERSION=${{ steps.image.outputs.version_tag }}
             GIT_COMMIT=${{ github.sha }}
             BUILD_DATE=${{ steps.date.outputs.created }}
             COMPOSE_UNPACKER_IMAGE=${{ env.COMPOSE_UNPACKER_IMAGE_NAME }}:${{ steps.image.outputs.compose_unpacker_tag }}
+
+      - name: Verify immutable image and promote channel
+        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        env:
+          VERSION_TAG: ${{ steps.image.outputs.version_tag }}
+          IMAGE_DIGEST: ${{ steps.publish.outputs.digest }}
+          CHANNEL_TAG: ${{ steps.image.outputs.channel_tag }}
+        run: |
+          manifest=$(docker buildx imagetools inspect "$IMAGE_NAME:$VERSION_TAG" --format '{{json .Manifest}}')
+          jq -e --arg digest "$IMAGE_DIGEST" '
+            .digest == $digest and
+            ([.manifests[].platform | .os + "/" + .architecture] |
+              index("linux/amd64") != null and index("linux/arm64") != null)
+          ' <<< "$manifest"
+          docker buildx imagetools create -t "$IMAGE_NAME:$CHANNEL_TAG" "$IMAGE_NAME@$IMAGE_DIGEST"
+          channel_digest=$(docker buildx imagetools inspect "$IMAGE_NAME:$CHANNEL_TAG" --format '{{.Manifest.Digest}}')
+          [[ "$channel_digest" == "$IMAGE_DIGEST" ]]
