@@ -23,8 +23,6 @@ import { useDeleteIngresses, useIngresses } from '../queries';
 
 import { columns } from './columns';
 
-import '../style.css';
-
 interface SelectedIngress {
   Namespace: string;
   Name: string;

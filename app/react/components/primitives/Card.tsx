@@ -9,7 +9,6 @@ import {
 } from 'react';
 
 import { useId } from '@/react/hooks/useId';
-
 import { Icon } from '@/ui/components/icons/Icon';
 
 const cardContainer = cva(

@@ -20,6 +20,8 @@ import type {
   Swarm,
 } from 'docker-types';
 
+import { PortainerDockerSnapshot } from '@api/types.gen';
+
 // Raw Docker API contracts are intentionally re-exported only from the
 // provider boundary. Consumers should not depend on docker-types directly.
 export type {
@@ -69,8 +71,6 @@ export type {
   Volume,
   VolumeCreateOptions,
 } from 'docker-types';
-
-import { PortainerDockerSnapshot } from '@api/types.gen';
 
 /** Identifies a Portainer environment without coupling the provider to a domain model. */
 export type EnvironmentId = number;

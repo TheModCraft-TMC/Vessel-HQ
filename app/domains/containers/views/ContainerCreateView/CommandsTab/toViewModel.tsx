@@ -1,5 +1,4 @@
 import { HostConfig } from '@/providers/infrastructure/docker';
-
 import { commandArrayToString } from '@/domains/containers/mappers/command';
 
 import { ContainerDetailsJSON } from '../../../queries/useContainer';

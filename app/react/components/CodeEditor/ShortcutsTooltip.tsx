@@ -1,5 +1,4 @@
 import { BROWSER_OS_PLATFORM } from '@/react/constants';
-
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
 
 const otherEditorConfig = {

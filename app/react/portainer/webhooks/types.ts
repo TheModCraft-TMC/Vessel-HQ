@@ -1,5 +1,4 @@
 import { EnvironmentId } from '@/domains/environments';
-
 import { RegistryId } from '@/domains/registries';
 
 export enum WebhookType {

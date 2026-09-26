@@ -1,8 +1,8 @@
 package settings
 
 import (
-	"fmt"
 	"net/http"
+	"net/url"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/pkg/featureflags"
@@ -91,16 +91,7 @@ func generatePublicSettings(appSettings *portainer.Settings) *publicSettingsResp
 	if publicSettings.AuthenticationMethod == portainer.AuthenticationOAuth {
 		publicSettings.TeamSync = appSettings.OAuthSettings.OAuthAutoMapTeamMemberships
 		publicSettings.OAuthLogoutURI = appSettings.OAuthSettings.LogoutURI
-		publicSettings.OAuthLoginURI = fmt.Sprintf("%s?response_type=code&client_id=%s&redirect_uri=%s&scope=%s",
-			appSettings.OAuthSettings.AuthorizationURI,
-			appSettings.OAuthSettings.ClientID,
-			appSettings.OAuthSettings.RedirectURI,
-			appSettings.OAuthSettings.Scopes)
-
-		// Control prompt=login param according to the SSO setting
-		if !appSettings.OAuthSettings.SSO {
-			publicSettings.OAuthLoginURI += "&prompt=login"
-		}
+		publicSettings.OAuthLoginURI = buildOAuthLoginURI(&appSettings.OAuthSettings)
 	}
 	// If LDAP authentication is on, compose the related fields from application settings
 	if publicSettings.AuthenticationMethod == portainer.AuthenticationLDAP && appSettings.LDAPSettings.GroupSearchSettings != nil {
@@ -110,4 +101,23 @@ func generatePublicSettings(appSettings *portainer.Settings) *publicSettingsResp
 	}
 
 	return publicSettings
+}
+
+func buildOAuthLoginURI(settings *portainer.OAuthSettings) string {
+	authorizationURL, err := url.Parse(settings.AuthorizationURI)
+	if err != nil {
+		return settings.AuthorizationURI
+	}
+
+	query := authorizationURL.Query()
+	query.Set("response_type", "code")
+	query.Set("client_id", settings.ClientID)
+	query.Set("redirect_uri", settings.RedirectURI)
+	query.Set("scope", settings.Scopes)
+	if !settings.SSO {
+		query.Set("prompt", "login")
+	}
+	authorizationURL.RawQuery = query.Encode()
+
+	return authorizationURL.String()
 }

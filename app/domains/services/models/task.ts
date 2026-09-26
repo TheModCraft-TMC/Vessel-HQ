@@ -1,5 +1,4 @@
 import { Task } from '@/providers/infrastructure/docker';
-
 import { DeepPick } from '@/types/deepPick';
 
 export class TaskViewModel {

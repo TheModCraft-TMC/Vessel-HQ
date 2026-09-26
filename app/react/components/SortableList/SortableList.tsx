@@ -3,7 +3,6 @@ import '@/ui/components/data-table/datatable.css';
 import { ReactNode } from 'react';
 
 import { AutomationTestingProps } from '@/types';
-
 import { DropdownOption } from '@/ui/components/menu';
 
 import { SortOption, SortableListHeader } from './SortableListHeader';

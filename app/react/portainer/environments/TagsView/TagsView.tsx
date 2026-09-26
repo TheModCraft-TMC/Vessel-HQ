@@ -7,12 +7,12 @@ import {
   useTags,
 } from '@/portainer/tags/queries';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { Widget } from '@@/Widget';
 import { Input } from '@/ui/components/forms/Input';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { LoadingButton } from '@/ui/components/buttons';
+
+import { Widget } from '@@/Widget';
 
 import { TagsDatatable } from './TagsDatatable';
 

@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { Swarm } from '@/providers/infrastructure/docker';
 
+import { Swarm } from '@/providers/infrastructure/docker';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 import { queryKeys } from './query-keys';
 import { useIsSwarmManager } from './useInfo';
-import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 export function useSwarm<T = Swarm>(
   environmentId: EnvironmentId,

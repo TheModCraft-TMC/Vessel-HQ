@@ -6,7 +6,6 @@ import {
   TeamAccessViewModel,
   UserAccessViewModel,
 } from '@/portainer/models/access';
-
 import { Datatable } from '@/ui/components/data-table';
 import { createPersistedStore } from '@/ui/components/data-table/types';
 import { useTableState } from '@/ui/components/data-table/useTableState';

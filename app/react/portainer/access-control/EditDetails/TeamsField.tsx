@@ -1,8 +1,8 @@
 import { Team } from '@/domains/teams';
-
-import { TeamsSelector } from '@@/TeamsSelector';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Link } from '@/ui/components/links/Link';
+
+import { TeamsSelector } from '@@/TeamsSelector';
 
 interface Props {
   name: string;

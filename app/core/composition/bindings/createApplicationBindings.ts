@@ -1,7 +1,8 @@
+import type { KubernetesHttpTransport } from '@/providers/infrastructure/kubernetes';
+
 import { getEnvironmentCapabilities } from '../capabilities';
 import { createInfrastructureProviders } from '../infrastructure-providers';
 import { createRemoteProviders } from '../remote-providers';
-import type { KubernetesHttpTransport } from '@/providers/infrastructure/kubernetes';
 
 import type { ApplicationBindings } from './types';
 

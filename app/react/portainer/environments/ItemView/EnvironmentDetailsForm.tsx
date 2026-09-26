@@ -2,11 +2,11 @@ import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
 
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { Environment } from '@/domains/environments';
+import { EdgeEnvironmentForm } from '@/domains/edge/views/environments/EdgeEnvironmentForm/EdgeEnvironmentForm';
 
 import { isAzureEnvironment, isEdgeEnvironment } from '../utils';
 
 import { AzureEnvironmentForm } from './AzureEnvironmentForm/AzureEnvironmentForm';
-import { EdgeEnvironmentForm } from '@/domains/edge/views/environments/EdgeEnvironmentForm/EdgeEnvironmentForm';
 import { GeneralEnvironmentForm } from './GeneralEnvironmentForm/GeneralEnvironmentForm';
 
 export function EnvironmentDetailsForm({

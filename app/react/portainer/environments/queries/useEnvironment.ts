@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { withError } from '@/core/query';
 import { EnvironmentId } from '@/domains/environments';
 
-export { useEnvironment } from '@/domains/environments/queries/useEnvironment';
-
 import { getDeploymentOptions } from '../environment.service';
 
 import { environmentQueryKeys } from './query-keys';
+
+export { useEnvironment } from '@/domains/environments/queries/useEnvironment';
 
 export function useEnvironmentDeploymentOptions(id: EnvironmentId | undefined) {
   return useQuery(

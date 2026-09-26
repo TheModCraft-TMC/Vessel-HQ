@@ -8,6 +8,7 @@ import { parseKubernetesError } from '../errors/parse-kubernetes-error';
 import { mapKubernetesEvent } from '../mappers/event';
 import { mapKubernetesNamespace } from '../mappers/namespace';
 import { mapKubernetesVersion } from '../mappers/version';
+
 import type { KubernetesHttpTransport } from './resource-client';
 
 type KubernetesReadTransport = Pick<KubernetesHttpTransport, 'get'>;

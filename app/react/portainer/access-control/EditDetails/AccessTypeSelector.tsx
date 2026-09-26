@@ -1,6 +1,7 @@
+import { Team } from '@/domains/teams';
+
 import { BoxSelector } from '@@/BoxSelector';
 
-import { Team } from '@/domains/teams';
 import { ResourceControlOwnership } from '../types';
 
 import { useOptions } from './useOptions';

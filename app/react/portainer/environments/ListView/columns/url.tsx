@@ -7,7 +7,6 @@ import {
   EnvironmentType,
 } from '@/domains/environments';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-
 import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';
 import { Button } from '@/ui/components/buttons';
 import { Icon } from '@/ui/components/icons/Icon';

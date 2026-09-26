@@ -30,6 +30,7 @@ function removeStoredValue(...names: string[]) {
 export const authStorage = {
   getLoginState: () => getStoredValue('LOGIN_STATE_UUID', ''),
   setLoginState: (value: string) => setStoredValue('LOGIN_STATE_UUID', value),
+  clearLoginState: () => removeStoredValue('LOGIN_STATE_UUID'),
   getLogoutReason: () => getStoredValue('logout_reason', ''),
   setLogoutReason: (value: string) => setStoredValue('logout_reason', value),
   clearLogoutReason: () => removeStoredValue('logout_reason'),

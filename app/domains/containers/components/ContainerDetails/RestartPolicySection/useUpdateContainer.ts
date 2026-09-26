@@ -1,5 +1,4 @@
 import { Resources, RestartPolicy } from '@/providers/infrastructure/docker';
-
 import { EnvironmentId } from '@/domains/environments';
 import { dockerClient } from '@/core/composition/dockerClient';
 

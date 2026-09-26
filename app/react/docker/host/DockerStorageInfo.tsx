@@ -3,7 +3,6 @@ import { humanize } from '@/portainer/filters/filters';
 import { EnvironmentId } from '@/domains/environments';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { getPlatformTypeName } from '@/react/portainer/environments/utils';
-
 import { ProgressBar } from '@/ui/components/status/ProgressBar';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip/Tooltip';
 import { InlineLoader } from '@/ui/components/feedback/InlineLoader/InlineLoader';

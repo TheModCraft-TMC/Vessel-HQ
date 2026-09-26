@@ -1,7 +1,6 @@
 import { ComponentProps } from 'react';
 
 import { FilesTable } from '@/react/docker/components/FilesTable';
-
 import { createPersistedStore } from '@/ui/components/data-table/types';
 import { useTableState } from '@/ui/components/data-table/useTableState';
 

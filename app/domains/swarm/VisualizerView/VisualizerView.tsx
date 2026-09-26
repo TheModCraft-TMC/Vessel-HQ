@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { Node, Task, TaskState } from '@/providers/infrastructure/docker';
 
+import { Node, Task, TaskState } from '@/providers/infrastructure/docker';
 import { humanize } from '@/portainer/filters/filters';
 import { hideShaSum, nodeStatusBadge } from '@/docker/filters/utils';
 import { useNodes } from '@/domains/swarm';

@@ -1,7 +1,7 @@
 import { FormikErrors } from 'formik';
 import { array, object, SchemaOf, string } from 'yup';
-import { DeviceMapping } from '@/providers/infrastructure/docker';
 
+import { DeviceMapping } from '@/providers/infrastructure/docker';
 import { FormError } from '@/ui/components/forms/FormError';
 import { InputList, ItemProps } from '@/ui/components/forms/InputList';
 import { InputLabeled } from '@/ui/components/forms/Input/InputLabeled';

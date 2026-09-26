@@ -1,6 +1,7 @@
+import { DockerSnapshot } from '@/domains/environments';
+
 import { DetailsTable } from '@@/DetailsTable';
 
-import { DockerSnapshot } from '@/domains/environments';
 
 export function GpuInfo({
   gpus,

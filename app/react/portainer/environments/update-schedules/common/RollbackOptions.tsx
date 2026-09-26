@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { useMemo, useEffect } from 'react';
 
 import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
-
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { usePreviousVersions } from '../queries/usePreviousVersions';

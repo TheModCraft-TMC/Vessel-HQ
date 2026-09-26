@@ -4,7 +4,6 @@ import { Briefcase } from 'lucide-react';
 import { init as initFeatureService } from '@/react/portainer/feature-flags/feature-flags.service';
 import { Edition, FeatureId } from '@/react/portainer/feature-flags/enums';
 import Docker from '@/assets/ico/vendor/docker.svg?c';
-
 import { IconProps } from '@/ui/components/icons/Icon';
 
 import { BoxSelectorItem } from './BoxSelectorItem';

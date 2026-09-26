@@ -1,10 +1,10 @@
 # Frontend refactor progress — final verification snapshot
 
 Status: application, domain, routing, UI integration, provider/Kubernetes
-placement, TypeScript, frontend boundary, and production build gates are green.
-The refactor is committed on `refactor/frontend-domain-boundaries`; browser
-smoke testing is blocked by the unavailable local backend and a public-layout
-`UserProvider` runtime error.
+placement, TypeScript, frontend boundary, lint, test, production build, and
+local runtime gates are green. The refactor is committed on
+`refactor/frontend-domain-boundaries`; local internal and OAuth authentication
+have both been verified against the running backend.
 
 ## Completed
 
@@ -30,22 +30,43 @@ smoke testing is blocked by the unavailable local backend and a public-layout
 - Kept Kubernetes provider DTOs and transport contracts behind the provider
   public index; migrated service and ingress callers no longer import legacy
   Axios directly.
+- Kept authenticated layout bindings below `UserProvider` so public routes no
+  longer require an authenticated user context.
+- Made named lazy routes safe when a domain barrel already exports a lazy
+  component, avoiding React 19 nested-lazy runtime failures.
+- Centralized global xterm and ingress styles and limited CSS-module order
+  suppression to conflicts containing only scoped styles.
+- Corrected OAuth state validation, callback parsing, URL encoding, and
+  authorization-code exchange, including codes containing reserved URL
+  characters.
+- Disabled the administrator-only settings query for standard users in the
+  shared layout.
+- Restored the standard-user sidebar by making public settings, rather than an
+  administrator role, the only prerequisite for rendering primary navigation.
+- Replaced the client hydration sentinel with an explicit post-hydration state
+  transition so hard reloads and logout cannot remain stuck on the loading
+  shell.
+- Stabilized environment layout synchronization by selecting individual
+  Zustand values/actions, avoiding redundant environment writes, and mapping
+  Docker, Kubernetes, Azure, and Podman platform enums explicitly.
 
 ## Verification
 
-| Check               | Result                                                        | Evidence                                                     |
-| ------------------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
-| TypeScript          | Passed                                                        | `pnpm run typecheck`                                         |
-| Full frontend tests | Passed: 330 files, 1 skipped; 2,309 tests, 5 skipped, 12 todo | `pnpm test`                                                  |
-| Production bundle   | Passed with five CSS-order warnings                           | `pnpm run build`                                             |
-| Frontend boundaries | Passed: 2,674 source files, zero violations                   | `pnpm run check:frontend-boundaries`                         |
-| ESLint              | Passed on canonical roots with existing warnings only         | `pnpm exec eslint app/core app/domains app/providers app/ui` |
-| Whitespace          | Passed                                                        | `git diff --check`                                           |
+| Check                     | Result                                                        | Evidence                                                                  |
+| ------------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| TypeScript                | Passed                                                        | `pnpm typecheck`                                                          |
+| Full frontend tests       | Passed: 335 files, 1 skipped; 2,324 tests, 5 skipped, 12 todo | `pnpm test`                                                               |
+| Production bundle         | Passed with zero webpack warnings                             | `pnpm build`                                                              |
+| Frontend boundaries       | Passed: 2,681 source files, zero violations                   | `pnpm check:frontend-boundaries`                                          |
+| Full frontend lint gate   | Passed with existing non-blocking warnings                    | `pnpm lint:ci`                                                            |
+| Focused backend auth tests | Passed                                                        | `go test ./api/oauth ./api/http/handler/settings ./api/http/handler/auth` |
+| OAuth browser round trip  | Passed                                                        | local mock provider to authenticated Home as a standard user              |
+| Browser UI smoke          | Passed                                                        | admin and standard-user navigation; Docker dashboard, containers, images, networks, volumes, stacks, events, and host; compact and expanded sidebar; zero clean-tab console errors |
+| Whitespace                | Passed                                                        | `git diff --check`                                                        |
 
 The verification machine used Node 25.9.0 while the package declares Node
-`^22.22.1`; pnpm therefore prints an engine warning. The build also reports the
-missing optional `.env`, a Babel plugin deprecation, and five existing CSS
-ordering warnings. None failed the build.
+`^22.22.1`; pnpm therefore prints an engine warning. The missing optional
+`.env`, Babel deprecation, and CSS-order build warnings have been resolved.
 
 ## Transitional legacy-import ratchets
 
@@ -95,10 +116,10 @@ The remaining handoff work is review and release hygiene:
 
 1. Review staged rename detection and split commits by structural area. Do not
    stage generated build assets or unrelated local files.
-2. Resolve the local backend/runtime blocker, then smoke test login, Home,
-   environment selection, Docker resources, Kubernetes resources, settings,
-   users, and registries.
-3. The final commit set is ready to push on
+2. Kubernetes resource routes still require a Kubernetes environment for live
+   smoke testing. The available local Docker environment and its principal
+   resource routes are verified.
+3. The final commit set is ready for review on
    `refactor/frontend-domain-boundaries`.
 
 The integrated refactor checkpoint is `c669923fb`; the verification snapshot is

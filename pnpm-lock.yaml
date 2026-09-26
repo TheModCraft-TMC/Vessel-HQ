@@ -25,6 +25,9 @@ patchedDependencies:
   '@tippyjs/react@4.2.6':
     hash: cd96316793f98bcaac72363c388cf7fc50549bbdac7300efe7d861c760e5b704
     path: patches/@tippyjs__react@4.2.6.patch
+  babel-plugin-lodash@3.3.4:
+    hash: f5f0fc2441c87968b5690db9636c61e9649192dd0c0a3536e4a00a964273a20a
+    path: patches/babel-plugin-lodash@3.3.4.patch
 
 importers:
 
@@ -435,7 +438,7 @@ importers:
         version: 0.9.0
       babel-plugin-lodash:
         specifier: ^3.3.4
-        version: 3.3.4
+        version: 3.3.4(patch_hash=f5f0fc2441c87968b5690db9636c61e9649192dd0c0a3536e4a00a964273a20a)
       clean-webpack-plugin:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.107.2)
@@ -13010,7 +13013,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-plugin-lodash@3.3.4:
+  babel-plugin-lodash@3.3.4(patch_hash=f5f0fc2441c87968b5690db9636c61e9649192dd0c0a3536e4a00a964273a20a):
     dependencies:
       '@babel/helper-module-imports': 7.28.6
       '@babel/types': 7.29.0

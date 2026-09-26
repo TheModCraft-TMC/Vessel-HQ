@@ -4,12 +4,12 @@ import { useRouter } from '@uirouter/react';
 
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { useIdParam } from '@/react/hooks/useIdParam';
-
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
 import { confirm } from '@/ui/components/dialog/confirm';
 import { ModalType } from '@/ui/components/dialog/Modal';
 import { buildConfirmButton } from '@/ui/components/dialog/utils';
+
+import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
 
 import { useGroup } from '../queries/useGroup';
 import { useDeleteEnvironmentGroupMutation } from '../queries/useDeleteEnvironmentGroupMutation';

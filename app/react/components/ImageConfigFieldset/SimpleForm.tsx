@@ -17,7 +17,6 @@ import {
   RegistryTypes,
 } from '@/domains/registries';
 import { useRegistry } from '@/domains/registries/queries/useRegistry';
-
 import { Button } from '@/ui/components/buttons';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { InputGroup } from '@/ui/components/forms/InputGroup';

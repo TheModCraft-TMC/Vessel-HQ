@@ -16,13 +16,13 @@ import {
 import { EnabledWaitingRoomSwitch } from '@/domains/settings/views/EdgeComputeView/AutomaticEdgeEnvCreation/EnableWaitingRoomSwitch';
 import { ConnectivityTestModal } from '@/domains/edge/components/ConnectivityTestModal/ConnectivityTestModal';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-
 import { Switch } from '@/ui/components/forms/SwitchField/Switch';
 import { FormControl } from '@/ui/components/forms/FormControl';
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 import { Button } from '@/ui/components/buttons';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
+
+import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 
 interface FormValues {
   EnableEdgeComputeFeatures: boolean;

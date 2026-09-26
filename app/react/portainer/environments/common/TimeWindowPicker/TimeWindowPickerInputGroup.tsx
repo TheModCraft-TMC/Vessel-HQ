@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { FormikErrors } from 'formik';
 
 import { EndpointChangeWindow } from '@/domains/environments';
-
 import { Select } from '@/ui/components/forms/ReactSelect';
 import { Option } from '@/ui/components/forms/PortainerSelect';
 import { FormError } from '@/ui/components/forms/FormError';

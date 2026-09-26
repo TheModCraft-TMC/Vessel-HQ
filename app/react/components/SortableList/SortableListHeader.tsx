@@ -2,9 +2,7 @@ import { ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { AutomationTestingProps } from '@/types';
-
 import { SearchBar } from '@/ui/components/data-table/SearchBar';
-
 import { DropdownOption } from '@/ui/components/menu';
 
 import { SortByGroup, SortOption } from './SortByGroup';

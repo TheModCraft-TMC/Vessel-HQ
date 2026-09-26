@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { useCustomTemplates } from '@/domains/templates';
 import { CustomTemplate } from '@/domains/templates';
 import { StackType } from '@/domains/stacks/models/types';
-
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 

@@ -2,9 +2,7 @@ import { Search, X } from 'lucide-react';
 import { type ReactNode, forwardRef, useMemo, useRef, useState } from 'react';
 
 import { pluralize } from '@/react/common/string-utils';
-
 import { Button } from '@/ui/components/buttons';
-
 import { filterToPattern } from '@/ui/components/forms/FilePicker/utils';
 
 import { globToRegex } from './utils';

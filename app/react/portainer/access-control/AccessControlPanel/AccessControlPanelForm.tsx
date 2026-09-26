@@ -6,7 +6,6 @@ import { object } from 'yup';
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { EnvironmentId } from '@/domains/environments';
-
 import { confirm } from '@/ui/components/dialog/confirm';
 import { Button } from '@/ui/components/buttons';
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';

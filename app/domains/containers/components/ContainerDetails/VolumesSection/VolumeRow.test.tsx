@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { MountPoint } from '@/providers/infrastructure/docker';
 
+import { MountPoint } from '@/providers/infrastructure/docker';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 
 import { VolumeRow } from './VolumeRow';

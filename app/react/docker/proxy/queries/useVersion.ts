@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { EnvironmentId } from '@/domains/environments';
 import { type DockerSystemVersion } from '@/providers/infrastructure/docker';
-
 import { dockerClient } from '@/core/composition/dockerClient';
 
 export async function getVersion(environmentId: EnvironmentId) {

@@ -9,10 +9,10 @@ import {
 } from '@/react/portainer/environments/utils';
 import { EnvironmentId } from '@/domains/environments';
 import { useEnvironmentList } from '@/react/portainer/environments/queries/useEnvironmentList';
+import { Icon } from '@/ui/components/icons/Icon';
 
 import { EdgeIndicator } from '@@/EdgeIndicator';
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
-import { Icon } from '@/ui/components/icons/Icon';
 
 import styles from './WizardEndpointsList.module.css';
 

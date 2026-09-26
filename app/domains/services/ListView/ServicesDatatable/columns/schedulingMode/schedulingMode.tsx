@@ -1,6 +1,6 @@
 import { CellContext } from '@tanstack/react-table';
-import { Node } from '@/providers/infrastructure/docker';
 
+import { Node } from '@/providers/infrastructure/docker';
 import { ServiceViewModel } from '@/domains/services/models/service';
 import { useNodes } from '@/domains/swarm';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';

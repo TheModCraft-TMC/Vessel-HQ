@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { withError } from '@/core/query';
 import { EnvironmentId } from '@/domains/environments';
-
 import { RegistryId } from '@/domains/registries';
 
 import { buildUrl } from './build-url';

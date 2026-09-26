@@ -5,7 +5,6 @@ import { Loader2 } from 'lucide-react';
 import { Icon, IconProps } from '@/ui/components/icons/Icon';
 import { pluralize } from '@/portainer/helpers/strings';
 import { AutomationTestingProps } from '@/types';
-
 import { Link } from '@/ui/components/links/Link';
 
 interface Props extends IconProps, AutomationTestingProps {

@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { mixed } from 'yup';
-import { ContainerConfig } from '@/providers/infrastructure/docker';
 
+import { ContainerConfig } from '@/providers/infrastructure/docker';
 import { AutomationTestingProps } from '@/types';
 import { FormControl } from '@/ui/components/forms/FormControl';
 

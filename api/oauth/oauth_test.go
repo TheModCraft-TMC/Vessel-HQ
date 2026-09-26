@@ -36,6 +36,18 @@ func Test_getOAuthToken(t *testing.T) {
 	})
 }
 
+func TestGetOAuthTokenPreservesReservedCharactersInCode(t *testing.T) {
+	t.Parallel()
+	validCode := "valid+code/with%percent"
+	srv, config := oauthtest.RunOAuthServer(validCode, &portainer.OAuthSettings{})
+	defer srv.Close()
+
+	token, err := GetOAuthToken(t.Context(), validCode, config)
+	require.NoError(t, err)
+	require.NotNil(t, token)
+	assert.Equal(t, oauthtest.AccessToken, token.AccessToken)
+}
+
 func Test_getIdToken(t *testing.T) {
 	t.Parallel()
 	verifiedToken := `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE2NTM1NDA3MjksImV4cCI6MTY4NTA3NjcyOSwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoiam9obi5kb2VAZXhhbXBsZS5jb20iLCJHaXZlbk5hbWUiOiJKb2huIiwiU3VybmFtZSI6IkRvZSIsIkdyb3VwcyI6WyJGaXJzdCIsIlNlY29uZCJdfQ.GeU8XCV4Y4p5Vm-i63Aj7UP5zpb_0Zxb7-DjM2_z-s8`

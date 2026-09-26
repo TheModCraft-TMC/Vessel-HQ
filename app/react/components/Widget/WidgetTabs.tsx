@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { Icon } from '@/ui/components/icons/Icon';
 import type { IconSource } from '@/ui/components/icons/Icon';
 import { Link } from '@/ui/components/links/Link';
+
 import { Tabs } from '@@/primitives/Tabs/Tabs';
 
 export interface Tab {

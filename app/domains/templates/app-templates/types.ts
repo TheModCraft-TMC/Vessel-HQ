@@ -1,5 +1,4 @@
 import { RestartPolicy } from '@/providers/infrastructure/docker';
-
 import { BasicTableSettings } from '@/ui/components/data-table/types';
 import { Pair } from '@/domains/settings';
 

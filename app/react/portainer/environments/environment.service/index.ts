@@ -19,8 +19,8 @@ import {
   EdgeStack,
   StatusType as EdgeStackStatusType,
 } from '@/domains/edge/models/edge-stack';
-
 import { getPublicSettings } from '@/domains/settings/services/settings.service';
+
 import { SortType } from '../queries/useEnvironmentList';
 
 import { buildUrl, toEnvironment } from './utils';

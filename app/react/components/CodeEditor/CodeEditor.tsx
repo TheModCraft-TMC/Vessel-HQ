@@ -6,11 +6,10 @@ import type { JSONSchema7 } from 'json-schema';
 import clsx from 'clsx';
 
 import { AutomationTestingProps } from '@/types';
-
 import { CopyButton } from '@/ui/components/buttons/CopyButton';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { useDebounce } from '../../hooks/useDebounce';
-import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { StackVersionSelector } from '../StackVersionSelector';
 
 import styles from './CodeEditor.module.css';

@@ -1,8 +1,8 @@
 import { User } from '@/domains/users';
-
-import { UsersSelector } from '@@/UsersSelector';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Link } from '@/ui/components/links/Link';
+
+import { UsersSelector } from '@@/UsersSelector';
 
 interface Props {
   name: string;

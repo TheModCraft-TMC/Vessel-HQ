@@ -1,0 +1,6 @@
+diff --git a/lib/index.js b/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -102 +102 @@ function lodash(_ref) {
+-        if ((0, _types.isModuleDeclaration)(node)) {
++        if ((0, _types.isImportOrExportDeclaration)(node)) {

@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { withLimitToBE } from '@/react/hooks/useLimitToBE';
 import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
-
 import { Datatable } from '@/ui/components/data-table';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { AddButton } from '@/ui/components/buttons';

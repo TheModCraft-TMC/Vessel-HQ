@@ -2,12 +2,12 @@ import { Info } from 'lucide-react';
 
 import { getAgentShortVersion } from '@/portainer/views/endpoints/helpers';
 import { useAgentDetails } from '@/react/portainer/environments/queries/useAgentDetails';
-
 import { CopyButton } from '@/ui/components/buttons/CopyButton';
-import { Code } from '@@/Code';
 import { FormSectionTitle } from '@/ui/components/forms/FormSectionTitle';
-import { NavTabs } from '@@/NavTabs';
 import { Icon } from '@/ui/components/icons/Icon';
+
+import { Code } from '@@/Code';
+import { NavTabs } from '@@/NavTabs';
 import { NavContainer } from '@@/NavTabs/NavContainer';
 
 export const deployments = [

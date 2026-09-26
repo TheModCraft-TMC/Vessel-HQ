@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'toastr/build/toastr.css';
 import 'spinkit/spinkit.min.css'; // ViewLoading, index.html, internal-auth. auth,
 import '@reach/menu-button/styles.css';
+import '@xterm/xterm/css/xterm.css';
 
 import './colors';
 
@@ -15,3 +16,4 @@ import './bootstrap-override.css';
 import './icon.css';
 import './button.css';
 import './react-datetime-picker-override.css';
+import '../../domains/ingress/ingresses/style.css';

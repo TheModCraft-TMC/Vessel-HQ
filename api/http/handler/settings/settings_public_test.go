@@ -1,7 +1,7 @@
 package settings
 
 import (
-	"fmt"
+	"net/url"
 	"testing"
 
 	portainer "github.com/portainer/portainer/api"
@@ -16,11 +16,6 @@ const (
 )
 
 func newTestSettings() (loginURI string, settings *portainer.Settings) {
-	loginURI = fmt.Sprintf("%s?response_type=code&client_id=%s&redirect_uri=%s&scope=%s",
-		dummyOAuthAuthenticationURI,
-		dummyOAuthClientID,
-		dummyOAuthRedirectURI,
-		dummyOAuthScopes)
 	settings = &portainer.Settings{
 		AuthenticationMethod: portainer.AuthenticationOAuth,
 		OAuthSettings: portainer.OAuthSettings{
@@ -31,14 +26,16 @@ func newTestSettings() (loginURI string, settings *portainer.Settings) {
 			LogoutURI:        dummyOAuthLogoutURI,
 		},
 	}
+	loginURI = buildOAuthLoginURI(&settings.OAuthSettings)
 	return
 }
 
 func TestGeneratePublicSettingsWithSSO(t *testing.T) {
 	t.Parallel()
-	dummyOAuthLoginURI, mockAppSettings := newTestSettings()
+	_, mockAppSettings := newTestSettings()
 
 	mockAppSettings.OAuthSettings.SSO = true
+	dummyOAuthLoginURI := buildOAuthLoginURI(&mockAppSettings.OAuthSettings)
 	publicSettings := generatePublicSettings(mockAppSettings)
 	if publicSettings.AuthenticationMethod != portainer.AuthenticationOAuth {
 		t.Errorf("wrong AuthenticationMethod, want: %d, got: %d", portainer.AuthenticationOAuth, publicSettings.AuthenticationMethod)
@@ -55,15 +52,15 @@ func TestGeneratePublicSettingsWithSSO(t *testing.T) {
 
 func TestGeneratePublicSettingsWithoutSSO(t *testing.T) {
 	t.Parallel()
-	dummyOAuthLoginURI, mockAppSettings := newTestSettings()
+	_, mockAppSettings := newTestSettings()
 
 	mockAppSettings.OAuthSettings.SSO = false
+	expectedOAuthLoginURI := buildOAuthLoginURI(&mockAppSettings.OAuthSettings)
 	publicSettings := generatePublicSettings(mockAppSettings)
 	if publicSettings.AuthenticationMethod != portainer.AuthenticationOAuth {
 		t.Errorf("wrong AuthenticationMethod, want: %d, got: %d", portainer.AuthenticationOAuth, publicSettings.AuthenticationMethod)
 	}
 
-	expectedOAuthLoginURI := dummyOAuthLoginURI + "&prompt=login"
 	if publicSettings.OAuthLoginURI != expectedOAuthLoginURI {
 		t.Errorf("wrong OAuthLoginURI when SSO is switched off, want: %s, got: %s", expectedOAuthLoginURI, publicSettings.OAuthLoginURI)
 	}
@@ -81,5 +78,39 @@ func TestGeneratePublicSettingsWithOAuthTeamSync(t *testing.T) {
 	publicSettings := generatePublicSettings(mockAppSettings)
 	if !publicSettings.TeamSync {
 		t.Error("expected OAuth automatic team membership to enable public team sync state")
+	}
+}
+
+func TestBuildOAuthLoginURIPreservesAndEncodesParameters(t *testing.T) {
+	t.Parallel()
+	settings := &portainer.OAuthSettings{
+		AuthorizationURI: "https://identity.example/authorize?audience=vessel%20api",
+		ClientID:         "client + id",
+		RedirectURI:      "https://vessel.example/oauth/callback?source=login",
+		Scopes:           "openid,profile,email",
+		SSO:              false,
+	}
+
+	loginURI := buildOAuthLoginURI(settings)
+	parsed, err := url.Parse(loginURI)
+	if err != nil {
+		t.Fatalf("expected a valid OAuth login URI: %v", err)
+	}
+
+	query := parsed.Query()
+	if query.Get("audience") != "vessel api" {
+		t.Errorf("expected existing authorization parameters to be preserved, got %q", query.Get("audience"))
+	}
+	if query.Get("client_id") != settings.ClientID {
+		t.Errorf("expected client ID to round-trip, got %q", query.Get("client_id"))
+	}
+	if query.Get("redirect_uri") != settings.RedirectURI {
+		t.Errorf("expected redirect URI to round-trip, got %q", query.Get("redirect_uri"))
+	}
+	if query.Get("scope") != settings.Scopes {
+		t.Errorf("expected scopes to round-trip, got %q", query.Get("scope"))
+	}
+	if query.Get("prompt") != "login" {
+		t.Errorf("expected prompt=login when SSO is disabled, got %q", query.Get("prompt"))
 	}
 }

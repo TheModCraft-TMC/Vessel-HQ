@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { FormikErrors } from 'formik';
 
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-
 import { Option, PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 import { FormControl } from '@/ui/components/forms/FormControl';
 

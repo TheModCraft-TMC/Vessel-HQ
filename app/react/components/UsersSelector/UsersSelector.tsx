@@ -1,5 +1,4 @@
 import { User, UserId } from '@/domains/users';
-
 import { Select } from '@/ui/components/forms/ReactSelect';
 
 interface Props {

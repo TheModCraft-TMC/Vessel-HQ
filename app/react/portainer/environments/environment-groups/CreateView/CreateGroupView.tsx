@@ -2,9 +2,9 @@ import { useRouter } from '@uirouter/react';
 import { FormikHelpers } from 'formik';
 
 import { notifySuccess } from '@/ui/components/toast/notifications';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 import { Widget } from '@@/Widget';
-import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 import { useCreateGroupMutation } from '../queries/useCreateGroupMutation';
 import { GroupForm, GroupFormValues } from '../components/GroupForm';

@@ -4,7 +4,6 @@ import UpdatesUnknown from '@/assets/ico/icon_updates-unknown.svg?c';
 import { useEnvironment } from '@/react/portainer/environments/queries';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
-
 import { Icon } from '@/ui/components/icons/Icon';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
 import {

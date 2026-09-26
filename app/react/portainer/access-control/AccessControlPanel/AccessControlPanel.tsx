@@ -9,7 +9,6 @@ import {
 } from '@/domains/users';
 import { EnvironmentId } from '@/domains/environments';
 import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
-
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
 import { Button } from '@/ui/components/buttons';
 

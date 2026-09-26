@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 
 import { Team } from '@/domains/teams';
 import { ownershipIcon } from '@/react/docker/components/datatable/createOwnershipColumn';
+import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
 
 import { BoxSelectorOption, buildOption } from '@@/BoxSelector';
-import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
 
 import { ResourceControlOwnership } from '../types';
 

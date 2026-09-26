@@ -3,8 +3,8 @@ import { Form, Formik } from 'formik';
 import { Environment } from '@/domains/environments';
 import { useUpdateEnvironmentMutation } from '@/react/portainer/environments/queries/useUpdateEnvironmentMutation';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
-
 import { FormSection } from '@/ui/components/forms/FormSection';
+
 import { Widget } from '@@/Widget/Widget';
 import { WidgetBody } from '@@/Widget';
 

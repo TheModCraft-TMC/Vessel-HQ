@@ -7,20 +7,21 @@ import { notifySuccess } from '@/ui/components/toast/notifications';
 import { withLimitToBE } from '@/react/hooks/useLimitToBE';
 import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
 import { EdgeGroup } from '@/domains/edge/models/edge-group';
-
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { Widget } from '@@/Widget';
 import { LoadingButton } from '@/ui/components/buttons';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
-import { InformationPanel } from '@@/InformationPanel';
 import { Link } from '@/ui/components/links/Link';
+import { EdgeGroupsField } from '@/domains/edge/views/environments/EdgeGroupsField/EdgeGroupsField';
+
+import { Widget } from '@@/Widget';
+import { InformationPanel } from '@@/InformationPanel';
+
 
 import { useItem } from '../queries/useItem';
 import { validation } from '../common/validation';
 import { useUpdateMutation } from '../queries/useUpdateMutation';
 import { useList } from '../queries/list';
 import { NameField, nameValidation } from '../common/NameField';
-import { EdgeGroupsField } from '@/domains/edge/views/environments/EdgeGroupsField/EdgeGroupsField';
 import { EdgeUpdateSchedule } from '../types';
 import { FormValues } from '../common/types';
 import { ScheduleTypeSelector } from '../common/ScheduleTypeSelector';

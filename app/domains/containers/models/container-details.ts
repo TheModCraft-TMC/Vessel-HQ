@@ -6,7 +6,6 @@ import type {
   MountPoint,
   NetworkSettings,
 } from '@/providers/infrastructure/docker';
-
 import type { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
 
 /** Stable domain representation of a Docker container inspect response. */

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Task } from '@/providers/infrastructure/docker';
 
+import { Task } from '@/providers/infrastructure/docker';
 import { EnvironmentId } from '@/domains/environments';
 import { dockerClient } from '@/core/composition/dockerClient';
 

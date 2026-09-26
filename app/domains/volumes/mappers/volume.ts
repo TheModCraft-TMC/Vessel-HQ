@@ -2,7 +2,6 @@ import {
   DockerPortainerResponse,
   Volume as DockerVolume,
 } from '@/providers/infrastructure/docker';
-
 import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
 
 import { VolumeModel } from '../models/volume';

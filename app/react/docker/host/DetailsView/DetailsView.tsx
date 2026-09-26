@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCurrentStateAndParams } from '@uirouter/react';
-import { Node } from '@/providers/infrastructure/docker';
 
+import { Node } from '@/providers/infrastructure/docker';
 import { useApiVersion } from '@/react/docker/agent/queries/useApiVersion';
 import { getNode } from '@/react/docker/proxy/queries/nodes/useNode';
 import { useInfo } from '@/react/docker/proxy/queries/useInfo';
@@ -11,7 +11,6 @@ import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
 import { withError } from '@/core/query';
-
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 import { HostDetailsPanel } from '../HostDetailsPanel/HostDetailsPanel';

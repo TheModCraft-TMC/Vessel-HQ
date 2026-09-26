@@ -1,5 +1,4 @@
 import { Config } from '@/providers/infrastructure/docker';
-
 import { dockerClient } from '@/core/composition/dockerClient';
 import { EnvironmentId } from '@/domains/environments';
 

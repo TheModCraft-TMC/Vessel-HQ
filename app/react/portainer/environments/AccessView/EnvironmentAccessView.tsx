@@ -13,9 +13,9 @@ import { Access } from '@/react/portainer/access-control/AccessManagement/Access
 import { CreateAccessWidget } from '@/react/portainer/access-control/AccessManagement/CreateAccessWidget';
 import { Option } from '@/react/portainer/access-control/AccessManagement/PorAccessManagementUsersSelector';
 import { useAccesses } from '@/react/portainer/access-control/AccessManagement/useAccesses';
-
 import { Link } from '@/ui/components/links/Link';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 
 import { useGroup } from '../environment-groups/queries/useGroup';

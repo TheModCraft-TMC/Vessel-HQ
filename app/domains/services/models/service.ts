@@ -8,7 +8,6 @@ import {
   TaskSpec,
   DockerPortainerResponse,
 } from '@/providers/infrastructure/docker';
-
 import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
 
 import { TaskViewModel } from './task';

@@ -5,7 +5,6 @@ import {
   getDockerSystemCapabilities,
   type DockerSystemInfo,
 } from '@/providers/infrastructure/docker';
-
 import { dockerClient } from '@/core/composition/dockerClient';
 
 export async function getInfo(environmentId: EnvironmentId) {

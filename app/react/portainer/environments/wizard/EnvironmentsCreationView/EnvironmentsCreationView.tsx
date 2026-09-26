@@ -8,12 +8,12 @@ import {
   Environment,
   EnvironmentId,
 } from '@/domains/environments';
-
-import { Stepper } from '@@/Stepper/Stepper';
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Button } from '@/ui/components/buttons';
 import { FormSection } from '@/ui/components/forms/FormSection';
+
+import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { Stepper } from '@@/Stepper/Stepper';
 import { StickyFooter } from '@@/StickyFooter/StickyFooter';
 
 import {

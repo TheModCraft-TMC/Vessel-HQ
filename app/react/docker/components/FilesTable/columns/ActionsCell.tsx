@@ -2,7 +2,6 @@ import { CellContext } from '@tanstack/react-table';
 import { Download, Edit, Trash2 } from 'lucide-react';
 
 import { Authorized } from '@/react/hooks/useUser';
-
 import { Button } from '@/ui/components/buttons';
 
 import { FileData, isFilesTableMeta } from '../types';

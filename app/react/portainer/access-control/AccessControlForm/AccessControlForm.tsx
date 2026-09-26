@@ -2,7 +2,6 @@ import { FormikErrors } from 'formik';
 
 import { useIsEdgeAdmin } from '@/react/hooks/useUser';
 import { EnvironmentId } from '@/domains/environments';
-
 import { FormSectionTitle } from '@/ui/components/forms/FormSectionTitle';
 import { SwitchField } from '@/ui/components/forms/SwitchField';
 

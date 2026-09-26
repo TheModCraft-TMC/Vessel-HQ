@@ -13,12 +13,12 @@ import {
 } from '@/domains/environments';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
 import { withError } from '@/core/query';
-
 import { LoadingButton } from '@/ui/components/buttons';
 import { FormSection } from '@/ui/components/forms/FormSection';
 import { SwitchField } from '@/ui/components/forms/SwitchField';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
+
 import { Widget } from '@@/Widget/Widget';
 import { WidgetBody } from '@@/Widget/WidgetBody';
 

@@ -12,6 +12,20 @@ const pkg = require('../package.json');
 const { renderSsrShell } = require('./ssr-shell');
 const projectRoot = path.resolve(__dirname, '..');
 
+function isScopedCssOrderWarning(warning) {
+  const message = warning?.message ?? String(warning);
+
+  if (!message.includes('[mini-css-extract-plugin]') || !message.includes('Conflicting order.')) {
+    return false;
+  }
+
+  const stylesheets = message.match(/\.\/[^\s!]+\.css\b/g) ?? [];
+
+  // CSS Modules produce unique selectors, so their relative chunk order does
+  // not affect the cascade. Keep reporting conflicts that involve global CSS.
+  return stylesheets.length > 0 && stylesheets.every((stylesheet) => stylesheet.endsWith('.module.css'));
+}
+
 /** @type {import('webpack').Configuration} */
 module.exports = {
   entry: {
@@ -102,7 +116,7 @@ module.exports = {
     },
   },
   plugins: [
-    new Dotenv({ defaults: true }),
+    new Dotenv({ defaults: true, silent: true }),
     new HtmlWebpackPlugin({
       template: './app/index.html',
       templateParameters: {
@@ -176,6 +190,7 @@ module.exports = {
       },
     },
   },
+  ignoreWarnings: [isScopedCssOrderWarning],
   watchOptions: {
     ignored: /node_modules/,
     aggregateTimeout: 200,

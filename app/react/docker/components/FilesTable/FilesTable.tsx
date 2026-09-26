@@ -2,7 +2,6 @@ import { CornerLeftUp, File as FileIcon, Upload } from 'lucide-react';
 import { useState } from 'react';
 
 import { Authorized } from '@/react/hooks/useUser';
-
 import { Datatable } from '@/ui/components/data-table';
 import { BasicTableSettings } from '@/ui/components/data-table/types';
 import { Button } from '@/ui/components/buttons';

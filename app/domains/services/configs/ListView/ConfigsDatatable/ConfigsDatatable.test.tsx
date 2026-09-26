@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { HttpResponse, http } from 'msw';
-import { Config } from '@/providers/infrastructure/docker';
 
+import { Config } from '@/providers/infrastructure/docker';
 import { isoDate } from '@/portainer/filters/filters';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';

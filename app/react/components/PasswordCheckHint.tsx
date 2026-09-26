@@ -1,7 +1,6 @@
 import { AlertTriangle, Check } from 'lucide-react';
 
 import { usePublicSettings } from '@/domains/settings/queries';
-
 import { Icon } from '@/ui/components/icons/Icon';
 
 interface Props {

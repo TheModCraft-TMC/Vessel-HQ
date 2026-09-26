@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Service } from '@/providers/infrastructure/docker';
 
+import { Service } from '@/providers/infrastructure/docker';
 import { dockerClient } from '@/core/composition/dockerClient';
 import { withError } from '@/core/query';
 import { queryKeys } from '@/domains/services/queries/query-keys';

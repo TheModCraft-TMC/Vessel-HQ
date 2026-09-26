@@ -4,7 +4,6 @@ import { useEnvironment } from '@/react/portainer/environments/queries';
 import { statusIcon } from '@/react/docker/components/ImageStatus/helpers';
 import { EnvironmentId } from '@/domains/environments';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
-
 import { Icon } from '@/ui/components/icons/Icon';
 
 import { ResourceID, ResourceType } from './types';

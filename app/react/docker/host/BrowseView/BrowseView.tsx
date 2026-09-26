@@ -11,7 +11,6 @@ import { getNode } from '@/react/docker/proxy/queries/nodes/useNode';
 import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { withError } from '@/core/query';
-
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { confirmDelete } from '@/ui/components/dialog/confirm';
 

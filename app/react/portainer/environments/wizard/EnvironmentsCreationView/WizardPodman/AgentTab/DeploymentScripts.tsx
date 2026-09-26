@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { useAgentDetails } from '@/react/portainer/environments/queries/useAgentDetails';
-
 import { CopyButton } from '@/ui/components/buttons/CopyButton';
+
 import { Code } from '@@/Code';
 import { NavTabs } from '@@/NavTabs';
 import { NavContainer } from '@@/NavTabs/NavContainer';

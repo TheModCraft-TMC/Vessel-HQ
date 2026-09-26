@@ -13,7 +13,6 @@ import {
   EnvironmentHealth,
   PlatformType,
 } from '@/domains/environments';
-
 import { DropdownOption } from '@/ui/components/menu/DropdownMenu/DropdownMenu';
 
 export function useAvailableSortGroups(

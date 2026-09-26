@@ -1,5 +1,4 @@
 import type { FeatureId } from '@/react/portainer/feature-flags/enums';
-
 import type { IconProps } from '@/ui/components/icons/Icon';
 
 import type { BoxSelectorOption } from './types';

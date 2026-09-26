@@ -1,5 +1,4 @@
 import { Team, TeamId } from '@/domains/teams';
-
 import { PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 
 interface Props {

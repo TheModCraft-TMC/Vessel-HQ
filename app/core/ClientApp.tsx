@@ -1,4 +1,4 @@
-import { Suspense, useSyncExternalStore } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { UIRouter, UIView, useCurrentStateAndParams } from '@uirouter/react';
 
 import { AuthenticatedLayout, PublicLayout } from '@/ui';
@@ -8,6 +8,7 @@ import {
 } from '@/core/composition';
 import { QueryProvider } from '@/core/query';
 import { SidebarProvider } from '@/ui/layouts/mobile-navigation/useSidebarState';
+import { UserProvider } from '@/react/hooks/useUser';
 
 import { router } from './router';
 
@@ -29,11 +30,14 @@ export function VesselLoadingShell() {
 }
 
 export function ClientApp() {
-  const hydrated = useSyncExternalStore(
-    () => () => undefined,
-    () => true,
-    () => false
-  );
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    // The first client render must match the static loading shell. Switch to
+    // the router only after React has hydrated that shell.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setHydrated(true);
+  }, []);
 
   if (!hydrated) {
     return <VesselLoadingShell />;
@@ -43,13 +47,11 @@ export function ClientApp() {
     <QueryProvider>
       <UIRouter router={router}>
         <ApplicationBindingsProvider>
-          <LayoutBindingsProvider>
-            <SidebarProvider>
-              <Suspense fallback={<VesselLoadingShell />}>
-                <ApplicationShell />
-              </Suspense>
-            </SidebarProvider>
-          </LayoutBindingsProvider>
+          <SidebarProvider>
+            <Suspense fallback={<VesselLoadingShell />}>
+              <ApplicationShell />
+            </Suspense>
+          </SidebarProvider>
         </ApplicationBindingsProvider>
       </UIRouter>
     </QueryProvider>
@@ -68,9 +70,13 @@ function ApplicationShell() {
   }
 
   return (
-    <AuthenticatedLayout
-      content={<UIView name="content" />}
-      sidebar={<UIView name="sidebar" />}
-    />
+    <UserProvider>
+      <LayoutBindingsProvider>
+        <AuthenticatedLayout
+          content={<UIView name="content" />}
+          sidebar={<UIView name="sidebar" />}
+        />
+      </LayoutBindingsProvider>
+    </UserProvider>
   );
 }

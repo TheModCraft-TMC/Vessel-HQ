@@ -1,10 +1,10 @@
-import { Task } from '@/providers/infrastructure/docker';
 import { useQuery } from '@tanstack/react-query';
 
+import { Task } from '@/providers/infrastructure/docker';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
-
 import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
+
 import { withFiltersQueryParam } from '../utils';
 
 import { queryKeys } from './query-keys';

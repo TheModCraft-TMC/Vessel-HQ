@@ -1,5 +1,4 @@
 import { Team } from '@/domains/teams';
-
 import { Select } from '@/ui/components/forms/ReactSelect';
 
 interface Props {

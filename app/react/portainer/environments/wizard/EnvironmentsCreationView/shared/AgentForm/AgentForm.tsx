@@ -11,7 +11,6 @@ import {
 import { CreateAgentEnvironmentValues } from '@/react/portainer/environments/environment.service/create';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
 import { EnvironmentUrlField } from '@/react/portainer/environments/common/EnvironmentUrlField/EnvironmentUrlField';
-
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 
 import { MoreSettingsSection } from '../MoreSettingsSection';

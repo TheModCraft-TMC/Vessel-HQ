@@ -3,7 +3,6 @@ import { Calendar, X } from 'lucide-react';
 
 import { isoDate } from '@/portainer/filters/filters';
 import { AutomationTestingProps } from '@/types';
-
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
 

@@ -1,5 +1,4 @@
 import { EnvironmentStatus } from '@/domains/environments';
-
 import { Link } from '@/ui/components/links/Link';
 
 import { columnHelper } from './helper';

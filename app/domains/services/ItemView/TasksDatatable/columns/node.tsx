@@ -1,6 +1,6 @@
-import { Node } from '@/providers/infrastructure/docker';
 import { CellContext } from '@tanstack/react-table';
 
+import { Node } from '@/providers/infrastructure/docker';
 import { useNodes } from '@/domains/swarm';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 

@@ -15,7 +15,6 @@ import { getAppState, initializeAppState } from '@/react/portainer/app-state';
 import { getSettings } from '@/domains/settings/services/settings.service';
 import { getSystemStatus } from '@/react/portainer/system/useSystemStatus';
 import { administratorExists, login } from '@/domains/auth';
-
 import { LoadingButton } from '@/ui/components/buttons';
 import { FileUploadField } from '@/ui/components/forms/FileUpload';
 import { Input } from '@/ui/components/forms/Input';

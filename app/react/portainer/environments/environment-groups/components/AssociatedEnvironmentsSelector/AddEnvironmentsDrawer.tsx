@@ -9,7 +9,6 @@ import {
   EnvironmentId,
   EnvironmentGroupId,
 } from '@/domains/environments';
-
 import { Datatable } from '@/ui/components/data-table';
 import { useTableStateWithoutStorage } from '@/ui/components/data-table/useTableState';
 import { withControlledSelected } from '@/ui/components/data-table/extend-options/withControlledSelected';

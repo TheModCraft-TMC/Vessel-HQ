@@ -4,8 +4,9 @@ import { Wand2 } from 'lucide-react';
 
 import { Button } from '@/ui/components/buttons';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 import { FormSection } from '@/ui/components/forms/FormSection';
+
+import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 
 import { EnvironmentSelector } from './EnvironmentSelector';
 import {

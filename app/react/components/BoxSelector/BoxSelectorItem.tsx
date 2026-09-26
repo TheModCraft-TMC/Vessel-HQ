@@ -4,7 +4,6 @@ import { Fragment } from 'react';
 
 import { Icon } from '@/ui/components/icons/Icon';
 import { isLimitedToBE } from '@/react/portainer/feature-flags/feature-flags.service';
-
 import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
 
 import styles from './BoxSelectorItem.module.css';

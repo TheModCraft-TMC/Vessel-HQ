@@ -1,7 +1,7 @@
 import { EnvironmentId } from '@/domains/environments';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
-
 import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
+
 import { withAgentTargetHeader } from '../utils';
 
 export type ImageLayer = {

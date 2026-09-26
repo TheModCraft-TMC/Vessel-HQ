@@ -2,9 +2,7 @@ import { CpuIcon } from 'lucide-react';
 
 import { humanize } from '@/portainer/filters/filters';
 import memoryIcon from '@/assets/ico/memory.svg?c';
-
 import { Icon } from '@/ui/components/icons/Icon';
-
 import { DockerSnapshot } from '@/domains/environments';
 
 export function SnapshotStats({

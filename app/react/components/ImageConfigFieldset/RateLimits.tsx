@@ -15,7 +15,6 @@ import {
 } from '@/react/portainer/environments/utils';
 import { RegistryId } from '@/domains/registries';
 import { useRegistry } from '@/domains/registries/queries/useRegistry';
-
 import { Link } from '@/ui/components/links/Link';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 

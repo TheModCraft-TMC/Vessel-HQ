@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@uirouter/react';
 import YAML from 'yaml';
-import { ServiceSpec } from '@/providers/infrastructure/docker';
 
+import { ServiceSpec } from '@/providers/infrastructure/docker';
 import {
   notifyError,
   notifySuccess,

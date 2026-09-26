@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import { TagId } from '@/domains/tags';
 import { useCreateTagMutation, useTags } from '@/portainer/tags/queries';
-
 import { Creatable, Select } from '@/ui/components/forms/ReactSelect';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Link } from '@/ui/components/links/Link';

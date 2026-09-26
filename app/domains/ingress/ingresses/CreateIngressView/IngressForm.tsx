@@ -25,8 +25,6 @@ import {
   ServicePorts,
 } from './types';
 
-import '../style.css';
-
 const PathTypes: Record<string, string[]> = {
   nginx: ['ImplementationSpecific', 'Prefix', 'Exact'],
   traefik: ['Prefix', 'Exact'],

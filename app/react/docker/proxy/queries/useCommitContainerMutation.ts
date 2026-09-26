@@ -9,7 +9,6 @@ import {
 import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
 import { withError } from '@/core/query';
 import { queryKeys } from '@/domains/containers/queries/query-keys';
-
 import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 type CommitParams = {

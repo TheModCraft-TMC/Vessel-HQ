@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { EnvironmentId } from '@/domains/environments';
-
 import { FormSection } from '@/ui/components/forms/FormSection';
+
 import { Widget, WidgetBody } from '@@/Widget';
 
 import { EnvironmentTableData } from './types';

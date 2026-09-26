@@ -10,17 +10,17 @@ import { commandsTabs } from '@/domains/edge/components/EdgeScriptForm/scripts';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 import EdgeAgentStandardIcon from '@/domains/edge/components/edge-agent-standard.svg?c';
 import EdgeAgentAsyncIcon from '@/domains/edge/components/edge-agent-async.svg?c';
-
-import { BoxSelector, type BoxSelectorOption } from '@@/BoxSelector';
 import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
 import { Alert } from '@/ui/components/feedback/Alert';
 import { FormSection } from '@/ui/components/forms/FormSection';
 import { Badge } from '@/ui/components/status/Badge';
-import { ExternalLink } from '@@/ExternalLink';
 import { useDocsUrl } from '@/ui/layouts/view-layout/page-header/ContextHelp';
+import { EdgeAgentTab } from '@/domains/edge/views/environments/EdgeAgentTab';
+
+import { ExternalLink } from '@@/ExternalLink';
+import { BoxSelector, type BoxSelectorOption } from '@@/BoxSelector';
 
 import { AnalyticsStateKey } from '../types';
-import { EdgeAgentTab } from '@/domains/edge/views/environments/EdgeAgentTab';
 
 import { AgentTab } from './AgentTab';
 import { APITab } from './APITab';

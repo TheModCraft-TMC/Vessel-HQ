@@ -9,7 +9,6 @@ import {
   Environment,
 } from '@/domains/environments';
 import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
-
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';

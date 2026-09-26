@@ -3,10 +3,10 @@ import { Wand2, Plug2 } from 'lucide-react';
 import { EnvironmentType } from '@/domains/environments';
 import DockerIcon from '@/assets/ico/vendor/docker-icon.svg?c';
 import Kube from '@/assets/ico/kube.svg?c';
-
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 import { Link } from '@/ui/components/links/Link';
+
+import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 
 import { Option } from '../components/Option';
 

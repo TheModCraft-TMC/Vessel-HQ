@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCurrentStateAndParams, useRouter } from '@uirouter/react';
-import { ConfigSpec } from '@/providers/infrastructure/docker';
 
+import { ConfigSpec } from '@/providers/infrastructure/docker';
 import {
   notifyError,
   notifySuccess,

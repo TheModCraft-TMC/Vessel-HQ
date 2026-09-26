@@ -3,7 +3,6 @@ import { ZapIcon } from 'lucide-react';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { getDockerEnvironmentType } from '@/react/portainer/environments/utils/getDockerEnvironmentType';
 import { usePodmanCapabilities } from '@/providers/infrastructure/podman';
-
 import { Icon } from '@/ui/components/icons/Icon';
 
 import { useInfo } from '../proxy/queries/useInfo';

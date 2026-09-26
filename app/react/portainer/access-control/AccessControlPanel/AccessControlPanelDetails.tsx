@@ -10,7 +10,6 @@ import { useTeams } from '@/domains/teams';
 import { useUsers } from '@/domains/users';
 import { pluralize } from '@/portainer/helpers/strings';
 import { ownershipIcon } from '@/react/docker/components/datatable/createOwnershipColumn';
-
 import { Link } from '@/ui/components/links/Link';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
 import { Icon } from '@/ui/components/icons/Icon';

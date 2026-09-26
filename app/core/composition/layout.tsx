@@ -33,33 +33,49 @@ import {
   type LayoutBindings,
 } from '@/ui/layouts/layout-context';
 
+import { toLayoutPlatform } from './environment-platform';
+
 export function LayoutBindingsProvider({ children }: PropsWithChildren) {
   const { state, params } = useCurrentStateAndParams();
   const router = useRouter();
-  const envState = useStore(environmentStore);
+  const environmentId = useStore(
+    environmentStore,
+    (store) => store.environmentId
+  );
+  const setEnvironmentId = useStore(
+    environmentStore,
+    (store) => store.setEnvironmentId
+  );
+  const clearEnvironment = useStore(environmentStore, (store) => store.clear);
   const currentUser = useCurrentUser();
   const publicSettings = usePublicSettings();
-  const settings = useSettings();
   const isEdgeAdmin = useIsEdgeAdmin({ noEnvScope: true });
   const isEnvironmentAdmin = useIsEnvironmentAdmin({ adminOnlyCE: true });
   const isPureAdmin = useIsPureAdmin();
+  const settings = useSettings(undefined, isPureAdmin);
   const isTeamLeader = useIsCurrentUserTeamLeader();
-  const environmentQuery = useEnvironment(envState.environmentId);
-  const infoQuery = useInfo(envState.environmentId ?? 0, {
+  const environmentQuery = useEnvironment(environmentId);
+  const infoQuery = useInfo(environmentId ?? 0, {
     select: (info) => !!info.Swarm?.NodeID && !!info.Swarm?.ControlAvailable,
   });
-  const apiVersionQuery = useApiVersion(envState.environmentId ?? 0);
+  const apiVersionQuery = useApiVersion(environmentId ?? 0);
   const versionQuery = useSystemVersion();
   const statusQuery = useSystemStatus();
   const uiState = useUIState();
   const updateUser = useUpdateUserMutation();
 
   useEffect(() => {
-    const environmentId = Number(params.endpointId ?? params.environmentId);
-    if (Number.isFinite(environmentId) && environmentId > 0) {
-      envState.setEnvironmentId(environmentId);
+    const routeEnvironmentId = Number(
+      params.endpointId ?? params.environmentId
+    );
+    if (
+      Number.isFinite(routeEnvironmentId) &&
+      routeEnvironmentId > 0 &&
+      routeEnvironmentId !== environmentId
+    ) {
+      setEnvironmentId(routeEnvironmentId);
     }
-  }, [envState, params.endpointId, params.environmentId]);
+  }, [environmentId, params.endpointId, params.environmentId, setEnvironmentId]);
 
   const environment = useMemo(() => {
     const value = environmentQuery.data;
@@ -67,11 +83,7 @@ export function LayoutBindingsProvider({ children }: PropsWithChildren) {
     const platform = getPlatformType(value.Type, value.ContainerEngine);
     return {
       ...value,
-      platform: ['azure', 'docker', 'podman', 'kubernetes'][platform] as
-        | 'azure'
-        | 'docker'
-        | 'podman'
-        | 'kubernetes',
+      platform: toLayoutPlatform(platform),
       PlatformIcon: getPlatformIconByEnvironment(
         value.Type,
         value.ContainerEngine
@@ -108,7 +120,7 @@ export function LayoutBindingsProvider({ children }: PropsWithChildren) {
     clearEnvironment: () => {
       if (params.endpointId || params.environmentId)
         router.stateService.go('portainer.home');
-      envState.clear();
+      clearEnvironment();
     },
     docker: {
       isEnvironmentAdmin: isEnvironmentAdmin.authorized,

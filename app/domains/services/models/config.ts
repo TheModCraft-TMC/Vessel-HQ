@@ -1,5 +1,4 @@
 import { Config, DockerPortainerResponse } from '@/providers/infrastructure/docker';
-
 import { IResource } from '@/react/docker/components/datatable/createOwnershipColumn';
 import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
 

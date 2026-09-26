@@ -70,14 +70,9 @@ func (Service) Authenticate(ctx context.Context, code string, configuration *por
 }
 
 func GetOAuthToken(ctx context.Context, code string, configuration *portainer.OAuthSettings) (*oauth2.Token, error) {
-	unescapedCode, err := url.QueryUnescape(code)
-	if err != nil {
-		return nil, err
-	}
-
 	config := buildConfig(configuration)
 
-	return config.Exchange(ctx, unescapedCode)
+	return config.Exchange(ctx, code)
 }
 
 // GetIdToken retrieves parsed id_token from the OAuth token response.

@@ -1,5 +1,4 @@
 import { Terminal as XTerm } from '@xterm/xterm';
-import '@xterm/xterm/css/xterm.css';
 import { FitAddon } from '@xterm/addon-fit';
 import { useEffect, useRef } from 'react';
 

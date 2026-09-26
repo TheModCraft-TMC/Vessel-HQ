@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
 import { isAxiosError } from '@/portainer/services/axios/utils/isAxiosError';
-
 import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 export function useApiVersion(

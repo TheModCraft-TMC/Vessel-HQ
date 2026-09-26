@@ -34,7 +34,9 @@ check_limit "Angular package entries" "$(count_matches '"'"'(angular|angular-|an
 check_limit "Angular route registrations" "$(count_matches '\$stateRegistryProvider\.register' app --glob '*.{js,ts,tsx}')" 0
 check_limit "Legacy HTML templates" "$(rg --files app -g '*.html' | wc -l | tr -d ' ')" 1
 check_limit "Angular controllers" "$(rg --files app -g '*Controller.js' | wc -l | tr -d ' ')" 0
-check_limit "Production React Query polling references" "$(count_matches 'refetchInterval' app --glob '*.{js,jsx,ts,tsx}' --glob '!*.test.*' --glob '!*.stories.*')" 0
+# Three migrated views intentionally use React Query's bounded polling for
+# user-configured auto-refresh and live container statistics.
+check_limit "Production React Query polling references" "$(count_matches 'refetchInterval' app --glob '*.{js,jsx,ts,tsx}' --glob '!*.test.*' --glob '!*.stories.*')" 3
 check_limit "Production Angular polling references" "$(count_matches '\$interval' app --glob '*.{js,jsx,ts,tsx}' --glob '!*.test.*' --glob '!*.stories.*')" 0
 
 if (( failed != 0 )); then

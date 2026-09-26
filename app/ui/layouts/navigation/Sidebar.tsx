@@ -27,7 +27,7 @@ function InnerSidebar() {
     useLayoutBindings();
   const { isOpen } = useSidebarState();
 
-  if (!publicSettings || !isAdmin) {
+  if (!publicSettings) {
     return null;
   }
 

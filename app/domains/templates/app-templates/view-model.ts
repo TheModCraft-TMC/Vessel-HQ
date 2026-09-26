@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { RestartPolicy } from '@/providers/infrastructure/docker';
 
+import { RestartPolicy } from '@/providers/infrastructure/docker';
 import { PorImageRegistryModel } from '@/domains/images';
 import { Pair } from '@/domains/settings';
 

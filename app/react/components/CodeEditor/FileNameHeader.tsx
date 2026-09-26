@@ -1,7 +1,6 @@
 import clsx from 'clsx';
 
 import { AutomationTestingProps } from '@/types';
-
 import { CopyButton } from '@/ui/components/buttons/CopyButton';
 
 type FileNameHeaderProps = {

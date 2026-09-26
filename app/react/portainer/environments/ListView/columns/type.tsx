@@ -5,7 +5,6 @@ import {
   getPlatformTypeName,
 } from '@/react/portainer/environments/utils';
 import { EnvironmentType, ContainerEngine } from '@/domains/environments';
-
 import { Icon } from '@/ui/components/icons/Icon';
 
 import { EnvironmentListItem } from '../types';

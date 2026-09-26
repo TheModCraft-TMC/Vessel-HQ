@@ -8,7 +8,7 @@ development.
 Install:
 
 - Docker
-- Go 1.26.4
+- Go 1.26.6
 - Node.js 22.22.1 or newer in the 22.x line
 - pnpm 10.26.2
 
@@ -24,11 +24,13 @@ make deps
 ## Start the development environment
 
 ```sh
-make dev
+./launch-dev.sh
 ```
 
 This builds the server, starts the Portainer container, installs frontend
 dependencies if needed, and starts the frontend development server.
+The script can be run from any working directory. `make dev` remains available
+when you are in the repository root.
 
 Default local URLs:
 

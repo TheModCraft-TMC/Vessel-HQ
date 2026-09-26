@@ -3,7 +3,6 @@ import { FormikErrors } from 'formik';
 
 import { useCurrentUser } from '@/react/hooks/useUser';
 import { EnvironmentId } from '@/domains/environments';
-
 import { FormError } from '@/ui/components/forms/FormError';
 
 import { ResourceControlOwnership, AccessControlFormData } from '../types';

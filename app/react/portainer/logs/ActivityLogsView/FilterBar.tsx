@@ -1,8 +1,9 @@
 import { DownloadIcon } from 'lucide-react';
 
-import { Widget } from '@@/Widget';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { Button } from '@/ui/components/buttons';
+
+import { Widget } from '@@/Widget';
 
 import { DateRangePicker } from '../components/DateRangePicker';
 

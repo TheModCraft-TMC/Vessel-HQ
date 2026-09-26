@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 
 import betaIcon from '@/assets/ico/beta.svg?c';
-
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 interface Props {

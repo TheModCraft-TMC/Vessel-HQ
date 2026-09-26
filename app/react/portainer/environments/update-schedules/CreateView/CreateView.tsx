@@ -6,12 +6,13 @@ import { useRouter } from '@uirouter/react';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { withLimitToBE } from '@/react/hooks/useLimitToBE';
 import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
-
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { Widget } from '@@/Widget';
 import { LoadingButton } from '@/ui/components/buttons';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { Link } from '@/ui/components/links/Link';
+import { EdgeGroupsField } from '@/domains/edge/views/environments/EdgeGroupsField/EdgeGroupsField';
+
+import { Widget } from '@@/Widget';
 
 import { ScheduleType } from '../types';
 import { useCreateMutation } from '../queries/create';
@@ -20,7 +21,6 @@ import { validation } from '../common/validation';
 import { ScheduleTypeSelector } from '../common/ScheduleTypeSelector';
 import { useList } from '../queries/list';
 import { NameField } from '../common/NameField';
-import { EdgeGroupsField } from '@/domains/edge/views/environments/EdgeGroupsField/EdgeGroupsField';
 import { BetaAlert } from '../common/BetaAlert';
 import { defaultValue } from '../common/ScheduledTimeField';
 

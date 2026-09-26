@@ -31,6 +31,7 @@ import {
 import { clearQueryCache, queryClient } from '@/core/query';
 
 import { LoginForm } from '../components/LoginForm';
+import { prepareOAuthLogin } from '../oauth';
 
 export function LoginView() {
   const router = useRouter();
@@ -119,7 +120,6 @@ export function LoginView() {
       setShowOAuthLogin(hasOAuth);
       setShowStandardLogin(!hasOAuth);
       setOAuthProvider(determineOauthProvider(settings.OAuthLoginURI));
-      setOAuthLoginUri(generateOAuthLoginUri(settings.OAuthLoginURI));
 
       const returnUrl = new URLSearchParams(window.location.search).get(
         'returnUrl'
@@ -128,17 +128,32 @@ export function LoginView() {
         storeReturnUrl(returnUrl);
       }
 
-      const code = getUrlParameter('code');
-      const oauthState = getUrlParameter('state');
-      if (code && oauthState) {
-        if (authStorage.getLoginState() !== oauthState) {
-          showError(undefined, 'Invalid OAuth state, try again.');
+      if (hasOAuth) {
+        const oauth = prepareOAuthLogin({
+          authorizationUri: settings.OAuthLoginURI,
+          currentUrl: window.location.href,
+          storedState: authStorage.getLoginState(),
+          createState: uuidv4,
+        });
+
+        if (oauth.kind === 'callback' || oauth.kind === 'error') {
+          authStorage.clearLoginState();
+          cleanUrlParameters();
+        }
+
+        if (oauth.kind === 'error') {
+          showError(undefined, oauth.message);
           return;
         }
-        await loginWithOAuth(code);
-        cleanUrlParameters();
-        await postLoginSteps();
-        return;
+
+        if (oauth.kind === 'callback') {
+          await loginWithOAuth(oauth.code);
+          await postLoginSteps();
+          return;
+        }
+
+        authStorage.setLoginState(oauth.state);
+        setOAuthLoginUri(oauth.loginUri);
       }
 
       if (!getAppState().application.logo) {
@@ -242,15 +257,6 @@ export function LoginView() {
     return true;
   }
 
-  function generateOAuthLoginUri(baseUri: string) {
-    if (!baseUri) {
-      return '';
-    }
-    const state = uuidv4();
-    authStorage.setLoginState(state);
-    return `${baseUri}&state=${state}`;
-  }
-
   function showError(error: unknown, message: string) {
     setAuthenticationError(message);
     setLoginInProgress(false);
@@ -269,10 +275,6 @@ function determineOauthProvider(loginUri: string) {
     return 'GitHub';
   }
   return 'OAuth';
-}
-
-function getUrlParameter(name: string) {
-  return new URL(window.location.href).searchParams.get(name) ?? undefined;
 }
 
 function cleanUrlParameters() {

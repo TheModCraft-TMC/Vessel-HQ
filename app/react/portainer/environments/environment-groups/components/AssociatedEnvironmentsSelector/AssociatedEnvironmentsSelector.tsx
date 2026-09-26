@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { useEnvironmentList } from '@/react/portainer/environments/queries';
 import { EnvironmentGroupId } from '@/domains/environments';
-
 import { openConfirm } from '@/ui/components/dialog/confirm';
 import { buildConfirmButton } from '@/ui/components/dialog/utils';
 

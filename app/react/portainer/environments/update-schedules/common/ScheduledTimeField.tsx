@@ -7,9 +7,9 @@ import {
   parseIsoDate,
   TIME_FORMAT,
 } from '@/portainer/filters/filters';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { DateTimeField, FORMAT } from '@@/DateTimeField';
-import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { FormValues } from './types';
 

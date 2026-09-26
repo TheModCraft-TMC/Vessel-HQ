@@ -12,12 +12,12 @@ import {
   useNameValidation,
 } from '@/react/portainer/environments/common/NameField/NameField';
 import { metadataValidation } from '@/react/portainer/environments/common/MetadataFieldset/validation';
-
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 import { Input } from '@/ui/components/forms/Input';
 import { FormControl } from '@/ui/components/forms/FormControl';
-import { BoxSelector, BoxSelectorOption } from '@@/BoxSelector';
 import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
+
+import { BoxSelector, BoxSelectorOption } from '@@/BoxSelector';
 
 import { AnalyticsStateKey } from '../types';
 import { MoreSettingsSection } from '../shared/MoreSettingsSection';

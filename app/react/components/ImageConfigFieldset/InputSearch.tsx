@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import { AutomationTestingProps } from '@/types';
-
 import { AutocompleteSelect } from '@/ui/components/forms/AutocompleteSelect';
 import { Option } from '@/ui/components/forms/PortainerSelect';
 

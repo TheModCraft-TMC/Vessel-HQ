@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
+
 import {
   Plugin,
   PluginInterfaceType,
   PluginsInfo,
 } from '@/providers/infrastructure/docker';
-
 import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
 import { EnvironmentId } from '@/domains/environments';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 
 import { queryKeys } from '../../queries/utils/root';
 
-import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 import { useInfo } from './useInfo';
 
 const pluginTypeToVersionMap: { [k in keyof PluginsInfo]: string } = {

@@ -1,5 +1,6 @@
-import { PortMap } from '@/providers/infrastructure/docker';
 import _ from 'lodash';
+
+import { PortMap } from '@/providers/infrastructure/docker';
 
 import { Protocol, Values } from './PortsMappingField';
 
