@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { saveAs } from 'file-saver';
 import { Copy, Download, FileText, X } from 'lucide-react';
 
@@ -194,16 +195,17 @@ export function DockerLogsView({
         <div className="col-sm-12 h-full">
           <pre
             ref={logElement}
-            className={`log_viewer${wrapLines ? 'wrap_lines' : ''}`}
+            className={clsx('log_viewer', { wrap_lines: wrapLines })}
           >
             {filteredLogs.map((log, index) =>
               log.line ? (
                 <div className="line" key={`${index}-${log.line}`}>
                   <button
                     type="button"
-                    className={`inner_line w-full border-0 bg-transparent text-left${
-                      selectedLines.includes(log.line) ? 'line_selected' : ''
-                    }`}
+                    className={clsx(
+                      'inner_line w-full border-0 bg-transparent text-left',
+                      { line_selected: selectedLines.includes(log.line) }
+                    )}
                     onClick={() => toggleLine(log.line)}
                   >
                     {log.spans.map((span, spanIndex) => (

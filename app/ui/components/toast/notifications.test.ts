@@ -54,6 +54,22 @@ it('calling error without Error should show fallback message', () => {
   expect(toastr.error).toHaveBeenCalledWith(fallback, title, expect.anything());
 });
 
+it.each([
+  'Invalid credentials',
+  'Only initial admin is allowed to login without oauth',
+])('shows the server authentication reason: %s', (message) => {
+  notifyError('Failure', {
+    message: 'Request failed with status code 422',
+    response: { status: 422, data: { message, details: 'Unauthorized' } },
+  });
+
+  expect(toastr.error).toHaveBeenCalledWith(
+    message,
+    'Failure',
+    expect.anything()
+  );
+});
+
 it('calling warning should show warning message', () => {
   const title = 'title';
   const text = 'text';

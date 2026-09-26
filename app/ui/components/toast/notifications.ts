@@ -71,6 +71,8 @@ function pickErrorMsg(e?: unknown) {
     'data.message',
     'data.content',
     'data.error',
+    'response.data.message',
+    'response.data.details',
     'message',
     'err.data[0].message',
     'err.data.err',
