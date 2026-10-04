@@ -1,0 +1,1 @@
+export { AuthenticationSettingsContent } from './AuthenticationView';

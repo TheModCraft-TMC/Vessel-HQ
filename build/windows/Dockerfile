@@ -2,15 +2,22 @@ ARG OSVERSION=ltsc2022
 ARG BUILDPLATFORM
 FROM --platform=${BUILDPLATFORM} gcr.io/k8s-staging-e2e-test-images/windows-servercore-cache:1.0-linux-amd64-${OSVERSION} AS core
 
-FROM mcr.microsoft.com/windows/nanoserver:${OSVERSION} AS production
+FROM node:22.22.1-nanoserver-${OSVERSION} AS production
 
 COPY --from=core /Windows/System32/netapi32.dll /Windows/System32/netapi32.dll
 
 USER ContainerAdministrator
 
+ENV HOSTNAME=127.0.0.1 \
+  PORT=8999 \
+  PORTAINER_FRONTEND_ORIGIN=http://127.0.0.1:8999 \
+  PORTAINER_FRONTEND_SERVER=C:/next/web-src/server.js \
+  PORTAINER_BINARY=C:/portainer.exe
+
 COPY dist/mustache-templates /mustache-templates/
 COPY dist/portainer.exe /
-COPY dist/public /public/
+COPY dist/next /next/
+COPY build/next-entrypoint.js /next-entrypoint.js
 
 # storybook exists only in portainerci builds
 COPY dist/storybook* /storybook/
@@ -29,4 +36,4 @@ LABEL git_commit=$GIT_COMMIT \
   org.opencontainers.image.vendor="TheModCraft" \
   io.portainer.server="true"
 
-ENTRYPOINT ["/portainer.exe"]
+ENTRYPOINT ["node", "C:/next-entrypoint.js"]

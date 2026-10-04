@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
 const config: StorybookConfig = {
-  stories: ['../app/**/*.stories.@(ts|tsx)'],
+  stories: ['../web-src/legacy/**/*.stories.@(ts|tsx)'],
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-webpack5-compiler-swc',
@@ -93,7 +93,7 @@ const config: StorybookConfig = {
       ...config,
       resolve: {
         ...config.resolve,
-        tsconfig: path.resolve(__dirname, '..', 'tsconfig.json'),
+        tsconfig: path.resolve(__dirname, '..', 'web-src', 'tsconfig.json'),
       },
       module: {
         ...config.module,

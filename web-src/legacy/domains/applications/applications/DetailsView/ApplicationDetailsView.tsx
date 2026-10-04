@@ -1,0 +1,145 @@
+import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { AlertTriangle, Code, History, Minimize2 } from 'lucide-react';
+
+import LaptopCode from '@/assets/ico/laptop-code.svg?c';
+import { useNamespaceAccessRedirect } from '@/domains/namespaces';
+import { PageHeader } from '@/ui/layouts/view-layout/page-header';
+import { Icon } from '@/ui/components/icons/Icon';
+import { Badge } from '@/ui/components/status/Badge';
+import { EventsDatatable } from '@/domains/clusters';
+
+import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
+
+import {
+  PlacementsDatatable,
+  usePlacementTableData,
+  usePlacementTableState,
+} from './PlacementsDatatable';
+import { ApplicationDetailsWidget } from './ApplicationDetailsWidget';
+import { ApplicationSummaryWidget } from './ApplicationSummaryWidget';
+import { ApplicationContainersDatatable } from './ApplicationContainersDatatable';
+import {
+  useApplicationEventsTableData,
+  useApplicationEventsTableState,
+} from './useApplicationEventsTableData';
+import { ApplicationYAMLEditor } from './AppYAMLEditor/ApplicationYAMLEditor';
+import { useApplicationYAML } from './AppYAMLEditor/useApplicationYAML';
+
+export function ApplicationDetailsView() {
+  return <ApplicationDetailsContent showHeader />;
+}
+
+export function ApplicationDetailsContent({
+  showHeader = false,
+}: {
+  showHeader?: boolean;
+}) {
+  const { namespace, name } = useRouteParams();
+  useNamespaceAccessRedirect(namespace, {
+    to: '/:endpointId/kubernetes/applications',
+  });
+
+  // placements table data
+  const { placementsData, isPlacementsTableLoading, hasPlacementWarning } =
+    usePlacementTableData();
+  const placementsTableState = usePlacementTableState();
+
+  // events table data
+  const { appEventsData, appEventWarningCount, isAppEventsTableLoading } =
+    useApplicationEventsTableData();
+  const appEventsTableState = useApplicationEventsTableState();
+
+  // load app yaml data early to load from cache later
+  useApplicationYAML();
+
+  const tabs: Tab[] = [
+    {
+      name: 'Application',
+      icon: LaptopCode,
+      widget: <ApplicationSummaryWidget />,
+      selectedTabParam: 'application',
+    },
+    {
+      name: (
+        <div className="flex items-center gap-x-2">
+          Placement
+          {hasPlacementWarning && (
+            <Badge type="warnSecondary">
+              <Icon icon={AlertTriangle} className="!mr-1" />1
+            </Badge>
+          )}
+        </div>
+      ),
+      icon: Minimize2,
+      widget: (
+        <PlacementsDatatable
+          hasPlacementWarning={hasPlacementWarning}
+          tableState={placementsTableState}
+          dataset={placementsData}
+          isLoading={isPlacementsTableLoading}
+        />
+      ),
+      selectedTabParam: 'placement',
+    },
+    {
+      name: (
+        <div className="flex items-center gap-x-2">
+          Events
+          {appEventWarningCount >= 1 && (
+            <Badge type="warnSecondary">
+              <Icon icon={AlertTriangle} className="!mr-1" />
+              {appEventWarningCount}
+            </Badge>
+          )}
+        </div>
+      ),
+      icon: History,
+      widget: (
+        <EventsDatatable
+          dataset={appEventsData}
+          tableState={appEventsTableState}
+          isLoading={isAppEventsTableLoading}
+          data-cy="k8sAppDetail-eventsTable"
+        />
+      ),
+      selectedTabParam: 'events',
+    },
+    {
+      name: 'YAML',
+      icon: Code,
+      widget: <ApplicationYAMLEditor />,
+      selectedTabParam: 'YAML',
+    },
+  ];
+  const currentTabIndex = useCurrentTabIndex(tabs);
+
+  return (
+    <>
+      {showHeader && (
+        <PageHeader
+          title="Application details"
+          breadcrumbs={[
+            { label: 'Namespaces', link: '/:endpointId/kubernetes/namespaces' },
+            {
+              label: namespace,
+              link: '/:endpointId/kubernetes/namespaces/:id',
+              linkParams: { id: namespace },
+            },
+            {
+              label: 'Applications',
+              link: '/:endpointId/kubernetes/applications',
+            },
+            name,
+          ]}
+          reload
+        />
+      )}
+      <>
+        <WidgetTabs tabs={tabs} currentTabIndex={currentTabIndex} />
+        {tabs[currentTabIndex].widget}
+        <ApplicationDetailsWidget />
+        <ApplicationContainersDatatable />
+      </>
+    </>
+  );
+}

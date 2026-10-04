@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import '../app/assets/css';
+import '../web-src/legacy/assets/css';
 import { pushStateLocationPlugin, UIRouter } from '@uirouter/react';
 import { initialize as initMSW, mswLoader } from 'msw-storybook-addon';
-import { handlers } from '../app/setup-tests/server-handlers';
+import { handlers } from '../web-src/legacy/setup-tests/server-handlers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Preview } from '@storybook/react-webpack5';
 

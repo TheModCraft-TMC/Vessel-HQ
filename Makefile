@@ -1,6 +1,5 @@
 # build target, can be one of "production", "testing", "development"
 ENV=production
-WEBPACK_CONFIG=webpack/webpack.$(ENV).js
 TAG=local
 
 SWAG=go run github.com/swaggo/swag/cmd/swag@v1.16.6
@@ -22,7 +21,7 @@ all: tidy deps build-server build-client ## Build the client, server and downloa
 build-all: all ## Alias for the 'all' target (used by CI)
 
 build-client: init-dist ## Build the client
-	export NODE_ENV=$(ENV) && pnpm run build --config $(WEBPACK_CONFIG)
+	export NODE_ENV=$(ENV) && pnpm run build
 
 build-server: init-dist ## Build the server binary
 	./build/build_binary.sh "$(PLATFORM)" "$(ARCH)"
@@ -44,7 +43,7 @@ client-deps: ## Install client dependencies
 	pnpm install
 
 tidy: ## Tidy up the go.mod file
-	@go mod tidy
+	@cd backend-src && go mod tidy
 
 ##@ Cleanup
 .PHONY: clean
@@ -62,7 +61,7 @@ test-client: ## Run client tests
 TEST_PACKAGES?=./...
 
 test-server:	## Run server tests
-	$(GOTESTSUM) --format pkgname-and-test-fails --format-hide-empty-pkg --hide-summary skipped -- -cover -covermode=atomic -coverprofile=coverage.out $(TEST_PACKAGES)
+	cd backend-src && $(GOTESTSUM) --format pkgname-and-test-fails --format-hide-empty-pkg --hide-summary skipped -- -cover -covermode=atomic -coverprofile=coverage.out $(TEST_PACKAGES)
 
 ##@ Dev
 .PHONY: dev dev-client dev-server
@@ -88,7 +87,7 @@ format-client: ## Format client code
 	pnpm run format
 
 format-server: ## Format server code
-	go fmt ./...
+	cd backend-src && go fmt ./...
 
 ##@ Lint
 .PHONY: lint lint-client lint-server check-lint-version check-frontend-modernization
@@ -113,8 +112,8 @@ check-lint-version:
 	fi
 
 lint-server: tidy check-lint-version ## Lint server code
-	golangci-lint run --timeout=10m --new-from-rev=HEAD~ -c .golangci.yaml
-	golangci-lint run --timeout=10m --new-from-rev=HEAD~ -c .golangci-forward.yaml
+	cd backend-src && golangci-lint run --timeout=10m --new-from-rev=HEAD~ -c ../.golangci.yaml
+	cd backend-src && golangci-lint run --timeout=10m --new-from-rev=HEAD~ -c ../.golangci-forward.yaml
 
 ##@ Extension
 .PHONY: dev-extension
@@ -124,21 +123,21 @@ dev-extension: build-server build-client ## Run the extension in development mod
 ##@ Docs
 .PHONY: docs-build docs-validate docs-sync-check docs-clean docs-validate-clean
 docs-build: ## Build docs
-	go mod download
-	mkdir -p api/docs
-	cd api && $(SWAG) init -o "./docs" -ot "yaml" -g ./http/handler/handler.go --parseDependency --parseInternal --parseDepth 2 -p pascalcase --markdownFiles ./ --overridesFile .swaggo
+	cd backend-src && go mod download
+	mkdir -p backend-src/api/docs
+	cd backend-src/api && $(SWAG) init -o "./docs" -ot "yaml" -g ./http/handler/handler.go --parseDependency --parseInternal --parseDepth 2 -p pascalcase --markdownFiles ./ --overridesFile .swaggo
 
 docs-validate: docs-build ## Validate docs
-	pnpm swagger2openapi --warnOnly api/docs/swagger.yaml -o api/docs/openapi.yaml
-	pnpm swagger-cli validate api/docs/openapi.yaml
+	pnpm swagger2openapi --warnOnly backend-src/api/docs/swagger.yaml -o backend-src/api/docs/openapi.yaml
+	pnpm swagger-cli validate backend-src/api/docs/openapi.yaml
 
 docs-sync-check: docs-build ## Check if committed API spec is in sync with Go annotations; fail if not
-	@if ! git diff --exit-code api/docs/swagger.yaml > /dev/null 2>&1; then \
+	@if ! git diff --exit-code backend-src/api/docs/swagger.yaml > /dev/null 2>&1; then \
 		echo ""; \
 		echo "ERROR: API spec is out of sync with Go annotations."; \
 		echo "Run 'make generate-api' in package/server-ce and commit the result."; \
 		echo ""; \
-		git diff --stat api/docs/swagger.yaml; \
+		git diff --stat backend-src/api/docs/swagger.yaml; \
 		exit 1; \
 	fi
 
@@ -146,7 +145,7 @@ docs-sync-check: docs-build ## Check if committed API spec is in sync with Go an
 docs-serve: docs-build ## Serve docs locally with Swagger UI on port 8080
 	docker run -p 8080:8080 \
 		-e SWAGGER_JSON=/foo/swagger.yaml \
-		-v $(PWD)/api/docs:/foo \
+		-v $(PWD)/backend-src/api/docs:/foo \
 		swaggerapi/swagger-ui
 
 .PHONY: generate-api

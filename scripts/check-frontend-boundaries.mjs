@@ -5,7 +5,7 @@ import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const appRoot = join(repoRoot, 'app');
+const appRoot = join(repoRoot, 'web-src', 'legacy');
 const canonicalRoots = ['core', 'domains', 'providers', 'shared', 'ui'];
 const transitionalRoots = ['design-system', 'layouts'];
 const architectureRoots = [...canonicalRoots, ...transitionalRoots];

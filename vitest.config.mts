@@ -1,8 +1,27 @@
+import path from 'node:path';
+
 import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(import.meta.dirname, 'web-src/legacy'),
+      '@@': path.resolve(
+        import.meta.dirname,
+        'web-src/legacy/react/components'
+      ),
+      '@api': path.resolve(
+        import.meta.dirname,
+        'web-src/legacy/react/portainer/generated-api/portainer'
+      ),
+      '@console': path.resolve(import.meta.dirname, 'web-src/components'),
+      'yaml-schema': path.resolve(
+        import.meta.dirname,
+        'node_modules/codemirror-json-schema/dist/yaml'
+      ),
+    },
+  },
   build: {
     // force tests to import svg as url
     // TODO consider removing when moving from webpack
@@ -12,24 +31,24 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: [
-      './app/setup-tests/setup.ts',
-      './app/setup-tests/setup-websocket.ts',
-      './app/setup-tests/setup-rtl.ts',
-      './app/setup-tests/setup-msw.ts',
-      './app/setup-tests/stub-modules.ts',
-      './app/setup-tests/setup-codemirror.ts',
-      './app/setup-tests/setup-fail-on-console.ts',
+      './web-src/legacy/setup-tests/setup.ts',
+      './web-src/legacy/setup-tests/setup-websocket.ts',
+      './web-src/legacy/setup-tests/setup-rtl.ts',
+      './web-src/legacy/setup-tests/setup-msw.ts',
+      './web-src/legacy/setup-tests/stub-modules.ts',
+      './web-src/legacy/setup-tests/setup-codemirror.ts',
+      './web-src/legacy/setup-tests/setup-fail-on-console.ts',
     ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'app/setup-tests/global-setup.js'],
+      exclude: ['node_modules/', 'web-src/legacy/setup-tests/global-setup.js'],
     },
     // The default includes package.json, which made `--changed` run the whole suite for
     // any edit to it. Dependency changes move pnpm-lock.yaml, so key off that instead.
     forceRerunTriggers: ['**/pnpm-lock.yaml', '**/{vitest,vite}.config.*'],
     bail: 2,
-    include: ['./app/**/*.test.ts', './app/**/*.test.tsx', './app/**/*.test.js'],
+    include: ['./web-src/**/*.test.ts', './web-src/**/*.test.tsx', './web-src/**/*.test.js'],
     env: {
       PORTAINER_EDITION: 'CE',
     },
@@ -42,5 +61,5 @@ export default defineConfig({
       return !/Can't perform a React state update on an unmounted component/.test(log);
     },
   },
-  plugins: [svgr({ include: /\?c$/ }), tsconfigPaths(), tsconfigPaths({ projects: ['./tsconfig.generated.json'] })],
+  plugins: [svgr({ include: /\?c$/ })],
 });

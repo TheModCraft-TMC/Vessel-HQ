@@ -1,0 +1,33 @@
+import { SystemBadge } from '@/ui/components/status/Badge/SystemBadge';
+import { Link } from '@/ui/components/links/Link';
+
+import { columnHelper } from './helper';
+
+export const name = columnHelper.accessor(
+  (row) => {
+    let result = row.Name;
+    if (row.IsSystem) {
+      result += ' system';
+    }
+    return result;
+  },
+  {
+    header: 'Name',
+    id: 'name',
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <Link
+          to="/:endpointId/kubernetes/moreResources/cronjobs/:namespace/:name"
+          params={{
+            namespace: row.original.Namespace,
+            name: row.original.Name,
+          }}
+          data-cy={`cronjob-name-link-${row.original.Namespace}-${row.original.Name}`}
+        >
+          {row.original.Name}
+        </Link>
+        {row.original.IsSystem && <SystemBadge className="ml-auto" />}
+      </div>
+    ),
+  }
+);

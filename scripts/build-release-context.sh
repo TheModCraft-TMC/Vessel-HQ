@@ -14,7 +14,7 @@ cd "$repository_root"
 
 echo "Building Vessel HQ $release_version for linux/amd64 and linux/arm64"
 CI=true pnpm install --frozen-lockfile
-NODE_ENV=production pnpm run build --config webpack/webpack.production.js
+NODE_ENV=production pnpm run build
 
 rm -rf "$release_context"
 mkdir -p "$release_context"
@@ -27,8 +27,9 @@ done
 
 (cd "$release_context" && shasum -a 256 amd64/portainer arm64/portainer > SHA256SUMS)
 
-cp -R dist/public "$release_context/public"
+cp -R dist/next "$release_context/next"
 cp -R dist/mustache-templates "$release_context/mustache-templates"
+cp build/next-entrypoint.js "$release_context/next-entrypoint.js"
 cp build/release-context.Dockerfile "$release_context/Dockerfile"
 
 git_commit=$(git rev-parse --short HEAD)

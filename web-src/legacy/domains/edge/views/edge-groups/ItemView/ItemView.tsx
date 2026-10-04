@@ -1,0 +1,74 @@
+import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { usePathname, useRouter } from 'next/navigation';
+import { buildHref } from '@console/console/routing/buildHref';
+
+import { notifySuccess } from '@/ui/components/toast/notifications';
+import { PageHeader } from '@/ui/layouts/view-layout';
+import { useUpdateEdgeGroupMutation } from '@/domains/edge/queries/edge-groups/useUpdateEdgeGroupMutation';
+import { useEdgeGroup } from '@/domains/edge/queries/edge-groups/useEdgeGroup';
+
+import { Widget } from '@@/Widget';
+import { Redirect } from '@@/Redirect';
+
+import { EdgeGroupForm } from '../components/EdgeGroupForm/EdgeGroupForm';
+
+export function ItemView() {
+  const { groupId } = useRouteParams();
+  const id = Number(groupId);
+  const groupQuery = useEdgeGroup(id);
+  const mutation = useUpdateEdgeGroupMutation();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  if (groupQuery.isError) {
+    return <Redirect to="/edge/groups" />;
+  }
+
+  if (!groupQuery.data) {
+    return null;
+  }
+
+  const group = groupQuery.data;
+  return (
+    <>
+      <PageHeader
+        title="Edit edge group"
+        breadcrumbs={[
+          { label: 'Edge groups', link: '/edge/groups' },
+          group.Name,
+        ]}
+      />
+
+      <div className="row">
+        <div className="col-sm-12">
+          <Widget>
+            <Widget.Body>
+              <EdgeGroupForm
+                group={group}
+                onSubmit={({ environmentIds, ...values }) => {
+                  mutation.mutate(
+                    {
+                      id,
+                      endpoints: environmentIds,
+                      ...values,
+                    },
+                    {
+                      onSuccess: () => {
+                        notifySuccess(
+                          'Success',
+                          'Edge group successfully updated'
+                        );
+                        router.push(buildHref('..', {}, pathname));
+                      },
+                    }
+                  );
+                }}
+                isLoading={mutation.isLoading}
+              />
+            </Widget.Body>
+          </Widget>
+        </div>
+      </div>
+    </>
+  );
+}

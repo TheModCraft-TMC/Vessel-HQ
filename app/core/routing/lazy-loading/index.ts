@@ -1,1 +1,0 @@
-export { lazyRoute } from './lazyRoute';

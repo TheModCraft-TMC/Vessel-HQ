@@ -14,7 +14,7 @@ import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 
 export default defineConfig([
-  globalIgnores(['**/node_modules/', '**/dist/', '**/test/', '.storybook/public/', 'coverage', 'app/react/portainer/generated-api/']),
+  globalIgnores(['**/node_modules/', '**/.next/', '**/dist/', '**/test/', '.storybook/public/', 'coverage', 'web-src/legacy/react/portainer/generated-api/']),
 
   js.configs.recommended,
 
@@ -51,7 +51,7 @@ export default defineConfig([
   },
 
   {
-    files: ['app/**/*.ts', 'app/**/*.tsx'],
+    files: ['web-src/**/*.ts', 'web-src/**/*.tsx'],
 
     extends: [
       ...tseslint.configs.recommended,
@@ -77,7 +77,7 @@ export default defineConfig([
       ecmaVersion: 'latest',
       sourceType: 'module',
       parserOptions: {
-        project: './tsconfig.json',
+        project: './web-src/tsconfig.json',
       },
     },
 
@@ -86,8 +86,8 @@ export default defineConfig([
       'import/resolver': {
         alias: {
           map: [
-            ['@@', './app/react/components'],
-            ['@', './app'],
+            ['@@', './web-src/legacy/react/components'],
+            ['@', './web-src/legacy'],
           ],
           extensions: ['.js', '.ts', '.tsx'],
         },
@@ -241,7 +241,7 @@ export default defineConfig([
   },
 
   {
-    files: ['app/**/with*.ts', 'app/**/with*.tsx'],
+    files: ['web-src/**/with*.ts', 'web-src/**/with*.tsx'],
     rules: {
       'react/jsx-props-no-spreading': 'off',
       'react/destructuring-assignment': 'off',
@@ -249,7 +249,7 @@ export default defineConfig([
   },
 
   {
-    files: ['app/**/*.test.*'],
+    files: ['web-src/**/*.test.*'],
     plugins: { vitest: pluginVitest },
     languageOptions: {
       // configs.env provides describe/it/expect globals
@@ -273,7 +273,7 @@ export default defineConfig([
   },
 
   {
-    files: ['app/**/*.stories.*'],
+    files: ['web-src/**/*.stories.*'],
     rules: {
       'no-alert': 'off',
       '@typescript-eslint/no-restricted-imports': 'off',
@@ -289,7 +289,7 @@ export default defineConfig([
   },
 
   {
-    files: ['app/__mocks__/**'],
+    files: ['web-src/legacy/__mocks__/**'],
     rules: {
       // Module mocks are intentionally empty stubs
       'no-empty-function': 'off',

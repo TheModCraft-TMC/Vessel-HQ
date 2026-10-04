@@ -1,0 +1,82 @@
+{
+  "compilerOptions": {
+    "outDir": "../dist/public",
+    "module": "esnext",
+    "incremental": true,
+    "tsBuildInfoFile": "../node_modules/.cache/vessel-tsconfig.tsbuildinfo",
+    "target": "esnext",
+    "allowJs": true,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "noEmit": false,
+    "jsx": "react-jsx",
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "paths": {
+      "@@/*": [
+        "./legacy/react/components/*"
+      ],
+      "@/*": [
+        "./legacy/*"
+      ],
+      "@console/*": [
+        "./components/*"
+      ],
+      "@api/*": [
+        "./legacy/react/portainer/generated-api/portainer/*"
+      ],
+      "yaml-schema": [
+        "../node_modules/codemirror-json-schema/dist/yaml"
+      ]
+    },
+    "types": [
+      "vitest/globals",
+      "@testing-library/jest-dom",
+      "node"
+    ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "exclude": [
+    "../backend-src",
+    "../build",
+    "../dist",
+    "../distribution",
+    "../node_modules",
+    "../test",
+    "../webpack",
+    "legacy/react/portainer/generated-api"
+  ],
+  "include": [
+    "app",
+    "components",
+    "legacy",
+    "types",
+    "next-env.d.ts",
+    "next.config.ts",
+    "proxy.ts",
+    "../.storybook",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ]
+}

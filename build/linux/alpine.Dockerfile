@@ -1,3 +1,5 @@
+FROM node:22.22.1-alpine AS node-runtime
+
 FROM alpine:latest AS production
 
 LABEL org.opencontainers.image.title="Vessel HQ" \
@@ -6,9 +8,18 @@ LABEL org.opencontainers.image.title="Vessel HQ" \
     com.docker.desktop.extension.api.version=">= 0.2.2" \
     com.docker.extension.detailed-description="<p>Vessel HQ provides a focused interface for managing Docker, Kubernetes, and Swarm environments.</p><ul><li>Inspect containers and logs</li><li>Open container consoles</li><li>Deploy applications and stacks</li><li>Manage reusable templates</li></ul>"
 
+ENV HOSTNAME=127.0.0.1 \
+  PORT=8999 \
+  PORTAINER_FRONTEND_ORIGIN=http://127.0.0.1:8999
+
 COPY dist/mustache-templates /mustache-templates/
 COPY dist/portainer /
-COPY dist/public /public/
+COPY --from=node-runtime /lib/ld-musl-*.so.1 /lib/
+COPY --from=node-runtime /usr/lib/libstdc++.so.6 /usr/lib/
+COPY --from=node-runtime /usr/lib/libgcc_s.so.1 /usr/lib/
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY dist/next /next/
+COPY build/next-entrypoint.js /next-entrypoint.js
 
 COPY build/docker-extension /
 
@@ -32,4 +43,4 @@ LABEL git_commit=$GIT_COMMIT \
   org.opencontainers.image.vendor="TheModCraft" \
   io.portainer.server="true"
 
-ENTRYPOINT ["/portainer"]
+ENTRYPOINT ["/usr/local/bin/node", "/next-entrypoint.js"]

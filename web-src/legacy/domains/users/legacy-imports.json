@@ -1,0 +1,20 @@
+{
+  "maxImports": 49,
+  "modules": [
+    "@/assets/ico/vendor/helm.svg?c",
+    "@/portainer/filters/filters",
+    "@/portainer/helpers/promise-utils",
+    "@/portainer/helpers/strings",
+    "@/portainer/models/user",
+    "@/portainer/services/axios/axios",
+    "@/react/common/processItemsInBatches",
+    "@/react/hooks/useUser",
+    "@/react/portainer/environments/environment-groups/types",
+    "@/react/portainer/environments/utils",
+    "@/react/portainer/services/axios/axios",
+    "@/react/test-utils/withRouter",
+    "@/react/test-utils/withUserProvider",
+    "@@/TeamsSelector",
+    "@@/Widget"
+  ]
+}

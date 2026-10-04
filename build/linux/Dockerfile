@@ -1,7 +1,12 @@
+FROM node:22.22.1-alpine AS node-runtime
+
 FROM portainer/base AS production
 
 ARG COMPOSE_UNPACKER_IMAGE=themodcrafttmc/compose-unpacker:2.39.3.2.3
 ENV COMPOSE_UNPACKER_IMAGE=${COMPOSE_UNPACKER_IMAGE}
+ENV HOSTNAME=127.0.0.1 \
+  PORT=8999 \
+  PORTAINER_FRONTEND_ORIGIN=http://127.0.0.1:8999
 
 LABEL org.opencontainers.image.title="Portainer" \
   org.opencontainers.image.description="Docker container management made simple, with the world’s most popular GUI-based container management platform." \
@@ -15,7 +20,12 @@ LABEL org.opencontainers.image.title="Portainer" \
 
 COPY dist/mustache-templates /mustache-templates/
 COPY dist/portainer /
-COPY dist/public /public/
+COPY --from=node-runtime /lib/ld-musl-*.so.1 /lib/
+COPY --from=node-runtime /usr/lib/libstdc++.so.6 /usr/lib/
+COPY --from=node-runtime /usr/lib/libgcc_s.so.1 /usr/lib/
+COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
+COPY dist/next /next/
+COPY build/next-entrypoint.js /next-entrypoint.js
 
 COPY build/docker-extension /
 
@@ -41,4 +51,4 @@ LABEL git_commit=$GIT_COMMIT \
   org.opencontainers.image.documentation="https://docs.portainer.io" \
   io.portainer.server="true"
 
-ENTRYPOINT ["/portainer"]
+ENTRYPOINT ["/usr/local/bin/node", "/next-entrypoint.js"]

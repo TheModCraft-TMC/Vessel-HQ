@@ -1,1 +1,0 @@
-export { EnvironmentRegistriesDatatable } from './EnvironmentRegistriesDatatable';

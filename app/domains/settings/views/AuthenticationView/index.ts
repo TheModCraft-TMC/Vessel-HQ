@@ -1,1 +1,0 @@
-export { AuthenticationView } from './AuthenticationView';

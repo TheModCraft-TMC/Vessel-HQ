@@ -1,0 +1,70 @@
+import { useRouter } from 'next/navigation';
+
+import { useUsers } from '@/domains/users';
+import { useIsPureAdmin } from '@/react/hooks/useUser';
+import { usePublicSettings } from '@/domains/settings';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
+import { PageHeader } from '@/ui/layouts/view-layout';
+
+import { useTeam, useTeamMemberships } from '../queries';
+
+import { Details } from './Details';
+import { TeamAssociationSelector } from './TeamAssociationSelector';
+import { useTeamIdParam } from './useTeamIdParam';
+
+export function ItemView() {
+  const teamId = useTeamIdParam();
+
+  const isPureAdmin = useIsPureAdmin();
+  const router = useRouter();
+  const teamQuery = useTeam(teamId, () => router.push('/teams'));
+  const usersQuery = useUsers();
+  const membershipsQuery = useTeamMemberships(teamId);
+  const teamSyncQuery = usePublicSettings<boolean>({
+    select: (settings) => settings.TeamSync,
+  });
+
+  if (!teamQuery.data) {
+    return null;
+  }
+
+  const team = teamQuery.data;
+
+  return (
+    <>
+      <PageHeader
+        title="Team details"
+        breadcrumbs={[{ label: 'Teams', link: '/teams' }, { label: team.Name }]}
+        reload
+      />
+
+      {membershipsQuery.data && (
+        <Details
+          team={team}
+          memberships={membershipsQuery.data}
+          isAdmin={isPureAdmin}
+        />
+      )}
+
+      {teamSyncQuery.data && (
+        <div className="row">
+          <div className="col-sm-12">
+            <TextTip color="orange">
+              Team membership is managed by external authentication. Team leader
+              roles can still be assigned here.
+            </TextTip>
+          </div>
+        </div>
+      )}
+
+      {usersQuery.data && membershipsQuery.data && (
+        <TeamAssociationSelector
+          teamId={teamId}
+          memberships={membershipsQuery.data}
+          users={usersQuery.data}
+          membershipChangesDisabled={teamSyncQuery.data}
+        />
+      )}
+    </>
+  );
+}
