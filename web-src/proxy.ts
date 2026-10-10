@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 
 const AUTH_COOKIE = 'portainer_api_key';
+export const HTML_CACHE_CONTROL =
+  'private, no-cache, no-store, max-age=0, must-revalidate, no-transform';
 const OAUTH_CALLBACK_PARAMETERS = [
   'code',
   'state',
@@ -58,12 +60,14 @@ export function proxy(request: NextRequest) {
     const loginUrl = buildLoginRedirectUrl(request.url);
     const response = NextResponse.redirect(loginUrl);
     response.headers.set('Content-Security-Policy', contentSecurityPolicy);
+    response.headers.set('Cache-Control', HTML_CACHE_CONTROL);
     return response;
   }
 
   if (authenticated && isLogin) {
     const response = NextResponse.redirect(new URL('/', request.url));
     response.headers.set('Content-Security-Policy', contentSecurityPolicy);
+    response.headers.set('Cache-Control', HTML_CACHE_CONTROL);
     return response;
   }
 
@@ -73,6 +77,7 @@ export function proxy(request: NextRequest) {
     },
   });
   response.headers.set('Content-Security-Policy', contentSecurityPolicy);
+  response.headers.set('Cache-Control', HTML_CACHE_CONTROL);
 
   return response;
 }

@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { buildContentSecurityPolicy, buildLoginRedirectUrl } from './proxy';
+import {
+  buildContentSecurityPolicy,
+  buildLoginRedirectUrl,
+  HTML_CACHE_CONTROL,
+} from './proxy';
+
+describe('HTML_CACHE_CONTROL', () => {
+  it('prevents intermediaries from rewriting streamed Next.js HTML', () => {
+    expect(HTML_CACHE_CONTROL).toContain('no-store');
+    expect(HTML_CACHE_CONTROL).toContain('no-transform');
+  });
+});
 
 describe('buildContentSecurityPolicy', () => {
   it('allows only scripts carrying the per-request nonce', () => {
