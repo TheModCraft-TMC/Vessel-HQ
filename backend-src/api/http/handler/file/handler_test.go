@@ -76,12 +76,13 @@ func TestProxyFrontend(t *testing.T) {
 		assert.Equal(t, "/environments/1", r.URL.Path)
 		assert.Equal(t, "portainer.example", r.Header.Get("X-Forwarded-Host"))
 		assert.Equal(t, "https", r.Header.Get("X-Forwarded-Proto"))
+		w.Header().Set("Content-Security-Policy", "script-src 'nonce-next-response'")
 		_, _ = w.Write([]byte("next response"))
 	}))
 	t.Cleanup(upstream.Close)
 	t.Setenv("PORTAINER_FRONTEND_ORIGIN", upstream.URL)
 
-	handler := file.NewHandler("", false, func() bool { return false })
+	handler := file.NewHandler("", true, func() bool { return false })
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodGet, "https://portainer.example/environments/1", nil)
 	request.Host = "portainer.example"
@@ -90,6 +91,7 @@ func TestProxyFrontend(t *testing.T) {
 	response := recorder.Result()
 	require.Equal(t, http.StatusOK, response.StatusCode)
 	require.Empty(t, response.Header.Get("Cache-Control"))
+	require.Equal(t, "script-src 'nonce-next-response'", response.Header.Get("Content-Security-Policy"))
 	body, err := io.ReadAll(response.Body)
 	require.NoError(t, err)
 	require.Equal(t, "next response", string(body))

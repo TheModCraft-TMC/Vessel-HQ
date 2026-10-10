@@ -34,6 +34,10 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+// A nonce must be generated for every HTML response. Static prerendering would
+// reuse HTML without the request nonce and CSP would block Next.js hydration.
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>

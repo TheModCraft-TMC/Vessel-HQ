@@ -41,5 +41,17 @@
     ]
   },
   "exclude": ["../backend-src", "../build", "../dist", "../distribution", "../node_modules", "../test", "../webpack", "legacy/react/portainer/generated-api"],
-  "include": ["app", "components", "legacy", "types", "next-env.d.ts", "next.config.ts", "proxy.ts", "../.storybook", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"]
+  "include": [
+    "app",
+    "components",
+    "legacy",
+    "types",
+    "next-env.d.ts",
+    "next.config.ts",
+    "proxy.ts",
+    "proxy.test.ts",
+    "../.storybook",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ]
 }

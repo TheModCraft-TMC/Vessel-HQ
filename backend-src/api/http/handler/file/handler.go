@@ -30,7 +30,7 @@ func NewHandler(assetPublicPath string, csp bool, wasInstanceDisabled func() boo
 		Handler: security.MWSecureHeaders(
 			gzhttp.GzipHandler(frontendHandler),
 			featureflags.IsEnabled("hsts"),
-			csp,
+			csp && !proxiedFrontend,
 		),
 		wasInstanceDisabled: wasInstanceDisabled,
 		proxiedFrontend:     proxiedFrontend,
