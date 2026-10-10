@@ -1,15 +1,30 @@
 import { describe, expect, it } from 'vitest';
+import { NextRequest } from 'next/server';
 
 import {
   buildContentSecurityPolicy,
   buildLoginRedirectUrl,
   HTML_CACHE_CONTROL,
+  proxy,
 } from './proxy';
 
 describe('HTML_CACHE_CONTROL', () => {
   it('prevents intermediaries from rewriting streamed Next.js HTML', () => {
     expect(HTML_CACHE_CONTROL).toContain('no-store');
     expect(HTML_CACHE_CONTROL).toContain('no-transform');
+  });
+});
+
+describe('proxy authentication routing', () => {
+  it('allows the login page to validate and recover a stale auth cookie', () => {
+    const request = new NextRequest('https://vessel.example/login', {
+      headers: { cookie: 'portainer_api_key=expired-token' },
+    });
+
+    const response = proxy(request);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('location')).toBeNull();
   });
 });
 

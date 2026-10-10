@@ -54,18 +54,11 @@ export function proxy(request: NextRequest) {
   requestHeaders.set('Content-Security-Policy', contentSecurityPolicy);
 
   const isLogin = request.nextUrl.pathname === '/login';
-  const authenticated = request.cookies.has(AUTH_COOKIE);
+  const hasAuthCookie = request.cookies.has(AUTH_COOKIE);
 
-  if (!authenticated && !isLogin) {
+  if (!hasAuthCookie && !isLogin) {
     const loginUrl = buildLoginRedirectUrl(request.url);
     const response = NextResponse.redirect(loginUrl);
-    response.headers.set('Content-Security-Policy', contentSecurityPolicy);
-    response.headers.set('Cache-Control', HTML_CACHE_CONTROL);
-    return response;
-  }
-
-  if (authenticated && isLogin) {
-    const response = NextResponse.redirect(new URL('/', request.url));
     response.headers.set('Content-Security-Policy', contentSecurityPolicy);
     response.headers.set('Cache-Control', HTML_CACHE_CONTROL);
     return response;
