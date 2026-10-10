@@ -1,8 +1,7 @@
 'use client';
 
-import { KubernetesRegistryAccessHeader } from '@console/console/platform/kubernetes/KubernetesAccessPages';
-
-import { RegistryAccessContent } from '@/domains/clusters/cluster/RegistryAccessView/RegistryAccessView';
+import { KubernetesRegistryAccessHeader } from '@app/_components/platform/kubernetes/KubernetesAccessPages';
+import { RegistryAccessContent } from '@app/_components/platform/kubernetes/cluster/RegistryAccessView/RegistryAccessView';
 
 export default function Page() {
   return (

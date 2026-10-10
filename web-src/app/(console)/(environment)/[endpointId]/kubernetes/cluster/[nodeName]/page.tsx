@@ -2,7 +2,7 @@
 
 import { useRouteParams } from '@console/console/routing/useRouteParams';
 
-import { NodeDetailsContent } from '@/domains/clusters/cluster/NodeView/NodeView';
+import { NodeDetailsContent } from '@app/_components/platform/kubernetes/cluster/NodeView/NodeView';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 export default function Page() {

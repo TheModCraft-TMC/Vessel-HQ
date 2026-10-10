@@ -1,5 +1,7 @@
 .root {
-  background-color: var(--bg-sidebar-nav-color);
+  background-color: #252527;
+  border: 1px inset #252527;
+  corner-shape: squircle;
 }
 
 .closeBtn {

@@ -1,5 +1,4 @@
-import { RegistryCreateContent } from '@console/console/pages/RegistryCreatePage';
-
+import { RegistryCreateContent } from '@app/_components/pages/RegistryCreatePage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function NewRegistryPage() {

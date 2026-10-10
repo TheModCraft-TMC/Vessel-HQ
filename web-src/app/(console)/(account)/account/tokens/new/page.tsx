@@ -1,5 +1,4 @@
-import { AccessTokenCreateContent } from '@console/console/pages/AccessTokenCreatePage';
-
+import { AccessTokenCreateContent } from '@app/_components/pages/AccessTokenCreatePage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function NewAccessTokenPage() {

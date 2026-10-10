@@ -1,4 +1,4 @@
-FROM node:22.22.1-alpine AS node-runtime
+FROM node:24.21.0-alpine AS node-runtime
 
 FROM portainer/base:latest AS production
 
@@ -9,12 +9,11 @@ ENV HOSTNAME=127.0.0.1 \
   PORT=8999 \
   PORTAINER_FRONTEND_ORIGIN=http://127.0.0.1:8999
 
-LABEL org.opencontainers.image.title="Portainer" \
-  org.opencontainers.image.description="Docker container management made simple, with the world's most popular GUI-based container management platform." \
-  org.opencontainers.image.vendor="Portainer.io" \
+LABEL org.opencontainers.image.title="Vessel HQ" \
+  org.opencontainers.image.description="Vessel HQ container management for Docker, Kubernetes, and Swarm." \
+  org.opencontainers.image.vendor="TheModCraft" \
   com.docker.desktop.extension.api.version=">= 0.2.2" \
-  com.docker.extension.publisher-url="https://www.portainer.io" \
-  com.docker.extension.additional-urls="[{\"title\":\"Website\",\"url\":\"https://www.portainer.io?utm_campaign=DockerCon&utm_source=DockerDesktop\"},{\"title\":\"Documentation\",\"url\":\"https://docs.portainer.io\"},{\"title\":\"Support\",\"url\":\"https://join.slack.com/t/portainer/shared_invite/zt-txh3ljab-52QHTyjCqbe5RibC2lcjKA\"}]"
+  com.docker.extension.detailed-description="<p>Vessel HQ provides a focused interface for managing Docker, Kubernetes, and Swarm environments.</p><ul><li>Inspect containers and logs</li><li>Open container consoles</li><li>Deploy applications and stacks</li><li>Manage reusable templates</li></ul>"
 
 COPY dist/mustache-templates /mustache-templates/
 COPY --chmod=0755 dist/portainer-${TARGETARCH} /portainer
@@ -42,11 +41,9 @@ ARG BUILD_DATE=unspecified
 LABEL git_commit=$GIT_COMMIT \
   org.opencontainers.image.revision=$GIT_COMMIT \
   org.opencontainers.image.created=$BUILD_DATE \
-  org.opencontainers.image.title="Portainer CE" \
-  org.opencontainers.image.description="Portainer Community Edition server." \
-  org.opencontainers.image.vendor="Portainer.io" \
-  org.opencontainers.image.url="https://www.portainer.io" \
-  org.opencontainers.image.documentation="https://docs.portainer.io" \
+  org.opencontainers.image.title="Vessel HQ" \
+  org.opencontainers.image.description="Vessel HQ container management server." \
+  org.opencontainers.image.vendor="TheModCraft" \
   io.portainer.server="true"
 
 ENTRYPOINT ["/usr/local/bin/node", "/next-entrypoint.js"]

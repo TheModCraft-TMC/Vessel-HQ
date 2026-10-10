@@ -1,7 +1,7 @@
 import { AlertTriangle } from 'lucide-react';
 
 import { Environment } from '@/domains/environments';
-import { isAgentEnvironment } from '@/react/portainer/environments/utils';
+import { isAgentEnvironment } from '@/domains/environments/utils';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
 import { Icon } from '@/ui/components/icons/Icon';
 

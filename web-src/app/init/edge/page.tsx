@@ -2,12 +2,13 @@
 
 import { Laptop } from 'lucide-react';
 import { Formik } from 'formik';
+
 import {
   EdgeComputeIntroduction,
   EdgeSetupForm,
   useInitEdgeSetup,
   validationSchema,
-} from '@console/console/pages/InitEdgePage';
+} from '@app/_components/pages/InitEdgePage';
 
 import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
 

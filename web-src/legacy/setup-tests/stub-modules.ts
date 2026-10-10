@@ -11,7 +11,7 @@ vi.mock('next/navigation', () => ({
   notFound: () => {
     throw new Error('NEXT_NOT_FOUND');
   },
-  useParams: () => ({}),
+  useParams: () => ({ endpointId: '1' }),
   usePathname: () => '/',
   useRouter: () => ({
     back: vi.fn(),

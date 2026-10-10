@@ -82,7 +82,7 @@ func (handler *Handler) executeServiceWebhook(
 
 	service.Spec.TaskTemplate.ForceUpdate++
 
-	imageName := strings.Split(service.Spec.TaskTemplate.ContainerSpec.Image, "@sha")[0]
+	imageName, _, _ := strings.Cut(service.Spec.TaskTemplate.ContainerSpec.Image, "@sha")
 	service.Spec.TaskTemplate.ContainerSpec.Image = imageName
 
 	if imageTag != "" {

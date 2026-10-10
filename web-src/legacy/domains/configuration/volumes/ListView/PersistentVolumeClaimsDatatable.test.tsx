@@ -20,6 +20,14 @@ vi.mock('@/react/hooks/useEnvironmentId', () => ({
 }));
 
 vi.mock(
+  '@/react/hooks/useUser',
+  async (importOriginal: () => Promise<Record<string, unknown>>) => ({
+    ...(await importOriginal()),
+    useAuthorizations: () => ({ authorized: true, isLoading: false }),
+  })
+);
+
+vi.mock(
   '@/domains/configuration/volumes/queries/usePersistentVolumeClaims',
   () => ({
     usePersistentVolumeClaims: vi.fn(),

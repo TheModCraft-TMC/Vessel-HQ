@@ -5,7 +5,7 @@ import {
   setPortainerAgentTargetHeader,
 } from '@/portainer/services/http-request.helper';
 
-import { agentInterceptor, agentTargetHeader } from './axios';
+import axios, { agentInterceptor, agentTargetHeader } from './axios';
 
 beforeEach(() => {
   resetAgentHeaders();
@@ -13,6 +13,10 @@ beforeEach(() => {
 
 afterEach(() => {
   resetAgentHeaders();
+});
+
+test('uses a root-relative API URL from nested application routes', () => {
+  expect(axios.defaults.baseURL).toBe('/api');
 });
 
 test('agentInterceptor preserves an explicit agent target', () => {

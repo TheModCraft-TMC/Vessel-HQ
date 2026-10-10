@@ -1,9 +1,14 @@
 'use client';
 
-import { Bell, ChevronDown, CircleHelp, Home, Menu } from 'lucide-react';
+import { Home, Menu } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { useSidebarState } from '@/ui/layouts/mobile-navigation/useSidebarState';
+import { ContextHelp } from '@/ui/layouts/view-layout/page-header/ContextHelp';
+import { NotificationsMenu } from '@/ui/layouts/view-layout/page-header/NotificationsMenu';
+import { UserMenu } from '@/ui/layouts/view-layout/page-header/UserMenu';
+import { AskAILink } from '@/ui/layouts/view-layout/page-header/AskAILink';
+import { useLayoutBindings } from '@/ui/layouts/layout-context';
 
 import { resolveConsoleRoute } from '../console/routes';
 
@@ -12,6 +17,7 @@ import styles from './MainLayout.module.css';
 export function HeaderBar() {
   const pathname = usePathname();
   const { toggle } = useSidebarState();
+  const { isBE, ddExtension } = useLayoutBindings();
   const routeTitle =
     pathname === '/'
       ? 'Environments'
@@ -35,16 +41,10 @@ export function HeaderBar() {
       </div>
 
       <div className={styles.headerActions}>
-        <button type="button" aria-label="Notifications">
-          <Bell aria-hidden size={17} />
-        </button>
-        <button type="button" aria-label="Help">
-          <CircleHelp aria-hidden size={17} />
-        </button>
-        <button type="button" className={styles.account}>
-          admin
-          <ChevronDown aria-hidden size={15} />
-        </button>
+        {isBE && <AskAILink />}
+        <NotificationsMenu />
+        <ContextHelp />
+        {!ddExtension && <UserMenu />}
       </div>
     </header>
   );

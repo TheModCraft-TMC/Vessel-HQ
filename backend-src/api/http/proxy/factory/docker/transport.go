@@ -170,7 +170,7 @@ func (transport *Transport) proxyDockerRequest(request *http.Request, fipsMode b
 	// trim to : containers/{id}/json
 	// pick    : [ containers, {id}, json ][0]
 	// prefix  : containers
-	prefix := strings.Split(strings.TrimPrefix(unversionedPath, "/"), "/")[0]
+	prefix, _, _ := strings.Cut(strings.TrimPrefix(unversionedPath, "/"), "/")
 
 	if proxyFunc := prefixProxyFuncMap[prefix]; proxyFunc != nil {
 		return proxyFunc(transport, request, unversionedPath)

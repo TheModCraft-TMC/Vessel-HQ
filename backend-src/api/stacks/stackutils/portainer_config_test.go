@@ -2,9 +2,9 @@ package stackutils
 
 import (
 	"os"
-	"path/filepath"
 	"testing"
 
+	"github.com/portainer/portainer/api/filesystem"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -53,7 +53,7 @@ func TestLoadPortainerStackConfigForFileLoadsConfigNextToComposeFile(t *testing.
 	t.Parallel()
 
 	projectPath := t.TempDir()
-	writePortainerStackConfig(t, filepath.Join(projectPath, "tmc-proxy"), `
+	writePortainerStackConfig(t, filesystem.JoinPaths(projectPath, "tmc-proxy"), `
 version: 1
 deploy:
   mode: flat
@@ -77,7 +77,7 @@ func TestLoadPortainerStackConfigForFileHandlesLeadingSlashComposeFile(t *testin
 	t.Parallel()
 
 	projectPath := t.TempDir()
-	writePortainerStackConfig(t, filepath.Join(projectPath, "tmc-proxy"), `
+	writePortainerStackConfig(t, filesystem.JoinPaths(projectPath, "tmc-proxy"), `
 version: 1
 compose:
   files:
@@ -98,7 +98,7 @@ func TestLoadPortainerStackConfigForFileRejectsMultipleConfigs(t *testing.T) {
 
 	projectPath := t.TempDir()
 	writePortainerStackConfig(t, projectPath, "version: 1\n")
-	writePortainerStackConfig(t, filepath.Join(projectPath, "tmc-proxy"), "version: 1\n")
+	writePortainerStackConfig(t, filesystem.JoinPaths(projectPath, "tmc-proxy"), "version: 1\n")
 
 	_, _, err := LoadPortainerStackConfigForFile(projectPath, "tmc-proxy/docker-compose.yml")
 
@@ -161,5 +161,5 @@ func writePortainerStackConfig(t *testing.T, projectPath string, content string)
 	t.Helper()
 
 	require.NoError(t, os.MkdirAll(projectPath, 0755))
-	require.NoError(t, os.WriteFile(filepath.Join(projectPath, PortainerStackConfigFile), []byte(content), 0644))
+	require.NoError(t, os.WriteFile(filesystem.JoinPaths(projectPath, PortainerStackConfigFile), []byte(content), 0644))
 }

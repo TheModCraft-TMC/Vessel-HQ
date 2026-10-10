@@ -1,5 +1,4 @@
-import { RegistriesContent } from '@console/console/pages/RegistriesPage';
-
+import { RegistriesContent } from '@app/_components/pages/RegistriesPage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function RegistriesPage() {

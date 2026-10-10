@@ -1,7 +1,5 @@
 export { ListView as ServicesListView } from './ListView/ListView';
-export { ItemView as ServiceItemView } from './ItemView/ItemView';
 export { CreateView as ServiceCreateView } from './CreateView/CreateView';
-export { LogsView as ServiceLogsView } from './LogsView/LogsView';
 export { useServices, getServices } from './queries/useServices';
 export { useService, getService } from './queries/useService';
 export { getServiceLogs } from './queries/useServiceLogs';
@@ -34,4 +32,3 @@ export {
 } from './secrets/queries/useSecrets';
 
 export { ItemView as TaskItemView } from './tasks/ItemView/ItemView';
-export { LogsView as TaskLogsView } from './tasks/LogsView/LogsView';

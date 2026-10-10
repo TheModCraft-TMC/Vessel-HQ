@@ -112,16 +112,15 @@ func refreshLatestVersion(versionCheckURL string) {
 		return
 	}
 
-	latestVersion := ""
+	tags := make([]string, 0, len(data.Results))
 	for _, tag := range data.Results {
-		if _, valid := parseNumericVersion(tag.Name); !valid {
-			continue
-		}
-
-		if latestVersion == "" || HasNewerVersion(latestVersion, tag.Name) {
-			latestVersion = tag.Name
-		}
+		tags = append(tags, tag.Name)
 	}
+
+	latestVersion := latestNumericVersion(
+		serverVersion(build.ImageTag, build.ReleaseVersion),
+		tags,
+	)
 
 	if latestVersion == "" {
 		log.Debug().Msg("couldn't find a valid maintained image version")
@@ -129,6 +128,31 @@ func refreshLatestVersion(versionCheckURL string) {
 	}
 
 	cachedLatestVersion.Store(&latestVersion)
+}
+
+func latestNumericVersion(currentVersion string, tags []string) string {
+	currentParts, _, currentIsValid := parseMaintainedVersion(currentVersion)
+	latestVersion := ""
+
+	for _, tag := range tags {
+		candidateParts, valid := parseNumericVersion(tag)
+		if !valid {
+			continue
+		}
+
+		// Vessel HQ uses three-part semantic versions. Older fork releases used
+		// five-part versions in the same Docker Hub repository; never advertise
+		// a release from the other version family as an upgrade.
+		if currentIsValid && len(candidateParts) != len(currentParts) {
+			continue
+		}
+
+		if latestVersion == "" || HasNewerVersion(latestVersion, tag) {
+			latestVersion = tag
+		}
+	}
+
+	return latestVersion
 }
 
 func GetLatestVersion() string {

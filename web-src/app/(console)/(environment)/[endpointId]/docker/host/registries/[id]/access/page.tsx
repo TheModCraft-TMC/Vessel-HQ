@@ -1,7 +1,7 @@
 import {
   EnvironmentRegistryAccessContent,
   EnvironmentRegistryAccessHeader,
-} from '@console/console/platform/EnvironmentRegistryPages';
+} from '@app/_components/platform/EnvironmentRegistryPages';
 
 export default function Page() {
   return (

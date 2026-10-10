@@ -1,5 +1,4 @@
-import { EnvironmentGroupCreateContent } from '@console/console/pages/EnvironmentGroupCreatePage';
-
+import { EnvironmentGroupCreateContent } from '@app/_components/pages/EnvironmentGroupCreatePage';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 export default function NewEnvironmentGroupPage() {

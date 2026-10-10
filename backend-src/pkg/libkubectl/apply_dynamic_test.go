@@ -26,6 +26,9 @@ import (
 // skipIfNoKubeconfig skips the test if no kubeconfig is available
 func skipIfNoKubeconfig(tb testing.TB) string {
 	tb.Helper()
+	if _, ok := os.LookupEnv("INTEGRATION_TEST"); !ok {
+		tb.Skip("skip Kubernetes integration test; set INTEGRATION_TEST to run")
+	}
 
 	// Check for kubeconfig in environment variable
 	kubeconfig := os.Getenv("KUBECONFIG")

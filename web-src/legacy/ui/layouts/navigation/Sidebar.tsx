@@ -38,7 +38,7 @@ function InnerSidebar() {
       <nav
         className={clsx(
           styles.nav,
-          'flex flex-1 flex-col overflow-y-auto py-5 pl-5',
+          'flex min-h-0 flex-1 flex-col overflow-hidden py-5 pl-5',
           { 'pr-5': isOpen }
         )}
         aria-label="Main"
@@ -48,7 +48,7 @@ function InnerSidebar() {
         <div
           className={clsx(
             styles.navListContainer,
-            'mt-6 flex-1 overflow-y-auto [color-scheme:light] be:[color-scheme:dark] th-highcontrast:[color-scheme:dark] th-dark:[color-scheme:dark]',
+            'mt-6 min-h-0 flex-1 overflow-y-auto [color-scheme:light] be:[color-scheme:dark] th-highcontrast:[color-scheme:dark] th-dark:[color-scheme:dark]',
             { '-mr-5 pr-5': isOpen }
           )}
         >

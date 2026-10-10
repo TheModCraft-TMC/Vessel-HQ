@@ -2,7 +2,7 @@ import { isSystemLabel, KubernetesPortainerNodeDrainLabel } from '../nodeUtils';
 import {
   NodeFormValues,
   defaultDrainOptions,
-} from '../NodeView/NodeDetails/types';
+} from '../models/nodeForm';
 
 import { buildSpec, buildLabels } from './useUpdateNodeMutation';
 

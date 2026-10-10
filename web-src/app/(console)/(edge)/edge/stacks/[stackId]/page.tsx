@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   EdgeStackDetailsContent,
   EdgeStackDetailsHeader,
-} from '@console/console/pages/EdgeEntityPages';
+} from '@app/_components/pages/EdgeEntityPages';
 
 export default async function Page({
   params,

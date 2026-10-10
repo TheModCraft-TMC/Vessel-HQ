@@ -92,7 +92,7 @@ func (h *Handler) websocketEvents(w http.ResponseWriter, r *http.Request) *httpe
 	if err != nil {
 		return httperror.InternalServerError("Unable to upgrade event stream connection", err)
 	}
-	defer connection.Close()
+	defer func() { _ = connection.Close() }()
 
 	updates, unsubscribe, ready := h.eventHub.subscribe()
 	defer unsubscribe()

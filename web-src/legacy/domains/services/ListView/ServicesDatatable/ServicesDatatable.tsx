@@ -17,7 +17,7 @@ import { getColumnVisibilityState } from '@/ui/components/data-table/ColumnVisib
 import { mergeOptions } from '@/ui/components/data-table/extend-options/mergeOptions';
 import { withGlobalFilter } from '@/ui/components/data-table/extend-options/withGlobalFilter';
 
-import { DecoratedTask } from '../../ItemView/TasksDatatable/types';
+import { DecoratedTask } from '../../components/TasksDatatable/types';
 
 import { useColumns } from './columns';
 import { TasksDatatable } from './TasksDatatable';

@@ -2,12 +2,11 @@
 
 import { useRouteParams } from '@console/console/routing/useRouteParams';
 
-import { HostBrowserContent } from '@/react/docker/host/BrowseView/BrowseView';
+import { HostBrowserContent } from '@app/_components/platform/docker/host/BrowseView/BrowseView';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {
-  const params = useRouteParams();
-
+  const routeParams = useRouteParams();
   return (
     <>
       <PageHeader
@@ -15,9 +14,9 @@ export default function Page() {
         breadcrumbs={[
           { label: 'Swarm', link: '/:endpointId/docker/swarm' },
           {
-            label: params.id,
+            label: routeParams.id,
             link: '/:endpointId/docker/nodes/:id',
-            linkParams: { id: params.id },
+            linkParams: { id: routeParams.id },
           },
           'Browse',
         ]}

@@ -1,14 +1,7 @@
 'use client';
 
-import { ContainerPageHeader } from '@console/console/platform/docker/ContainerPageHeader';
-
-import { ContainerConsole } from '@/domains/containers/views/ContainerConsoleView/ConsoleView';
+import { ContainerConsole } from '../_components/ContainerConsole';
 
 export default function Page() {
-  return (
-    <>
-      <ContainerPageHeader title="Container console" suffix="Console" />
-      <ContainerConsole mode="attach" showHeader={false} />
-    </>
-  );
+  return <ContainerConsole mode="attach" />;
 }

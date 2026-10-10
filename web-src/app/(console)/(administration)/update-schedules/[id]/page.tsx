@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   UpdateScheduleDetailsContent,
   UpdateScheduleDetailsHeader,
-} from '@console/console/pages/UpdateScheduleEditorPages';
+} from '@app/_components/pages/UpdateScheduleEditorPages';
 
 export default async function Page({
   params,

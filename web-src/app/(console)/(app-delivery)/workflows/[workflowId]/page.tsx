@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   WorkflowDetailsContent,
   WorkflowDetailsHeader,
-} from '@console/console/pages/WorkflowDetailsPage';
+} from '@app/_components/pages/WorkflowDetailsPage';
 
 export default async function WorkflowPage({
   params,

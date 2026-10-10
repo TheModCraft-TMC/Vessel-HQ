@@ -4,7 +4,7 @@ This fork has two distinct version concepts and intentionally keeps them separat
 
 ## Fork release version
 
-`RELEASE_VERSION` is the authoritative TheModCraft release identifier. The build script injects it into both `pkg/build.ReleaseVersion` and, by default, `pkg/build.ImageTag`; released images use tags such as `2.39.3.2.16`.
+`RELEASE_VERSION` is the authoritative Vessel HQ release identifier. The build script injects it into both `pkg/build.ReleaseVersion` and, by default, `pkg/build.ImageTag`; official releases use three-part semantic versions such as `1.2.0`.
 
 The authenticated `GET /api/system/version` response exposes the maintained image tag as `ServerVersion`, falling back to the maintained fork release when required. Numeric stable releases and `-beta.N` prereleases are supported, including `2.39.3.2.27-beta.2`. It never uses the upstream API/schema version as the installed image version.
 
@@ -16,8 +16,9 @@ The backend checks the public tags for `themodcrafttmc/portainer` on Docker Hub 
 
 1. fetches up to 100 recently updated tags every six hours;
 2. ignores aliases (`latest`, `beta`) and prerelease tags when discovering stable updates;
-3. compares every numeric component, including the fork's five-part versions;
-4. reports an update only when a newer maintained image tag exists.
+3. keeps three-part Vessel HQ releases separate from historical five-part fork releases stored in the same repository;
+4. compares every numeric component within the installed release's version family;
+5. reports an update only when a newer maintained image tag exists.
 
 The UI's update link opens the matching Docker Hub tag. Browser-side version data remains cached for 24 hours, with a hard browser refresh causing a new API request.
 

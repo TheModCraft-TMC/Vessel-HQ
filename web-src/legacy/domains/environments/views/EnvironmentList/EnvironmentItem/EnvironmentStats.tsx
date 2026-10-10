@@ -1,5 +1,5 @@
 import { Environment, PlatformType } from '@/domains/environments';
-import { getPlatformType } from '@/react/portainer/environments/utils';
+import { getPlatformType } from '@/domains/environments/utils';
 
 import { EnvironmentStatsDocker } from './EnvironmentStatsDocker';
 import { EnvironmentStatsKubernetes } from './EnvironmentStatsKubernetes';
@@ -14,7 +14,7 @@ export function EnvironmentStats({ environment }: Props) {
   const component = getComponent(platform, environment);
 
   return (
-    <span className="blocklist-item-desc flex w-full flex-wrap items-center gap-x-4 gap-y-2 lg:w-auto lg:gap-x-10">
+    <span className="blocklist-item-desc flex w-full flex-wrap items-center gap-x-4 gap-y-2 lg:ml-auto lg:w-auto lg:shrink-0 lg:justify-end lg:gap-x-10">
       {component}
     </span>
   );
@@ -29,8 +29,9 @@ function getComponent(platform: PlatformType, environment: Environment) {
         />
       );
     case PlatformType.Docker:
+    case PlatformType.Podman:
       return <EnvironmentStatsDocker snapshot={environment.Snapshots?.[0]} />;
-    default:
+    case PlatformType.Azure:
       return null;
   }
 }

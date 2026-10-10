@@ -1,8 +1,8 @@
 'use client';
 
-import { ContainerPageHeader } from '@console/console/platform/docker/ContainerPageHeader';
+import { ContainerDetailsContent } from '@app/_components/platform/docker/containers/ContainerDetailsView/ContainerDetailsView';
 
-import { ContainerDetailsContent } from '@/domains/containers/views/ContainerDetailsView/ContainerDetailsView';
+import { ContainerPageHeader } from '../../../_components/ContainerPageHeader';
 
 export default function Page() {
   return (

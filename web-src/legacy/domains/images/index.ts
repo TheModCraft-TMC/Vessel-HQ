@@ -21,7 +21,6 @@ export {
 } from './queries/useBuildImageMutation';
 export { pullImage } from './queries/usePullImageMutation';
 export { ListView } from './views/ListView/ListView';
-export { ItemView } from './views/ItemView/ItemView';
 export { BuildView } from './views/BuildView/BuildView';
 export { ImportView } from './views/ImportView/ImportView';
 export { PorImageRegistryModel } from './models/porImageRegistry';

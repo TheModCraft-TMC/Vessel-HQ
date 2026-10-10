@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense } from 'react';
-import { LogoutLogo, useLogout } from '@console/console/pages/LogoutPage';
 
+import { LogoutLogo, useLogout } from '@app/_components/pages/LogoutPage';
 import { LogoutStatus } from '@/domains/auth/components/LogoutStatus';
 
 export default function Page() {

@@ -1,5 +1,5 @@
 .root {
-  width: 500px;
+  width: min(500px, calc(100vw - 24px));
 }
 
 .badge {
@@ -16,14 +16,14 @@
   border-radius: 50%;
 }
 
-.notification-container {
+.notificationContainer {
   display: flex;
   border-bottom: 1px solid var(--ui-gray-4);
   padding: 5px 10px;
   margin-bottom: 15px;
 }
 
-.item-last {
+.itemLast {
   margin-left: auto;
 }
 
@@ -51,7 +51,7 @@
   flex-basis: 5rem;
 }
 
-.notification-details {
+.notificationDetails {
   word-break: break-all;
   white-space: normal;
   overflow: hidden;
@@ -67,11 +67,11 @@
   margin: auto;
 }
 
-.notification-title {
+.notificationTitle {
   font-weight: 700;
 }
 
-.notification-link {
+.notificationLink {
   border-top: 1px solid var(--ui-gray-4);
   padding: 10px;
   text-align: center;

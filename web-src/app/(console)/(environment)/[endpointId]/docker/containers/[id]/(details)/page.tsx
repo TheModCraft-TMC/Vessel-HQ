@@ -1,0 +1,108 @@
+'use client';
+
+import { useCallback } from 'react';
+import { useRouteParams } from '@console/console/routing/useRouteParams';
+
+import type { ContainerDetails } from '@/domains/containers/models';
+import { ContainerActionsSection } from '@/domains/containers/components/ContainerDetails/ContainerActionsSection/ContainerActionsSection';
+import { ContainerStatusSection } from '@/domains/containers/components/ContainerDetails/ContainerStatusSection/ContainerStatusSection';
+import { CreateImageSection } from '@/domains/containers/components/ContainerDetails/CreateImageSection/CreateImageSection';
+import { ContainerDetailsSection } from '@/domains/containers/components/ContainerDetails/ContainerDetailsSection/ContainerDetailsSection';
+import { VolumesSection } from '@/domains/containers/components/ContainerDetails/VolumesSection/VolumesSection';
+import { ContainerNetworksDatatable } from '@/domains/containers/components/ContainerDetails/ContainerNetworksDatatable';
+import { HealthStatus } from '@/domains/containers/components/ContainerDetails/HealthStatus';
+import { useContainer } from '@/domains/containers/queries/useContainer';
+import { Registry } from '@/domains/registries';
+import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel';
+import { ResourceControlType } from '@/react/portainer/access-control/types';
+import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
+
+import { findBestMatchRegistry } from '@@/ImageConfigFieldset/findRegistryMatch';
+
+export default function Page() {
+  const environmentId = useEnvironmentId();
+  const { id: containerId, nodeName } = useRouteParams();
+  const containerQuery = useContainer(
+    { environmentId, containerId, nodeName },
+    { select: (container) => container }
+  );
+  const registriesQuery = useEnvironmentRegistries(environmentId);
+  const handleAccessUpdate = useCallback(async () => {
+    await containerQuery.refetch();
+  }, [containerQuery]);
+
+  if (
+    containerQuery.isLoading ||
+    !containerQuery.data ||
+    !registriesQuery.data
+  ) {
+    return null;
+  }
+
+  const container = containerQuery.data;
+  const registryId = getRegistryId(container, registriesQuery.data);
+
+  return (
+    <>
+      <div className="mx-4 mb-4 space-y-4 [&>*]:block">
+        <ContainerActionsSection
+          environmentId={environmentId}
+          nodeName={nodeName}
+          container={container}
+        />
+        <ContainerStatusSection
+          environmentId={environmentId}
+          nodeName={nodeName}
+          container={container}
+          registryId={registryId}
+        />
+      </div>
+
+      <AccessControlPanel
+        resourceId={container.Id || ''}
+        resourceControl={container.ResourceControl}
+        resourceType={ResourceControlType.Container}
+        onUpdateSuccess={handleAccessUpdate}
+        environmentId={environmentId}
+      />
+
+      {container.State?.Health && (
+        <HealthStatus health={container.State.Health} />
+      )}
+
+      <div className="mx-4 mb-4 space-y-4 [&>*]:block">
+        <CreateImageSection
+          environmentId={environmentId}
+          containerId={container.Id || ''}
+        />
+        <ContainerDetailsSection
+          environmentId={environmentId}
+          container={container}
+          nodeName={nodeName}
+        />
+        <VolumesSection volumes={container.Mounts} nodeName={nodeName} />
+      </div>
+
+      {container.NetworkSettings?.Networks && (
+        <ContainerNetworksDatatable
+          dataset={container.NetworkSettings.Networks}
+          containerId={containerId}
+          nodeName={nodeName}
+        />
+      )}
+    </>
+  );
+}
+
+function getRegistryId(
+  container: ContainerDetails,
+  registries?: Array<Registry>
+) {
+  const imageName = container.Config?.Image;
+  if (!imageName || !registries) {
+    return undefined;
+  }
+
+  return findBestMatchRegistry(imageName, registries)?.Id;
+}

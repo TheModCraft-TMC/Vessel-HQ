@@ -1,5 +1,4 @@
-import { NotificationsContent } from '@console/console/pages/NotificationsPage';
-
+import { NotificationsContent } from '@app/_components/pages/NotificationsPage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function NotificationsPage() {

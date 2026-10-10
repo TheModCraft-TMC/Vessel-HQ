@@ -6,7 +6,7 @@ import {
   RestoreBackupForm,
   SetupPanel,
   useInitAdminSetup,
-} from '@console/console/pages/InitAdminPage';
+} from '@app/_components/pages/InitAdminPage';
 
 export default function Page() {
   const setup = useInitAdminSetup();

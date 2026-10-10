@@ -4,7 +4,7 @@ import { drainNode as drainNodeApi } from '@api/sdk.gen';
 import { EnvironmentId } from '@/domains/environments';
 import { withInvalidate, withError } from '@/core/query';
 
-import { DrainOptions } from '../NodeView/NodeDetails/types';
+import { DrainOptions } from '../models/nodeForm';
 
 import { queryKeys } from './query-keys';
 

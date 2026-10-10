@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
-import { AuthenticationSettingsPageContent } from '@console/console/pages/AuthenticationSettingsPage';
-import { EdgeComputeSettingsContent } from '@console/console/pages/EdgeComputeSettingsPage';
 
+import { AuthenticationSettingsPageContent } from '@app/_components/pages/AuthenticationSettingsPage';
+import { EdgeComputeSettingsContent } from '@app/_components/pages/EdgeComputeSettingsPage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default async function SettingsSectionPage({

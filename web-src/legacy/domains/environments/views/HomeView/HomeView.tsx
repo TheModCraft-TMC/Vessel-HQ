@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { environmentStore } from '@/react/hooks/current-environment-store';
 import { Environment } from '@/domains/environments';
-import { isEdgeEnvironment } from '@/react/portainer/environments/utils';
+import { isEdgeEnvironment } from '@/domains/environments/utils';
 import { confirm } from '@/ui/components/dialog/confirm';
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { ModalType } from '@/ui/components/dialog';

@@ -160,7 +160,18 @@ function renderComponent() {
   const user = new UserViewModel({ Username: 'user', Role: 1 });
 
   const Wrapped = withTestQueryProvider(
-    withUserProvider(withTestRouter(UpdateNamespaceForm), user)
+    withUserProvider(
+      withTestRouter(UpdateNamespaceForm, {
+        route: 'namespace-details',
+        stateConfig: [
+          {
+            name: 'namespace-details',
+            params: { id: NAMESPACE_NAME },
+          },
+        ],
+      }),
+      user
+    )
   );
 
   return render(<Wrapped />);

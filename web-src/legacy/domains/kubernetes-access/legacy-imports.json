@@ -1,5 +1,5 @@
 {
-  "maxImports": 68,
+  "maxImports": 63,
   "modules": [
     "@/portainer/filters/filters",
     "@/portainer/models/user",
@@ -12,7 +12,6 @@
     "@/react/test-utils/withUserProvider",
     "@/setup-tests/server",
     "@/setup-tests/suppress-console",
-    "@@/CodeEditor",
     "@@/DetailsTable/DetailsRow",
     "@@/DetailsTable/DetailsTable",
     "@@/Widget",

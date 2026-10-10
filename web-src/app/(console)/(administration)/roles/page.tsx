@@ -1,5 +1,4 @@
-import { RolesContent } from '@console/console/pages/RolesPage';
-
+import { RolesContent } from '@app/_components/pages/RolesPage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function RolesPage() {

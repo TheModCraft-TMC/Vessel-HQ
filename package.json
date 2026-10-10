@@ -22,7 +22,7 @@
     "build": "bash scripts/package-next-standalone.sh --clean && next build web-src --webpack && bash scripts/package-next-standalone.sh",
     "format": "prettier --log-level warn --write  \"**/*.{js,css,html,jsx,tsx,ts}\"",
     "lint": "eslint --cache --fix \"./**/*.{js,jsx,ts,tsx}\"",
-    "lint:ci": "./scripts/check-frontend-modernization.sh && node ./scripts/check-frontend-boundaries.mjs && eslint --cache \"./**/*.{js,jsx,ts,tsx}\"",
+    "lint:ci": "./scripts/check-frontend-modernization.sh && node ./scripts/check-frontend-boundaries.mjs && node ./scripts/check-app-router-compliance.mjs && eslint --cache \"./**/*.{js,jsx,ts,tsx}\"",
     "test": "vitest run",
     "sb": "pnpm run storybook",
     "storybook": "storybook dev -p 6006",
@@ -30,11 +30,13 @@
     "typecheck": "tsc --project web-src/tsconfig.json --noEmit",
     "check:frontend-modernization": "./scripts/check-frontend-modernization.sh",
     "check:frontend-boundaries": "node ./scripts/check-frontend-boundaries.mjs",
+    "check:app-router-compliance": "node ./scripts/check-app-router-compliance.mjs",
+    "index:app-router-pages": "pnpm check:app-router-compliance && node ./scripts/index-app-router-pages.mjs",
     "generate-api": "openapi-ts",
     "postgenerate-api": "pnpm format"
   },
   "engines": {
-    "node": "^22.22.1"
+    "node": "^24.21.0"
   },
   "packageManager": "pnpm@10.26.2",
   "dependencies": {

@@ -11,6 +11,7 @@ import (
 	sourceDS "github.com/portainer/portainer/api/dataservices/source"
 	dataStorePkg "github.com/portainer/portainer/api/datastore"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -21,7 +22,7 @@ func TestVaultTokenRenewerRunOnceRenewsStoredPeriodicTokens(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/v1/auth/token/lookup-self":
-			require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+			assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 				"data": map[string]any{
 					"ttl":       60,
 					"period":    120,
@@ -30,7 +31,7 @@ func TestVaultTokenRenewerRunOnceRenewsStoredPeriodicTokens(t *testing.T) {
 			}))
 		case "/v1/auth/token/renew-self":
 			renewals.Add(1)
-			require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+			assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 				"auth": map[string]any{
 					"lease_duration": 120,
 					"renewable":      true,

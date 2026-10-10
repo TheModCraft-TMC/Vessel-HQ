@@ -2,7 +2,7 @@
 
 import { useRouteParams } from '@console/console/routing/useRouteParams';
 
-import { HelmApplicationContent } from '@/domains/configuration/helm/HelmApplicationView/HelmApplicationView';
+import { HelmApplicationContent } from '@app/_components/platform/kubernetes/helm/HelmApplicationView/HelmApplicationView';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 export default function Page() {

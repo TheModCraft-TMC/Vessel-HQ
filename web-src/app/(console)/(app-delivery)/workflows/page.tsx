@@ -1,5 +1,4 @@
-import { WorkflowsContent } from '@console/console/pages/WorkflowsPage';
-
+import { WorkflowsContent } from '@app/_components/pages/WorkflowsPage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function WorkflowsPage() {

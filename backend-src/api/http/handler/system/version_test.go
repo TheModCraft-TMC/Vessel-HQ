@@ -147,6 +147,22 @@ func Test_GetLatestVersion(t *testing.T) {
 	require.Equal(t, version, GetLatestVersion())
 }
 
+func Test_latestNumericVersionKeepsReleaseFamiliesSeparate(t *testing.T) {
+	t.Parallel()
+
+	tags := []string{
+		"latest",
+		"beta",
+		"2.39.3.2.27",
+		"1.1.0",
+		"1.3.0",
+		"1.4.0-beta.1",
+	}
+
+	require.Equal(t, "1.3.0", latestNumericVersion("1.2.0", tags))
+	require.Equal(t, "2.39.3.2.27", latestNumericVersion("2.39.3.2.26", tags))
+}
+
 func Test_refreshLatestVersion(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte(`{"results":[{"name":"latest"},{"name":"beta"},{"name":"2.99.0.0.99-beta.1"},{"name":"2.39.3.2.9"},{"name":"2.39.3.2.16"},{"name":"2.39.3.2.15"}]}`))

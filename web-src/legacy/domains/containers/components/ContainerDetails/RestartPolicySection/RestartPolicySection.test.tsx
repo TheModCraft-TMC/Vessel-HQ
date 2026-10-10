@@ -17,6 +17,11 @@ vi.mock('./useUpdateRestartPolicyMutation', () => ({
   }),
 }));
 
+vi.mock('@/react/hooks/useUser', async (importOriginal) => ({
+  ...(await importOriginal<Record<string, unknown>>()),
+  Authorized: ({ children }: React.PropsWithChildren) => children,
+}));
+
 function renderComponent(
   props: Partial<React.ComponentProps<typeof RestartPolicySection>> = {}
 ) {

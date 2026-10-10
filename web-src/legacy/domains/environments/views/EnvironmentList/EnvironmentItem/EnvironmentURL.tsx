@@ -1,5 +1,5 @@
 import type { Environment } from '@/domains/environments';
-import { isEdgeEnvironment } from '@/react/portainer/environments/utils';
+import { isEdgeEnvironment } from '@/domains/environments/utils';
 
 export function EnvironmentURL({ environment }: { environment: Environment }) {
   if (isEdgeEnvironment(environment.Type)) {

@@ -2,12 +2,14 @@ package stackutils
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 
+	"github.com/portainer/portainer/api/filesystem"
 	"go.yaml.in/yaml/v3"
 )
 
@@ -111,7 +113,7 @@ func (config *PortainerStackConfig) resolveComposeFilePaths() {
 	}
 
 	for i, file := range config.Compose.Files {
-		config.Compose.Files[i] = path.Join(config.ConfigDir, file)
+		config.Compose.Files[i] = path.Join(config.ConfigDir, file) //nolint:forbidigo // Repository-relative slash path, not a filesystem path.
 	}
 }
 
@@ -128,7 +130,7 @@ func findPortainerStackConfig(projectPath string, configFilePath string) (string
 
 	for _, configDir := range portainerStackConfigSearchDirs(configFilePath) {
 		for _, name := range []string{PortainerStackConfigFile, portainerStackConfigFileYAML} {
-			configPath := filepath.Join(projectPath, filepath.FromSlash(configDir), name)
+			configPath := filesystem.JoinPaths(projectPath, filepath.FromSlash(configDir), name)
 			if _, err := os.Stat(configPath); err != nil {
 				if os.IsNotExist(err) {
 					continue
@@ -138,7 +140,7 @@ func findPortainerStackConfig(projectPath string, configFilePath string) (string
 			}
 
 			if foundPath != "" {
-				return "", "", false, fmt.Errorf("only one Portainer stack config file is allowed")
+				return "", "", false, errors.New("only one Portainer stack config file is allowed")
 			}
 
 			foundPath = configPath

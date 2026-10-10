@@ -1,7 +1,7 @@
-import { useParams } from 'next/navigation';
+import { useRouteParams } from '@console/console/routing/useRouteParams';
 
 export function useIdParam(param = 'id', suppliedId?: number): number {
-  const params = useParams<Record<string, string | string[]>>();
+  const params = useRouteParams() as Record<string, string | string[]>;
 
   if (suppliedId) {
     return suppliedId;

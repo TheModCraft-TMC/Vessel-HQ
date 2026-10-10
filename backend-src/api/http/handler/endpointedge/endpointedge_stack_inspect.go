@@ -57,8 +57,7 @@ func (handler *Handler) endpointEdgeStackInspect(w http.ResponseWriter, r *http.
 		return edgeStack, err
 	})
 	if err != nil {
-		var httpErr *httperror.HandlerError
-		if errors.As(err, &httpErr) {
+		if httpErr, ok := errors.AsType[*httperror.HandlerError](err); ok {
 			return httpErr
 		}
 

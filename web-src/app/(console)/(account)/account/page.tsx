@@ -1,5 +1,4 @@
-import { AccountContent } from '@console/console/pages/AccountPage';
-
+import { AccountContent } from '@app/_components/pages/AccountPage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function UserAccountPage() {

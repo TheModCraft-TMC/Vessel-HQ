@@ -1,7 +1,7 @@
 import {
   EdgeStacksContent,
   EdgeStacksHeader,
-} from '@console/console/pages/EdgeListPages';
+} from '@app/_components/pages/EdgeListPages';
 
 export default function Page() {
   return (

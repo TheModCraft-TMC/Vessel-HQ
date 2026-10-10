@@ -1,7 +1,6 @@
 package sources
 
 import (
-	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -16,6 +15,7 @@ import (
 	"github.com/portainer/portainer/pkg/libhttp/request"
 	"github.com/portainer/portainer/pkg/libhttp/response"
 	"github.com/portainer/portainer/pkg/validate"
+	"github.com/segmentio/encoding/json"
 
 	"github.com/rs/zerolog/log"
 )
@@ -158,13 +158,12 @@ func (h *Handler) gitSourceUpdate(w http.ResponseWriter, r *http.Request) *httpe
 }
 
 func isJSONDecodeError(err error) bool {
-	var syntaxErr *json.SyntaxError
-	if errors.As(err, &syntaxErr) {
+	if _, ok := errors.AsType[*json.SyntaxError](err); ok {
 		return true
 	}
 
-	var typeErr *json.UnmarshalTypeError
-	return errors.As(err, &typeErr)
+	_, ok := errors.AsType[*json.UnmarshalTypeError](err)
+	return ok
 }
 
 // ApplyGitSourceChanges applies the payload changes to the source in place

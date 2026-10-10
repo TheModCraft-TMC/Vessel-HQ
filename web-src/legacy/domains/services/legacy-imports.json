@@ -1,5 +1,5 @@
 {
-  "maxImports": 129,
+  "maxImports": 117,
   "modules": [
     "@/docker/filters/utils",
     "@/portainer/filters/filters",
@@ -13,7 +13,6 @@
     "@/react/docker/components/ImageStatus/types",
     "@/react/docker/components/datatable/TableColumnHeaderImageUpToDate",
     "@/react/docker/components/datatable/createOwnershipColumn",
-    "@/react/docker/logs/DockerLogsView",
     "@/react/docker/proxy/queries/query-keys",
     "@/react/docker/proxy/queries/useVersion",
     "@/react/docker/queries/utils",

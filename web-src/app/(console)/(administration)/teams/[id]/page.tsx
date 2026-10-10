@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   TeamDetailsContent,
   TeamDetailsHeader,
-} from '@console/console/pages/TeamDetailsPage';
+} from '@app/_components/pages/TeamDetailsPage';
 
 export default async function TeamPage({
   params,

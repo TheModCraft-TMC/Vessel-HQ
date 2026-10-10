@@ -152,7 +152,7 @@ func (h *Handler) fetchDashboardData(ctx context.Context, key dashboardCacheKey)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to the Docker daemon: %w", err)
 	}
-	defer cli.Close()
+	defer func() { _ = cli.Close() }()
 
 	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 	if err != nil {

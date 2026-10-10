@@ -1,5 +1,4 @@
-import { EdgeAutoCreateContent } from '@console/console/pages/EdgeAutoCreatePage';
-
+import { EdgeAutoCreateContent } from '@app/_components/pages/EdgeAutoCreatePage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

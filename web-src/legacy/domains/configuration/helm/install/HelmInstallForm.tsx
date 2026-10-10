@@ -8,13 +8,12 @@ import { notifySuccess } from '@/ui/components/toast/notifications';
 import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
 import { confirm, confirmGenericDiscard } from '@/ui/components/dialog/confirm';
 import { Option } from '@/ui/components/forms/PortainerSelect';
-
-import { Chart } from '../types';
-import { useUpdateHelmReleaseMutation } from '../helmReleaseQueries/useUpdateHelmReleaseMutation';
+import { Chart } from '@/domains/configuration/helm/types';
+import { useUpdateHelmReleaseMutation } from '@/domains/configuration/helm/helmReleaseQueries/useUpdateHelmReleaseMutation';
 import {
   ChartVersion,
   useHelmRepoVersions,
-} from '../helmChartSourceQueries/useHelmRepoVersions';
+} from '@/domains/configuration/helm/helmChartSourceQueries/useHelmRepoVersions';
 
 import { HelmInstallInnerForm } from './HelmInstallInnerForm';
 import { HelmInstallFormValues } from './types';

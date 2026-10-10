@@ -11,6 +11,7 @@ import (
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/dataservices/source"
 	"github.com/portainer/portainer/api/datastore"
+	"github.com/portainer/portainer/api/filesystem"
 	gittypes "github.com/portainer/portainer/api/git/types"
 	"github.com/portainer/portainer/api/gitops/workflows"
 	"github.com/portainer/portainer/api/internal/testhelpers"
@@ -28,7 +29,7 @@ type stubFileService struct {
 
 func (s *stubFileService) GetStackProjectPath(stackIdentifier string) string {
 	if s.root != "" {
-		return filepath.Join(s.root, stackIdentifier)
+		return filesystem.JoinPaths(s.root, stackIdentifier)
 	}
 
 	return "/data/compose/" + stackIdentifier
@@ -46,7 +47,7 @@ func (g gitServiceWritingFiles) CloneRepository(_ context.Context, destination, 
 	}
 
 	for name, content := range g.files {
-		path := filepath.Join(destination, filepath.FromSlash(name))
+		path := filesystem.JoinPaths(destination, filepath.FromSlash(name))
 		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 			return err
 		}

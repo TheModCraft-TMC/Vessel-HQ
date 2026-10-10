@@ -18,6 +18,14 @@ vi.mock('@/react/hooks/useEnvironmentId', () => ({
   useEnvironmentId: () => mockUseEnvironmentId(),
 }));
 
+vi.mock(
+  '@/react/hooks/useUser',
+  async (importOriginal: () => Promise<Record<string, unknown>>) => ({
+    ...(await importOriginal()),
+    useAuthorizations: () => ({ authorized: true, isLoading: false }),
+  })
+);
+
 vi.mock('@/domains/configuration/volumes/queries/useStorageClasses', () => ({
   useStorageClasses: vi.fn(),
 }));

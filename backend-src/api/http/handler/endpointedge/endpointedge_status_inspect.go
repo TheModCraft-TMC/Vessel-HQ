@@ -111,8 +111,7 @@ func (handler *Handler) endpointEdgeStatusInspect(w http.ResponseWriter, r *http
 		statusResponse, err = handler.inspectStatus(tx, r, portainer.EndpointID(endpointID), firstConn)
 		return err
 	}); err != nil {
-		var httpErr *httperror.HandlerError
-		if errors.As(err, &httpErr) {
+		if httpErr, ok := errors.AsType[*httperror.HandlerError](err); ok {
 			httpErr.Err = fmt.Errorf("edge polling error: %w. Environment ID: %d", httpErr.Err, endpoint.ID)
 			return httpErr
 		}

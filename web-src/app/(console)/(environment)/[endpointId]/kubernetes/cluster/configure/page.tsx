@@ -3,8 +3,7 @@
 import {
   ClusterPageHeader,
   KubernetesConfigureContent,
-} from '@console/console/platform/kubernetes/KubernetesClusterPages';
-
+} from '@app/_components/platform/kubernetes/KubernetesClusterPages';
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { useUnauthorizedRedirect } from '@/react/hooks/useUnauthorizedRedirect';
 

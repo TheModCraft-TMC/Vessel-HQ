@@ -12,6 +12,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func Test_displayVersion(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, "1.2.0", displayVersion("1.2.0", "2.45.0"))
+	assert.Equal(t, "2.45.0", displayVersion("", "2.45.0"))
+}
+
 func Test_resolveSetupToken(t *testing.T) {
 	t.Parallel()
 

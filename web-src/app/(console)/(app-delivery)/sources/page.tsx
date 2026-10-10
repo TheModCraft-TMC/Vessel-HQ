@@ -1,5 +1,4 @@
-import { SourcesContent } from '@console/console/pages/SourcesPage';
-
+import { SourcesContent } from '@app/_components/pages/SourcesPage';
 import { AddButton } from '@/ui/components/buttons';
 import { PageHeader } from '@/ui/layouts/view-layout';
 

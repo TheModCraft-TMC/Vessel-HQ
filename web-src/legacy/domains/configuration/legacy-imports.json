@@ -1,5 +1,5 @@
 {
-  "maxImports": 198,
+  "maxImports": 145,
   "modules": [
     "@/assets/ico/vendor/helm.svg?c",
     "@/kubernetes/models/configuration/models",
@@ -10,10 +10,7 @@
     "@/portainer/models/user",
     "@/portainer/services/axios/axios",
     "@/react-tools/test-mocks",
-    "@/react/common/date-utils",
-    "@/react/common/semver-utils",
     "@/react/components/FallbackImage",
-    "@/react/hooks/useDebounce",
     "@/react/hooks/useDebouncedValue",
     "@/react/hooks/useEnvironmentId",
     "@/react/hooks/useIsDeploymentOptionHidden",
@@ -24,12 +21,7 @@
     "@/react/test-utils/react-select",
     "@/react/test-utils/withRouter",
     "@/react/test-utils/withUserProvider",
-    "@/setup-tests/mock-codemirror",
-    "@/setup-tests/mock-localizeDate",
     "@/setup-tests/server",
-    "@/setup-tests/suppress-console",
-    "@/types",
-    "@@/Blocklist/BlocklistItem",
     "@@/CodeEditor",
     "@@/CodeEditor/DiffViewer",
     "@@/CodeEditor/ShortcutsTooltip",
@@ -37,13 +29,7 @@
     "@@/DetailsTable/DetailsTable",
     "@@/ExpandableMessageByLines",
     "@@/FallbackImage",
-    "@@/NavTabs",
-    "@@/RadioGroup/RadioGroup",
-    "@@/WebEditorForm",
     "@@/Widget",
-    "@@/Widget/WidgetBody",
-    "@@/Widget/WidgetIcon",
-    "@@/Widget/WidgetTabs",
-    "@@/primitives/Card"
+    "@@/Widget/WidgetTabs"
   ]
 }

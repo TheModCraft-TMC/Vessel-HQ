@@ -1,21 +1,36 @@
 .shell {
-  --active-sidebar-width: var(--vessel-size-sidebar-collapsed, 68px);
+  --vessel-size-sidebar-collapsed: 4rem;
+  --vessel-size-sidebar-expanded: 17.5rem;
+  --active-sidebar-width: var(--vessel-size-sidebar-collapsed, 64px);
+  --frame-gap: 0px;
   --shell-gap: var(--frame-gap);
   --shell-radius: var(--frame-radius);
   --shell-surface: var(--frame);
   --shell-chrome: transparent;
   --shell-border: var(--border);
+  display: grid;
   width: 100dvw;
   height: 100dvh;
+  grid-template-areas:
+    'sidebar header'
+    'sidebar page';
+  grid-template-columns: var(--active-sidebar-width) minmax(0, 1fr);
+  grid-template-rows: var(--header-height) minmax(0, 1fr);
   overflow: hidden;
   padding-left: 0 !important;
-  background: radial-gradient(circle at 12% 0%, rgb(35 82 124 / 14%), transparent 34rem), #090a0b;
+  background:
+    radial-gradient(
+      circle at 12% 0%,
+      color-mix(in srgb, var(--blue-4) 9%, transparent),
+      transparent 34rem
+    ),
+    var(--bg-body-color);
+  transition: grid-template-columns 200ms ease;
 }
 
 .shell[data-sidebar-open] {
-  --active-sidebar-width: var(--vessel-size-sidebar-expanded, 300px);
+  --active-sidebar-width: var(--vessel-size-sidebar-expanded, 280px);
 }
-
 .sidebar {
   position: fixed;
   z-index: 40;
@@ -24,7 +39,7 @@
   width: var(--sidebar-width);
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid var(--shell-border);
   border-right: 0;
   border-radius: var(--frame-radius) 0 var(--frame-radius) var(--frame-radius);
   background: var(--frame);
@@ -164,32 +179,60 @@
   text-align: center;
 }
 
-.workspace {
-  position: fixed;
-  inset: var(--frame-gap) var(--frame-gap) var(--frame-gap) calc(var(--frame-gap) + var(--active-sidebar-width));
-  transition: inset 200ms ease;
+.sidebarRegion {
+  position: relative;
+  z-index: 40;
+  grid-area: sidebar;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-left: 0;
-  border-radius: 0 var(--frame-radius) var(--frame-radius) 0;
-  background: var(--frame);
-  box-shadow:
-    0 20px 55px rgb(0 0 0 / 24%),
-    inset 0 1px rgb(255 255 255 / 8%);
 }
 
 .header {
-  position: absolute;
+  --header-scoop-padding: 14px;
+  --header-scoop-radius: calc(
+    var(--frame-radius) + var(--header-scoop-padding)
+  );
+  position: relative;
   z-index: 20;
-  inset: 0 0 auto;
   display: flex;
-  height: var(--header-height);
+  box-sizing: border-box;
+  grid-area: header;
+  min-width: 0;
   align-items: center;
   justify-content: space-between;
+  border: 1px solid var(--shell-border);
+  border-left: 0;
+  border-radius: 0 var(--frame-radius) var(--frame-radius) 0;
+  corner-shape: square var(--frame-corner-shape) var(--frame-corner-shape)
+    square;
   padding: 0 28px;
   background: var(--frame);
   color: #f8fafc !important;
+  box-shadow:
+    0 20px 55px rgb(0 0 0 / 18%),
+    inset 0 1px rgb(255 255 255 / 8%);
   backdrop-filter: blur(28px) saturate(160%);
+}
+
+.header::after {
+  position: absolute;
+  top: calc(100%);
+  left: 0;
+  box-sizing: border-box;
+  width: var(--header-scoop-radius);
+  height: var(--header-scoop-radius);
+  background: var(--frame);
+  /* A normalized SVG keeps the inclined curve responsive as its box changes. */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M 0 0 H 100 C 33 0 0 33 0 100 Z' fill='black'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M 0 0 H 100 C 33 0 0 33 0 100 Z' fill='black'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  filter: drop-shadow(0.75px 0.75px 0 var(--border));
+  content: '';
+  pointer-events: none;
 }
 
 .headerStart,
@@ -224,6 +267,31 @@
   cursor: pointer;
 }
 
+.headerActions > a {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 5%);
+  color: #f8fafc !important;
+}
+
+.headerActions :global([aria-label='User menu toggle']) {
+  display: flex;
+  width: auto;
+  gap: 7px;
+  padding: 0 11px;
+}
+
+.headerActions :global(.icon-badge) {
+  border: 0;
+  background: transparent;
+  color: inherit !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 .mobileClose,
 .mobileMenu {
   min-width: 34px;
@@ -235,8 +303,11 @@
   cursor: pointer;
 }
 
-.headerActions button:hover {
+.headerActions button:hover,
+.headerActions > a:hover {
   background: rgb(255 255 255 / 10%);
+  color: #fff !important;
+  text-decoration: none;
 }
 
 .headerActions .account {
@@ -246,20 +317,25 @@
 }
 
 .mainScroll {
-  position: absolute;
-  inset: var(--header-height) 0 0;
+  grid-area: page;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden auto;
   overscroll-behavior: contain;
-  border-top: 1px solid var(--border);
-  border-left: 1px solid var(--border);
-  border-top-left-radius: var(--frame-radius);
+  border: 0;
+  border-radius: 0;
   background: var(--canvas);
   scrollbar-gutter: stable;
 }
 
 .content {
   min-height: 100%;
+  border: 0;
   padding: var(--content-inset);
+}
+
+.content :global([data-legacy-page-header]) {
+  display: none;
 }
 
 .backdrop {
@@ -267,6 +343,26 @@
 }
 
 @media (max-width: 720px) {
+  .shell {
+    grid-template-areas:
+      'header'
+      'page';
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebarRegion {
+    position: fixed;
+    z-index: 40;
+    inset: 0 auto 0 0;
+    width: min(var(--vessel-size-sidebar-expanded), 85vw);
+    transform: translateX(-101%);
+    transition: transform 180ms ease;
+  }
+
+  .shell[data-sidebar-open] .sidebarRegion {
+    transform: translateX(0);
+  }
+
   .sidebar {
     inset: 0 auto 0 0;
     width: min(var(--sidebar-width), 86vw);
@@ -288,19 +384,21 @@
     margin-left: auto;
   }
 
-  .workspace {
-    inset: 0;
-    border: 0;
-    border-radius: 0;
-  }
-
   .header {
+    border-left: 1px solid var(--border);
+    border-radius: 0 0 var(--frame-radius) var(--frame-radius);
+    corner-shape: square square var(--frame-corner-shape)
+      var(--frame-corner-shape);
     padding: 0 15px;
   }
 
+  .header::after {
+    content: none;
+  }
+
   .mainScroll {
-    border-left: 0;
-    border-top-left-radius: 0;
+    border: 0;
+    border-radius: 0;
   }
 
   .backdrop {

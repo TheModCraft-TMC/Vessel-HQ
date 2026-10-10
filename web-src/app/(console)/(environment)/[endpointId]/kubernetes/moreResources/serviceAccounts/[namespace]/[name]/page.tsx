@@ -1,7 +1,7 @@
 import {
   KubernetesServiceAccountContent,
   KubernetesServiceAccountHeader,
-} from '@console/console/platform/kubernetes/KubernetesAccessPages';
+} from '@app/_components/platform/kubernetes/KubernetesAccessPages';
 
 export default function Page() {
   return (

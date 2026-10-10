@@ -17,7 +17,7 @@ func TestStackWithResolvedSecrets_ExpandsVaultPathMapping(t *testing.T) {
 	t.Parallel()
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "/v1/secret/data/app", r.URL.Path)
+		assert.Equal(t, "/v1/secret/data/app", r.URL.Path)
 
 		err := json.NewEncoder(w).Encode(map[string]any{
 			"data": map[string]any{
@@ -27,7 +27,7 @@ func TestStackWithResolvedSecrets_ExpandsVaultPathMapping(t *testing.T) {
 				},
 			},
 		})
-		require.NoError(t, err)
+		assert.NoError(t, err)
 	}))
 	t.Cleanup(server.Close)
 

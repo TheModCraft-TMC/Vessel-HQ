@@ -1,6 +1,6 @@
 'use client';
 
-import { KubernetesDeployContent } from '@/domains/applications/DeployView/DeployView';
+import { KubernetesDeployContent } from '@app/_components/platform/kubernetes/applications/DeployView/DeployView';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 export default function Page() {

@@ -142,8 +142,7 @@ func categorizeRegistryError(err error, registryURL string) string {
 
 	var userMessage string
 
-	var errResp *errcode.ErrorResponse
-	if errors.As(err, &errResp) {
+	if errResp, ok := errors.AsType[*errcode.ErrorResponse](err); ok {
 
 		// 401 Unauthorized or 403 Forbidden = authentication/authorization issue
 		if errResp.StatusCode == http.StatusUnauthorized || errResp.StatusCode == http.StatusForbidden {

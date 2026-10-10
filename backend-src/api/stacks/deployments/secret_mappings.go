@@ -2,6 +2,7 @@ package deployments
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -51,7 +52,7 @@ func stackWithResolvedSecrets(ctx context.Context, dataStore dataservices.DataSt
 			for _, secretKey := range keys {
 				name := strings.TrimSpace(secretKey)
 				if name == "" {
-					return nil, fmt.Errorf("secret mapping environment variable name is required")
+					return nil, errors.New("secret mapping environment variable name is required")
 				}
 				upsertEnv(&resolvedEnv, indexByName, name, values[secretKey])
 			}

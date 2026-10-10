@@ -1,8 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
-import { useRouter } from 'next/navigation';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
 
 import { server } from '@/setup-tests/server';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
@@ -11,13 +9,16 @@ import { useHomeViewState } from '../../hooks/useHomeViewState';
 
 import { EnvironmentHeader } from './EnvironmentHeader';
 
-vi.mock(
-  '@console/console/routing/useRouteParams',
-  async (importOriginal: () => Promise<object>) => ({
-    ...(await importOriginal()),
-    useRouteParams: vi.fn(),
-  })
-);
+const { mockRouterReplace, mockSearchParams } = vi.hoisted(() => ({
+  mockRouterReplace: vi.fn(),
+  mockSearchParams: { current: new URLSearchParams() },
+}));
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/environments',
+  useRouter: () => ({ replace: mockRouterReplace }),
+  useSearchParams: () => mockSearchParams.current,
+}));
 
 const mockCounts = {
   total: 10,
@@ -26,13 +27,10 @@ const mockCounts = {
   unassigned: 1,
 };
 
-const mockGo = vi.fn();
-
 function setupMocks(params: Record<string, unknown> = {}) {
-  vi.mocked(useRouteParams).mockReturnValue(params as Record<string, string>);
-  vi.mocked(useRouter).mockReturnValue({
-    push: mockGo,
-  } as never);
+  mockSearchParams.current = new URLSearchParams(
+    Object.entries(params).map(([key, value]) => [key, String(value)])
+  );
 }
 
 function renderComponent() {
@@ -52,7 +50,7 @@ function mockSummaryCounts(counts = mockCounts) {
 
 describe('EnvironmentHeader', () => {
   beforeEach(() => {
-    mockGo.mockClear();
+    mockRouterReplace.mockClear();
     setupMocks();
   });
 
@@ -89,15 +87,9 @@ describe('EnvironmentHeader', () => {
     });
 
     await user.click(screen.getByRole('radio', { name: /filter by down/i }));
-    expect(mockGo).toHaveBeenCalledWith(
-      '.',
-      expect.objectContaining({
-        groupBy: 'Health',
-        groupFilter: 'Down',
-        page: 0,
-        search: '',
-      }),
-      { reload: false, location: 'replace' }
+    expect(mockRouterReplace).toHaveBeenCalledWith(
+      '/environments?groupBy=Health&groupFilter=Down&order=asc&page=0',
+      { scroll: false }
     );
   });
 
@@ -114,15 +106,9 @@ describe('EnvironmentHeader', () => {
     });
 
     await user.click(screen.getByRole('radio', { name: /filter by total/i }));
-    expect(mockGo).toHaveBeenCalledWith(
-      '.',
-      expect.objectContaining({
-        groupBy: 'Id',
-        groupFilter: null,
-        page: 0,
-        search: '',
-      }),
-      { reload: false, location: 'replace' }
+    expect(mockRouterReplace).toHaveBeenCalledWith(
+      '/environments?groupBy=Id&order=asc&page=0',
+      { scroll: false }
     );
   });
 });

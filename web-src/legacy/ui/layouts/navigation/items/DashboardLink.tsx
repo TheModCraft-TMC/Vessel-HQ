@@ -15,7 +15,7 @@ export function DashboardLink({
 }: Props) {
   return (
     <SidebarItem
-      to={`${platformPath}.dashboard`}
+      to={`/:endpointId/${platformPath}/dashboard`}
       params={{ endpointId: environmentId }}
       icon={Layout}
       label="Dashboard"

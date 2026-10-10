@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/portainer/portainer/api/http/handler/file"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -72,9 +73,9 @@ func TestRedirectInstanceDisabled(t *testing.T) {
 
 func TestProxyFrontend(t *testing.T) {
 	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "/environments/1", r.URL.Path)
-		require.Equal(t, "portainer.example", r.Header.Get("X-Forwarded-Host"))
-		require.Equal(t, "https", r.Header.Get("X-Forwarded-Proto"))
+		assert.Equal(t, "/environments/1", r.URL.Path)
+		assert.Equal(t, "portainer.example", r.Header.Get("X-Forwarded-Host"))
+		assert.Equal(t, "https", r.Header.Get("X-Forwarded-Proto"))
 		_, _ = w.Write([]byte("next response"))
 	}))
 	t.Cleanup(upstream.Close)

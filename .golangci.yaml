@@ -87,7 +87,8 @@ linters:
         - ruleguard
       settings:
         ruleguard:
-          rules: './analysis/ssrf.go,./analysis/git.go,./analysis/transaction.go'
+          failOn: all
+          rules: '${config-path}/analysis/ssrf.go,${config-path}/analysis/git.go,${config-path}/analysis/transaction.go'
     forbidigo:
       forbid:
         - pattern: ^tls\.Config$
@@ -118,6 +119,10 @@ linters:
         linters:
           - forbidigo
       - path: api/filesystem/filesystem\.go
+        linters:
+          - forbidigo
+        text: path traversal attacks
+      - path: api/gitops/secrets/vault\.go
         linters:
           - forbidigo
         text: path traversal attacks

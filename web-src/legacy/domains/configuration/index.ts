@@ -1,9 +1,6 @@
 /** Public entry point for Kubernetes configuration workflows. */
 
 export { ConfigmapsAndSecretsView } from './configs/ListView/ConfigmapsAndSecretsView';
-export { ResourceEditorView } from './configs/ResourceEditorView';
-export { HelmApplicationView } from './helm/HelmApplicationView/HelmApplicationView';
-export { HelmInstallView } from './helm/install/HelmInstallView';
 export { ServicesView } from './views/ServicesView/ServicesView';
 export { VolumesView } from './volumes/ListView/VolumesView';
 
@@ -26,7 +23,7 @@ export {
   configMapQueryKeys,
   secretQueryKeys,
 } from './configs/queries/query-keys';
-export { useDescribeResource } from './helm/HelmApplicationView/ReleaseDetails/ResourcesTable/queries/useDescribeResource';
+export { useDescribeResource } from './queries/describe-resource/useDescribeResource';
 export { queryKeys as helmChartSourceQueryKeys } from './helm/helmChartSourceQueries/query-keys';
 export type { ChartVersion } from './helm/helmChartSourceQueries/useHelmRepoVersions';
 export type {

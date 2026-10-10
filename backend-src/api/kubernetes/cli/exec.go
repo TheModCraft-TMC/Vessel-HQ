@@ -90,8 +90,7 @@ func (kcl *KubeClient) StartExecProcess(params portainer.KubeExecParams) {
 
 	err = exec.StreamWithContext(context.TODO(), streamOpts)
 	if err != nil {
-		var exitError utilexec.ExitError
-		if !errors.As(err, &exitError) {
+		if _, ok := errors.AsType[utilexec.ExitError](err); !ok {
 			params.ErrChan <- fmt.Errorf("unable to start exec process: %w", err)
 			return
 		}

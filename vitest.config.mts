@@ -16,6 +16,7 @@ export default defineConfig({
         'web-src/legacy/react/portainer/generated-api/portainer'
       ),
       '@console': path.resolve(import.meta.dirname, 'web-src/components'),
+      '@app': path.resolve(import.meta.dirname, 'web-src/app'),
       'yaml-schema': path.resolve(
         import.meta.dirname,
         'node_modules/codemirror-json-schema/dist/yaml'

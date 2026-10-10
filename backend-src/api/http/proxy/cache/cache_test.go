@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -54,7 +55,7 @@ func TestCacheReturnsStaleResponseWhileRefreshing(t *testing.T) {
 				return nil, ctx.Err()
 			}
 		}
-		return response(string(rune('0' + call))), nil
+		return response(strconv.Itoa(int(call))), nil
 	}
 
 	initial, err := cache.Get(t.Context(), "containers", request, fetch)
@@ -141,8 +142,9 @@ func TestCacheKeepsSuccessfulResponseAfterRefreshError(t *testing.T) {
 		return response("last-good"), nil
 	}
 
-	_, err = cache.Get(t.Context(), "nodes", request, fetch)
+	initial, err := cache.Get(t.Context(), "nodes", request, fetch)
 	require.NoError(t, err)
+	require.NoError(t, initial.Body.Close())
 
 	stale, err := cache.Get(t.Context(), "nodes", request, fetch)
 	require.NoError(t, err)
@@ -171,8 +173,9 @@ func TestCachePeriodicallyRefreshesIdleOverview(t *testing.T) {
 		return response("services"), nil
 	}
 
-	_, err = cache.Get(t.Context(), "services", request, fetch)
+	initial, err := cache.Get(t.Context(), "services", request, fetch)
 	require.NoError(t, err)
+	require.NoError(t, initial.Body.Close())
 
 	ctx, cancel := context.WithCancel(t.Context())
 	t.Cleanup(cancel)

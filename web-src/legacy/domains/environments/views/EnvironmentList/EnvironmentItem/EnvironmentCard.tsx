@@ -7,7 +7,7 @@ import {
   getPlatformType,
   isEdgeEnvironment,
   isSnapshotBrowsingSupported,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import { EnvironmentStatusBadge } from '@/ui/components/status/EnvironmentStatusBadge';
 import { EnvironmentStatus } from '@/domains/environments';
 import { Link } from '@/ui/components/links/Link';

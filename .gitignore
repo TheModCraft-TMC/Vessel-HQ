@@ -20,3 +20,6 @@ __debug_bin*
 go.work.sum
 
 .vitest
+# Generated SonarQube external-issues reports
+/reports/sonar/app-router-compliance.json
+/reports/app-router-page-index.md

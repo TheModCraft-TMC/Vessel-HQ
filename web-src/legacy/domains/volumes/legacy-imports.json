@@ -1,5 +1,5 @@
 {
-  "maxImports": 50,
+  "maxImports": 40,
   "modules": [
     "@/portainer/filters/filters",
     "@/portainer/helpers/array",
@@ -18,14 +18,12 @@
     "@/react/hooks/useEnvironmentId",
     "@/react/hooks/useUser",
     "@/react/portainer/access-control/AccessControlForm",
-    "@/react/portainer/access-control/AccessControlPanel",
     "@/react/portainer/access-control/access-control.service",
     "@/react/portainer/access-control/models/ResourceControlViewModel",
     "@/react/portainer/access-control/types",
     "@/react/portainer/access-control/utils",
     "@/react/portainer/environments/queries",
     "@/react/portainer/environments/utils",
-    "@@/DetailsTable",
     "@@/Widget",
     "@@/Widget/WidgetBody"
   ]

@@ -17,7 +17,7 @@ import { useIsPureAdmin } from '@/react/hooks/useUser';
 import {
   getPlatformType,
   isEdgeEnvironment,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import { useEnvironmentSummaryCounts } from '@/react/portainer/environments/queries/useEnvironmentSummaryCounts';
 import { useParseSortGroupApiParams } from '@/react/portainer/environments/queries/useParseApiSortParams';
 import { useBaseApiQueryParams } from '@/react/portainer/environments/queries/useBaseApiQueryParams';

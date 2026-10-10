@@ -7,7 +7,7 @@ import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
 import { MAX_DOCKER_API_VERSION } from './dockerMaxApiVersion';
 
 const envVersionAxios = Axios.create({
-  baseURL: 'api',
+  baseURL: '/api',
 });
 
 // setup a cache for the intermediary request sent by the interceptor

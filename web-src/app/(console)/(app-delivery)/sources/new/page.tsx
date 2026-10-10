@@ -1,5 +1,4 @@
-import { SourceCreateContent } from '@console/console/pages/SourceCreatePage';
-
+import { SourceCreateContent } from '@app/_components/pages/SourceCreatePage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function NewSourcePage() {

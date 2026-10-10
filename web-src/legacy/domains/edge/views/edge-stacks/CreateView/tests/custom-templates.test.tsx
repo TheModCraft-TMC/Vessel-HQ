@@ -12,16 +12,15 @@ import { renderCreateForm } from './utils.test';
 let mockTemplateId: number;
 let mockTemplateType: string;
 
-vi.mock(
-  '@console/console/routing/useRouteParams',
-  async (importOriginal: () => Promise<object>) => ({
-    ...(await importOriginal()),
-    useRouteParams: () => ({
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/edge/stacks/new',
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  useSearchParams: () =>
+    new URLSearchParams({
       templateId: String(mockTemplateId),
       templateType: mockTemplateType,
     }),
-  })
-);
+}));
 
 // browser address
 // /edge/stacks/new?templateId=54&templateType=app

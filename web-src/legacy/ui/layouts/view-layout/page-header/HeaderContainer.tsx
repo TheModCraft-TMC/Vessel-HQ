@@ -19,7 +19,11 @@ interface Props {
 export function HeaderContainer({ id, children }: PropsWithChildren<Props>) {
   return (
     <Context.Provider value>
-      <div id={id} className={`row ${styles.root}`}>
+      <div
+        id={id}
+        className={`row ${styles.root}`}
+        data-legacy-page-header
+      >
         <div id="loadingbar-placeholder" />
         <div className="col-xs-12">
           <div className="flex items-center justify-between [&_div]:truncate">

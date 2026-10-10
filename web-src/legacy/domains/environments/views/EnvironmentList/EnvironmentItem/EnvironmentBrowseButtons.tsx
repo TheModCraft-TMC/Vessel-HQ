@@ -5,7 +5,7 @@ import { Environment } from '@/domains/environments';
 import {
   getDashboardRoute,
   isEdgeAsync as checkEdgeAsync,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
 import { Icon } from '@/ui/components/icons/Icon';
 import { LinkButton } from '@/ui/components/links/LinkButton';

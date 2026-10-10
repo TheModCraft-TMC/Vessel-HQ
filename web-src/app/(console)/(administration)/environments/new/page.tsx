@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import {
   EnvironmentCreationView,
   EnvironmentTypeSelectView,
-} from '@/react/portainer/environments/wizard';
+} from '@app/_components/pages/environment-wizard';
 import {
   EnvironmentOptionValue,
   environmentTypes,
-} from '@/react/portainer/environments/wizard/EnvironmentTypeSelectView/environment-types';
+} from '@app/_components/pages/environment-wizard/EnvironmentTypeSelectView/environment-types';
 
 const validTypes = new Set<EnvironmentOptionValue>(
   environmentTypes.map((type) => type.id)

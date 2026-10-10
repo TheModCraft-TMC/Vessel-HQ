@@ -51,7 +51,7 @@ function headerInterpreter(
 }
 
 const axios = Axios.create({
-  baseURL: 'api',
+  baseURL: '/api',
   paramsSerializer: {
     serialize: (params) => qs.stringify(params, { arrayFormat: 'brackets' }),
   },

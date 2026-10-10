@@ -4,7 +4,7 @@ import {
   KubernetesShellStatus,
   KubectlTerminal,
   useKubernetesShell,
-} from '@console/console/platform/kubernetes/KubernetesShellPage';
+} from '@app/_components/platform/kubernetes/KubernetesShellPage';
 
 export default function Page() {
   const shell = useKubernetesShell();

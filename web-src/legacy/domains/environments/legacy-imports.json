@@ -1,5 +1,5 @@
 {
-  "maxImports": 109,
+  "maxImports": 94,
   "modules": [
     "@/assets/ico/docker-edge-environment.svg",
     "@/assets/ico/kubernetes-edge-environment.svg",
@@ -35,7 +35,6 @@
     "@/react/portainer/environments/utils/get-group-icon",
     "@/react/portainer/environments/utils/get-health-icon",
     "@/react/portainer/environments/utils/get-platform-icon",
-    "@/react/portainer/environments/utils/getDockerEnvironmentType",
     "@/react/portainer/feature-flags/feature-flags.service",
     "@/react/portainer/licenses/types",
     "@/react/portainer/licenses/use-license.service",

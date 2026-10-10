@@ -1,5 +1,4 @@
-import { SettingsContent } from '@console/console/pages/SettingsPage';
-
+import { SettingsContent } from '@app/_components/pages/SettingsPage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function SettingsPage() {

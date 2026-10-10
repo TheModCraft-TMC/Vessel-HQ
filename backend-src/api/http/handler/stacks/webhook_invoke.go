@@ -50,8 +50,7 @@ func (handler *Handler) webhookInvoke(w http.ResponseWriter, r *http.Request) *h
 	}
 
 	if err = deployments.RedeployWhenChanged(context.TODO(), stack.ID, handler.StackDeployer, handler.DataStore, handler.GitService); err != nil {
-		var StackAuthorMissingErr *deployments.StackAuthorMissingErr
-		if errors.As(err, &StackAuthorMissingErr) {
+		if _, ok := errors.AsType[*deployments.StackAuthorMissingErr](err); ok {
 			return httperror.Conflict("Autoupdate for the stack isn't available", err)
 		}
 

@@ -88,6 +88,7 @@ export default defineConfig([
           map: [
             ['@@', './web-src/legacy/react/components'],
             ['@', './web-src/legacy'],
+            ['@app', './web-src/app'],
           ],
           extensions: ['.js', '.ts', '.tsx'],
         },

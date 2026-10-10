@@ -1,5 +1,4 @@
 export { CreateView } from './views/CreateView';
-export { ItemView } from './views/ItemView';
 export { ListView } from './views/ListView';
 export type {
   DockerNetwork,

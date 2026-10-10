@@ -1,17 +1,20 @@
 :root {
   color-scheme: dark;
   --frame-gap: 12px;
-  --frame-radius: 28px;
-  --surface-radius: 18px;
+  --frame-inner-radius: 20px;
+  --frame-padding: 12px;
+  --frame-radius: calc(var(--frame-inner-radius) + var(--frame-padding));
+  --frame-corner-shape: squircle;
+  --surface-radius: var(--frame-inner-radius);
   --sidebar-width: 300px;
   --header-height: 68px;
   --content-inset: 15px;
-  --frame: rgb(43 45 50 / 90%);
-  --canvas: #111213;
-  --surface: #1d1e20;
-  --border: rgb(148 163 184 / 24%);
-  --text: #f8fafc;
-  --muted: #9ca3af;
+  --frame: var(--bg-sidebar-color);
+  --canvas: var(--bg-body-color);
+  --surface: var(--bg-widget-color);
+  --border: color-mix(in srgb, var(--border-widget) 76%, transparent);
+  --text: var(--text-body-color);
+  --muted: var(--text-muted-color);
   --accent: #45d6c4;
 }
 
@@ -34,7 +37,7 @@ input {
 }
 
 body {
-  background: #090a0b;
+  background: var(--bg-body-color);
   color: var(--text);
   font-family:
     Inter,

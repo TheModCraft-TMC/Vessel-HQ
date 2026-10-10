@@ -3,6 +3,7 @@ package auth
 import (
 	"fmt"
 	"regexp"
+	"slices"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
@@ -69,11 +70,8 @@ func resolveOAuthTeamMemberships(settings *portainer.OAuthSettings, claims map[s
 			return nil, nil, fmt.Errorf("compile OAuth claim mapping %q: %w", mapping.ClaimValRegex, err)
 		}
 
-		for _, claimValue := range claimValues {
-			if matcher.MatchString(claimValue) {
-				desiredTeamIDs[mapping.Team] = struct{}{}
-				break
-			}
+		if slices.ContainsFunc(claimValues, matcher.MatchString) {
+			desiredTeamIDs[mapping.Team] = struct{}{}
 		}
 	}
 

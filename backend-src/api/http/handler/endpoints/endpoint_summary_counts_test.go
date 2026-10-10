@@ -136,7 +136,7 @@ func TestSummaryCounts(t *testing.T) {
 			name: "trusted edge endpoints classified by heartbeat, not stored status",
 			endpoints: []testEndpoint{
 				// Recent check-in: heartbeat alive → counted as Up + Heartbeat.
-				{endpointType: portainer.EdgeAgentOnDockerEnvironment, status: portainer.EndpointStatusUp, groupID: 2, agentVersion: currentVersion, userTrusted: true, lastCheckInDate: time.Now().Unix()},
+				{endpointType: portainer.EdgeAgentOnDockerEnvironment, status: portainer.EndpointStatusUp, groupID: 2, agentVersion: currentVersion, userTrusted: true, lastCheckInDate: -1},
 				// Stored Up but never checked in: counted as Down.
 				{endpointType: portainer.EdgeAgentOnDockerEnvironment, status: portainer.EndpointStatusUp, groupID: 2, agentVersion: currentVersion, userTrusted: true, lastCheckInDate: 0},
 			},
@@ -188,6 +188,13 @@ func TestSummaryCounts(t *testing.T) {
 			_, store := datastore.MustNewTestStore(t, true, true)
 
 			for i, ep := range tt.endpoints {
+				lastCheckInDate := ep.lastCheckInDate
+				if lastCheckInDate == -1 {
+					// Resolve "now" when the subtest runs. Building the table can take
+					// longer than the heartbeat grace period on slower machines.
+					lastCheckInDate = time.Now().Unix()
+				}
+
 				endpoint := &portainer.Endpoint{
 					ID:              portainer.EndpointID(i + 1),
 					Name:            "env",
@@ -196,7 +203,7 @@ func TestSummaryCounts(t *testing.T) {
 					GroupID:         ep.groupID,
 					ContainerEngine: ep.containerEngine,
 					UserTrusted:     ep.userTrusted,
-					LastCheckInDate: ep.lastCheckInDate,
+					LastCheckInDate: lastCheckInDate,
 				}
 				endpoint.Agent.Version = ep.agentVersion
 

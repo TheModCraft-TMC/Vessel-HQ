@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   SourceDetailsContent,
   SourceDetailsHeader,
-} from '@console/console/pages/SourceDetailsPage';
+} from '@app/_components/pages/SourceDetailsPage';
 
 export default async function SourcePage({
   params,

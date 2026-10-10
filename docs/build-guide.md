@@ -8,7 +8,7 @@ Install the project toolchain versions declared in the repo:
 
 - Docker
 - Go 1.26.4
-- Node.js 22.22.1 or newer in the 22.x line
+- Node.js 24.21.0 or newer in the 24.x LTS line
 - pnpm 10.26.2
 
 ## Install dependencies

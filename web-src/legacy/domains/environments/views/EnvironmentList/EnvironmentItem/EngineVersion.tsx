@@ -5,8 +5,10 @@ import {
   KubernetesSnapshot,
 } from '@/domains/environments';
 import { getPodmanCapabilities } from '@/providers/infrastructure/podman';
-import { getPlatformType } from '@/react/portainer/environments/utils';
-import { getDockerEnvironmentType } from '@/react/portainer/environments/utils/getDockerEnvironmentType';
+import {
+  getDockerEnvironmentType,
+  getPlatformType,
+} from '@/domains/environments/utils';
 
 export function EngineVersion({ environment }: { environment: Environment }) {
   const platform = getPlatformType(environment.Type);

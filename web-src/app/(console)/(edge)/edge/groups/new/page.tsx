@@ -1,5 +1,4 @@
-import { EdgeGroupCreateContent } from '@console/console/pages/EdgeEntityPages';
-
+import { EdgeGroupCreateContent } from '@app/_components/pages/EdgeEntityPages';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

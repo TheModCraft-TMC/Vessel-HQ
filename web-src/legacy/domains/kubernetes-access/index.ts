@@ -2,7 +2,6 @@
 
 export { ClusterRolesView } from './more-resources/ClusterRolesView/ClusterRolesView';
 export { JobsView } from './more-resources/JobsView/JobsView';
-export { ResourceDetailsYAMLView } from './more-resources/ResourceDetailsYAMLView';
 export { RolesView } from './more-resources/RolesView/RolesView';
 export { ServiceAccountView } from './more-resources/ServiceAccountsView/ItemView/ServiceAccountView';
 export { ServiceAccountsView } from './more-resources/ServiceAccountsView/ServiceAccountsView';

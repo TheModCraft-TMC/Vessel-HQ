@@ -1,6 +1,6 @@
 'use client';
 
-import { HelmInstallContent } from '@/domains/configuration/helm/install/HelmInstallView';
+import { HelmInstallContent } from '@app/_components/platform/kubernetes/helm/install/HelmInstallView';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 export default function Page() {

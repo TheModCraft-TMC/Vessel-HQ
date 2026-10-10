@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import { CustomTemplateEditContent } from '@console/console/platform/TemplatePages';
 
+import { CustomTemplateEditContent } from '@app/_components/platform/TemplatePages';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default async function Page({

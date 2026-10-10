@@ -1,4 +1,10 @@
-import { PropsWithChildren, useEffect, useMemo } from 'react';
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { buildHref } from '@console/console/routing/buildHref';
 import { useRouteParams } from '@console/console/routing/useRouteParams';
@@ -37,7 +43,15 @@ import {
 
 import { toLayoutPlatform } from './environment-platform';
 
+const logos = {
+  full: assetUrl(fullLogo),
+  collapsed: assetUrl(collapsedLogo),
+};
+
+const themeOptions = userThemeOptions.map(({ id, label }) => ({ id, label }));
+
 export function LayoutBindingsProvider({ children }: PropsWithChildren) {
+  const suppressRouteSelection = useRef(false);
   const params = useRouteParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -48,6 +62,10 @@ export function LayoutBindingsProvider({ children }: PropsWithChildren) {
   const setEnvironmentId = useStore(
     environmentStore,
     (store) => store.setEnvironmentId
+  );
+  const selectedEnvironment = useStore(
+    environmentStore,
+    (store) => store.selectedEnvironment
   );
   const clearEnvironment = useStore(environmentStore, (store) => store.clear);
   const currentUser = useCurrentUser();
@@ -64,13 +82,31 @@ export function LayoutBindingsProvider({ children }: PropsWithChildren) {
   const apiVersionQuery = useApiVersion(environmentId ?? 0);
   const versionQuery = useSystemVersion();
   const statusQuery = useSystemStatus();
-  const uiState = useUIState();
+  const dismissUpdate = useUIState((state) => state.dismissUpdateVersion);
+  const dismissedUpdateVersion = useUIState(
+    (state) => state.dismissedUpdateVersion
+  );
   const updateUser = useUpdateUserMutation();
+  const userTheme = currentUser.user?.ThemeSettings?.color as
+    | ThemeColor
+    | undefined;
+
+  useEffect(() => {
+    if (currentUser.user) {
+      applyTheme(userTheme ?? 'auto');
+    }
+  }, [currentUser.user, userTheme]);
 
   useEffect(() => {
     const routeEnvironmentId = Number(
       params.endpointId ?? params.environmentId
     );
+    if (suppressRouteSelection.current) {
+      if (!Number.isFinite(routeEnvironmentId) || routeEnvironmentId <= 0) {
+        suppressRouteSelection.current = false;
+      }
+      return;
+    }
     if (
       Number.isFinite(routeEnvironmentId) &&
       routeEnvironmentId > 0 &&
@@ -86,7 +122,11 @@ export function LayoutBindingsProvider({ children }: PropsWithChildren) {
   ]);
 
   const environment = useMemo(() => {
-    const value = environmentQuery.data;
+    const queriedEnvironment =
+      environmentQuery.data?.Id === environmentId
+        ? environmentQuery.data
+        : undefined;
+    const value = queriedEnvironment ?? selectedEnvironment;
     if (!value) return undefined;
     const platform = getPlatformType(value.Type, value.ContainerEngine);
     return {
@@ -97,7 +137,7 @@ export function LayoutBindingsProvider({ children }: PropsWithChildren) {
         value.ContainerEngine
       ),
     };
-  }, [environmentQuery.data]);
+  }, [environmentId, environmentQuery.data, selectedEnvironment]);
 
   const docsUrl = useMemo(() => {
     let url = 'https://docs.portainer.io/';
@@ -107,49 +147,89 @@ export function LayoutBindingsProvider({ children }: PropsWithChildren) {
     return url;
   }, [versionQuery.data]);
 
-  const value: LayoutBindings = {
-    isBE,
-    ddExtension: !!window.ddExtension,
-    isPureAdmin,
-    isAdmin: isEdgeAdmin.isAdmin,
-    isTeamLeader,
-    user: currentUser.user,
-    publicSettings: publicSettings.data,
-    settings: settings.data,
-    environment,
-    environmentLoading: environmentQuery.isLoading,
-    clearEnvironment: () => {
-      if (params.endpointId || params.environmentId)
-        router.push(buildHref('/', {}, pathname));
-      clearEnvironment();
-    },
-    docker: {
-      isEnvironmentAdmin: isEnvironmentAdmin.authorized,
-      isSwarmManager: !!infoQuery.data,
-      apiVersion: apiVersionQuery ?? 0,
-    },
-    Authorized,
-    version: versionQuery.data,
-    status: statusQuery.data,
-    updateUserTheme: (color) => {
+  const handleClearEnvironment = useCallback(() => {
+    suppressRouteSelection.current = true;
+    clearEnvironment();
+    if (params.endpointId || params.environmentId) {
+      router.push(buildHref('/', {}, pathname));
+    }
+  }, [
+    clearEnvironment,
+    params.endpointId,
+    params.environmentId,
+    pathname,
+    router,
+  ]);
+
+  const updateUserTheme = useCallback(
+    (color: string) => {
       applyTheme(color as never);
       updateUser.mutate({ theme: { color: color as ThemeColor } });
     },
-    dismissUpdate: uiState.dismissUpdateVersion,
-    dismissedUpdateVersion: uiState.dismissedUpdateVersion,
-    clearQueries: () => queryClient.clear(),
-    reload: () => {
-      void invalidateAllQueries(queryClient);
-      router.refresh();
-    },
-    docsUrl,
-    baseHref,
-    logos: {
-      full: assetUrl(fullLogo),
-      collapsed: assetUrl(collapsedLogo),
-    },
-    themeOptions: userThemeOptions.map(({ id, label }) => ({ id, label })),
-  };
+    [updateUser]
+  );
+
+  const clearQueries = useCallback(() => queryClient.clear(), []);
+  const reload = useCallback(() => {
+    void invalidateAllQueries(queryClient);
+    router.refresh();
+  }, [router]);
+
+  const value = useMemo<LayoutBindings>(
+    () => ({
+      isBE,
+      ddExtension: typeof window !== 'undefined' && !!window.ddExtension,
+      isPureAdmin,
+      isAdmin: isEdgeAdmin.isAdmin,
+      isTeamLeader,
+      user: currentUser.user,
+      publicSettings: publicSettings.data,
+      settings: settings.data,
+      environment,
+      environmentLoading: Boolean(environmentId) && environmentQuery.isLoading,
+      clearEnvironment: handleClearEnvironment,
+      docker: {
+        isEnvironmentAdmin: isEnvironmentAdmin.authorized,
+        isSwarmManager: !!infoQuery.data,
+        apiVersion: apiVersionQuery,
+      },
+      Authorized,
+      version: versionQuery.data,
+      status: statusQuery.data,
+      updateUserTheme,
+      dismissUpdate,
+      dismissedUpdateVersion,
+      clearQueries,
+      reload,
+      docsUrl,
+      baseHref,
+      logos,
+      themeOptions,
+    }),
+    [
+      apiVersionQuery,
+      clearQueries,
+      currentUser.user,
+      dismissUpdate,
+      dismissedUpdateVersion,
+      docsUrl,
+      environment,
+      environmentId,
+      environmentQuery.isLoading,
+      handleClearEnvironment,
+      infoQuery.data,
+      isEdgeAdmin.isAdmin,
+      isEnvironmentAdmin.authorized,
+      isPureAdmin,
+      isTeamLeader,
+      publicSettings.data,
+      reload,
+      settings.data,
+      statusQuery.data,
+      updateUserTheme,
+      versionQuery.data,
+    ]
+  );
 
   return <LayoutProvider value={value}>{children}</LayoutProvider>;
 }

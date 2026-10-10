@@ -1,5 +1,4 @@
-import { CustomTemplatesContent } from '@console/console/platform/TemplatePages';
-
+import { CustomTemplatesContent } from '@app/_components/platform/TemplatePages';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

@@ -13,8 +13,7 @@ func TxResponse(w http.ResponseWriter, r any, err error) *httperror.HandlerError
 
 func TxEmptyResponse(w http.ResponseWriter, err error) *httperror.HandlerError {
 	if err != nil {
-		var handlerError *httperror.HandlerError
-		if errors.As(err, &handlerError) {
+		if handlerError, ok := errors.AsType[*httperror.HandlerError](err); ok {
 			return handlerError
 		}
 
@@ -26,8 +25,7 @@ func TxEmptyResponse(w http.ResponseWriter, err error) *httperror.HandlerError {
 
 func TxFuncResponse(err error, validResponse func() *httperror.HandlerError) *httperror.HandlerError {
 	if err != nil {
-		var handlerError *httperror.HandlerError
-		if errors.As(err, &handlerError) {
+		if handlerError, ok := errors.AsType[*httperror.HandlerError](err); ok {
 			return handlerError
 		}
 
@@ -38,8 +36,7 @@ func TxFuncResponse(err error, validResponse func() *httperror.HandlerError) *ht
 }
 
 func TxErrorResponse(err error) *httperror.HandlerError {
-	var handlerError *httperror.HandlerError
-	if errors.As(err, &handlerError) {
+	if handlerError, ok := errors.AsType[*httperror.HandlerError](err); ok {
 		return handlerError
 	}
 

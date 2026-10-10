@@ -2,7 +2,7 @@ ARG OSVERSION=ltsc2022
 ARG BUILDPLATFORM
 FROM --platform=${BUILDPLATFORM} gcr.io/k8s-staging-e2e-test-images/windows-servercore-cache:1.0-linux-amd64-${OSVERSION} AS core
 
-FROM node:22.22.1-nanoserver-${OSVERSION} AS production
+FROM node:24.21.0-nanoserver-${OSVERSION} AS production
 
 COPY --from=core /Windows/System32/netapi32.dll /Windows/System32/netapi32.dll
 

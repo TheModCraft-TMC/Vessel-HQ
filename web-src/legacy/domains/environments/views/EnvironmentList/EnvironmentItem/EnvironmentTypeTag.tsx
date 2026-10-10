@@ -3,7 +3,7 @@ import {
   isEdgeEnvironment,
   isLocalEnvironment,
   isAgentEnvironment,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 
 export function EnvironmentTypeTag({
   environment,

@@ -6,12 +6,11 @@ import { FormControl } from '@/ui/components/forms/FormControl';
 import { Option, PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 import { FormSection } from '@/ui/components/forms/FormSection';
 import { LoadingButton } from '@/ui/components/buttons';
-
-import { Chart } from '../types';
-import { useHelmChartValues } from '../helmChartSourceQueries/useHelmChartValues';
-import { HelmValuesInput } from '../components/HelmValuesInput';
-import { ChartVersion } from '../helmChartSourceQueries/useHelmRepoVersions';
-import { ManifestPreviewFormSection } from '../components/ManifestPreviewFormSection';
+import { Chart } from '@/domains/configuration/helm/types';
+import { useHelmChartValues } from '@/domains/configuration/helm/helmChartSourceQueries/useHelmChartValues';
+import { HelmValuesInput } from '@/domains/configuration/helm/components/HelmValuesInput';
+import { ChartVersion } from '@/domains/configuration/helm/helmChartSourceQueries/useHelmRepoVersions';
+import { ManifestPreviewFormSection } from '@/domains/configuration/helm/components/ManifestPreviewFormSection';
 
 import { HelmInstallFormValues } from './types';
 

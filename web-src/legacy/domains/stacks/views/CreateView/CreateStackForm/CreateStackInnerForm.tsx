@@ -7,24 +7,10 @@ import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { LoadingButton } from '@/ui/components/buttons';
 import { FormSection } from '@/ui/components/forms/FormSection';
 import { StackEnvironmentVariablesPanel } from '@/ui/components/forms/EnvironmentVariablesFieldset';
-import { WebhookFieldset } from '@/domains/stacks/components/common/WebhookFieldset';
 
-import {
-  editor,
-  upload,
-  git,
-  customTemplate,
-} from '@@/BoxSelector/common-options/build-methods';
-import { BoxSelector } from '@@/BoxSelector';
-
-import { EditorSection } from './EditorSection/EditorSection';
-import { UploadSection } from './UploadSection/UploadSection';
-import { GitSection } from './GitSection/GitSection';
-import { TemplateSection } from './TemplateSection/TemplateSection';
+import { BuildMethodSection } from './BuildMethodSection';
 import { DeploymentInfo } from './DeploymentInfo';
 import { FormValues } from './types';
-
-const buildMethods = [editor, upload, git, customTemplate];
 
 export function CreateStackInnerForm({
   isSwarm = false,
@@ -67,45 +53,12 @@ export function CreateStackInnerForm({
         composeSyntaxMaxVersion={composeSyntaxMaxVersion}
       />
 
-      <FormSection title="Build method">
-        <BoxSelector
-          radioName="build-method"
-          value={values.method}
-          onChange={(method) => setFieldValue('method', method)}
-          options={buildMethods}
-          slim
-        />
-      </FormSection>
-
-      {values.method === 'upload' && <UploadSection isSwarm={isSwarm} />}
-
-      {values.method === 'repository' && (
-        <GitSection isDockerStandalone={!isSwarm} webhookId={webhookId} />
-      )}
-
-      {values.method === 'template' && (
-        <TemplateSection
-          isSwarm={isSwarm}
-          schema={dockerComposeSchema}
-          isSaved={isSaved}
-        />
-      )}
-
-      {values.method === 'editor' && (
-        <EditorSection
-          schema={dockerComposeSchema}
-          isSwarm={isSwarm}
-          isSaved={isSaved}
-        />
-      )}
-
-      {values.method !== 'repository' && (
-        <WebhookFieldset
-          value={values.enableWebhook}
-          onChange={(value) => setFieldValue('enableWebhook', value)}
-          webhookId={webhookId}
-        />
-      )}
+      <BuildMethodSection
+        isSwarm={isSwarm}
+        isSaved={isSaved}
+        webhookId={webhookId}
+        schema={dockerComposeSchema}
+      />
 
       <StackEnvironmentVariablesPanel
         values={values.env}

@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"path/filepath"
 	"testing"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/datastore"
+	"github.com/portainer/portainer/api/filesystem"
 	"github.com/portainer/portainer/api/stacks/stackutils"
 
 	"github.com/stretchr/testify/assert"
@@ -49,8 +49,8 @@ func TestDeployRemoteComposeStackResolvesSecretsBeforePull(t *testing.T) {
 	t.Parallel()
 
 	vaultServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "/v1/secret/data/app", r.URL.Path)
-		require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+		assert.Equal(t, "/v1/secret/data/app", r.URL.Path)
+		assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 			"data": map[string]any{
 				"data": map[string]any{"IMAGE_TAG": "vault-release"},
 			},
@@ -148,9 +148,9 @@ func TestApplyRelativePathStackConfigSetsSourceDirAndDestination(t *testing.T) {
 	t.Parallel()
 
 	projectPath := t.TempDir()
-	configDir := filepath.Join(projectPath, "tmc-proxy")
+	configDir := filesystem.JoinPaths(projectPath, "tmc-proxy")
 	require.NoError(t, os.MkdirAll(configDir, 0755))
-	require.NoError(t, os.WriteFile(filepath.Join(configDir, stackutils.PortainerStackConfigFile), []byte(`version: 1
+	require.NoError(t, os.WriteFile(filesystem.JoinPaths(configDir, stackutils.PortainerStackConfigFile), []byte(`version: 1
 deploy:
   mode: flat
   targetName: tmc-proxy

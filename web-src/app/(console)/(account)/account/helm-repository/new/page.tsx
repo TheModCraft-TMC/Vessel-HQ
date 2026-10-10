@@ -1,5 +1,4 @@
-import { HelmRepositoryCreateContent } from '@console/console/pages/HelmRepositoryCreatePage';
-
+import { HelmRepositoryCreateContent } from '@app/_components/pages/HelmRepositoryCreatePage';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function NewHelmRepositoryPage() {

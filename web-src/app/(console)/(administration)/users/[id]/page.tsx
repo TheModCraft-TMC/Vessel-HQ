@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   UserDetailsContent,
   UserDetailsHeader,
-} from '@console/console/pages/UserDetailsPage';
+} from '@app/_components/pages/UserDetailsPage';
 
 export default async function UserPage({
   params,

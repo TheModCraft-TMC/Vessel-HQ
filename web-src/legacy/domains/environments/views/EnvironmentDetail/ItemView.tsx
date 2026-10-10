@@ -4,7 +4,7 @@ import { useEnvironment } from '@/domains/environments/queries/useEnvironment';
 import {
   getPlatformTypeName,
   isEdgeEnvironment,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import { EnvironmentDetailsForm } from '@/react/portainer/environments/ItemView/EnvironmentDetailsForm';
 
 import { EdgeInformationPanel } from './EdgeInformationPanel/EdgeInformationPanel';

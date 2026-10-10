@@ -1,6 +1,6 @@
 'use client';
 
-import { HostBrowserContent } from '@/react/docker/host/BrowseView/BrowseView';
+import { HostBrowserContent } from '@app/_components/platform/docker/host/BrowseView/BrowseView';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

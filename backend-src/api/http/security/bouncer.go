@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"net"
 	"net/http"
 	"slices"
@@ -19,6 +18,7 @@ import (
 	"github.com/portainer/portainer/pkg/featureflags"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 	"github.com/portainer/portainer/pkg/schedule"
+	"github.com/segmentio/encoding/json"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"

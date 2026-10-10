@@ -2,8 +2,6 @@ package secrets
 
 import (
 	"context"
-	"crypto/tls"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -13,6 +11,9 @@ import (
 	"time"
 
 	portainer "github.com/portainer/portainer/api"
+	"github.com/portainer/portainer/api/crypto"
+	"github.com/portainer/portainer/pkg/libhttp/ssrf"
+	"github.com/segmentio/encoding/json"
 )
 
 type VaultClient struct {
@@ -43,28 +44,23 @@ func (err *vaultStatusError) Error() string {
 }
 
 func NewVaultClient(tlsSkipVerify bool) *VaultClient {
-	transport := http.DefaultTransport.(*http.Transport).Clone()
-	if tlsSkipVerify {
-		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec
-	}
-
 	return &VaultClient{
 		httpClient: &http.Client{
 			Timeout:   15 * time.Second,
-			Transport: transport,
+			Transport: ssrf.NewTransport(crypto.CreateTLSConfiguration(tlsSkipVerify)),
 		},
 	}
 }
 
 func TestVaultConnection(ctx context.Context, config *portainer.VaultConfig) error {
 	if config == nil {
-		return fmt.Errorf("vault configuration is required")
+		return errors.New("vault configuration is required")
 	}
 	if config.Authentication.Method != "token" {
 		return fmt.Errorf("unsupported vault authentication method %q", config.Authentication.Method)
 	}
 	if strings.TrimSpace(config.Authentication.Token) == "" {
-		return fmt.Errorf("vault token is required")
+		return errors.New("vault token is required")
 	}
 
 	_, err := tryVaultAddresses(config, func(address string) (struct{}, error) {
@@ -89,7 +85,7 @@ func testVaultConnectionAtAddress(ctx context.Context, config *portainer.VaultCo
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if !isHealthyVaultStatus(resp.StatusCode) {
 		return fmt.Errorf("vault health check failed with status %d", resp.StatusCode)
@@ -114,7 +110,7 @@ func testVaultToken(ctx context.Context, config *portainer.VaultConfig, address 
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		return fmt.Errorf("vault token validation failed with status %d", resp.StatusCode)
@@ -144,7 +140,7 @@ func LookupVaultToken(ctx context.Context, config *portainer.VaultConfig) (Vault
 		if err != nil {
 			return VaultTokenInfo{}, err
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 			return VaultTokenInfo{}, fmt.Errorf("vault token lookup failed with status %d", resp.StatusCode)
@@ -182,7 +178,7 @@ func RenewVaultToken(ctx context.Context, config *portainer.VaultConfig) (VaultT
 		if err != nil {
 			return VaultTokenInfo{}, err
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 			return VaultTokenInfo{}, fmt.Errorf("vault token renewal failed with status %d", resp.StatusCode)
@@ -233,13 +229,13 @@ func RenewVaultTokenIfNeeded(ctx context.Context, config *portainer.VaultConfig)
 
 func validateVaultTokenConfig(config *portainer.VaultConfig) error {
 	if config == nil {
-		return fmt.Errorf("vault configuration is required")
+		return errors.New("vault configuration is required")
 	}
 	if config.Authentication.Method != "token" {
 		return fmt.Errorf("unsupported vault authentication method %q", config.Authentication.Method)
 	}
 	if strings.TrimSpace(config.Authentication.Token) == "" {
-		return fmt.Errorf("vault token is required")
+		return errors.New("vault token is required")
 	}
 	return nil
 }
@@ -262,7 +258,7 @@ func isHealthyVaultStatus(statusCode int) bool {
 func ResolveVaultSecret(ctx context.Context, config *portainer.VaultConfig, secretPath, key string) (string, error) {
 	key = strings.TrimSpace(key)
 	if key == "" {
-		return "", fmt.Errorf("vault secret key is required")
+		return "", errors.New("vault secret key is required")
 	}
 
 	values, err := ResolveVaultSecretValues(ctx, config, secretPath)
@@ -280,11 +276,11 @@ func ResolveVaultSecret(ctx context.Context, config *portainer.VaultConfig, secr
 
 func ResolveVaultSecretValues(ctx context.Context, config *portainer.VaultConfig, secretPath string) (map[string]string, error) {
 	if config == nil {
-		return nil, fmt.Errorf("vault configuration is required")
+		return nil, errors.New("vault configuration is required")
 	}
 
 	if strings.TrimSpace(secretPath) == "" {
-		return nil, fmt.Errorf("vault secret path is required")
+		return nil, errors.New("vault secret path is required")
 	}
 
 	values, err := readVaultSecretValues(ctx, config, secretPath)
@@ -327,7 +323,7 @@ func readVaultSecretValuesAtAddress(ctx context.Context, config *portainer.Vault
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, &vaultStatusError{operation: "read", statusCode: resp.StatusCode}
@@ -413,7 +409,7 @@ func listVaultSecretKeysAtAddress(ctx context.Context, config *portainer.VaultCo
 		_ = resp.Body.Close()
 		return listVaultSecretKeysWithGET(ctx, config, endpoint)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, &vaultStatusError{operation: "folder list", statusCode: resp.StatusCode}
@@ -441,7 +437,7 @@ func listVaultSecretKeysWithGET(ctx context.Context, config *portainer.VaultConf
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return nil, &vaultStatusError{operation: "folder list", statusCode: resp.StatusCode}
@@ -477,7 +473,7 @@ func mergeVaultFolderSecretValues(resolved map[string]string, secretName string,
 }
 
 func vaultSecretChildPath(secretPath, key string) string {
-	return path.Join(normalizeVaultSecretPath(secretPath), strings.Trim(strings.TrimSuffix(key, "/"), "/"))
+	return path.Join(normalizeVaultSecretPath(secretPath), strings.Trim(strings.TrimSuffix(key, "/"), "/")) //nolint:forbidigo // URL path, not a filesystem path.
 }
 
 func isVaultStatusError(err error, statusCode int) bool {
@@ -485,7 +481,7 @@ func isVaultStatusError(err error, statusCode int) bool {
 		return false
 	}
 
-	if statusErr, ok := err.(*vaultStatusError); ok {
+	if statusErr, ok := errors.AsType[*vaultStatusError](err); ok {
 		return statusErr.statusCode == statusCode
 	}
 
@@ -505,7 +501,7 @@ func tryVaultAddresses[T any](config *portainer.VaultConfig, operation func(addr
 	var zero T
 	addresses := vaultAddressCandidates(config)
 	if len(addresses) == 0 {
-		return zero, fmt.Errorf("vault address is required")
+		return zero, errors.New("vault address is required")
 	}
 
 	failures := make([]error, 0, len(addresses))
@@ -543,7 +539,7 @@ func vaultAddressCandidates(config *portainer.VaultConfig) []string {
 func vaultURL(address, apiPath string) (string, error) {
 	address = strings.TrimSpace(address)
 	if address == "" {
-		return "", fmt.Errorf("vault address is required")
+		return "", errors.New("vault address is required")
 	}
 
 	base, err := url.Parse(address)
@@ -551,17 +547,17 @@ func vaultURL(address, apiPath string) (string, error) {
 		return "", fmt.Errorf("invalid vault address: %w", err)
 	}
 	if base.Scheme == "" || base.Host == "" {
-		return "", fmt.Errorf("vault address must include scheme and host")
+		return "", errors.New("vault address must include scheme and host")
 	}
 
-	base.Path = path.Join(base.Path, strings.TrimLeft(apiPath, "/"))
+	base.Path = path.Join(base.Path, strings.TrimLeft(apiPath, "/")) //nolint:forbidigo // URL path, not a filesystem path.
 	return base.String(), nil
 }
 
 func vaultSecretAPIPath(kvVersion int, secretPath string) string {
 	secretPath = normalizeVaultSecretPath(secretPath)
 	if kvVersion != 2 {
-		return path.Join("v1", secretPath)
+		return path.Join("v1", secretPath) //nolint:forbidigo // URL path, not a filesystem path.
 	}
 
 	parts := strings.SplitN(secretPath, "/", 2)

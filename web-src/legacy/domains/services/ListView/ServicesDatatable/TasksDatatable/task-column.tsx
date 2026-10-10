@@ -2,9 +2,10 @@ import { CellContext } from '@tanstack/react-table';
 
 import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
 import { isAgentEnvironment } from '@/react/portainer/environments/utils';
-import { DecoratedTask } from '@/domains/services/ItemView/TasksDatatable/types';
-import { columnHelper } from '@/domains/services/ItemView/TasksDatatable/columns/helper';
 import { Link } from '@/ui/components/links/Link';
+
+import { DecoratedTask } from '../../../components/TasksDatatable/types';
+import { columnHelper } from '../../../components/TasksDatatable/columns/helper';
 
 export const task = columnHelper.accessor('Id', {
   header: 'Task',

@@ -1,5 +1,4 @@
-import { EdgeGroupsContent } from '@console/console/pages/EdgeListPages';
-
+import { EdgeGroupsContent } from '@app/_components/pages/EdgeListPages';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

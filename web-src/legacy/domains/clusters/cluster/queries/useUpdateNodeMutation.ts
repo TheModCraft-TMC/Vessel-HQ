@@ -8,7 +8,7 @@ import { withError, withInvalidate } from '@/core/query';
 
 import { parseKubernetesAxiosError } from '../../axiosError';
 import { isSystemLabel, KubernetesPortainerNodeDrainLabel } from '../nodeUtils';
-import { NodeFormValues } from '../NodeView/NodeDetails/types';
+import { NodeFormValues } from '../models/nodeForm';
 
 import { queryKeys } from './query-keys';
 

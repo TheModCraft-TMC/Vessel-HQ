@@ -16,6 +16,11 @@ vi.mock('@/domains/settings/queries/useSettings', () => ({
   useSettings: () => useSettings(),
 }));
 
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/init/edge',
+  useRouter: () => ({ push: go }),
+}));
+
 async function renderComponent() {
   const Wrapped = withTestQueryProvider(withTestRouter(InitEdgeView));
   const result = render(<Wrapped />);

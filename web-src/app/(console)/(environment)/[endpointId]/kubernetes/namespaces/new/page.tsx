@@ -1,5 +1,4 @@
-import { KubernetesNamespaceCreateContent } from '@console/console/platform/kubernetes/KubernetesNamespacePages';
-
+import { KubernetesNamespaceCreateContent } from '@app/_components/platform/kubernetes/KubernetesNamespacePages';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 export default function Page() {

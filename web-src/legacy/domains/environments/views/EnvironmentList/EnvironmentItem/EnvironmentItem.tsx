@@ -13,7 +13,7 @@ import {
   getDashboardRoute,
   getPlatformType,
   isEdgeEnvironment,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import type { TagId } from '@/domains/tags';
 import { useTags } from '@/portainer/tags/queries';
 import { EnvironmentStatusBadge } from '@/ui/components/status/EnvironmentStatusBadge';

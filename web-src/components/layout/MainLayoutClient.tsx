@@ -28,12 +28,10 @@ function MainLayoutFrame({ children }: { children: ReactNode }) {
       id="page-wrapper"
     >
       <SideNavigation />
-      <section className={styles.workspace}>
-        <HeaderBar />
-        <main className={styles.mainScroll}>
-          <div className={styles.content}>{children}</div>
-        </main>
-      </section>
+      <HeaderBar />
+      <main className={styles.mainScroll}>
+        <div className={styles.content}>{children}</div>
+      </main>
     </div>
   );
 }

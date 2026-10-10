@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
 import { HttpResponse } from 'msw';
 
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
@@ -17,8 +16,6 @@ import { Role } from '@/domains/users';
 
 import { ApplicationsStacksDatatable } from './ApplicationsStacksDatatable';
 
-const mockUseCurrentStateAndParams = vi.fn();
-
 describe('ApplicationsStacksDatatable', () => {
   beforeEach(() => {
     server.use(
@@ -30,7 +27,6 @@ describe('ApplicationsStacksDatatable', () => {
         ])
       )
     );
-    mockUseCurrentStateAndParams.mockReturnValue({ params: { endpointId: 3 } });
   });
 
   it('shows a Workflow badge for workflow-managed stacks', async () => {
@@ -83,7 +79,18 @@ function renderComponent() {
   const user = new UserViewModel({ Username: 'user', Role: Role.Admin });
 
   const Wrapped = withTestQueryProvider(
-    withUserProvider(withTestRouter(ApplicationsStacksDatatable), user)
+    withUserProvider(
+      withTestRouter(ApplicationsStacksDatatable, {
+        route: 'applications',
+        stateConfig: [
+          {
+            name: 'applications',
+            params: { endpointId: 3 },
+          },
+        ],
+      }),
+      user
+    )
   );
 
   return render(

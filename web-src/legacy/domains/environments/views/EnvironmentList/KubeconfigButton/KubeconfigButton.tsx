@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Download } from 'lucide-react';
 
 import { Environment } from '@/domains/environments';
-import { isKubernetesEnvironment } from '@/react/portainer/environments/utils';
+import { isKubernetesEnvironment } from '@/domains/environments/utils';
 import { Query } from '@/domains/environments/queries/useEnvironmentList';
 import { Button } from '@/ui/components/buttons';
 import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';

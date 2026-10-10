@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   RegistryRepositoriesContent,
   RegistryRepositoriesHeader,
-} from '@console/console/pages/RegistryRepositoryPages';
+} from '@app/_components/pages/RegistryRepositoryPages';
 
 export default async function Page({
   params,

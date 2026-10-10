@@ -7,7 +7,7 @@ import { Environment, PlatformType } from '@/domains/environments';
 import {
   isEdgeAsync as checkEdgeAsync,
   getPlatformType,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import { LinkButton } from '@/ui/components/links/LinkButton';
 
 export function EditButtons({ environment }: { environment: Environment }) {

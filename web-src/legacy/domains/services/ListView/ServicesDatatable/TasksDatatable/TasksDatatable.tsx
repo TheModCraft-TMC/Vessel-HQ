@@ -1,10 +1,11 @@
-import { DecoratedTask } from '@/domains/services/ItemView/TasksDatatable/types';
-import { status } from '@/domains/services/ItemView/TasksDatatable/columns/status';
-import { actions } from '@/domains/services/ItemView/TasksDatatable/columns/actions';
-import { slot } from '@/domains/services/ItemView/TasksDatatable/columns/slot';
-import { node } from '@/domains/services/ItemView/TasksDatatable/columns/node';
-import { updated } from '@/domains/services/ItemView/TasksDatatable/columns/updated';
 import { NestedDatatable } from '@/ui/components/data-table/NestedDatatable';
+
+import { DecoratedTask } from '../../../components/TasksDatatable/types';
+import { status } from '../../../components/TasksDatatable/columns/status';
+import { actions } from '../../../components/TasksDatatable/columns/actions';
+import { slot } from '../../../components/TasksDatatable/columns/slot';
+import { node } from '../../../components/TasksDatatable/columns/node';
+import { updated } from '../../../components/TasksDatatable/columns/updated';
 
 import { task } from './task-column';
 

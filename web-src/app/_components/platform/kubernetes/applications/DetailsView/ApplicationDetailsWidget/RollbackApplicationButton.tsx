@@ -1,0 +1,151 @@
+import { Pod } from 'kubernetes-types/core/v1';
+import { RotateCcw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+import { Authorized } from '@/react/hooks/useUser';
+import {
+  notifySuccess,
+  notifyError,
+} from '@/ui/components/toast/notifications';
+import { EnvironmentId } from '@/domains/environments';
+import { Button } from '@/ui/components/buttons';
+import { Icon } from '@/ui/components/icons/Icon';
+import { confirm } from '@/ui/components/dialog/confirm';
+import { ModalType } from '@/ui/components/dialog';
+import { buildConfirmButton } from '@/ui/components/dialog/utils';
+import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';
+import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
+import {
+  applicationIsKind,
+  getRollbackPatchPayload,
+  matchLabelsToLabelSelectorValue,
+} from '@/domains/applications/applications/utils';
+import { Application } from '@/domains/applications/applications/types';
+import { appDeployMethodLabel } from '@/domains/applications/applications/constants';
+import { useApplicationRevisionList } from '@/domains/applications/applications/queries/useApplicationRevisionList';
+import { usePatchApplicationMutation } from '@/domains/applications/applications/queries/usePatchApplicationMutation';
+
+type Props = {
+  environmentId: EnvironmentId;
+  namespace: string;
+  appName: string;
+  app?: Application;
+};
+
+export function RollbackApplicationButton({
+  environmentId,
+  namespace,
+  appName,
+  app,
+}: Props) {
+  const router = useRouter();
+  const labelSelector = applicationIsKind<Pod>('Pod', app)
+    ? ''
+    : matchLabelsToLabelSelectorValue(app?.spec?.selector?.matchLabels);
+  const appRevisionListQuery = useApplicationRevisionList(
+    environmentId,
+    namespace,
+    appName,
+    app?.metadata?.uid,
+    labelSelector,
+    app?.kind
+  );
+  const appRevisionList = appRevisionListQuery.data;
+  const appRevisions = appRevisionList?.items;
+  const appDeployMethod =
+    app?.metadata?.labels?.[appDeployMethodLabel] || 'application form';
+
+  const patchAppMutation = usePatchApplicationMutation(
+    environmentId,
+    namespace,
+    appName
+  );
+
+  const isRollbackNotAvailable =
+    !app ||
+    !appRevisions ||
+    appRevisions?.length < 2 ||
+    appDeployMethod !== 'application form' ||
+    patchAppMutation.isLoading;
+
+  const rollbackButton = (
+    <Button
+      type="button"
+      color="light"
+      size="small"
+      className="!ml-0"
+      disabled={isRollbackNotAvailable}
+      onClick={() => rollbackApplication()}
+      data-cy="k8sAppDetail-rollbackButton"
+    >
+      <Icon icon={RotateCcw} className="mr-1" />
+      Rollback to previous configuration
+    </Button>
+  );
+
+  return (
+    <Authorized authorizations="K8sApplicationDetailsW">
+      <div className="flex gap-x-2">
+        {isRollbackNotAvailable ? (
+          <TooltipWithChildren message="Cannot roll back to previous configuration as none currently exists">
+            <span>{rollbackButton}</span>
+          </TooltipWithChildren>
+        ) : (
+          rollbackButton
+        )}
+        <Tooltip message="Only one level of rollback is available, i.e. if you roll back from v2 to v1, and then roll back again, you will end up back at v2. Note that service changes and autoscaler rule changes are not included in rollback functionality. This is how Kubernetes works natively." />
+      </div>
+    </Authorized>
+  );
+
+  async function rollbackApplication() {
+    // exit early if the application is a pod or there are no revisions
+    if (
+      !app?.kind ||
+      applicationIsKind<Pod>('Pod', app) ||
+      !appRevisionList?.items?.length
+    ) {
+      return;
+    }
+
+    // confirm the action
+    const confirmed = await confirm({
+      title: 'Are you sure?',
+      modalType: ModalType.Warn,
+      confirmButton: buildConfirmButton('Rollback'),
+      message:
+        'Rolling back the application to a previous configuration may cause service interruption. Do you wish to continue?',
+    });
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const patch = getRollbackPatchPayload(app, appRevisionList);
+      patchAppMutation.mutateAsync(
+        {
+          appKind: app.kind,
+          patch,
+          contentType:
+            app.kind === 'Deployment'
+              ? 'application/json-patch+json'
+              : 'application/strategic-merge-patch+json',
+        },
+        {
+          onSuccess: () => {
+            notifySuccess('Success', 'Application successfully rolled back');
+            router.refresh();
+          },
+          onError: (error) =>
+            notifyError(
+              'Failure',
+              error as Error,
+              'Unable to rollback the application'
+            ),
+        }
+      );
+    } catch (error) {
+      notifyError('Failure', error as Error);
+    }
+  }
+}

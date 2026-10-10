@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -49,7 +50,7 @@ func snapshotResponse(response *http.Response) (*responseSnapshot, error) {
 	if header == nil {
 		header = http.Header{}
 	}
-	header.Set("Content-Length", fmt.Sprintf("%d", len(body)))
+	header.Set("Content-Length", strconv.Itoa(len(body)))
 	header.Del("Transfer-Encoding")
 
 	return &responseSnapshot{

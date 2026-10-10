@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import type { MouseEvent } from 'react';
 
+import styles from './MainLayout.module.css';
+
 const PortainerNavigation = dynamic(
   () =>
     import('@/ui/layouts/navigation/Sidebar').then((module) => module.Sidebar),
@@ -46,7 +48,11 @@ export function SideNavigation() {
   }
 
   return (
-    <nav aria-label="Main navigation" onClickCapture={navigate}>
+    <nav
+      aria-label="Main navigation"
+      className={styles.sidebarRegion}
+      onClickCapture={navigate}
+    >
       <PortainerNavigation />
     </nav>
   );

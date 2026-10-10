@@ -75,7 +75,7 @@ const swarmStackStatusCheckInterval = time.Minute
 func initCLI() *portainer.CLIFlags {
 	cliService := cli.Service{}
 
-	flags, err := cliService.ParseFlags(portainer.APIVersion)
+	flags, err := cliService.ParseFlags(displayVersion(build.ReleaseVersion, portainer.APIVersion))
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed parsing flags")
 	}
@@ -85,6 +85,14 @@ func initCLI() *portainer.CLIFlags {
 	}
 
 	return flags
+}
+
+func displayVersion(releaseVersion, schemaVersion string) string {
+	if releaseVersion != "" {
+		return releaseVersion
+	}
+
+	return schemaVersion
 }
 
 func initFileService(dataStorePath string) portainer.FileService {
@@ -713,7 +721,8 @@ func main() {
 		server := buildServer(flags, shutdownCtx, shutdownTrigger)
 
 		log.Info().
-			Str("version", portainer.APIVersion).
+			Str("version", displayVersion(build.ReleaseVersion, portainer.APIVersion)).
+			Str("database_version", portainer.APIVersion).
 			Str("build_number", build.BuildNumber).
 			Str("image_tag", build.ImageTag).
 			Str("nodejs_version", build.NodejsVersion).

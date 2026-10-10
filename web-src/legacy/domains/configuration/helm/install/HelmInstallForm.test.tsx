@@ -8,16 +8,22 @@ import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withUserProvider } from '@/react/test-utils/withUserProvider';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 import { UserViewModel } from '@/portainer/models/user';
-
-import { Chart } from '../types';
+import { Chart } from '@/domains/configuration/helm/types';
 
 import { HelmInstallForm } from './HelmInstallForm';
 
 const mockNotifySuccess = vi.fn();
-const mockRouterGo = vi.fn();
+const mockRouterPush = vi.fn();
 
 // Mock the router hook to provide endpointId
 // Mock dependencies
+vi.mock('next/navigation', () => ({
+  useParams: () => ({ endpointId: '1' }),
+  usePathname: () => '/1/kubernetes/helm',
+  useRouter: () => ({ push: mockRouterPush }),
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 vi.mock('@/ui/components/toast/notifications', () => ({
   notifySuccess: vi.fn((title: string, text: string) =>
     mockNotifySuccess(title, text)
@@ -155,8 +161,8 @@ describe('HelmInstallForm', () => {
         'Success',
         'Helm chart successfully installed'
       );
-      expect(mockRouterGo).toHaveBeenCalledWith(
-        '/:endpointId/kubernetes/applications'
+      expect(mockRouterPush).toHaveBeenCalledWith(
+        '/1/kubernetes/applications'
       );
     });
   });

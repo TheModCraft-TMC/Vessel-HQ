@@ -1,7 +1,7 @@
 import {
   KubernetesDashboardContent,
   KubernetesDashboardHeader,
-} from '@console/console/platform/kubernetes/KubernetesDashboardPage';
+} from '@app/_components/platform/kubernetes/KubernetesDashboardPage';
 
 export default function Page() {
   return (

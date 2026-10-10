@@ -1,4 +1,4 @@
-FROM node:22.22.1-alpine AS node-runtime
+FROM node:24.21.0-alpine AS node-runtime
 
 FROM alpine:latest AS production
 

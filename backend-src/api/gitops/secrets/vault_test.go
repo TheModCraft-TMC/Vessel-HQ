@@ -19,8 +19,8 @@ func TestVaultConnectionValidatesToken(t *testing.T) {
 	var requests atomic.Int32
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requests.Add(1)
-		require.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
-		require.Equal(t, "team-a", r.Header.Get("X-Vault-Namespace"))
+		assert.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
+		assert.Equal(t, "team-a", r.Header.Get("X-Vault-Namespace"))
 
 		switch r.URL.Path {
 		case "/v1/sys/health":
@@ -187,10 +187,10 @@ func TestLookupVaultTokenReturnsRenewalMetadata(t *testing.T) {
 	t.Parallel()
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, http.MethodGet, r.Method)
-		require.Equal(t, "/v1/auth/token/lookup-self", r.URL.Path)
-		require.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
-		require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+		assert.Equal(t, http.MethodGet, r.Method)
+		assert.Equal(t, "/v1/auth/token/lookup-self", r.URL.Path)
+		assert.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
+		assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 			"data": map[string]any{
 				"ttl":              1_296_000,
 				"creation_ttl":     2_592_000,
@@ -221,11 +221,11 @@ func TestRenewVaultTokenIfNeededRenewsPeriodicTokenAtHalfPeriod(t *testing.T) {
 
 	var renewals atomic.Int32
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
+		assert.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
 
 		switch {
 		case r.Method == http.MethodGet && r.URL.Path == "/v1/auth/token/lookup-self":
-			require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+			assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 				"data": map[string]any{
 					"ttl":       60,
 					"period":    120,
@@ -234,7 +234,7 @@ func TestRenewVaultTokenIfNeededRenewsPeriodicTokenAtHalfPeriod(t *testing.T) {
 			}))
 		case r.Method == http.MethodPost && r.URL.Path == "/v1/auth/token/renew-self":
 			renewals.Add(1)
-			require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+			assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 				"auth": map[string]any{
 					"lease_duration": 120,
 					"renewable":      true,
@@ -277,9 +277,9 @@ func TestRenewVaultTokenIfNeededDoesNotRenewEarlyOrNonPeriodicTokens(t *testing.
 			t.Parallel()
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				require.Equal(t, http.MethodGet, r.Method)
-				require.Equal(t, "/v1/auth/token/lookup-self", r.URL.Path)
-				require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+				assert.Equal(t, http.MethodGet, r.Method)
+				assert.Equal(t, "/v1/auth/token/lookup-self", r.URL.Path)
+				assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 					"data": map[string]any{
 						"ttl":       test.ttl,
 						"period":    test.period,
@@ -307,9 +307,9 @@ func TestResolveVaultSecret_KV2(t *testing.T) {
 	t.Parallel()
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "/v1/secret/data/app", r.URL.Path)
-		require.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
-		require.Equal(t, "team-a", r.Header.Get("X-Vault-Namespace"))
+		assert.Equal(t, "/v1/secret/data/app", r.URL.Path)
+		assert.Equal(t, "token-value", r.Header.Get("X-Vault-Token"))
+		assert.Equal(t, "team-a", r.Header.Get("X-Vault-Namespace"))
 
 		err := json.NewEncoder(w).Encode(map[string]any{
 			"data": map[string]any{
@@ -318,7 +318,7 @@ func TestResolveVaultSecret_KV2(t *testing.T) {
 				},
 			},
 		})
-		require.NoError(t, err)
+		assert.NoError(t, err)
 	}))
 	t.Cleanup(server.Close)
 
@@ -345,8 +345,8 @@ func TestResolveVaultSecretFallsBackToPublicAddress(t *testing.T) {
 	t.Cleanup(internalServer.Close)
 
 	publicServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "/v1/secret/data/app", r.URL.Path)
-		require.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+		assert.Equal(t, "/v1/secret/data/app", r.URL.Path)
+		assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
 			"data": map[string]any{
 				"data": map[string]any{"password": "p@ss"},
 			},
@@ -372,14 +372,14 @@ func TestResolveVaultSecret_KV1(t *testing.T) {
 	t.Parallel()
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "/v1/secret/app", r.URL.Path)
+		assert.Equal(t, "/v1/secret/app", r.URL.Path)
 
 		err := json.NewEncoder(w).Encode(map[string]any{
 			"data": map[string]any{
 				"password": "p@ss",
 			},
 		})
-		require.NoError(t, err)
+		assert.NoError(t, err)
 	}))
 	t.Cleanup(server.Close)
 
@@ -400,7 +400,7 @@ func TestResolveVaultSecretValues_KV2(t *testing.T) {
 	t.Parallel()
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		require.Equal(t, "/v1/secret/data/app", r.URL.Path)
+		assert.Equal(t, "/v1/secret/data/app", r.URL.Path)
 
 		err := json.NewEncoder(w).Encode(map[string]any{
 			"data": map[string]any{
@@ -410,7 +410,7 @@ func TestResolveVaultSecretValues_KV2(t *testing.T) {
 				},
 			},
 		})
-		require.NoError(t, err)
+		assert.NoError(t, err)
 	}))
 	t.Cleanup(server.Close)
 
@@ -443,7 +443,7 @@ func TestResolveVaultSecretValues_KV2FolderFallback(t *testing.T) {
 					"keys": []string{"DATABASE_PASSWORD", "API_TOKEN", "nested/"},
 				},
 			})
-			require.NoError(t, err)
+			assert.NoError(t, err)
 		case r.Method == http.MethodGet && r.URL.Path == "/v1/kv/data/tmc-proxy/DATABASE_PASSWORD":
 			err := json.NewEncoder(w).Encode(map[string]any{
 				"data": map[string]any{
@@ -452,7 +452,7 @@ func TestResolveVaultSecretValues_KV2FolderFallback(t *testing.T) {
 					},
 				},
 			})
-			require.NoError(t, err)
+			assert.NoError(t, err)
 		case r.Method == http.MethodGet && r.URL.Path == "/v1/kv/data/tmc-proxy/API_TOKEN":
 			err := json.NewEncoder(w).Encode(map[string]any{
 				"data": map[string]any{
@@ -462,7 +462,7 @@ func TestResolveVaultSecretValues_KV2FolderFallback(t *testing.T) {
 					},
 				},
 			})
-			require.NoError(t, err)
+			assert.NoError(t, err)
 		default:
 			t.Fatalf("unexpected Vault request %s %s", r.Method, r.URL.String())
 		}

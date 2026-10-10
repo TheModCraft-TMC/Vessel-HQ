@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -111,13 +112,13 @@ func createKubernetesLogsProxyRequest(r *http.Request) (*http.Request, error) {
 	podName := r.FormValue("id")
 	containerName := r.FormValue("container")
 	if !logResourceIDPattern.MatchString(namespace) {
-		return nil, fmt.Errorf("invalid namespace")
+		return nil, errors.New("invalid namespace")
 	}
 	if !logResourceIDPattern.MatchString(podName) {
-		return nil, fmt.Errorf("invalid pod identifier")
+		return nil, errors.New("invalid pod identifier")
 	}
 	if !logResourceIDPattern.MatchString(containerName) {
-		return nil, fmt.Errorf("invalid container identifier")
+		return nil, errors.New("invalid container identifier")
 	}
 
 	timestamps, err := optionalBool(r.FormValue("timestamps"), false)
@@ -173,7 +174,7 @@ func createDockerLogsProxyRequest(r *http.Request) (*http.Request, error) {
 
 	resourceID := r.FormValue("id")
 	if !logResourceIDPattern.MatchString(resourceID) {
-		return nil, fmt.Errorf("invalid resource identifier")
+		return nil, errors.New("invalid resource identifier")
 	}
 
 	timestamps, err := optionalBool(r.FormValue("timestamps"), false)
@@ -237,7 +238,7 @@ func optionalNonNegativeInt(value string, fallback int64) (int64, error) {
 		return 0, err
 	}
 	if parsed < 0 {
-		return 0, fmt.Errorf("value must not be negative")
+		return 0, errors.New("value must not be negative")
 	}
 	return parsed, nil
 }

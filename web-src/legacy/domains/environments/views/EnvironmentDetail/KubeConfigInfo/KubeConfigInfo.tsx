@@ -8,7 +8,7 @@ import {
 import {
   isKubernetesEnvironment,
   isEdgeEnvironment,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import { InformationPanel } from '@/react/components/InformationPanel';
 import { Link } from '@/ui/components/links/Link';
 import { Icon } from '@/ui/components/icons/Icon';

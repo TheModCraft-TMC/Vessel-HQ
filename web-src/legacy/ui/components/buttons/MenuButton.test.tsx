@@ -42,8 +42,6 @@ type MockMenuFns = {
   MenuList: (props: MockWithChildren) => ReactNode;
 };
 
-const mockUseSref = vi.hoisted(() => vi.fn());
-
 vi.mock('@reach/menu-button', () => {
   type Ctx = {
     isOpen: boolean;
@@ -276,11 +274,6 @@ function renderDefault({
 
 beforeEach(() => {
   vi.clearAllMocks();
-  // Set default mock implementation
-  mockUseSref.mockReturnValue({
-    href: '#default',
-    onClick: vi.fn(),
-  });
 });
 
 test('should display MenuButton with correct text and chevron icon', async () => {
@@ -353,21 +346,13 @@ test('should not call onClick when disabled item is clicked', async () => {
 });
 
 test('should support link items', async () => {
-  const mockOnClick = vi.fn();
-
-  // Set up the mock to return our test onClick function
-  mockUseSref.mockReturnValue({
-    href: '#kubernetes.deploy',
-    onClick: mockOnClick,
-  });
-
   render(
     <MenuButton
       items={[
         <MenuButtonLink
           key="docs"
           to="/:endpointId/kubernetes/deploy"
-          params={{}}
+          params={{ endpointId: 1 }}
           label="Docs"
           data-cy="menu-button-link-docs"
         >
@@ -385,8 +370,7 @@ test('should support link items', async () => {
   fireEvent.click(trigger);
 
   const link = await screen.findByText('Deploy');
-  fireEvent.click(link);
-  expect(mockOnClick).toHaveBeenCalled();
+  expect(link).toHaveAttribute('href', '/1/kubernetes/deploy');
 });
 
 test('should be disabled when disabled prop is true', async () => {
@@ -423,21 +407,13 @@ test('should render with custom className', async () => {
 });
 
 test('should have proper accessibility attributes for screen readers', async () => {
-  const mockOnClick = vi.fn();
-
-  // Set up the mock to return our test onClick function
-  mockUseSref.mockReturnValue({
-    href: '#kubernetes.deploy',
-    onClick: mockOnClick,
-  });
-
   render(
     <MenuButton
       items={[
         <MenuButtonLink
           key="docs"
           to="/:endpointId/kubernetes/deploy"
-          params={{}}
+          params={{ endpointId: 1 }}
           label="Deploy"
           data-cy="menu-button-link-docs"
         >

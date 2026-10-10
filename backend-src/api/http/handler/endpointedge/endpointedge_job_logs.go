@@ -59,8 +59,7 @@ func (handler *Handler) endpointEdgeJobsLogs(w http.ResponseWriter, r *http.Requ
 	if err := handler.DataStore.UpdateTx(func(tx dataservices.DataStoreTx) error {
 		return handler.updateEdgeJobLogs(tx, endpoint.ID, portainer.EdgeJobID(edgeJobID), payload)
 	}); err != nil {
-		var httpErr *httperror.HandlerError
-		if errors.As(err, &httpErr) {
+		if httpErr, ok := errors.AsType[*httperror.HandlerError](err); ok {
 			httpErr.Err = fmt.Errorf("edge polling error: %w. Environment ID: %d", httpErr.Err, endpoint.ID)
 			return httpErr
 		}

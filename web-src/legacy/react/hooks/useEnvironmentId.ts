@@ -1,4 +1,4 @@
-import { useParams } from 'next/navigation';
+import { useRouteParams } from '@console/console/routing/useRouteParams';
 
 import { EnvironmentId } from '@/domains/environments';
 
@@ -9,8 +9,7 @@ import { EnvironmentId } from '@/domains/environments';
  * for `:id` paths, use a different hook
  */
 export function useEnvironmentId(force = true): EnvironmentId {
-  const { endpointId } = useParams<{ endpointId?: string | string[] }>();
-  const environmentId = Array.isArray(endpointId) ? endpointId[0] : endpointId;
+  const { endpointId: environmentId } = useRouteParams();
 
   if (!environmentId) {
     if (!force) {

@@ -8,9 +8,6 @@ import { TagsDatatable } from './TagsDatatable';
 import { Tag } from './types';
 import { RepositoryTagViewModel } from './view-model';
 
-// Mock the necessary hooks
-const mockUseCurrentStateAndParams = vi.fn();
-
 // Mock the Link component to capture route parameters and generate proper hrefs
 vi.mock('@/ui/components/links/Link', () => ({
   Link: ({
@@ -97,23 +94,20 @@ const defaultProps = {
 
 function renderComponent() {
   const Wrapped = withTestQueryProvider(
-    withTestRouter(() => <TagsDatatable {...defaultProps} />)
+    withTestRouter(() => <TagsDatatable {...defaultProps} />, {
+      route: 'registry-tags',
+      stateConfig: [
+        {
+          name: 'registry-tags',
+          params: { endpointId: '1', id: '1', repository: 'test-repo' },
+        },
+      ],
+    })
   );
   return render(<Wrapped />);
 }
 
 describe('TagsDatatable', () => {
-  beforeEach(() => {
-    // Set up default mock values
-    mockUseCurrentStateAndParams.mockReturnValue({
-      params: {
-        endpointId: '1',
-        id: '1',
-        repository: 'test-repo',
-      },
-    });
-  });
-
   it('renders basic table structure', () => {
     renderComponent();
     expect(screen.getByText('Tags')).toBeInTheDocument();

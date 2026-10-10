@@ -1,7 +1,4 @@
-'use client';
-
-import { EnvironmentGroupsContent } from '@console/console/pages/EnvironmentGroupsPage';
-
+import { EnvironmentGroupsContent } from '@app/_components/pages/EnvironmentGroupsPage';
 import { AddButton } from '@/ui/components/buttons';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 

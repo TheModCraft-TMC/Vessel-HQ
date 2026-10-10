@@ -1,8 +1,7 @@
 'use client';
 
-import { KubernetesResourceEditorHeader } from '@console/console/platform/kubernetes/KubernetesResourcePages';
-
-import { ResourceEditorContent } from '@/domains/configuration/configs/ResourceEditorView';
+import { KubernetesResourceEditorHeader } from '@app/_components/platform/kubernetes/KubernetesResourcePages';
+import { ResourceEditorContent } from '@app/_components/platform/kubernetes/configuration/ResourceEditorView';
 
 const routeData = {
   resourceEditorConfig: {

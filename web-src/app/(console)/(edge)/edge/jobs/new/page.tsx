@@ -1,5 +1,4 @@
-import { EdgeJobCreateContent } from '@console/console/pages/EdgeEntityPages';
-
+import { EdgeJobCreateContent } from '@app/_components/pages/EdgeEntityPages';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

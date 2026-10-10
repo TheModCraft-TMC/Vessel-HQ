@@ -366,7 +366,7 @@ function expectDefaultValues() {
 
 vi.mock('@reach/menu-button');
 
-vi.mock('@/react/hooks/useParamState', () => ({
+vi.mock('@/ui/hooks/useParamState', () => ({
   useParamsState: <T extends Record<string, unknown>>(
     parseParams: (params: Record<string, string | undefined>) => T
   ) => {

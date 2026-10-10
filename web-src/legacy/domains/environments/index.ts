@@ -1,4 +1,5 @@
 export * from './types';
+export * from './utils';
 export type { DockerSnapshot } from './models/snapshot';
 export {
   getEnvironment,

@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   RegistryDetailsContent,
   RegistryDetailsHeader,
-} from '@console/console/pages/RegistryDetailsPage';
+} from '@app/_components/pages/RegistryDetailsPage';
 
 export default async function RegistryPage({
   params,

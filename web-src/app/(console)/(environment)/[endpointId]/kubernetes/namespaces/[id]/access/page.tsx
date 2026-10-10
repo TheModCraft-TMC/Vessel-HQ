@@ -1,7 +1,7 @@
 import {
   KubernetesNamespaceAccessContent,
   KubernetesNamespaceAccessHeader,
-} from '@console/console/platform/kubernetes/KubernetesNamespacePages';
+} from '@app/_components/platform/kubernetes/KubernetesNamespacePages';
 
 export default function Page() {
   return (

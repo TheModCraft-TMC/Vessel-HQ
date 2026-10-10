@@ -1,5 +1,4 @@
-import { EdgeWaitingRoomContent } from '@console/console/pages/EdgeListPages';
-
+import { EdgeWaitingRoomContent } from '@app/_components/pages/EdgeListPages';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

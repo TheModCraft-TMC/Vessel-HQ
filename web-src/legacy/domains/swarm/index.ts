@@ -1,5 +1,4 @@
 export { SwarmView } from './SwarmView/SwarmView';
-export { VisualizerView } from './VisualizerView/VisualizerView';
 export { NodesDatatable } from './SwarmView/NodesDatatable';
 export { NodeViewModel } from './models/node';
 export {

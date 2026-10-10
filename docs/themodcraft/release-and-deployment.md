@@ -2,13 +2,13 @@
 
 ## Registry transition policy
 
-The beta release is `2.39.3.2.27-beta.4`; its [release notes](../releases/2.39.3.2.27-beta.4.md) describe the latest fixes; [beta.3 notes](../releases/2.39.3.2.27-beta.3.md) cover the preceding frontend refactor. Keep the existing `themodcrafttmc/portainer` repository and its tags intact.
+The first official Vessel HQ release is `1.2.0`; its [release notes](../releases/1.2.0.md) describe the migration and verification scope. Keep the existing `themodcrafttmc/portainer` repository and its historical tags intact.
 
 A dedicated Vessel HQ Docker Hub repository is planned but has not been created or selected yet. Future publishing must not switch registries, retag historical images, or change update discovery until that repository name and its migration plan are explicitly approved. Once approved, update the build script, release workflow, update checker, UI links, and this document together.
 
 ## Build and publish
 
-The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`, with binary checksums in `SHA256SUMS`. Use Node 22.22.1, pnpm 10.26.2, and the Go version in `go.mod`.
+The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`, with binary checksums in `SHA256SUMS`. Use Node 24.21.0 LTS, pnpm 10.26.2, and the Go version in `backend-src/go.mod`.
 
 Build, test, and publish release images locally from the committed source using the release context below. Release tags do not trigger the Linux image workflow. Pushes to `develop` validate and build; the workflow also remains available for an explicitly requested manual dispatch, whose supplied version must match the version file. The workflow refuses an existing published tag or a failed registry lookup, publishes the immutable version, verifies its digest and both platforms, then promotes that digest to the matching channel alias and checks the alias digest. Beta versions ending in `-beta.N` use `beta`; numeric stable versions use `latest`.
 
@@ -20,10 +20,10 @@ The generated `BUILD-IMAGE.txt` contains the exact commands for the release:
 ./scripts/build-release-context.sh
 cd dist/release-context
 docker buildx build --platform linux/amd64,linux/arm64 \
-  -t themodcrafttmc/portainer:2.39.3.2.27-beta.4 --push .
+  -t themodcrafttmc/portainer:1.2.0 --push .
 docker buildx imagetools create \
-  -t themodcrafttmc/portainer:beta \
-  themodcrafttmc/portainer:2.39.3.2.27-beta.4
+  -t themodcrafttmc/portainer:latest \
+  themodcrafttmc/portainer:1.2.0
 ```
 
 The immutable version is published and verified before the channel alias is moved. Both registry references must resolve to the same OCI index digest and contain `linux/amd64` and `linux/arm64` manifests.

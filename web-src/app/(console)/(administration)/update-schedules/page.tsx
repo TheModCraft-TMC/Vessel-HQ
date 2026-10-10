@@ -1,5 +1,4 @@
-import { UpdateSchedulesContent } from '@console/console/pages/UpdateSchedulesPage';
-
+import { UpdateSchedulesContent } from '@app/_components/pages/UpdateSchedulesPage';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
 export default function Page() {

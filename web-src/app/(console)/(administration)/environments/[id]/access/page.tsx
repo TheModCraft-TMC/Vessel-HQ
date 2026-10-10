@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
+
 import {
   EnvironmentAccessContent,
   EnvironmentAccessHeader,
-} from '@console/console/pages/EnvironmentAccessPage';
+} from '@app/_components/pages/EnvironmentAccessPage';
 
 export default async function Page({
   params,

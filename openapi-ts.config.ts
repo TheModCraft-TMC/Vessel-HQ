@@ -27,7 +27,7 @@ export default defineConfig({
     {
       name: '@hey-api/client-axios',
       runtimeConfigPath: '@/react/portainer/services/axios/configure-hey-api',
-      baseUrl: 'api',
+      baseUrl: '/api',
       throwOnError: true,
     },
     {

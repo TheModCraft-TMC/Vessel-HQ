@@ -1,5 +1,4 @@
-import { EdgeJobsContent } from '@console/console/pages/EdgeListPages';
-
+import { EdgeJobsContent } from '@app/_components/pages/EdgeListPages';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

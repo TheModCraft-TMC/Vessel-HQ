@@ -9,7 +9,7 @@ Install:
 
 - Docker
 - Go 1.26.6
-- Node.js 22.22.1 or newer in the 22.x line
+- Node.js 24.21.0 or newer in the 24.x LTS line
 - pnpm 10.26.2
 
 Docker must be running because the development server runs Portainer in a local

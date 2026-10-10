@@ -30,7 +30,7 @@ export function EnvironmentSidebar() {
 
   const { isOpen } = useSidebarState();
 
-  if ((!isOpen && !environment) || environmentLoading) {
+  if ((!isOpen && !environment) || (environmentLoading && !environment)) {
     return null;
   }
 

@@ -1,8 +1,7 @@
 'use client';
 
-import { ApplicationPageHeader } from '@console/console/platform/kubernetes/KubernetesApplicationPages';
-
-import { ApplicationDetailsContent } from '@/domains/applications/applications/DetailsView/ApplicationDetailsView';
+import { ApplicationPageHeader } from '@app/_components/platform/kubernetes/KubernetesApplicationPages';
+import { ApplicationDetailsContent } from '@app/_components/platform/kubernetes/applications/DetailsView/ApplicationDetailsView';
 
 export default function Page() {
   return (

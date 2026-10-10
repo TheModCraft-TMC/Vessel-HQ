@@ -1,8 +1,7 @@
 'use client';
 
-import { KubernetesIngressEditorHeader } from '@console/console/platform/kubernetes/KubernetesIngressPages';
-
-import { IngressEditorContent } from '@/domains/ingress/ingresses/CreateIngressView/CreateIngressView';
+import { KubernetesIngressEditorHeader } from '@app/_components/platform/kubernetes/KubernetesIngressPages';
+import { IngressEditorContent } from '@app/_components/platform/kubernetes/ingress/CreateIngressView/CreateIngressView';
 
 export default function Page() {
   return (
