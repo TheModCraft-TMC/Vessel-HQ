@@ -37,7 +37,33 @@ export function SideNavigation() {
   const router = useRouter();
 
   function navigate(event: MouseEvent<HTMLDivElement>) {
+    if (
+      event.defaultPrevented ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
     const target = event.target as HTMLElement;
+    const anchor = target.closest<HTMLAnchorElement>('a[href]');
+    if (
+      anchor &&
+      !anchor.download &&
+      (!anchor.target || anchor.target === '_self')
+    ) {
+      const url = new URL(anchor.href, window.location.href);
+      if (url.origin === window.location.origin) {
+        event.preventDefault();
+        event.stopPropagation();
+        router.push(`${url.pathname}${url.search}${url.hash}`);
+        return;
+      }
+    }
+
     const element = target.closest<HTMLElement>('[data-cy]');
     const route = element?.dataset.cy ? routes[element.dataset.cy] : undefined;
     if (!route) return;

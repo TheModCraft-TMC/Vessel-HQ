@@ -142,6 +142,9 @@ describe('Datatable', () => {
     );
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
+    expect(
+      screen.getByRole('status', { name: 'Loading table content' })
+    ).toBeInTheDocument();
   });
 
   it('renders empty state', () => {

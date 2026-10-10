@@ -94,6 +94,19 @@
   margin-bottom: 0;
 }
 
+.datatable .datatable-loading-row {
+  height: clamp(18rem, 42vh, 32rem);
+}
+
+.datatable .datatable-loading-state {
+  display: flex;
+  min-height: clamp(18rem, 42vh, 32rem);
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--text-muted-color, var(--text-main-color));
+}
+
 .datatable .footer {
   background-color: var(--bg-card-color);
   color: var(--text-main-color);

@@ -1,5 +1,8 @@
 import { Fragment, PropsWithChildren } from 'react';
 import { Row } from '@tanstack/react-table';
+import { Loader2 } from 'lucide-react';
+
+import { Icon } from '@/ui/components/icons/Icon';
 
 import { DefaultType } from './types';
 
@@ -17,7 +20,20 @@ export function TableContent<T extends DefaultType = DefaultType>({
   renderRow,
 }: Props<T>) {
   if (isLoading) {
-    return <TableContentOneColumn>Loading...</TableContentOneColumn>;
+    return (
+      <tr className="datatable-loading-row">
+        <td colSpan={Number.MAX_SAFE_INTEGER}>
+          <div
+            className="datatable-loading-state"
+            role="status"
+            aria-label="Loading table content"
+          >
+            <Icon icon={Loader2} className="h-8 w-8 animate-spin-slow" />
+            <span>Loading...</span>
+          </div>
+        </td>
+      </tr>
+    );
   }
 
   if (!rows.length) {
