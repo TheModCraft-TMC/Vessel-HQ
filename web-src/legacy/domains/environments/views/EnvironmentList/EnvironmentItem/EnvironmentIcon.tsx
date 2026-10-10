@@ -14,6 +14,10 @@ interface Props {
   containerEngine?: ContainerEngine;
 }
 
+export function assetUrl(asset: string | { src: string }) {
+  return typeof asset === 'string' ? asset : asset.src;
+}
+
 export function EnvironmentIcon({ type, containerEngine }: Props) {
   switch (type) {
     case EnvironmentType.AgentOnDocker:
@@ -21,7 +25,7 @@ export function EnvironmentIcon({ type, containerEngine }: Props) {
       if (containerEngine === ContainerEngine.Podman) {
         return (
           <img
-            src={podman}
+            src={assetUrl(podman)}
             width="60"
             alt="podman environment"
             aria-hidden="true"
@@ -30,7 +34,7 @@ export function EnvironmentIcon({ type, containerEngine }: Props) {
       }
       return (
         <img
-          src={docker}
+          src={assetUrl(docker)}
           width="60"
           alt="docker environment"
           aria-hidden="true"
@@ -39,7 +43,7 @@ export function EnvironmentIcon({ type, containerEngine }: Props) {
     case EnvironmentType.Azure:
       return (
         <img
-          src={azure}
+          src={assetUrl(azure)}
           width="60"
           alt="azure environment"
           aria-hidden="true"
@@ -49,7 +53,7 @@ export function EnvironmentIcon({ type, containerEngine }: Props) {
       if (containerEngine === ContainerEngine.Podman) {
         return (
           <img
-            src={podmanEdge}
+            src={assetUrl(podmanEdge)}
             alt="podman edge environment"
             aria-hidden="true"
           />
@@ -57,18 +61,24 @@ export function EnvironmentIcon({ type, containerEngine }: Props) {
       }
       return (
         <img
-          src={dockerEdge}
+          src={assetUrl(dockerEdge)}
           alt="docker edge environment"
           aria-hidden="true"
         />
       );
     case EnvironmentType.KubernetesLocal:
     case EnvironmentType.AgentOnKubernetes:
-      return <img src={kube} alt="kubernetes environment" aria-hidden="true" />;
+      return (
+        <img
+          src={assetUrl(kube)}
+          alt="kubernetes environment"
+          aria-hidden="true"
+        />
+      );
     case EnvironmentType.EdgeAgentOnKubernetes:
       return (
         <img
-          src={kubeEdge}
+          src={assetUrl(kubeEdge)}
           alt="kubernetes edge environment"
           aria-hidden="true"
         />

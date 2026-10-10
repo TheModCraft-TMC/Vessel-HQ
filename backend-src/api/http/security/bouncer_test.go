@@ -432,6 +432,49 @@ func Test_mwAuthenticateFirst_rejectsBothAPIKeyAndBearerToken(t *testing.T) {
 	require.Equal(t, http.StatusUnauthorized, rr.Code)
 }
 
+func Test_mwAuthenticateFirst_removesInvalidBrowserAuthCookie(t *testing.T) {
+	t.Parallel()
+	_, store := datastore.MustNewTestStore(t, true, true)
+
+	jwtService, err := jwt.NewService("1h", store)
+	require.NoError(t, err)
+
+	bouncer := NewRequestBouncer(t.Context(), store, jwtService, apikey.NewAPIKeyService(nil, nil))
+	req := httptest.NewRequest(http.MethodGet, "https://portainer.example/api/users/1", nil)
+	req.Header.Set("X-Forwarded-Proto", "https")
+	req.AddCookie(&http.Cookie{Name: portainer.AuthCookieKey, Value: "not-a-jwt"})
+
+	rr := httptest.NewRecorder()
+	bouncer.mwAuthenticateFirst([]tokenLookup{bouncer.CookieAuthLookup}, testHandler200).ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusUnauthorized, rr.Code)
+	cookies := rr.Result().Cookies()
+	require.Len(t, cookies, 1)
+	require.Equal(t, portainer.AuthCookieKey, cookies[0].Name)
+	require.Empty(t, cookies[0].Value)
+	require.Equal(t, -1, cookies[0].MaxAge)
+	require.True(t, cookies[0].Secure)
+}
+
+func Test_mwAuthenticateFirst_doesNotRemoveBrowserCookieForInvalidBearerToken(t *testing.T) {
+	t.Parallel()
+	_, store := datastore.MustNewTestStore(t, true, true)
+
+	jwtService, err := jwt.NewService("1h", store)
+	require.NoError(t, err)
+
+	bouncer := NewRequestBouncer(t.Context(), store, jwtService, apikey.NewAPIKeyService(nil, nil))
+	req := httptest.NewRequest(http.MethodGet, "https://portainer.example/api/users/1", nil)
+	req.Header.Set(jwtTokenHeader, "Bearer not-a-jwt")
+	req.AddCookie(&http.Cookie{Name: portainer.AuthCookieKey, Value: "unrelated-browser-cookie"})
+
+	rr := httptest.NewRecorder()
+	bouncer.mwAuthenticateFirst([]tokenLookup{bouncer.JWTAuthLookup}, testHandler200).ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusUnauthorized, rr.Code)
+	require.Empty(t, rr.Result().Cookies())
+}
+
 func TestJWTRevocation(t *testing.T) {
 	t.Parallel()
 	_, store := datastore.MustNewTestStore(t, true, true)

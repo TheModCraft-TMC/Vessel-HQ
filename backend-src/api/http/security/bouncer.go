@@ -441,6 +441,7 @@ func (bouncer *RequestBouncer) mwAuthenticateFirst(tokenLookups []tokenLookup, n
 		for _, lookup := range tokenLookups {
 			resultToken, err := lookup(r)
 			if err != nil {
+				bouncer.removeInvalidAuthCookie(w, r, hasAPIKey, hasBearerToken)
 				httperror.WriteError(w, http.StatusUnauthorized, "Invalid JWT token", httperrors.ErrUnauthorized)
 
 				return
@@ -460,6 +461,7 @@ func (bouncer *RequestBouncer) mwAuthenticateFirst(tokenLookups []tokenLookup, n
 		}
 
 		if ok, _ := bouncer.dataStore.User().Exists(token.ID); !ok {
+			bouncer.removeInvalidAuthCookie(w, r, hasAPIKey, hasBearerToken)
 			httperror.WriteError(w, http.StatusUnauthorized, "The authorization token is invalid", httperrors.ErrUnauthorized)
 
 			return
@@ -468,6 +470,22 @@ func (bouncer *RequestBouncer) mwAuthenticateFirst(tokenLookups []tokenLookup, n
 		ctx := StoreTokenData(r, token)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+// removeInvalidAuthCookie expires a browser session cookie when cookie-only
+// authentication fails. Header-based API clients must never have their browser
+// cookie changed as a side effect of an invalid API key or bearer token.
+func (bouncer *RequestBouncer) removeInvalidAuthCookie(w http.ResponseWriter, r *http.Request, hasAPIKey, hasBearerToken bool) {
+	if hasAPIKey || hasBearerToken {
+		return
+	}
+
+	if _, err := r.Cookie(portainer.AuthCookieKey); err != nil {
+		return
+	}
+
+	secure := r.TLS != nil || strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https")
+	RemoveAuthCookie(w, secure)
 }
 
 // JWTAuthLookup looks up a valid bearer in the request.
