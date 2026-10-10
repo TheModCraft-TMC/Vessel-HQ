@@ -1,8 +1,10 @@
-import { PropsWithChildren, ReactNode } from 'react';
+import { Children, PropsWithChildren, ReactNode } from 'react';
 import clsx from 'clsx';
 
 import { Icon } from '@/ui/components/icons/Icon';
 import type { IconSource } from '@/ui/components/icons/Icon';
+
+import styles from './TableTitle.module.css';
 
 interface Props {
   icon?: IconSource;
@@ -20,6 +22,8 @@ export function TableTitle({
   className,
   id,
 }: PropsWithChildren<Props>) {
+  const controls = Children.toArray(children);
+
   return (
     <>
       <div className={clsx('toolBar flex-col', className)} id={id}>
@@ -33,7 +37,9 @@ export function TableTitle({
 
             {label}
           </h2>
-          {children}
+          {controls.length > 0 && (
+            <div className={styles.controls}>{controls}</div>
+          )}
         </div>
       </div>
       {!!description && <div className="toolBar !pt-0">{description}</div>}

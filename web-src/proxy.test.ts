@@ -29,15 +29,22 @@ describe('proxy authentication routing', () => {
 });
 
 describe('buildContentSecurityPolicy', () => {
-  it('allows only scripts carrying the per-request nonce', () => {
-    const policy = buildContentSecurityPolicy('test-nonce');
+  it('keeps the production policy nonce-only', () => {
+    const policy = buildContentSecurityPolicy('test-nonce', false);
 
     expect(policy).toContain(
       "script-src 'self' 'nonce-test-nonce' 'strict-dynamic'"
     );
     expect(policy).not.toContain("'unsafe-inline'");
+    expect(policy).not.toContain("'unsafe-eval'");
     expect(policy).toContain("object-src 'none'");
     expect(policy).toContain("frame-ancestors 'none'");
+  });
+
+  it('allows the Next.js evaluation runtime only in development', () => {
+    const policy = buildContentSecurityPolicy('test-nonce', true);
+
+    expect(policy).toContain("'unsafe-eval'");
   });
 });
 

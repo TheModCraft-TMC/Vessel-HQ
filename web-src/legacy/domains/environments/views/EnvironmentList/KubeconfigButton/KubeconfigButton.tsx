@@ -8,8 +8,8 @@ import { Button } from '@/ui/components/buttons';
 import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';
 
 import { KubeconfigPrompt } from './KubeconfigPrompt';
-
 import '@reach/dialog/styles.css';
+import styles from './KubeconfigButton.module.css';
 
 export interface Props {
   environments: Environment[];
@@ -49,7 +49,7 @@ export function KubeconfigButton({ environments, envQueryParams }: Props) {
   );
 
   return (
-    <>
+    <div className={styles.root}>
       {isDisabled ? (
         <TooltipWithChildren message={tooltipMessage}>
           <span className="!m-0">{button}</span>
@@ -58,7 +58,7 @@ export function KubeconfigButton({ environments, envQueryParams }: Props) {
         button
       )}
       {prompt()}
-    </>
+    </div>
   );
 
   function handleClick() {

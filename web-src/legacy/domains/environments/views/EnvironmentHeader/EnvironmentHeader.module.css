@@ -1,0 +1,6 @@
+.root {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--vessel-radius-md);
+  box-shadow: var(--vessel-shadow-recessed-control);
+}

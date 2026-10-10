@@ -17,6 +17,7 @@ import { EnvironmentHomeView } from '../EnvironmentHomeView';
 import { EdgeLoadingSpinner } from './EdgeLoadingSpinner';
 import { LicenseNodePanel } from './LicenseNodePanel';
 import { BackupFailedPanel } from './BackupFailedPanel';
+import styles from './HomeView.module.css';
 
 export function HomeView() {
   const { clear: clearStore } = useStore(environmentStore);
@@ -61,7 +62,7 @@ export function HomeView() {
   }, [params, setConnectingToEdgeEndpoint, router, clearStore]);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className={`${styles.root} flex min-h-screen flex-col`}>
       <PageHeader
         reload
         title="Home"

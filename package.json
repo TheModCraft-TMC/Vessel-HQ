@@ -17,7 +17,8 @@
     }
   ],
   "scripts": {
-    "dev": "next dev web-src --webpack --port 8999",
+    "dev": "node scripts/start-dev.mjs",
+    "dev:frontend": "node scripts/start-frontend-dev.mjs",
     "start": "next start web-src --port 8999",
     "build": "bash scripts/package-next-standalone.sh --clean && next build web-src --webpack && bash scripts/package-next-standalone.sh",
     "format": "prettier --log-level warn --write  \"**/*.{js,css,html,jsx,tsx,ts}\"",

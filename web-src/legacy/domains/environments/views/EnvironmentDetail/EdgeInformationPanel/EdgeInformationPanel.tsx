@@ -8,6 +8,7 @@ import { InformationPanel } from '@@/InformationPanel';
 import { confirmDisassociate } from '../ConfirmDisassociateModel';
 
 import { useDisassociateEnvironment } from './useDisassociateEnvironment';
+import styles from './EdgeInformationPanel.module.css';
 
 interface EdgeInformationPanelProps {
   environmentId: EnvironmentId;
@@ -51,37 +52,39 @@ export function EdgeInformationPanel({
   }
 
   return (
-    <InformationPanel title="Edge information">
-      <div className="text-muted small flex flex-col gap-2">
-        <TextTip>
-          This Edge environment is associated to an Edge environment (
-          {platformName}).
-        </TextTip>
-        <p>
-          Edge key: <code>{edgeKey}</code>
-        </p>
-        <p>
-          Vessel HQ API server: <code>{edgeServerAddress}</code>
-        </p>
-        <p>
-          Vessel HQ tunnel address: <code>{edgeTunnelAddress}</code>
-        </p>
-        <p>
-          Edge identifier: <code>{edgeId}</code>
-        </p>
-        <p>
-          <LoadingButton
-            size="small"
-            color="primary"
-            isLoading={disassociateMutation.isLoading}
-            loadingText="Disassociating..."
-            onClick={handleDisassociate}
-            data-cy="disassociate-environment-button"
-          >
-            Disassociate
-          </LoadingButton>
-        </p>
-      </div>
-    </InformationPanel>
+    <div className={styles.root}>
+      <InformationPanel title="Edge information">
+        <div className="text-muted small flex flex-col gap-2">
+          <TextTip>
+            This Edge environment is associated to an Edge environment (
+            {platformName}).
+          </TextTip>
+          <p>
+            Edge key: <code>{edgeKey}</code>
+          </p>
+          <p>
+            Vessel HQ API server: <code>{edgeServerAddress}</code>
+          </p>
+          <p>
+            Vessel HQ tunnel address: <code>{edgeTunnelAddress}</code>
+          </p>
+          <p>
+            Edge identifier: <code>{edgeId}</code>
+          </p>
+          <p>
+            <LoadingButton
+              size="small"
+              color="primary"
+              isLoading={disassociateMutation.isLoading}
+              loadingText="Disassociating..."
+              onClick={handleDisassociate}
+              data-cy="disassociate-environment-button"
+            >
+              Disassociate
+            </LoadingButton>
+          </p>
+        </div>
+      </InformationPanel>
+    </div>
   );
 }

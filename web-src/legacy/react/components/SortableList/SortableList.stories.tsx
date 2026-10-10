@@ -9,7 +9,7 @@ import {
   useGroups,
   computePagedGroups,
 } from './sortable-list.story-utils';
-import { SortableListItem } from './SortableListItem';
+import { SortableListItem } from './Item/SortableListItem';
 import { useSortableListState } from './sortable-list.store';
 
 export default {

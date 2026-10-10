@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Icon } from '@/ui/components/icons/Icon';
 import { Link } from '@/ui/components/links/Link';
 
-import { SortableListItem } from '@@/SortableList/SortableListItem';
+import { SortableListItem } from '@@/SortableList/Item/SortableListItem';
 
 import { StatusBadge } from '../../components/StatusBadge';
 import { Source, SOURCE_TYPES } from '../types';

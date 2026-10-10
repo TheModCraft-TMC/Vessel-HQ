@@ -18,7 +18,7 @@ import {
 } from '@@/StatusSummaryBar/StatusSummaryBar';
 
 import { SortableList } from './SortableList';
-import { SortableGroup } from './SortableListGroup';
+import { SortableGroup } from './Group/SortableListGroup';
 
 describe('StatusFilteredList', () => {
   beforeEach(() => {

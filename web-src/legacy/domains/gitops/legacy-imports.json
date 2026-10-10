@@ -47,7 +47,7 @@
     "@@/ResourceDetailHeader/ResourceDetailHeaderSkeleton",
     "@@/ResourceDetailHeader/ResourceStatBlock",
     "@@/SortableList/SortableList",
-    "@@/SortableList/SortableListItem",
+    "@@/SortableList/Item/SortableListItem",
     "@@/StatusSummaryBar/StatusSummaryBar",
     "@@/Stepper/Stepper",
     "@@/Stepper/useWizardSteps",

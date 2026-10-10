@@ -5,12 +5,13 @@ import { ReactNode } from 'react';
 import { AutomationTestingProps } from '@/types';
 import { DropdownOption } from '@/ui/components/menu';
 
-import { SortOption, SortableListHeader } from './SortableListHeader';
-import { SortableGroup } from './SortableListGroup';
-import { SortableListBody } from './SortableListBody';
-import { SortableListCard } from './SortableListCard';
-import { SortableListPager } from './SortableListPager';
+import { SortableListBody } from './Body/SortableListBody';
+import { SortableListCard } from './Card/SortableListCard';
+import { SortableGroup } from './Group/SortableListGroup';
+import { SortOption, SortableListHeader } from './Header/SortableListHeader';
+import { SortableListPager } from './Pager/SortableListPager';
 import { SortableListState } from './sortable-list.store';
+import styles from './SortableList.module.css';
 
 export type { SortableGroup };
 export type { SortableListState };
@@ -56,7 +57,7 @@ export function SortableList<T>({
   );
 
   return (
-    <SortableListCard>
+    <SortableListCard className={styles.root}>
       <SortableListHeader
         value={{
           group: activeKey,

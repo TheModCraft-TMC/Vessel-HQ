@@ -110,6 +110,22 @@ test('when user is an admin and no environments at all should show empty list in
   ).resolves.toBeVisible();
 });
 
+test('shows the add environment action for administrators', async () => {
+  const { findByRole } = await renderComponent(true);
+
+  await expect(
+    findByRole('link', { name: 'Add environment' })
+  ).resolves.toBeVisible();
+});
+
+test('hides the add environment action from non-administrators', async () => {
+  const { queryByRole } = await renderComponent(false);
+
+  expect(
+    queryByRole('link', { name: 'Add environment' })
+  ).not.toBeInTheDocument();
+});
+
 test('renders environments returned by the API', async () => {
   const environments = [
     createMockEnvironment({ Id: 1, Name: 'prod-cluster', GroupId: 1 }),

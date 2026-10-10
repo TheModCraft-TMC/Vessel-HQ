@@ -1,0 +1,21 @@
+.root {
+  min-width: 0;
+}
+
+.filters {
+  min-width: 0;
+}
+
+/*
+ * Add page-specific filter styles here. Descendant elements come from shared
+ * components, so use :global() when targeting their stable accessibility or
+ * testing attributes. For example:
+ *
+ * .filters :global([aria-label='Sort by']) {
+ *   ...
+ * }
+ *
+ * .filters :global([data-cy='home-endpointList-header-search']) {
+ *   ...
+ * }
+ */

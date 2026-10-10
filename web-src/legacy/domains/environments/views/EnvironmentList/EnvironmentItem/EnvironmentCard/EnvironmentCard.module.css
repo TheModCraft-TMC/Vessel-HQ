@@ -1,0 +1,8 @@
+.root {
+  min-width: 0;
+}
+
+.iconSurface {
+  border: 1px outset var(--vessel-border-depth, #252527);
+  box-shadow: var(--vessel-shadow-raised-control);
+}

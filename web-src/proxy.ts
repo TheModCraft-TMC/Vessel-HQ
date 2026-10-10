@@ -11,9 +11,14 @@ const OAUTH_CALLBACK_PARAMETERS = [
   'error_description',
 ] as const;
 
-export function buildContentSecurityPolicy(nonce: string) {
+export function buildContentSecurityPolicy(
+  nonce: string,
+  development = process.env.NODE_ENV === 'development'
+) {
+  const developmentScriptPolicy = development ? " 'unsafe-eval'" : '';
+
   return [
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://js.hsforms.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://static.cloudflareinsights.com`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${developmentScriptPolicy} https://js.hsforms.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://static.cloudflareinsights.com`,
     `connect-src 'self' https://cloudflareinsights.com`,
     `object-src 'none'`,
     `frame-ancestors 'none'`,

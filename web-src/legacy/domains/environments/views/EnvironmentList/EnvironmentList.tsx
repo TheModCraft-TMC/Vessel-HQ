@@ -1,10 +1,11 @@
 import React, { ReactNode, useMemo } from 'react';
+import clsx from 'clsx';
 
 import {
   Environment,
+  EnvironmentHealth,
   EnvironmentStatus,
   PlatformType,
-  EnvironmentHealth,
 } from '@/domains/environments';
 import type { HomeViewTableState } from '@/domains/environments/types';
 import {
@@ -14,6 +15,7 @@ import {
 import { useGroups } from '@/react/portainer/environments/environment-groups/queries';
 import { EnvironmentsQueryParams } from '@/domains/environments/services/environments.service';
 import { useIsPureAdmin } from '@/react/hooks/useUser';
+import { AddButton } from '@/ui/components/buttons';
 import {
   getPlatformType,
   isEdgeEnvironment,
@@ -37,10 +39,12 @@ import { UpdateBadge } from './UpdateBadge';
 import { KubeconfigButton } from './KubeconfigButton';
 import { EnvironmentCard } from './EnvironmentItem/EnvironmentCard';
 import { NoEnvironmentsInfoPanel } from './NoEnvironmentsInfoPanel';
+import styles from './EnvironmentList.module.css';
 
 interface Props {
   onClickBrowse(environment: Environment): void;
   tableState: HomeViewTableState;
+  className?: string;
 }
 
 const SORT_OPTIONS: SortOption<SortType>[] = [
@@ -100,7 +104,11 @@ const GROUP_FIELD: Partial<Record<SortType, (item: EnvironmentRow) => string>> =
     Health: (item) => item.healthLabel,
   };
 
-export function EnvironmentList({ onClickBrowse, tableState }: Props) {
+export function EnvironmentList({
+  onClickBrowse,
+  tableState,
+  className,
+}: Props) {
   const isPureAdmin = useIsPureAdmin();
   const summaryQuery = useEnvironmentSummaryCounts();
 
@@ -179,7 +187,7 @@ export function EnvironmentList({ onClickBrowse, tableState }: Props) {
   ].filter((btn): btn is React.ReactElement => Boolean(btn));
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={clsx(styles.root, 'flex flex-col gap-2', className)}>
       {summaryQuery.isSuccess && summaryQuery.data.total === 0 && (
         <NoEnvironmentsInfoPanel isAdmin={isPureAdmin} />
       )}
@@ -203,6 +211,17 @@ export function EnvironmentList({ onClickBrowse, tableState }: Props) {
         searchPlaceholder="Search environments..."
         emptyMessage="No environments available."
         headerButtons={headerButtons}
+        actionButton={
+          isPureAdmin ? (
+            <AddButton
+              to="/environments/new"
+              params={{ referrer: 'environments' }}
+              data-cy="environments-add-environments-button"
+            >
+              Add environment
+            </AddButton>
+          ) : undefined
+        }
         data-cy="home-endpointList"
         showGroupHeaders
       />

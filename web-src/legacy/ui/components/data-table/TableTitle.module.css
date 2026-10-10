@@ -1,0 +1,20 @@
+.controls {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  border: 1px inset var(--vessel-border-depth, #252527);
+  border-radius: var(--vessel-radius-md);
+  background: color-mix(in srgb, var(--bg-card-color) 84%, transparent);
+  padding: 0.4375rem;
+  box-shadow: var(--vessel-shadow-recessed-control);
+}
+
+.controls :global(.searchBar) {
+  margin-right: 0 !important;
+}
+
+.controls :global(.settings) {
+  margin-top: 0 !important;
+}

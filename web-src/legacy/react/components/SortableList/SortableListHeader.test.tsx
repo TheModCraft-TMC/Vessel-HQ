@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { SortableListHeader } from './SortableListHeader';
+import { SortableListHeader } from './Header/SortableListHeader';
 
 vi.mock('@reach/menu-button');
 

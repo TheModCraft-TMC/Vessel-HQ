@@ -37,6 +37,10 @@ Default local URLs:
 - Portainer server: <https://localhost:9443>
 - Frontend dev server: <http://localhost:8999>
 
+`npm run dev` also starts the local development backend when it is not already
+available, loads the ignored root `.env`, and enables development auto-login.
+Use `npm run dev:frontend` when the backend is already managed separately.
+
 ## Run server and client separately
 
 Use separate targets when you want independent terminal sessions:

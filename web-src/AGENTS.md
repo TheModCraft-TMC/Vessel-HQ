@@ -7,3 +7,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Shared component organization
+
+- Put each new or restructured shared React component in its own directory.
+- Colocate a same-named CSS Module with the component, for example
+  `Button/Button.tsx` and `Button/Button.module.css`.
+- Import the CSS Module from the component and attach `styles.root` to its root
+  element so component-scoped CSS can be added without further wiring.
+- Keep broadly reusable styling in shared primitives; use the colocated module
+  for styles that belong only to that component.

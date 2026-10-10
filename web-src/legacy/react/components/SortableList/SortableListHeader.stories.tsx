@@ -4,7 +4,7 @@ import { Server, Cloud } from 'lucide-react';
 
 import { Icon } from '@/ui/components/icons/Icon';
 
-import { SortableListHeader } from './SortableListHeader';
+import { SortableListHeader } from './Header/SortableListHeader';
 
 export default {
   component: SortableListHeader,

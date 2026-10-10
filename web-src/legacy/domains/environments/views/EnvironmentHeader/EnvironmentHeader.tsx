@@ -7,6 +7,8 @@ import {
   StatusSegment,
 } from '@@/StatusSummaryBar/StatusSummaryBar';
 
+import styles from './EnvironmentHeader.module.css';
+
 type HeaderFilter =
   | 'all'
   | 'custom'
@@ -85,14 +87,16 @@ export function EnvironmentHeader({
   ];
 
   return (
-    <StatusSummaryBar
-      total={counts.total}
-      segments={segments}
-      value={headerFilter}
-      onChange={handleFilterChange}
-      radioGroupName="environment-status-filter"
-      data-cy="environment-status-bar"
-      ariaLabel="Filter by environment status"
-    />
+    <div className={styles.root}>
+      <StatusSummaryBar
+        total={counts.total}
+        segments={segments}
+        value={headerFilter}
+        onChange={handleFilterChange}
+        radioGroupName="environment-status-filter"
+        data-cy="environment-status-bar"
+        ariaLabel="Filter by environment status"
+      />
+    </div>
   );
 }

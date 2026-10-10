@@ -8,6 +8,8 @@ import { Widget, WidgetBody } from '@@/Widget';
 
 import { EdgeKeyDisplay } from '../EdgeKeyDisplay';
 
+import styles from './EdgeAgentDeploymentWidget.module.css';
+
 interface Props {
   edgeKey: string;
   edgeId?: string;
@@ -37,7 +39,7 @@ export function EdgeAgentDeploymentWidget({
   const edgeKeyDetails = decodeEdgeKey(edgeKey);
 
   return (
-    <Widget>
+    <Widget className={styles.root}>
       <WidgetBody>
         <FormSection title="Deploy an agent">
           <TextTip color="blue">

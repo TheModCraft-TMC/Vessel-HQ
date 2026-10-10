@@ -1,0 +1,50 @@
+import { Environment, EnvironmentType } from '@/domains/environments';
+import {
+  isEdgeEnvironment,
+  isLocalEnvironment,
+  isAgentEnvironment,
+} from '@/domains/environments/utils';
+
+import styles from './EnvironmentTypeTag.module.css';
+
+export function EnvironmentTypeTag({
+  environment,
+}: {
+  environment: Environment;
+}) {
+  const typeLabel = getTypeLabel(environment);
+
+  if (!typeLabel) {
+    return null;
+  }
+
+  return (
+    <span className={`${styles.root} vertical-center gap-1`}>
+      <span className="small text-muted vertical-center font-medium">
+        {typeLabel}
+      </span>
+    </span>
+  );
+}
+
+function getTypeLabel(environment: Environment) {
+  if (isEdgeEnvironment(environment.Type)) {
+    return environment.Edge.AsyncMode
+      ? 'Edge Agent Async'
+      : 'Edge Agent Standard';
+  }
+
+  if (isLocalEnvironment(environment)) {
+    return 'Local';
+  }
+
+  if (environment.Type === EnvironmentType.Azure) {
+    return 'ACI';
+  }
+
+  if (isAgentEnvironment(environment.Type)) {
+    return 'Agent';
+  }
+
+  return '';
+}

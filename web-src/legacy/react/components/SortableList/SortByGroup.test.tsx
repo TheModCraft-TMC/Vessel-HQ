@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { withTestRouter } from '@/react/test-utils/withRouter';
 
-import { SortByGroup, SortOption } from './SortByGroup';
+import { SortByGroup, SortOption } from './SortByGroup/SortByGroup';
 
 vi.mock('@reach/menu-button');
 

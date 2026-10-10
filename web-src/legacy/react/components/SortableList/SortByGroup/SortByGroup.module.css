@@ -1,0 +1,17 @@
+.root {
+  /* Component-scoped overrides belong here. */
+}
+
+.buttonGroup {
+  border: 1px inset var(--vessel-border-depth, #252527);
+  box-shadow: var(--vessel-shadow-recessed-control);
+}
+
+.buttonGroup > [aria-pressed='true'] {
+  box-shadow: var(--vessel-shadow-raised-control);
+}
+
+.buttonGroup > button:active {
+  box-shadow: var(--vessel-shadow-recessed-control);
+  transform: translateY(1px);
+}

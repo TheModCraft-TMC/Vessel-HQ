@@ -5,7 +5,7 @@ PORTAINER_DATA=${PORTAINER_DATA:-/tmp/portainer-ce}
 PORTAINER_PROJECT=${PORTAINER_PROJECT:-$(pwd)}
 PORTAINER_FLAGS=${PORTAINER_FLAGS:-}
 
-docker rm -f portainer
+docker rm -f portainer >/dev/null 2>&1 || true
 
 docker run -d \
   -p 8000:8000 \
