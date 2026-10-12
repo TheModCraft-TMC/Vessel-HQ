@@ -44,9 +44,11 @@ stale selection; both passed after the fix.
 - Fresh architecture guards (3,263 source files; 166 routes), typecheck, and
   production webpack build with standalone packaging passed. Lint passed with
   zero errors and 196 warnings. Focused compiler-enabled table tests passed:
-  six files, 101 tests. Full-suite results follow when complete. No live
-  Kubernetes, Swarm, Podman, or Azure ACI verification was performed for this
-  follow-up.
+  six files, 101 tests. The full suite passed: 340 files, 2,289 passed, five
+  skipped, 11 todo; the newly added variant file passed separately (four tests).
+  No live Kubernetes, Swarm, Podman, or Azure ACI verification was performed
+  for this follow-up. The maintainer authorized overwriting 1.3.0 again and
+  deploying this fix to Node4; publication/deployment verification follows.
 
 ## Observed migration changes
 
