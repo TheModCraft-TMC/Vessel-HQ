@@ -101,6 +101,9 @@ export function CardExpandableList<D extends DefaultType>({
   onPageChange = _.noop,
   'data-cy': dataCy,
 }: Props<D> & PaginationProps) {
+  'use no memo';
+  // TanStack Table mutates stable instances; compiler caches can hide updates.
+
   const pageCount = useMemo(
     () => Math.ceil(totalCount / settings.pageSize),
     [settings.pageSize, totalCount]

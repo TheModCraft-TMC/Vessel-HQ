@@ -16,6 +16,9 @@ export function TableRow<D extends DefaultType = DefaultType>({
   onClick,
   'aria-selected': ariaSelected,
 }: Props<D>) {
+  'use no memo';
+  // TanStack Table mutates stable instances; compiler caches can hide updates.
+
   return (
     <tr
       className={clsx(className, { 'cursor-pointer': !!onClick })}

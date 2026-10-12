@@ -23,6 +23,9 @@ export function DatatableContent<D extends DefaultType>({
   'data-cy': dataCy,
   'aria-label': ariaLabel,
 }: Props<D>) {
+  'use no memo';
+  // TanStack Table mutates stable instances; compiler caches can hide updates.
+
   const headerGroups = tableInstance.getHeaderGroups();
   const pageRowModel = tableInstance.getPaginationRowModel();
 

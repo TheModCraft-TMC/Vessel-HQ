@@ -1,7 +1,11 @@
 import path from 'node:path';
+import { createRequire } from 'node:module';
 
 import { defineConfig } from 'vitest/config';
 import svgr from 'vite-plugin-svgr';
+
+const require = createRequire(import.meta.url);
+const { transformSync } = require('@babel/core');
 
 export default defineConfig({
   resolve: {
@@ -74,5 +78,25 @@ export default defineConfig({
       return !/Can't perform a React state update on an unmounted component/.test(log);
     },
   },
-  plugins: [svgr({ include: /\?c$/ })],
+  plugins: [
+    svgr({ include: /\?c$/ }),
+    {
+      name: 'compile-table-components',
+      enforce: 'pre',
+      transform(code, id) {
+        // Match production's compiler for the mutable TanStack Table boundary.
+        if (!id.includes('/ui/components/data-table/') || !id.endsWith('.tsx') || id.includes('.test.')) {
+          return null;
+        }
+        return transformSync(code, {
+          filename: id,
+          babelrc: false,
+          configFile: false,
+          parserOpts: { plugins: ['typescript', 'jsx'] },
+          plugins: ['babel-plugin-react-compiler'],
+          sourceMaps: true,
+        });
+      },
+    },
+  ],
 });

@@ -57,6 +57,31 @@ function DatatableWithStore(props: Omit<Props<MockData>, 'settingsManager'>) {
 }
 
 describe('Datatable', () => {
+  it('renders arriving data and later replacements without remounting', () => {
+    const props = {
+      columns: mockColumns,
+      settingsManager: mockSettingsManager,
+      title: 'Async rows',
+      'data-cy': 'async-table',
+    };
+    const { rerender } = render(
+      <Datatable {...props} dataset={[]} isLoading />
+    );
+    rerender(<Datatable {...props} dataset={mockData} isLoading={false} />);
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
+    expect(screen.queryByText('No items available.')).not.toBeInTheDocument();
+
+    rerender(<Datatable {...props} dataset={[]} isLoading={false} />);
+    expect(screen.queryByText('John Doe')).not.toBeInTheDocument();
+    expect(screen.getByText('No items available.')).toBeInTheDocument();
+
+    rerender(
+      <Datatable {...props} dataset={[mockData[1]]} isLoading={false} />
+    );
+    expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    expect(screen.queryByText('John Doe')).not.toBeInTheDocument();
+  });
+
   it('renders the table with correct data', () => {
     render(
       <DatatableWithStore

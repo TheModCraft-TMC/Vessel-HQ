@@ -25,6 +25,29 @@ the stable release and image at the maintainer's explicit request.
 
 Reconcile this draft with the final diff and add exact validation results before committing. Plugin support is documentation only. Maintaining this file does not create a commit or release.
 
+## Post-1.3.0 table rendering fix — October 12, 2026
+
+This follow-up is separate from the historical release scope below. Production
+1.3.0 showed empty Images rows that appeared after leaving and returning, and
+empty Networks rows alongside a four-page paginator. React Compiler cached
+reads from TanStack Table's mutable, identity-stable instances. A fresh
+compiler-enabled regression reproduced missing asynchronously loaded rows and
+stale selection; both passed after the fix.
+
+- Exclude shared table owners and components reading mutable table/row/cell
+  instances from compiler memoization using `use no memo`, including basic,
+  nested, and expandable variants. Keep React Compiler enabled elsewhere.
+- Compile shared table components in Vitest to exercise the production behavior;
+  cover arriving, removed, and replaced datasets without remounting.
+- Local browser verification: Images populated after a full reload; Networks
+  populated on navigation. Production was inspected only; deployment is pending.
+- Fresh architecture guards (3,263 source files; 166 routes), typecheck, and
+  production webpack build with standalone packaging passed. Lint passed with
+  zero errors and 196 warnings. Focused compiler-enabled table tests passed:
+  six files, 101 tests. Full-suite results follow when complete. No live
+  Kubernetes, Swarm, Podman, or Azure ACI verification was performed for this
+  follow-up.
+
 ## Observed migration changes
 
 | Area | Current working-tree change | Evidence / handoff |

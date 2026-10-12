@@ -15,6 +15,9 @@ export function ExpandableDatatableTableRow<D extends DefaultType>({
   renderSubRow,
   expandOnClick,
 }: Props<D>) {
+  'use no memo';
+  // Expansion changes on the stable TanStack row instance.
+
   const cells = row.getVisibleCells();
 
   return (

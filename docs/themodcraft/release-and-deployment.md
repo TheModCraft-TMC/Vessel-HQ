@@ -23,6 +23,11 @@ Consumers must explicitly pull/recreate because the version string is unchanged.
 The normal CI guard remains in place; perform this authorized replacement through
 the local release publishing path.
 
+Later on October 12, 2026 the maintainer explicitly authorized replacing 1.3.0
+again with the table rendering fix and deploying it to Node4. This additional
+exception applies only to that fix; preserve the existing beta archive and keep
+the previous Node4 container available for rollback.
+
 ## Build and publish
 
 The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`, with binary checksums in `SHA256SUMS`. Use Node 24.21.0 LTS, pnpm 10.26.2, and the Go version in `backend-src/go.mod`.

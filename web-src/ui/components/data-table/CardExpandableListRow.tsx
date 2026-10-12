@@ -18,6 +18,9 @@ export function CardExpandableListRow<D extends DefaultType>({
   renderSubRow,
   expandOnClick,
 }: Props<D>) {
+  'use no memo';
+  // TanStack Table mutates stable instances; compiler caches can hide updates.
+
   const cells = row.getVisibleCells();
   const canExpand = row.getCanExpand();
   const isExpanded = canExpand && row.getIsExpanded();

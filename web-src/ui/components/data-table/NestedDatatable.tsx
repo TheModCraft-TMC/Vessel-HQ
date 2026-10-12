@@ -55,6 +55,9 @@ export function NestedDatatable<D extends DefaultType>({
   'data-cy': dataCy,
   'aria-label': ariaLabel,
 }: Props<D>) {
+  'use no memo';
+  // TanStack Table mutates stable instances; compiler caches can hide updates.
+
   const tableInstance = useReactTable<D>({
     columns,
     data: dataset,

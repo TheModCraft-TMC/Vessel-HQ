@@ -109,6 +109,9 @@ export function Datatable<D extends DefaultType>({
   ariaLabel,
   id,
 }: Props<D> & PaginationProps) {
+  'use no memo';
+  // TanStack Table mutates stable instances; compiler caches can hide updates.
+
   const pageCount = useMemo(
     () => Math.ceil(totalCount / settings.pageSize),
     [settings.pageSize, totalCount]

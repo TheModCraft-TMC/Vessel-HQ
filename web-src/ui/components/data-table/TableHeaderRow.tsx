@@ -20,6 +20,9 @@ export function TableHeaderRow<D extends DefaultType = DefaultType>({
   onSortChange,
   tableMeta,
 }: Props<D>) {
+  'use no memo';
+  // TanStack Table mutates stable instances; compiler caches can hide updates.
+
   return (
     <tr>
       {headers.map((header) => {
