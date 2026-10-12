@@ -3,12 +3,12 @@ import { useReducer } from 'react';
 import { Plug2 } from 'lucide-react';
 
 import { notifySuccess } from '@/ui/components/toast/notifications';
-import { useCreateLocalDockerEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
+import { useCreateLocalDockerEnvironmentMutation } from '@/domains/environments/queries/useCreateEnvironmentMutation';
 import {
   ContainerEngine,
   Environment,
 } from '@/domains/environments';
-import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
+import { NameField } from '@/domains/environments/features/NameField/NameField';
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';

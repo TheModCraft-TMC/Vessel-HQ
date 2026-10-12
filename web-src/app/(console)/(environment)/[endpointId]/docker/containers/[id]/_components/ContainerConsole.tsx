@@ -1,39 +1,40 @@
 'use client';
 
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Terminal as TerminalIcon } from 'lucide-react';
+import { PageContent } from '@console/layout/PageContent';
 
-import { CONSOLE_COMMANDS_LABEL_PREFIX } from '@/constants';
-import { commandStringToArray } from '@/domains/containers/mappers/command';
-import { baseHref } from '@/portainer/helpers/pathHelper';
-import { withError } from '@/core/query';
 import {
   ContainerDetailsResponse,
   useContainer,
-} from '@/domains/containers/queries/useContainer';
+} from '@/domains/containers';
+import { CONSOLE_COMMANDS_LABEL_PREFIX } from '@/shared/constants';
+import { commandStringToArray } from '@/domains/containers/mappers/command';
+import { baseHref } from '@/shared/browser-path';
+import { withError } from '@/core/query';
 import { createExec } from '@/domains/containers/queries/useCreateExecMutation';
 import { resizeTTY as resizeContainerTTY } from '@/domains/containers/queries/useContainerResizeTTYMutation';
 import { dockerClient } from '@/core/composition/dockerClient';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { Alert } from '@/ui/components/feedback/Alert';
+import { ViewLoading } from '@/ui/components/feedback/ViewLoading';
 import { Button } from '@/ui/components/buttons';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
 import { Select } from '@/ui/components/forms/Input/Select';
 import { SwitchField } from '@/ui/components/forms/SwitchField';
-
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 import {
   isLinuxTerminalCommand,
   LINUX_SHELL_INIT_COMMANDS,
   ShellState,
   Terminal,
   TerminalDimensions,
-} from '@@/Terminal/Terminal';
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+} from '@/core/realtime/Terminal/Terminal';
 
 type Mode = 'attach' | 'exec';
 
@@ -65,7 +66,19 @@ export function ContainerConsole({ mode }: { mode: Mode }) {
     withError('Unable to exec into container')
   );
 
-  if (!containerQuery.data || (mode === 'exec' && !imageQuery.data)) {
+  if (containerQuery.isLoading) {
+    return <ViewLoading message="Loading container console..." />;
+  }
+
+  if (!containerQuery.data) {
+    return null;
+  }
+
+  if (mode === 'exec' && imageQuery.isLoading) {
+    return <ViewLoading message="Loading container image..." />;
+  }
+
+  if (mode === 'exec' && !imageQuery.data) {
     return null;
   }
 
@@ -86,7 +99,7 @@ export function ContainerConsole({ mode }: { mode: Mode }) {
       : shellUrl;
 
   return (
-    <>
+    <PageContent>
       <Widget>
         <WidgetTitle
           icon={TerminalIcon}
@@ -99,6 +112,7 @@ export function ContainerConsole({ mode }: { mode: Mode }) {
       <div className="row h-[600px]">
         <div className="col-sm-12 h-full p-0">
           <Terminal
+            fill
             url={url}
             connect={connect && running && Boolean(url)}
             onStateChange={handleStateChange}
@@ -111,7 +125,7 @@ export function ContainerConsole({ mode }: { mode: Mode }) {
           />
         </div>
       </div>
-    </>
+    </PageContent>
   );
 
   function AttachForm() {

@@ -3,21 +3,20 @@
 import { memo, useMemo } from 'react';
 
 import { Node, Task, TaskState } from '@/providers/infrastructure/docker';
-import { humanize } from '@/portainer/filters/filters';
-import { hideShaSum, nodeStatusBadge } from '@/docker/filters/utils';
+import { humanize } from '@/shared/formatters';
+import { hideShaSum, nodeStatusBadge } from '@/shared/docker/filters/utils';
 import { useNodes } from '@/domains/swarm/queries/useNodes';
-import { useTasks } from '@/domains/services';
-import { useServices } from '@/domains/services';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useLocalStorage } from '@/react/hooks/useLocalStorage';
-import { strToHash } from '@/react/utils/hash';
+import { useServices } from '@/domains/services/queries/useServices';
+import { useTasks } from '@/domains/services/queries/useTasks';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useLocalStorage } from '@/core/hooks/useLocalStorage';
+import { strToHash } from '@/shared/hash';
 import { Button } from '@/ui/components/buttons';
 import { SwitchField } from '@/ui/components/forms/SwitchField';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { Widget } from '@@/Widget/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+import { Widget } from '@/ui/components/Widget/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 
 const EMPTY_TASKS: Task[] = [];
 

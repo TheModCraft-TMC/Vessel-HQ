@@ -7,7 +7,7 @@ import {
   useSettings,
   useUpdateSettingsMutation,
 } from '@/domains/settings/queries';
-import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import { isBE } from '@/shared/feature-flags/feature-flags.service';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 
 export function EdgeComputeSettingsContent() {

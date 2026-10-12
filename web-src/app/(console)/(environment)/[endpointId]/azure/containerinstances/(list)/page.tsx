@@ -5,10 +5,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ContainersDatatable } from '@/domains/azure/components/ContainerInstances/ListView/ContainersDatatable';
 import { useContainerGroups } from '@/domains/azure/queries/useContainerGroups';
 import { useSubscriptions } from '@/domains/azure/queries/useSubscriptions';
-import { EnvironmentId } from '@/domains/environments';
-import { promiseSequence } from '@/portainer/helpers/promise-utils';
+import type { EnvironmentId } from '@/domains/environments/types';
+import { promiseSequence } from '@/shared/promise-utils';
 import { azureAciClient } from '@/providers/infrastructure/azure-aci';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import {
   notifyError,
   notifySuccess,

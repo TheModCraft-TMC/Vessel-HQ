@@ -1,10 +1,9 @@
 import { List } from 'lucide-react';
 
-import { joinCommand } from '@/docker/filters/utils';
-import { getPairKey, getPairValue } from '@/portainer/filters/filters';
+import { joinCommand } from '@/shared/docker/filters/utils';
+import { getPairKey, getPairValue } from '@/shared/formatters';
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
-
-import { DetailsTable } from '@@/DetailsTable';
+import { DetailsTable } from '@/ui/components/DetailsTable';
 
 interface DockerImage {
   Command: null | Array<string>;

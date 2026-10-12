@@ -10,10 +10,10 @@ import { loadStacks } from '@/domains/stacks/views/ListView/ListView';
 import { StacksDatatable } from '@/domains/stacks/views/ListView/StacksDatatable';
 import { useDeleteStackMutation } from '@/domains/stacks/queries/common/useDeleteStackMutation';
 import { queryKeys } from '@/domains/stacks/queries/common/query-keys';
-import { processItemsInBatches } from '@/react/common/processItemsInBatches';
-import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useIsEdgeAdmin } from '@/react/hooks/useUser';
+import { processItemsInBatches } from '@/shared/processItemsInBatches';
+import { useCurrentEnvironment } from '@/core/composition/useCurrentEnvironment';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useIsEdgeAdmin } from '@/core/session/useUser';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
 

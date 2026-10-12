@@ -1,7 +1,7 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
-import LaptopCode from '@/assets/ico/laptop-code.svg?c';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import LaptopCode from '@/shared/assets/ico/laptop-code.svg?c';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useApplications } from '@/domains/applications';
 import { Datatable, TableSettingsMenu } from '@/ui/components/data-table';
 import { TableSettingsMenuAutoRefresh } from '@/ui/components/data-table/TableSettingsMenuAutoRefresh';

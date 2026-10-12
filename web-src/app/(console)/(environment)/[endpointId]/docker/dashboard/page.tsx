@@ -9,25 +9,25 @@ import {
   NetworkIcon,
   ShuffleIcon,
 } from 'lucide-react';
+import { PageContent } from '@console/layout/PageContent';
 
-import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useIsEnvironmentAdmin } from '@/react/hooks/useUser';
-import { ClusterAgentInfo } from '@/react/docker/DashboardView/ClusterAgentInfo';
-import { ContainerStatus } from '@/react/docker/DashboardView/ContainerStatus';
-import { EnvironmentInfo } from '@/react/docker/DashboardView/EnvironmentInfo';
-import { ImagesTotalSize } from '@/react/docker/DashboardView/ImagesTotalSize';
-import { NonAgentSwarmInfo } from '@/react/docker/DashboardView/NonAgentSwarmInfo';
-import { useDashboard } from '@/react/docker/DashboardView/useDashboard';
+import { useCurrentEnvironment } from '@/core/composition/useCurrentEnvironment';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useIsEnvironmentAdmin } from '@/core/session/useUser';
+import { ClusterAgentInfo } from '@/core/docker/DashboardView/ClusterAgentInfo';
+import { ContainerStatus } from '@/core/docker/DashboardView/ContainerStatus';
+import { EnvironmentInfo } from '@/core/docker/DashboardView/EnvironmentInfo';
+import { ImagesTotalSize } from '@/core/docker/DashboardView/ImagesTotalSize';
+import { NonAgentSwarmInfo } from '@/core/docker/DashboardView/NonAgentSwarmInfo';
+import { useDashboard } from '@/core/docker/DashboardView/useDashboard';
 import {
   useIsSwarm,
   useIsSwarmManager,
-} from '@/react/docker/proxy/queries/useInfo';
-import { isAgentEnvironment } from '@/react/portainer/environments/utils';
+} from '@/core/composition/useDockerInfo';
+import { isAgentEnvironment } from '@/domains/environments/utils';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { DashboardItem } from '@@/DashboardItem';
-import { DashboardGrid } from '@@/DashboardItem/DashboardGrid';
+import { DashboardItem } from '@/ui/components/DashboardItem';
+import { DashboardGrid } from '@/ui/components/DashboardItem/DashboardGrid';
 
 export default function Page() {
   const environmentId = useEnvironmentId();
@@ -48,74 +48,71 @@ export default function Page() {
   return (
     <>
       <PageHeader title="Dashboard" breadcrumbs="Environment summary" reload />
-      <>
-        <div className="mx-4 space-y-6">
-          <DockerEnvironmentInformation
-            isAgent={isAgentEnvironment(environment.Type)}
+      <PageContent gap="large">
+        <DockerEnvironmentInformation
+          isAgent={isAgentEnvironment(environment.Type)}
+        />
+        <DashboardGrid>
+          {stacksVisible && (
+            <DashboardItem
+              to="/:endpointId/docker/stacks"
+              icon={LayersIcon}
+              type="Stack"
+              value={stats.stacks}
+              data-cy="stacks"
+            />
+          )}
+          {isSwarmManager && (
+            <DashboardItem
+              to="/:endpointId/docker/services"
+              icon={ShuffleIcon}
+              type="Service"
+              value={stats.services}
+              data-cy="services"
+            />
+          )}
+          <DashboardItem
+            to="/:endpointId/docker/containers"
+            icon={BoxIcon}
+            type="Container"
+            value={stats.containers.total}
+            data-cy="containers"
+          >
+            <ContainerStatus stats={stats.containers} />
+          </DashboardItem>
+          <DashboardItem
+            to="/:endpointId/docker/images"
+            icon={ListIcon}
+            type="Image"
+            value={stats.images.total}
+            data-cy="images"
+          >
+            <ImagesTotalSize imagesTotalSize={stats.images.size} />
+          </DashboardItem>
+          <DashboardItem
+            to="/:endpointId/docker/volumes"
+            icon={DatabaseIcon}
+            type="Volume"
+            value={stats.volumes}
+            data-cy="volumes"
           />
-          <DashboardGrid>
-            {stacksVisible && (
-              <DashboardItem
-                to="/:endpointId/docker/stacks"
-                icon={LayersIcon}
-                type="Stack"
-                value={stats.stacks}
-                data-cy="stacks"
-              />
-            )}
-            {isSwarmManager && (
-              <DashboardItem
-                to="/:endpointId/docker/services"
-                icon={ShuffleIcon}
-                type="Service"
-                value={stats.services}
-                data-cy="services"
-              />
-            )}
+          <DashboardItem
+            to="/:endpointId/docker/networks"
+            icon={NetworkIcon}
+            type="Network"
+            value={stats.networks}
+            data-cy="networks"
+          />
+          {environment.EnableGPUManagement && isStandalone && (
             <DashboardItem
-              to="/:endpointId/docker/containers"
-              icon={BoxIcon}
-              type="Container"
-              value={stats.containers.total}
-              data-cy="containers"
-            >
-              <ContainerStatus stats={stats.containers} />
-            </DashboardItem>
-            <DashboardItem
-              to="/:endpointId/docker/images"
-              icon={ListIcon}
-              type="Image"
-              value={stats.images.total}
-              data-cy="images"
-            >
-              <ImagesTotalSize imagesTotalSize={stats.images.size} />
-            </DashboardItem>
-            <DashboardItem
-              to="/:endpointId/docker/volumes"
-              icon={DatabaseIcon}
-              type="Volume"
-              value={stats.volumes}
-              data-cy="volumes"
+              icon={CpuIcon}
+              type="GPU"
+              value={environment.Gpus?.length}
+              data-cy="gpus"
             />
-            <DashboardItem
-              to="/:endpointId/docker/networks"
-              icon={NetworkIcon}
-              type="Network"
-              value={stats.networks}
-              data-cy="networks"
-            />
-            {environment.EnableGPUManagement && isStandalone && (
-              <DashboardItem
-                icon={CpuIcon}
-                type="GPU"
-                value={environment.Gpus?.length}
-                data-cy="gpus"
-              />
-            )}
-          </DashboardGrid>
-        </div>
-        <div className="pt-6" />
-      </>
+          )}
+        </DashboardGrid>
+      </PageContent>
     </>
   );
 }

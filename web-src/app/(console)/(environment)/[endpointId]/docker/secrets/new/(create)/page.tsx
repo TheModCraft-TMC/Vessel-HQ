@@ -1,7 +1,7 @@
 'use client';
 
 import { CreateSecretForm } from '@/domains/services/secrets/CreateView/CreateView';
-import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
+import { useCurrentUser, useIsEdgeAdmin } from '@/core/session/useUser';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

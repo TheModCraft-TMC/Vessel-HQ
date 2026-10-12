@@ -1,0 +1,87 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { EnvironmentId } from '@/domains/environments';
+import axios, { parseAxiosError } from '@/shared/http';
+import {
+  buildImageFullURIFromModel,
+  fullURIIntoRepoAndTag,
+} from '@/domains/images';
+import { useEnvironmentRegistries } from '@/domains/environments';
+import { withError } from '@/core/query';
+import { containerQueryKeys as queryKeys } from '@/domains/containers';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
+
+type CommitParams = {
+  container?: string; //  The ID or name of the container to commit
+  repo?: string; //  Repository name for the created image
+  tag?: string; //  Tag name for the create image
+  comment?: string; //  Commit message
+  author?: string; //  Author of the image (e.g., John Hannibal Smith <hannibal@a-team.com>)
+  pause?: boolean; //  Default: true  Whether to pause the container before committing
+  changes?: string; //  Dockerfile instructions to apply while committing
+};
+
+interface MutationParams {
+  environmentId: EnvironmentId;
+  containerId: string;
+  image: string;
+  registryId?: number;
+  useRegistry: boolean;
+}
+
+export function useCommitContainerMutation(environmentId: EnvironmentId) {
+  const queryClient = useQueryClient();
+  const registriesQuery = useEnvironmentRegistries(environmentId);
+
+  return useMutation({
+    mutationFn: async ({
+      environmentId,
+      containerId,
+      image,
+      registryId,
+      useRegistry,
+    }: MutationParams) => {
+      const registry = useRegistry
+        ? registriesQuery.data?.find((r) => r.Id === registryId)
+        : undefined;
+
+      const fullURI = buildImageFullURIFromModel({
+        UseRegistry: useRegistry,
+        Registry: registry,
+        Image: image,
+      });
+
+      const { repo, tag } = fullURIIntoRepoAndTag(fullURI);
+
+      return commitContainer(environmentId, {
+        container: containerId,
+        repo,
+        tag,
+      });
+    },
+
+    ...withError('Unable to create image'),
+    onSuccess: (_, { containerId, environmentId }) =>
+      queryClient.invalidateQueries(
+        queryKeys.container(environmentId, containerId)
+      ),
+  });
+}
+
+export async function commitContainer(
+  environmentId: EnvironmentId,
+  params: CommitParams
+) {
+  try {
+    const { data } = await axios.post<{ Id: string }>(
+      buildDockerProxyUrl(environmentId, 'commit'),
+      {},
+      {
+        params,
+      }
+    );
+    return data;
+  } catch (err) {
+    throw parseAxiosError(err, 'Unable to commit container');
+  }
+}

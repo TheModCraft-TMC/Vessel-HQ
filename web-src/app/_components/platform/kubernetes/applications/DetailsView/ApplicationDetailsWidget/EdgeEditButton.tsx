@@ -1,4 +1,4 @@
-import { useIsEdgeAdmin } from '@/react/hooks/useUser';
+import { useIsEdgeAdmin } from '@/core/session/useUser';
 import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';
 
 import { EditButton } from './EditButton';

@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { Lock } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { withError } from '@/core/query';
 import { SecretViewModel } from '@/domains/services/models/secret';
@@ -12,10 +12,10 @@ import {
   getSecret,
   removeSecret,
 } from '@/domains/services/secrets/queries/useSecrets';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { Authorized } from '@/react/hooks/useUser';
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel/AccessControlPanel';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { Authorized } from '@/core/session/useUser';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel/AccessControlPanel';
+import { ResourceControlType } from '@/domains/access-control/types';
 import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';

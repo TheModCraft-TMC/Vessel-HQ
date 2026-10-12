@@ -2,8 +2,7 @@
 
 import { ConfigureForm } from '@/domains/clusters/cluster/ConfigureView/ConfigureForm';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 export function KubernetesConfigureContent() {
   return (

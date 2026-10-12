@@ -1,7 +1,7 @@
 'use client';
 
-import { LoginHeading, LoginLogo } from '@console/console/auth/LoginBranding';
-import { useLoginController } from '@console/console/auth/useLoginController';
+import { LoginHeading, LoginLogo } from '@console/auth/LoginBranding';
+import { useLoginController } from '@console/auth/useLoginController';
 
 import { LoginForm } from '@/domains/auth/components/LoginForm';
 

@@ -5,12 +5,12 @@ import { http, HttpResponse } from 'msw';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { withTestRouter } from '@/react/test-utils/withRouter';
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { UserViewModel } from '@/portainer/models/user';
-import { server } from '@/setup-tests/server';
-import { useAuthorizations } from '@/react/hooks/useUser';
-import { select } from '@/react/test-utils/react-select';
+import { withTestRouter } from '@/core/test-support/withRouter';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
+import { UserViewModel } from '@/domains/users';
+import { server } from '@/core/test-support/setup/server';
+import { useAuthorizations } from '@/core/session/useUser';
+import { select } from '@/core/test-support/react-select';
 
 import { confirmUpdateNode } from '../ConfirmUpdateNode';
 
@@ -27,7 +27,7 @@ vi.mock('@/ui/components/toast/notifications', () => ({
 }));
 
 vi.mock(
-  '@/react/hooks/useUser',
+  '@/core/session/useUser',
   async (importOriginal: () => Promise<object>) => {
     const actual = await importOriginal();
     return {

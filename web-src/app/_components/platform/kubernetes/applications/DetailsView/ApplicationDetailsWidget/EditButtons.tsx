@@ -1,5 +1,5 @@
 import type { Stack } from '@/domains/stacks';
-import { Authorized } from '@/react/hooks/useUser';
+import { Authorized } from '@/core/session/useUser';
 import { EditGitSettingsButton, GitPullButton } from '@/domains/stacks';
 
 import { EdgeEditButton } from './EdgeEditButton';

@@ -2,25 +2,25 @@
 
 import { Radio } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { PageContent } from '@console/layout/PageContent';
 
 import { withError } from '@/core/query';
 import { queryKeys } from '@/domains/registries/queries/query-keys';
 import { useRegistry } from '@/domains/registries/queries/useRegistry';
-import { RoleTypes } from '@/portainer/rbac/models/role';
-import { AccessDatatable } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/AccessDatatable';
-import { Access } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/types';
-import { CreateAccessWidget } from '@/react/portainer/access-control/AccessManagement/CreateAccessWidget';
-import { Option } from '@/react/portainer/access-control/AccessManagement/PorAccessManagementUsersSelector';
-import { useAccesses } from '@/react/portainer/access-control/AccessManagement/useAccesses';
-import { useGroup } from '@/react/portainer/environments/environment-groups/queries/useGroup';
-import { updateEnvironmentRegistryAccess } from '@/react/portainer/environments/environment.service/registries';
-import { useEnvironment } from '@/react/portainer/environments/queries';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useIdParam } from '@/react/hooks/useIdParam';
+import { RoleTypes } from '@/core/access-control/rbac/models/role';
+import { AccessDatatable } from '@/core/access-control/AccessManagement/AccessDatatable/AccessDatatable';
+import { Access } from '@/core/access-control/AccessManagement/AccessDatatable/types';
+import { CreateAccessWidget } from '@/core/access-control/AccessManagement/CreateAccessWidget';
+import { Option } from '@/core/access-control/AccessManagement/PorAccessManagementUsersSelector';
+import { useAccesses } from '@/core/access-control/AccessManagement/useAccesses';
+import { useGroup } from '@/domains/environments/queries/useGroup';
+import { updateEnvironmentRegistryAccess } from '@/core/environment-management/environments/environment.service/registries';
+import { useEnvironment } from '@/domains/environments';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useIdParam } from '@/core/hooks/useIdParam';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
 
 export function EnvironmentRegistryAccessHeader({
   registryListRoute,
@@ -147,7 +147,7 @@ function RegistrySummary({
   isLoading: boolean;
 }) {
   return (
-    <div className="mx-4 mb-4">
+    <PageContent>
       <Widget>
         <WidgetTitle icon={Radio} title="Registry" />
         <WidgetBody loading={isLoading} className="!p-0">
@@ -167,7 +167,7 @@ function RegistrySummary({
           )}
         </WidgetBody>
       </Widget>
-    </div>
+    </PageContent>
   );
 }
 
@@ -188,7 +188,7 @@ function RegistryAccessManager({
 }) {
   return (
     <>
-      <div className="mx-4">
+      <PageContent>
         <CreateAccessWidget
           availableUsersAndTeams={available}
           isLoading={isLoading}
@@ -199,7 +199,7 @@ function RegistryAccessManager({
           showRole={false}
           showWarning={false}
         />
-      </div>
+      </PageContent>
       <AccessDatatable
         tableKey="access_registry"
         dataset={authorized}

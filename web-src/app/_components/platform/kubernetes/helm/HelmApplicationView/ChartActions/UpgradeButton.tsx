@@ -1,15 +1,15 @@
 import { ArrowUp } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { useState } from 'react';
+import { Link } from '@console/navigation/Link';
 
 import { EnvironmentId } from '@/domains/environments';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-import { semverCompare } from '@/react/common/semver-utils';
+import { semverCompare } from '@/shared/semver';
 import { Button, LoadingButton } from '@/ui/components/buttons';
 import { InlineLoader } from '@/ui/components/feedback/InlineLoader';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
-import { Link } from '@/ui/components/links/Link';
 import { HelmRelease, UpdateHelmReleasePayload } from '@/domains/configuration/helm/types';
 import { useUpdateHelmReleaseMutation } from '@/domains/configuration/helm/helmReleaseQueries/useUpdateHelmReleaseMutation';
 import { useHelmRepoVersions } from '@/domains/configuration/helm/helmChartSourceQueries/useHelmRepoVersions';

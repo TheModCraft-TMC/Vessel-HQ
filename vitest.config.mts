@@ -6,16 +6,28 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(import.meta.dirname, 'web-src/legacy'),
-      '@@': path.resolve(
+      'file-saver': path.resolve(
         import.meta.dirname,
-        'web-src/legacy/react/components'
+        'web-src/core/test-support/setup/mock-file-saver.ts'
       ),
+      toastr: path.resolve(
+        import.meta.dirname,
+        'web-src/core/test-support/setup/mock-toastr.ts'
+      ),
+      '@uiw/react-codemirror': path.resolve(
+        import.meta.dirname,
+        'web-src/core/test-support/setup/mock-codemirror.tsx'
+      ),
+      'next/navigation': path.resolve(
+        import.meta.dirname,
+        'web-src/core/test-support/next-navigation.ts'
+      ),
+      '@': path.resolve(import.meta.dirname, 'web-src'),
       '@api': path.resolve(
         import.meta.dirname,
-        'web-src/legacy/react/portainer/generated-api/portainer'
+        'web-src/core/generated-api/portainer'
       ),
-      '@console': path.resolve(import.meta.dirname, 'web-src/components'),
+      '@console': path.resolve(import.meta.dirname, 'web-src/core/console'),
       '@app': path.resolve(import.meta.dirname, 'web-src/app'),
       'yaml-schema': path.resolve(
         import.meta.dirname,
@@ -32,18 +44,18 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: [
-      './web-src/legacy/setup-tests/setup.ts',
-      './web-src/legacy/setup-tests/setup-websocket.ts',
-      './web-src/legacy/setup-tests/setup-rtl.ts',
-      './web-src/legacy/setup-tests/setup-msw.ts',
-      './web-src/legacy/setup-tests/stub-modules.ts',
-      './web-src/legacy/setup-tests/setup-codemirror.ts',
-      './web-src/legacy/setup-tests/setup-fail-on-console.ts',
+      './web-src/core/test-support/setup/setup.ts',
+      './web-src/core/test-support/setup/setup-websocket.ts',
+      './web-src/core/test-support/setup/setup-rtl.ts',
+      './web-src/core/test-support/setup/setup-msw.ts',
+      './web-src/core/test-support/setup/stub-modules.ts',
+      './web-src/core/test-support/setup/setup-codemirror.ts',
+      './web-src/core/test-support/setup/setup-fail-on-console.ts',
     ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'web-src/legacy/setup-tests/global-setup.js'],
+      exclude: ['node_modules/', 'web-src/core/test-support/setup/global-setup.js'],
     },
     // The default includes package.json, which made `--changed` run the whole suite for
     // any edit to it. Dependency changes move pnpm-lock.yaml, so key off that instead.

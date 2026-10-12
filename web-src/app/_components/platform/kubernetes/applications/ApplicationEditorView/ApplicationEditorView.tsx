@@ -1,13 +1,13 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import YAML from 'yaml';
 
-import axios from '@/portainer/services/axios/axios';
+import axios from '@/shared/http';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useNamespacesQuery } from '@/domains/namespaces';
 import { withError } from '@/core/query';
 import { Button, LoadingButton } from '@/ui/components/buttons';
@@ -22,10 +22,9 @@ import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { appStackNameLabel } from '@/domains/applications/applications/constants';
 import { queryKeys } from '@/domains/applications/applications/queries/query-keys';
 import { useApplicationYAML } from '@app/_components/platform/kubernetes/applications/DetailsView/AppYAMLEditor/useApplicationYAML';
-
-import { usePreventExit, WebEditorForm } from '@@/WebEditorForm';
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
+import { usePreventExit, WebEditorForm } from '@/ui/components/WebEditorForm';
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
 
 
 const initialApplication = `apiVersion: apps/v1

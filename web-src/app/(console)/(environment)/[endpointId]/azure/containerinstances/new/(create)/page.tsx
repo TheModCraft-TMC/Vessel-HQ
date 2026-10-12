@@ -2,8 +2,7 @@
 
 import { CreateContainerInstanceForm } from '@/domains/azure/views/ContainerInstances/CreateView/CreateContainerInstanceForm';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 export default function Page() {
   return (

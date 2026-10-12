@@ -1,21 +1,20 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useState } from 'react';
 import { Terminal as TerminalIcon } from 'lucide-react';
 
-import { baseHref } from '@/portainer/helpers/pathHelper';
-import { TerminalTooltip } from '@/react/components/TerminalTooltip';
+import { baseHref } from '@/shared/browser-path';
+import { TerminalTooltip } from '@/ui/components/TerminalTooltip';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Icon } from '@/ui/components/icons/Icon';
 import { Button } from '@/ui/components/buttons';
 import { Input } from '@/ui/components/forms/Input';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 import {
   Terminal,
   isLinuxTerminalCommand,
   LINUX_SHELL_INIT_COMMANDS,
-} from '@@/Terminal/Terminal';
-import type { ShellState } from '@@/Terminal/Terminal';
+} from '@/core/realtime/Terminal/Terminal';
+import type { ShellState } from '@/core/realtime/Terminal/Terminal';
 
 export function ConsoleView() {
   return <ApplicationConsoleContent showHeader />;

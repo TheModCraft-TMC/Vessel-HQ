@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 
-import { server } from '@/setup-tests/server';
-import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
+import { server } from '@/core/test-support/setup/server';
+import { suppressConsoleLogs } from '@/core/test-support/setup/suppress-console';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { withTestRouter } from '@/react/test-utils/withRouter';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
+import { withTestRouter } from '@/core/test-support/withRouter';
 
 import { ApplicationStatsView } from './ApplicationStatsView';
 

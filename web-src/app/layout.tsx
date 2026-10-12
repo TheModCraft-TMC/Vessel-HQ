@@ -1,24 +1,21 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { LegacyClientSetup } from '@console/LegacyClientSetup';
-import { MainLayout } from '@console/layout/MainLayout';
 
 import './next-globals.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'toastr/build/toastr.css';
 import 'spinkit/spinkit.min.css';
-import '@reach/menu-button/styles.css';
-import '@xterm/xterm/css/xterm.css';
-import '../legacy/assets/css/rdash.css';
-import '../legacy/assets/css/app.css';
-import '../legacy/assets/css/theme.css';
-import '../legacy/ui/tokens/tokens.css';
-import '../legacy/assets/css/vendor-override.css';
-import '../legacy/assets/css/bootstrap-override.css';
-import '../legacy/assets/css/icon.css';
-import '../legacy/assets/css/button.css';
-import '../legacy/assets/css/react-datetime-picker-override.css';
-import '../legacy/domains/ingress/ingresses/style.css';
+import '../shared/assets/css/rdash.css';
+import '../shared/assets/css/app.css';
+import '../shared/assets/css/theme.css';
+import '../ui/tokens/tokens.css';
+import '../shared/assets/css/vendor-override.css';
+import '../shared/assets/css/bootstrap-override.css';
+import '../shared/assets/css/icon.css';
+import '../shared/assets/css/button.css';
+import '../shared/assets/css/react-datetime-picker-override.css';
+import '../domains/ingress/ingresses/style.css';
 
 export const metadata: Metadata = {
   title: {
@@ -40,10 +37,10 @@ export const dynamic = 'force-dynamic';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body>
         <LegacyClientSetup />
-        <MainLayout>{children}</MainLayout>
+        {children}
       </body>
     </html>
   );

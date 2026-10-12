@@ -1,8 +1,9 @@
 'use client';
 
 import { useMemo } from 'react';
+import { PageContent } from '@console/layout/PageContent';
 
-import { useWorkflowsSummary } from '@/domains/gitops/queries/useWorkflowsSummary';
+import { useWorkflowsSummary } from '@/domains/gitops';
 import { WorkflowCard } from '@/domains/gitops/workflows/ListView/WorkflowCard';
 import {
   SORT_KEYS,
@@ -12,13 +13,12 @@ import { useWorkflows } from '@/domains/gitops/workflows/queries/useWorkflows';
 import { effectiveWorkflowStatus } from '@/domains/gitops/workflows/status';
 import { Workflow, WorkflowStatus } from '@/domains/gitops/workflows/types';
 import { asEnum } from '@/ui/components/data-table/useTableStateFromUrl';
-
 import {
   SortableGroup,
   SortableList,
   SortOption,
-} from '@@/SortableList/SortableList';
-import { StatusSummaryBar } from '@@/StatusSummaryBar/StatusSummaryBar';
+} from '@/ui/components/SortableList/SortableList';
+import { StatusSummaryBar } from '@/ui/components/StatusSummaryBar/StatusSummaryBar';
 
 const STATUS_CONFIG: Array<{
   key: WorkflowStatus;
@@ -68,30 +68,30 @@ export function WorkflowsContent() {
     : 0;
 
   return (
-    <div className="mx-4 mb-4 space-y-4">
-        <StatusSummaryBar
-          total={summaryTotal}
-          segments={statusSegments}
-          value={listState.status}
-          onChange={listState.setStatus}
-          radioGroupName="workflows-status"
-          isLoading={summaryQuery.isLoading}
-        />
-        <SortableList
-          tableState={listState}
-          sortOptions={SORT_OPTIONS}
-          groupOptions={{ status: statusSegments }}
-          groups={groups}
-          totalCount={workflowsQuery.data?.totalCount ?? 0}
-          isLoading={workflowsQuery.isLoading}
-          getItemKey={(workflow) => `workflow-${workflow.id}`}
-          showGroupHeaders
-          emptyMessage="No workflows found"
-          searchPlaceholder="Search"
-          renderItem={(workflow) => <WorkflowCard item={workflow} />}
-          data-cy="workflows-list"
-        />
-      </div>
+    <PageContent>
+      <StatusSummaryBar
+        total={summaryTotal}
+        segments={statusSegments}
+        value={listState.status}
+        onChange={listState.setStatus}
+        radioGroupName="workflows-status"
+        isLoading={summaryQuery.isLoading}
+      />
+      <SortableList
+        tableState={listState}
+        sortOptions={SORT_OPTIONS}
+        groupOptions={{ status: statusSegments }}
+        groups={groups}
+        totalCount={workflowsQuery.data?.totalCount ?? 0}
+        isLoading={workflowsQuery.isLoading}
+        getItemKey={(workflow) => `workflow-${workflow.id}`}
+        showGroupHeaders
+        emptyMessage="No workflows found"
+        searchPlaceholder="Search"
+        renderItem={(workflow) => <WorkflowCard item={workflow} />}
+        data-cy="workflows-list"
+      />
+    </PageContent>
   );
 }
 

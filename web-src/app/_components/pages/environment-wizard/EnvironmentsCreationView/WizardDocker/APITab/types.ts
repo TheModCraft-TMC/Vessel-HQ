@@ -1,5 +1,5 @@
-import { TLSConfig } from '@/react/components/TLSFieldset/types';
-import { EnvironmentMetadata } from '@/react/portainer/environments/environment.service/create';
+import { TLSConfig } from '@/core/components/TLSFieldset/types';
+import { EnvironmentMetadata } from '@/domains/environments/services/createEnvironment';
 
 export interface FormValues {
   name: string;

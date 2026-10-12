@@ -10,8 +10,8 @@ import {
   getSecrets,
   removeSecret,
 } from '@/domains/services/secrets/queries/useSecrets';
-import { processItemsInBatches } from '@/react/common/processItemsInBatches';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { processItemsInBatches } from '@/shared/processItemsInBatches';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
 

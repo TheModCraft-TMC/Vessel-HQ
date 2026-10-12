@@ -4,16 +4,16 @@ import { useMemo } from 'react';
 import { Clock } from 'lucide-react';
 
 import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
-import { BetaAlert } from '@/react/portainer/environments/update-schedules/common/BetaAlert';
-import { columns } from '@/react/portainer/environments/update-schedules/ListView/columns';
-import { createStore } from '@/react/portainer/environments/update-schedules/ListView/datatable-store';
-import { DecoratedItem } from '@/react/portainer/environments/update-schedules/ListView/types';
-import { useList } from '@/react/portainer/environments/update-schedules/queries/list';
-import { useRemoveMutation } from '@/react/portainer/environments/update-schedules/queries/useRemoveMutation';
+import { BetaAlert } from '@/core/environment-management/update-schedules/common/BetaAlert';
+import { columns } from '@/core/environment-management/update-schedules/ListView/columns';
+import { createStore } from '@/core/environment-management/update-schedules/ListView/datatable-store';
+import { DecoratedItem } from '@/core/environment-management/update-schedules/ListView/types';
+import { useList } from '@/core/environment-management/update-schedules/queries/list';
+import { useRemoveMutation } from '@/core/environment-management/update-schedules/queries/useRemoveMutation';
 import {
   EdgeUpdateSchedule,
   StatusType,
-} from '@/react/portainer/environments/update-schedules/types';
+} from '@/core/environment-management/update-schedules/types';
 import { AddButton } from '@/ui/components/buttons';
 import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
 import { Datatable } from '@/ui/components/data-table';

@@ -3,19 +3,18 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2 } from 'lucide-react';
 
 import { Node, NodeSpec } from '@/providers/infrastructure/docker';
-import { nodeStatusBadge } from '@/docker/filters/utils';
+import { nodeStatusBadge } from '@/shared/docker/filters/utils';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-import { queryKeys } from '@/react/docker/proxy/queries/nodes/query-keys';
-import { updateNode } from '@/react/docker/proxy/queries/nodes/useUpdateNodeMutation';
+import { queryKeys } from '@/core/docker/proxy/queries/nodes/query-keys';
+import { updateNode } from '@/core/docker/proxy/queries/nodes/useUpdateNodeMutation';
 import { EnvironmentId } from '@/domains/environments';
 import { withError } from '@/core/query';
 import { Button } from '@/ui/components/buttons';
 import { Input } from '@/ui/components/forms/Input';
-
-import { DetailsTable } from '@@/DetailsTable/DetailsTable';
-import { Widget } from '@@/Widget/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+import { DetailsTable } from '@/ui/components/DetailsTable/DetailsTable';
+import { Widget } from '@/ui/components/Widget/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 
 type Label = { key: string; value: string };
 

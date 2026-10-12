@@ -2,16 +2,16 @@ import { User, Clock, Info } from 'lucide-react';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Pod } from 'kubernetes-types/core/v1';
+import { Link } from '@console/navigation/Link';
 
 import { useApplicationRouteParams } from '@/domains/applications/applications/useApplicationRouteParams';
-import { Authorized } from '@/react/hooks/useUser';
+import { Authorized } from '@/core/session/useUser';
 import {
   notifyError,
   notifySuccess,
 } from '@/ui/components/toast/notifications';
 import { usePublicSettings } from '@/domains/settings';
 import type { GlobalDeploymentOptions } from '@/domains/settings';
-import { Link } from '@/ui/components/links/Link';
 import { LoadingButton } from '@/ui/components/buttons';
 import { InlineLoader } from '@/ui/components/feedback/InlineLoader';
 import { Icon } from '@/ui/components/icons/Icon';
@@ -36,10 +36,9 @@ import {
 import { Application, ApplicationPatch } from '@/domains/applications/applications/types';
 import { useApplication } from '@/domains/applications/applications/queries/useApplication';
 import { usePatchApplicationMutation } from '@/domains/applications/applications/queries/usePatchApplicationMutation';
-
-import { DetailsTable } from '@@/DetailsTable';
-import { WidgetBody, Widget } from '@@/Widget';
-import { Note } from '@@/Note';
+import { DetailsTable } from '@/ui/components/DetailsTable';
+import { WidgetBody, Widget } from '@/ui/components/Widget';
+import { Note } from '@/ui/components/Note';
 
 export function ApplicationSummaryWidget() {
   const { environmentId, namespace, name, resourceType } =

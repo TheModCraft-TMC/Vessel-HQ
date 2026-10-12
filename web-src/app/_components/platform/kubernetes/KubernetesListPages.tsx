@@ -28,9 +28,8 @@ import { RoleBindingsDatatable } from '@/domains/kubernetes-access/more-resource
 import { RolesDatatable } from '@/domains/kubernetes-access/more-resources/RolesView/RolesDatatable';
 import { ServiceAccountsDatatable } from '@/domains/kubernetes-access/more-resources/ServiceAccountsView/ServiceAccountsDatatable';
 import { usePublicSettings } from '@/domains/settings';
-import { useUnauthorizedRedirect } from '@/react/hooks/useUnauthorizedRedirect';
-
-import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
+import { useUnauthorizedRedirect } from '@/core/routing/useUnauthorizedRedirect';
+import { Tab, WidgetTabs, useCurrentTabIndex } from '@/ui/components/Widget/WidgetTabs';
 
 export function KubernetesApplicationsContent() {
   const tableState = useKubeAppsTableStore(

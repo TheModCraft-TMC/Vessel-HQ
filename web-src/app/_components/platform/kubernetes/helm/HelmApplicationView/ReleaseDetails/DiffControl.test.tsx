@@ -5,7 +5,7 @@ import { vi } from 'vitest';
 import { DiffControl, DiffViewMode } from './DiffControl';
 
 // Create a mock for useDebounce that directly passes the setter function
-vi.mock('@/react/hooks/useDebounce', () => ({
+vi.mock('@/shared/hooks/useDebounce', () => ({
   useDebounce: (initialValue: number, setter: (value: number) => void) =>
     // Return the initial value and a function that directly calls the setter
     [initialValue, setter],

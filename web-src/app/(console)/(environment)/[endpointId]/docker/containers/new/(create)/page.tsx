@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { Formik } from 'formik';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 
+import { useContainers } from '@/domains/containers/queries/useContainers';
 import {
   useIsWindows,
   useSystemLimits,
 } from '@/domains/containers/hooks/useDockerSystem';
-import { useContainers } from '@/domains/containers/queries/useContainers';
 import { CreateInnerForm } from '@/domains/containers/views/ContainerCreateView/CreateInnerForm';
 import { toRequest } from '@/domains/containers/views/ContainerCreateView/toRequest';
 import { useCreateOrReplaceMutation } from '@/domains/containers/views/ContainerCreateView/useCreateMutation';
@@ -18,21 +18,20 @@ import {
   type Values,
 } from '@/domains/containers/views/ContainerCreateView/useInitialValues';
 import { useValidation } from '@/domains/containers/views/ContainerCreateView/validation';
-import type { Registry } from '@/domains/registries';
-import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { useDebouncedValue } from '@/react/hooks/useDebouncedValue';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useIsEdgeAdmin, useIsEnvironmentAdmin } from '@/react/hooks/useUser';
-import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
+import type { Registry } from '@/domains/registries/models/registry';
+import { useCurrentEnvironment } from '@/core/composition/useCurrentEnvironment';
+import { useDebouncedValue } from '@/shared/hooks/useDebouncedValue';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useIsEdgeAdmin, useIsEnvironmentAdmin } from '@/core/session/useUser';
+import { useEnvironmentRegistries } from '@/domains/environments/queries/useEnvironmentRegistries';
 import { confirmDestructive } from '@/ui/components/dialog/confirm';
 import { buildConfirmButton } from '@/ui/components/dialog/utils';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { HelpLink } from '@@/HelpLink';
-import type { ImageConfigValues } from '@@/ImageConfigFieldset';
-import { InformationPanel } from '@@/InformationPanel';
+import { HelpLink } from '@/ui/components/HelpLink';
+import type { ImageConfigValues } from '@/domains/images/features/ImageConfigFieldset';
+import { InformationPanel } from '@/ui/components/feedback/InformationPanel';
 
 export default function Page() {
   const environmentId = useEnvironmentId();

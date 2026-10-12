@@ -18,9 +18,8 @@ import { EnvironmentsDatatable as EdgeStackEnvironmentsDatatable } from '@/domai
 import { Alert } from '@/ui/components/feedback/Alert';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { Widget } from '@@/Widget';
-import { Tab, useCurrentTabIndex, WidgetTabs } from '@@/Widget/WidgetTabs';
+import { Widget } from '@/ui/components/Widget';
+import { Tab, useCurrentTabIndex, WidgetTabs } from '@/ui/components/Widget/WidgetTabs';
 
 export function EdgeGroupCreateContent() {
   const createGroup = useCreateEdgeGroupMutation();

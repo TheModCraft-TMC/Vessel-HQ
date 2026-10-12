@@ -2,7 +2,7 @@
 
 Status: refactor foundation in progress; future product and design items in this document are not implementation commitments.
 
-Last updated: September 22, 2026.
+Last updated: October 12, 2026.
 
 This document records why the fork exists, what has already changed, and the direction agreed for future work. It is deliberately explicit about status so that roadmap context is not mistaken for shipped behavior.
 
@@ -59,11 +59,11 @@ The upstream API and datastore compatibility version remains `2.45.0`. That valu
 
 ## Target React architecture
 
-The enforced module contract and incremental migration procedure are documented in [Frontend module architecture](frontend-architecture.md). The canonical destination is defined in [Frontend domain and provider architecture](frontend-domain-provider-architecture.md): application boot and routing live in `app/core`, product behavior lives in `app/domains`, external-system adapters live in `app/providers`, and shared presentation converges in `app/ui`. `pnpm check:frontend-boundaries` protects those boundaries from invalid dependencies.
+The enforced module contract and incremental migration procedure are documented in [Frontend module architecture](frontend-architecture.md). The canonical destination is defined in [Frontend domain and provider architecture](frontend-domain-provider-architecture.md): application boot and routing live in `web-src/core`, product behavior lives in `web-src/domains`, external-system adapters live in `web-src/providers`, and shared presentation converges in `web-src/ui`. `pnpm check:frontend-boundaries` protects those boundaries from invalid dependencies.
 
 Containers is the first migrated vertical slice. Its implementation, lazy routes, public API, and shrinking transitional dependency budget are described in [Containers vertical-slice migration](containers-vertical-slice.md).
 
-The September 22 structural pass expanded the canonical layout across the main Docker, Kubernetes, Edge, administration, GitOps, configuration, and registry folders, together with Docker, Podman, Kubernetes, Azure ACI, edge-agent, and remote providers. Typecheck and the production build pass at the integration checkpoint. Exact legacy-import snapshots now prevent dependency drift while the remaining cross-domain, UI, service, model, and provider boundary findings are removed. Current evidence and the next assignment plan are in [Frontend refactor progress — September 22, 2026](frontend-refactor-progress-2026-09-22.md) and [Frontend refactor plan — September 23, 2026](frontend-refactor-plan-2026-09-23.md).
+The canonical modules now live directly under `web-src/core`, `web-src/domains`, `web-src/providers`, `web-src/shared`, and `web-src/ui`; `web-src/app` remains the Next.js route tree. The obsolete `web-src/legacy` source root and zero-valued compatibility allowlists were removed after all boundary budgets reached zero. Current evidence and the original assignment plan remain recorded in [Frontend refactor progress — September 22, 2026](frontend-refactor-progress-2026-09-22.md) and [Frontend refactor plan — September 23, 2026](frontend-refactor-plan-2026-09-23.md).
 
 The future server-state and streaming model is documented in [Realtime state architecture](realtime-state-architecture.md): TanStack Query remains the authoritative server cache, authorized lifecycle events evolve toward scoped and batched invalidation, and high-frequency logs, terminals, and metrics remain isolated bounded streams. Redux and RTK Query are not planned.
 
@@ -72,7 +72,8 @@ The next refactor organizes each product domain into views, components, models, 
 Prefer domain-owned vertical slices:
 
 ```text
-app/
+web-src/
+  app/                     Next.js App Router routes and layouts
   core/                    application boot, composition, routing, session, realtime
   domains/
     containers/
@@ -133,7 +134,7 @@ The repository-side audit is recorded in [UI component inventory](ui-component-i
 - Audit each package for React 19, TypeScript, SSR, accessibility, responsive behavior, bundle impact, maintenance status, and license compatibility.
 - Reuse framework-neutral React components directly when appropriate.
 - Wrap components tied to `next/link`, `next/image`, Next.js routing, server actions, or React Server Components behind small Vessel HQ adapters.
-- Do not introduce Next.js solely to consume a component package; Vessel HQ remains a React application unless a separate architecture decision changes that.
+- Vessel HQ now uses Next.js App Router; keep framework-specific component integrations behind the appropriate routing and presentation boundaries.
 - Adopt design tokens and primitives before replacing entire screens, so visual changes remain consistent and reviewable.
 
 The npm settings URL is account-scoped and cannot serve as public package documentation. Record exact package names and versions here when packages are selected.
@@ -170,13 +171,21 @@ This sequence is planning context and has not been started:
 7. Apply the proven domain/view pattern to stacks, images, environments, users, settings, and the remaining domains while extracting provider-specific adapters.
 8. Continue selective upstream 2.45 security and bug-fix intake without overwriting Vessel HQ frontend architecture or identity.
 
+## Future add-on and plugin support
+
+Status: proposed, not implemented or scheduled. Start with trusted companion applications running as separate services, a manifest and settings registry, sidebar integration, and scoped API access. Support Docker-based installations alongside Kubernetes; add managed Compose/Helm deployment after a manually deployed reference add-on works.
+
+Later phases can introduce explicit dashboard widgets, resource tabs, and resource actions through a versioned SDK. Browser isolation, authorization, revocation, compatibility, and upgrade recovery must be defined before widening plugin access. Portainer add-on package compatibility is not assumed.
+
+See the [plugin system proposal](plugin-system.md) for architecture, effort estimates, acceptance criteria, and open decisions. Finish the current frontend migration before implementation. Track the migration handoff in [Migration changes and draft commit message](migration-change-summary.md).
+
 ## Decisions still open
 
 - Final Docker Hub repository name and tag policy for the first non-transitional Vessel HQ image.
 - Exact `@themodcraft` packages and versions to adopt.
 - Final visual language after reviewing the Portainer 3 reference instance.
 - Supported minimum viewport and browser matrix.
-- Whether the current router and build pipeline remain long-term or receive a separate migration proposal.
+- Long-term maintenance and optimization of the current Next.js App Router and build pipeline.
 - The first stable Vessel HQ release number after the WIP line.
 
 No implementation should be inferred from these open items. Record the decision and migration impact before changing production behavior.

@@ -7,9 +7,11 @@ This decision replaces the generic `features` destination with explicit product 
 ## Canonical structure
 
 ```text
-app/
+web-src/
+  app/                          Next.js route tree only
   core/
     composition/                 application assembly and dependency wiring
+    console/                     stateful console-shell and navigation coordination
     query/                       TanStack Query client and cache coordination
     realtime/                    authenticated event and stream coordination
     routing/                     router adapters and guards
@@ -49,7 +51,7 @@ app/
 
   ui/
     components/                  reusable presentation primitives
-    layouts/                     shell and reusable application layouts
+    layouts/                     reusable, presentation-only application layouts
     tokens/                      themes, spacing, colors, and typography
 
   shared/
@@ -63,7 +65,7 @@ Only directories required by implemented behavior should exist. Product-specific
 ## Domain shape
 
 ```text
-app/domains/<domain>/
+web-src/domains/<domain>/
   index.ts                       deliberate public API
   routes.ts                      route registration and lazy views
   views/                         route-level application composition
@@ -74,7 +76,6 @@ app/domains/<domain>/
   queries/                       TanStack Query reads, mutations, and keys
   hooks/                         React orchestration local to the domain
   tests/                         domain-level tests when not colocated
-  legacy-imports.json            temporary exact migration ratchet
 ```
 
 `views` is used instead of `pages`. A view may be rendered in a browser route, desktop shell, embedded panel, or another application surface.
@@ -82,7 +83,7 @@ app/domains/<domain>/
 ## Provider shape
 
 ```text
-app/providers/<class>/<provider>/
+web-src/providers/<class>/<provider>/
   index.ts                       public adapter and capability API
   client/                        protocol and SDK communication
   dto/                           provider-native transport shapes
@@ -128,20 +129,20 @@ Where practical, a domain or shared contract defines the capability required by 
 
 | Current owner                               | Destination                                                                | Boundary decision                                                                             |
 | ------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `app/features/auth`                         | `app/domains/auth`                                                         | Authentication is a product domain.                                                           |
-| `app/features/environments`                 | `app/domains/environments`                                                 | Environment identity and lifecycle are domain contracts.                                      |
-| `app/features/containers`                   | `app/domains/containers`                                                   | Container workflows remain provider-neutral where capability permits.                         |
-| `app/features/azure`                        | Split between `app/domains` and `app/providers/infrastructure/azure-aci`   | Views and workflows are domain-owned; Azure transport, DTOs, and mapping are provider-owned.  |
-| `app/react/docker` and `app/docker`         | Docker domains plus `app/providers/infrastructure/docker`                  | User workflows move to domains; Engine API transport and native mapping move to the provider. |
-| Podman-specific Docker compatibility code   | `app/providers/infrastructure/podman`                                      | Capability differences are explicit rather than scattered conditionals.                       |
-| `app/react/kubernetes` and `app/kubernetes` | Kubernetes-oriented domains plus `app/providers/infrastructure/kubernetes` | Workflows remain domains; Kubernetes API communication is provider code.                      |
-| Registry services and native types          | `app/providers/remotes/<provider>`                                         | Each registry adapter normalizes authentication, catalog, repository, and tag behavior.       |
-| Registry management views                   | `app/domains/registries`                                                   | Configuration, access, and repository workflows remain a user-facing domain.                  |
-| `app/react/components`                      | Owning domain or `app/ui/components`                                       | Promote only proven reusable presentation.                                                    |
+| `app/features/auth`                         | `web-src/domains/auth`                                                         | Authentication is a product domain.                                                           |
+| `app/features/environments`                 | `web-src/domains/environments`                                                 | Environment identity and lifecycle are domain contracts.                                      |
+| `app/features/containers`                   | `web-src/domains/containers`                                                   | Container workflows remain provider-neutral where capability permits.                         |
+| `app/features/azure`                        | Split between `web-src/domains` and `web-src/providers/infrastructure/azure-aci`   | Views and workflows are domain-owned; Azure transport, DTOs, and mapping are provider-owned.  |
+| `app/react/docker` and `app/docker`         | Docker domains plus `web-src/providers/infrastructure/docker`                  | User workflows move to domains; Engine API transport and native mapping move to the provider. |
+| Podman-specific Docker compatibility code   | `web-src/providers/infrastructure/podman`                                      | Capability differences are explicit rather than scattered conditionals.                       |
+| `app/react/kubernetes` and `app/kubernetes` | Kubernetes-oriented domains plus `web-src/providers/infrastructure/kubernetes` | Workflows remain domains; Kubernetes API communication is provider code.                      |
+| Registry services and native types          | `web-src/providers/remotes/<provider>`                                         | Each registry adapter normalizes authentication, catalog, repository, and tag behavior.       |
+| Registry management views                   | `web-src/domains/registries`                                                   | Configuration, access, and repository workflows remain a user-facing domain.                  |
+| `app/react/components`                      | Owning domain or `web-src/ui/components`                                       | Promote only proven reusable presentation.                                                    |
 
 ## Migration sequence
 
-1. Rename the accepted `app/features` slices to `app/domains` and update architecture enforcement.
+1. Rename the accepted `app/features` slices to `web-src/domains` and update architecture enforcement.
 2. Standardize new route-level directories as `views`; rename existing `*View` directories incrementally when a complete domain is touched.
 3. Extract provider-neutral contracts before moving provider implementations.
 4. Establish Docker and registry provider APIs as the first infrastructure and remote examples.

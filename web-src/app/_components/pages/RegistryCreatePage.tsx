@@ -16,9 +16,8 @@ import { useRegistries } from '@/domains/registries/queries/useRegistries';
 import { createRegistry } from '@/domains/registries/services/registry.service';
 import { options } from '@/domains/registries/views/CreateView/options';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-
-import { BoxSelector } from '@@/BoxSelector';
-import { Widget, WidgetBody } from '@@/Widget';
+import { BoxSelector } from '@/ui/components/BoxSelector';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 import { toRegistryPayload } from './registryPayload';
 

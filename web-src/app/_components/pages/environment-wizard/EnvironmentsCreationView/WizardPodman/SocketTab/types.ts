@@ -1,4 +1,4 @@
-import { EnvironmentMetadata } from '@/react/portainer/environments/environment.service/create';
+import { EnvironmentMetadata } from '@/domains/environments/services/createEnvironment';
 
 export interface FormValues {
   name: string;

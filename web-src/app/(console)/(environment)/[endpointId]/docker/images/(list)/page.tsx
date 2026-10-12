@@ -2,7 +2,7 @@
 
 import { ImagesDatatable } from '@/domains/images/views/ListView/ImagesDatatable/ImagesDatatable';
 import { PullImageFormWidget } from '@/domains/images/views/ListView/PullImageFormWidget';
-import { useIsSwarmAgent } from '@/react/docker/proxy/queries/useIsSwarmAgent';
+import { useIsSwarmAgent } from '@/core/docker/proxy/queries/useIsSwarmAgent';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

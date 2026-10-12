@@ -1,7 +1,7 @@
 import { Pod } from 'kubernetes-types/core/v1';
 
 import { EnvironmentId } from '@/domains/environments';
-import axios from '@/portainer/services/axios/axios';
+import axios from '@/shared/http';
 import { parseKubernetesAxiosError } from '@/domains/clusters';
 
 export async function getPod(

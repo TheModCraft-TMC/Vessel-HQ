@@ -1,10 +1,12 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
+import { PageContent } from '@console/layout/PageContent';
 
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel';
+import { useContainer } from '@/domains/containers';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel';
 import type { ContainerDetails } from '@/domains/containers/models';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
+import { ResourceControlType } from '@/domains/access-control';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useEnvironmentRegistries } from '@/domains/environments/queries/useEnvironmentRegistries';
 import { Registry } from '@/domains/registries';
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { ContainerActionsSection } from '@/domains/containers/components/ContainerDetails/ContainerActionsSection/ContainerActionsSection';
@@ -14,10 +16,8 @@ import { ContainerDetailsSection } from '@/domains/containers/components/Contain
 import { VolumesSection } from '@/domains/containers/components/ContainerDetails/VolumesSection/VolumesSection';
 import { ContainerNetworksDatatable } from '@/domains/containers/components/ContainerDetails/ContainerNetworksDatatable';
 import { HealthStatus } from '@/domains/containers/components/ContainerDetails/HealthStatus';
-import { useContainer } from '@/domains/containers/queries/useContainer';
-
-import { findBestMatchRegistry } from '@@/ImageConfigFieldset/findRegistryMatch';
-
+import { findBestMatchRegistry } from '@/domains/images/features/ImageConfigFieldset/findRegistryMatch';
+import { ViewLoading } from '@/ui/components/feedback/ViewLoading';
 
 export function ContainerDetailsView() {
   return (
@@ -39,11 +39,11 @@ export function ContainerDetailsContent() {
 
   const registriesQuery = useEnvironmentRegistries(environmentId);
 
-  if (
-    containerQuery.isLoading ||
-    !containerQuery.data ||
-    !registriesQuery.data
-  ) {
+  if (containerQuery.isLoading || registriesQuery.isLoading) {
+    return <ViewLoading message="Loading container details..." />;
+  }
+
+  if (!containerQuery.data || !registriesQuery.data) {
     return null;
   }
 
@@ -56,7 +56,7 @@ export function ContainerDetailsContent() {
 
   return (
     <>
-      <div className="mx-4 mb-4 space-y-4 [&>*]:block">
+      <PageContent>
         <ContainerActionsSection
           environmentId={environmentId}
           nodeName={nodeName}
@@ -69,7 +69,7 @@ export function ContainerDetailsContent() {
           container={container}
           registryId={registryId}
         />
-      </div>
+      </PageContent>
 
       <AccessControlPanel
         resourceId={container.Id || ''}
@@ -83,7 +83,7 @@ export function ContainerDetailsContent() {
         <HealthStatus health={container.State.Health} />
       )}
 
-      <div className="mx-4 mb-4 space-y-4 [&>*]:block">
+      <PageContent>
         <CreateImageSection
           environmentId={environmentId}
           containerId={container.Id || ''}
@@ -96,7 +96,7 @@ export function ContainerDetailsContent() {
         />
 
         <VolumesSection volumes={container.Mounts} nodeName={nodeName} />
-      </div>
+      </PageContent>
 
       {container.NetworkSettings?.Networks && (
         <ContainerNetworksDatatable

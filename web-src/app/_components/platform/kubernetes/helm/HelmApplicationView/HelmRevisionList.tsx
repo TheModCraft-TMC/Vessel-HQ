@@ -1,9 +1,8 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { History } from 'lucide-react';
 
 import { HelmRelease } from '@/domains/configuration/helm/types';
-
-import { WidgetIcon } from '@@/Widget/WidgetIcon';
+import { WidgetIcon } from '@/ui/components/Widget/WidgetIcon';
 
 
 import { HelmRevisionItem } from './HelmRevisionItem';

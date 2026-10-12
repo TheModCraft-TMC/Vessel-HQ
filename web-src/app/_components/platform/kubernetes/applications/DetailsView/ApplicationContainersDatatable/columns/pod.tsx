@@ -1,12 +1,12 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { Trash2 } from 'lucide-react';
+import { Link } from '@console/navigation/Link';
 
-import { Authorized } from '@/react/hooks/useUser';
-import { formatDate } from '@/portainer/filters/filters';
-import { pluralize } from '@/react/common/string-utils';
+import { Authorized } from '@/core/session/useUser';
+import { formatDate } from '@/shared/formatters';
+import { pluralize } from '@/shared/strings';
 import { Badge } from '@/ui/components/status/Badge';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
-import { Link } from '@/ui/components/links/Link';
 import { Icon } from '@/ui/components/icons/Icon';
 import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';
 import { LoadingButton } from '@/ui/components/buttons';

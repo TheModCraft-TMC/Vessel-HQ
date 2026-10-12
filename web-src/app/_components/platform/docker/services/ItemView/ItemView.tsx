@@ -1,22 +1,22 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import YAML from 'yaml';
 import { Code, FileText, List, RefreshCw, RotateCcw } from 'lucide-react';
 
 import { ServiceViewModel } from '@/domains/services/models/service';
 import { TaskViewModel } from '@/domains/services/models/task';
-import { isoDate } from '@/portainer/filters/filters';
+import { isoDate } from '@/shared/formatters';
 import {
   notifyError,
   notifySuccess,
 } from '@/ui/components/toast/notifications';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { Authorized } from '@/react/hooks/useUser';
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel/AccessControlPanel';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { Authorized } from '@/core/session/useUser';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel/AccessControlPanel';
+import { ResourceControlType } from '@/domains/access-control';
 import { useTasks } from '@/domains/services/queries/useTasks';
 import { Button, ButtonGroup, LoadingButton } from '@/ui/components/buttons';
 import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
@@ -34,10 +34,9 @@ import { ServiceUpdateConfig } from '@/domains/services/types';
 import { useForceUpdateServicesMutation } from '@/domains/services/ListView/ServicesDatatable/useForceUpdateServicesMutation';
 import { useRemoveServicesMutation } from '@/domains/services/ListView/ServicesDatatable/useRemoveServicesMutation';
 import { TasksDatatable } from '@/domains/services/components/TasksDatatable';
-
-import { Widget } from '@@/Widget';
-import { WebEditorForm, usePreventExit } from '@@/WebEditorForm';
-import { DetailsTable } from '@@/DetailsTable';
+import { Widget } from '@/ui/components/Widget';
+import { WebEditorForm, usePreventExit } from '@/ui/components/WebEditorForm';
+import { DetailsTable } from '@/ui/components/DetailsTable';
 
 export function ItemView() {
   return <ServiceItemContent showHeader />;

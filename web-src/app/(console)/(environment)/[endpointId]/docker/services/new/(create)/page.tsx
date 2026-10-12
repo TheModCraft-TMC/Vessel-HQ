@@ -1,8 +1,8 @@
 'use client';
 
 import { CreateServiceForm } from '@/domains/services/CreateView/CreateView';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useCurrentUser, useIsEdgeAdmin } from '@/core/session/useUser';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

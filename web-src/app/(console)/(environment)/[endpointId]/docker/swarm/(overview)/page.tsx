@@ -1,20 +1,20 @@
 'use client';
 
 import { useMemo } from 'react';
+import { Link } from '@console/navigation/Link';
 
-import { useInfo, useNodes, useVersion } from '@/domains/swarm';
 import { NodeViewModel } from '@/domains/swarm/models/node';
+import { useInfo, useVersion } from '@/domains/swarm/queries/useClusterInfo';
+import { useNodes } from '@/domains/swarm/queries/useNodes';
 import { NodesDatatable } from '@/domains/swarm/SwarmView/NodesDatatable';
-import { humanize } from '@/portainer/filters/filters';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useIsEdgeAdmin } from '@/react/hooks/useUser';
-import { Link } from '@/ui/components/links/Link';
+import { humanize } from '@/shared/formatters';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useIsEdgeAdmin } from '@/core/session/useUser';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { DetailsTable } from '@@/DetailsTable/DetailsTable';
-import { Widget } from '@@/Widget/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+import { DetailsTable } from '@/ui/components/DetailsTable/DetailsTable';
+import { Widget } from '@/ui/components/Widget/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 
 export default function Page() {
   const environmentId = useEnvironmentId();

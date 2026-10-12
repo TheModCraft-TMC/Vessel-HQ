@@ -3,7 +3,7 @@
 import { Box, Database, FileCode, Layers, Lock, Shuffle } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 
-import Route from '@/assets/ico/route.svg?c';
+import Route from '@/shared/assets/ico/route.svg?c';
 import { EnvironmentInfo } from '@/domains/clusters/dashboard/EnvironmentInfo';
 import { useGetApplicationsCountQuery } from '@/domains/clusters/dashboard/queries/getApplicationsCountQuery';
 import { useGetConfigMapsCountQuery } from '@/domains/clusters/dashboard/queries/getConfigMapsCountQuery';
@@ -12,11 +12,10 @@ import { useGetNamespacesCountQuery } from '@/domains/clusters/dashboard/queries
 import { useGetSecretsCountQuery } from '@/domains/clusters/dashboard/queries/getSecretsCountQuery';
 import { useGetServicesCountQuery } from '@/domains/clusters/dashboard/queries/getServicesCountQuery';
 import { useGetVolumesCountQuery } from '@/domains/clusters/dashboard/queries/getVolumesCountQuery';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { DashboardItem } from '@@/DashboardItem/DashboardItem';
-import { DashboardGrid } from '@@/DashboardItem/DashboardGrid';
+import { DashboardItem } from '@/ui/components/DashboardItem/DashboardItem';
+import { DashboardGrid } from '@/ui/components/DashboardItem/DashboardGrid';
 
 export function KubernetesDashboardHeader() {
   const queryClient = useQueryClient();

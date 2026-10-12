@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { buildHref } from '@console/routing/buildHref';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import YAML from 'yaml';
 
 import { notifySuccess } from '@/ui/components/toast/notifications';
-import axios from '@/portainer/services/axios/axios';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import axios from '@/shared/http';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useNamespacesQuery } from '@/domains/namespaces';
 import {
   useResourceYAML,
@@ -20,10 +20,9 @@ import { FormControl } from '@/ui/components/forms/FormControl';
 import { FormSection } from '@/ui/components/forms/FormSection';
 import { Input } from '@/ui/components/forms/Input';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { WebEditorForm, usePreventExit } from '@@/WebEditorForm';
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
+import { WebEditorForm, usePreventExit } from '@/ui/components/WebEditorForm';
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
 
 export type ResourceEditorConfig = {
   title: string;

@@ -1,18 +1,17 @@
 import { Plug2 } from 'lucide-react';
 import clsx from 'clsx';
 
-import { stripProtocol } from '@/react/common/string-utils';
-import { endpointTypeName } from '@/portainer/filters/filters';
+import { stripProtocol } from '@/shared/strings';
+import { endpointTypeName } from '@/shared/formatters';
 import {
   getEnvironmentTypeIcon,
   isEdgeEnvironment,
-} from '@/react/portainer/environments/utils';
+} from '@/domains/environments/utils';
 import { EnvironmentId } from '@/domains/environments';
-import { useEnvironmentList } from '@/react/portainer/environments/queries/useEnvironmentList';
+import { useEnvironmentList } from '@/domains/environments/queries/useEnvironmentList';
 import { Icon } from '@/ui/components/icons/Icon';
-
-import { EdgeIndicator } from '@@/EdgeIndicator';
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { EdgeIndicator } from '@/domains/environments/features/EdgeIndicator';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
 
 import styles from './WizardEndpointsList.module.css';
 

@@ -1,9 +1,9 @@
 import { CellContext } from '@tanstack/react-table';
+import { Link } from '@console/navigation/Link';
 
 import { isExternalApplication } from '@/domains/applications';
 import { useIsSystemNamespace } from '@/domains/namespaces';
 import type { Application } from '@/domains/applications';
-import { Link } from '@/ui/components/links/Link';
 import { SystemBadge } from '@/ui/components/status/Badge/SystemBadge';
 import { ExternalBadge } from '@/ui/components/status/Badge/ExternalBadge';
 

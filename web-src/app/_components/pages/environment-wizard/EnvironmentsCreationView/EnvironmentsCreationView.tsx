@@ -1,6 +1,6 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { useState, useMemo } from 'react';
 import _ from 'lodash';
 import { Wand2 } from 'lucide-react';
@@ -10,10 +10,9 @@ import { Environment, EnvironmentId } from '@/domains/environments';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Button } from '@/ui/components/buttons';
 import { FormSection } from '@/ui/components/forms/FormSection';
-
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
-import { Stepper } from '@@/Stepper/Stepper';
-import { StickyFooter } from '@@/StickyFooter/StickyFooter';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
+import { Stepper } from '@/ui/components/Stepper/Stepper';
+import { StickyFooter } from '@/ui/components/StickyFooter/StickyFooter';
 
 import {
   EnvironmentOptionValue,

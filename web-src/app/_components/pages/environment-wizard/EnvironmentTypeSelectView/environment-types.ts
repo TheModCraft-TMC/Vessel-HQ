@@ -1,12 +1,11 @@
-import { FeatureId } from '@/react/portainer/feature-flags/enums';
-import Docker from '@/assets/ico/vendor/docker.svg?c';
-import Podman from '@/assets/ico/vendor/podman.svg?c';
-import Kubernetes from '@/assets/ico/vendor/kubernetes.svg?c';
-import Kubesolo from '@/assets/ico/vendor/kubesolo.svg?c';
-import Azure from '@/assets/ico/vendor/azure.svg?c';
-import InstallK8s from '@/assets/ico/vendor/install-kubernetes.svg?c';
-
-import { BoxSelectorOption } from '@@/BoxSelector';
+import { FeatureId } from '@/shared/feature-flags/enums';
+import Docker from '@/shared/assets/ico/vendor/docker.svg?c';
+import Podman from '@/shared/assets/ico/vendor/podman.svg?c';
+import Kubernetes from '@/shared/assets/ico/vendor/kubernetes.svg?c';
+import Kubesolo from '@/shared/assets/ico/vendor/kubesolo.svg?c';
+import Azure from '@/shared/assets/ico/vendor/azure.svg?c';
+import InstallK8s from '@/shared/assets/ico/vendor/install-kubernetes.svg?c';
+import { BoxSelectorOption } from '@/ui/components/BoxSelector';
 
 export type EnvironmentOptionValue =
   | 'dockerStandalone'

@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Lock, Trash2, User as UserIcon } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { PageContent } from '@console/layout/PageContent';
 
 import { AuthenticationMethod, usePublicSettings } from '@/domains/settings';
 import {
@@ -13,7 +14,7 @@ import {
   useUser,
   userQueryKeys,
 } from '@/domains/users';
-import { useCurrentUser } from '@/react/hooks/useUser';
+import { useCurrentUser } from '@/core/session/useUser';
 import { Button, LoadingButton } from '@/ui/components/buttons';
 import { ModalType } from '@/ui/components/dialog';
 import {
@@ -30,9 +31,8 @@ import {
   notifySuccess,
 } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { PasswordCheckHint } from '@@/PasswordCheckHint';
-import { Widget } from '@@/Widget';
+import { PasswordCheckHint } from '@/domains/settings/features/PasswordCheckHint';
+import { Widget } from '@/ui/components/Widget';
 
 export function UserDetailsHeader({ userId }: { userId: number }) {
   const userQuery = useUser(userId);
@@ -84,33 +84,33 @@ export function UserDetailsContent({ userId }: { userId: number }) {
     newPassword === confirmPassword;
 
   return (
-    <div className="mx-4 space-y-4">
-        <UserProfilePanel
-          username={username}
-          administrator={administrator}
-          showAdministrator={currentUser.Role === Role.Admin}
-          canSave={detailsChanged && Boolean(username.trim())}
-          canDelete={user.Id !== 1}
+    <PageContent>
+      <UserProfilePanel
+        username={username}
+        administrator={administrator}
+        showAdministrator={currentUser.Role === Role.Admin}
+        canSave={detailsChanged && Boolean(username.trim())}
+        canDelete={user.Id !== 1}
+        isSaving={updateUserMutation.isLoading}
+        isDeleting={deleteUserMutation.isLoading}
+        onUsernameChange={setUsername}
+        onAdministratorChange={setAdministrator}
+        onSave={handleUpdateUser}
+        onDelete={handleDeleteUser}
+      />
+      {settingsQuery.data.AuthenticationMethod ===
+        AuthenticationMethod.Internal && (
+        <UserPasswordPanel
+          newPassword={newPassword}
+          confirmPassword={confirmPassword}
+          passwordValid={passwordValid}
           isSaving={updateUserMutation.isLoading}
-          isDeleting={deleteUserMutation.isLoading}
-          onUsernameChange={setUsername}
-          onAdministratorChange={setAdministrator}
-          onSave={handleUpdateUser}
-          onDelete={handleDeleteUser}
+          onNewPasswordChange={setNewPassword}
+          onConfirmPasswordChange={setConfirmPassword}
+          onSubmit={handleUpdatePassword}
         />
-        {settingsQuery.data.AuthenticationMethod ===
-          AuthenticationMethod.Internal && (
-          <UserPasswordPanel
-            newPassword={newPassword}
-            confirmPassword={confirmPassword}
-            passwordValid={passwordValid}
-            isSaving={updateUserMutation.isLoading}
-            onNewPasswordChange={setNewPassword}
-            onConfirmPasswordChange={setConfirmPassword}
-            onSubmit={handleUpdatePassword}
-          />
-        )}
-      </div>
+      )}
+    </PageContent>
   );
 
   async function handleUpdateUser(event: FormEvent<HTMLFormElement>) {

@@ -1,0 +1,237 @@
+.trigger {
+  display: flex !important;
+  width: clamp(9rem, 19vw, 15rem) !important;
+  height: 34px;
+  align-items: center;
+  justify-content: flex-start !important;
+  gap: 8px;
+  border: 1px solid rgb(255 255 255 / 10%) !important;
+  border-radius: 10px !important;
+  background: rgb(255 255 255 / 5%) !important;
+  padding: 0 8px 0 10px;
+  color: rgb(248 250 252 / 78%) !important;
+  transition:
+    width 180ms ease,
+    border-color 160ms ease,
+    background 160ms ease !important;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  border-color: rgb(69 214 196 / 45%) !important;
+  background: rgb(255 255 255 / 9%) !important;
+}
+
+.triggerLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.trigger kbd {
+  min-width: 22px;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 6px;
+  background: rgb(0 0 0 / 18%);
+  padding: 1px 6px;
+  font-size: 11px;
+  line-height: 19px;
+  text-align: center;
+}
+
+.overlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: rgb(3 7 18 / 58%);
+  backdrop-filter: blur(5px);
+  animation: search-overlay-in 140ms ease-out both;
+}
+
+.dialog {
+  position: fixed;
+  z-index: 1001;
+  top: min(16vh, 9rem);
+  left: 50%;
+  display: flex;
+  width: min(42rem, calc(100vw - 2rem));
+  max-height: min(38rem, calc(100dvh - 4rem));
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  flex-direction: column;
+  background: color-mix(in srgb, var(--bg-widget-color) 96%, transparent);
+  box-shadow: 0 30px 90px rgb(0 0 0 / 46%);
+  transform: translateX(-50%);
+  animation: search-dialog-in 190ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.inputRow {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 14px 0 18px;
+  color: var(--text-summary-color, var(--muted));
+}
+
+.inputRow input {
+  min-width: 0;
+  height: 58px;
+  border: 0;
+  outline: 0;
+  flex: 1;
+  background: transparent;
+  color: var(--text-body-color);
+  font-size: 16px;
+}
+
+.close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: color-mix(in srgb, var(--bg-hover-table-color) 75%, transparent);
+}
+
+.results {
+  overflow: hidden auto;
+  padding: 8px;
+}
+
+.result {
+  display: flex;
+  width: 100%;
+  min-height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  padding: 9px 11px;
+  color: var(--text-body-color);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+.result[data-active] {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  transform: translateX(2px);
+}
+
+.result span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.result .resultTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resultTitle em {
+  flex: 0 0 auto;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  padding: 1px 6px;
+  color: color-mix(in srgb, var(--accent) 80%, white);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.result strong,
+.result small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result small,
+.footer,
+.empty {
+  color: var(--text-summary-color, var(--muted));
+}
+
+.result small {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.empty {
+  margin: 0;
+  padding: 36px 16px;
+  text-align: center;
+}
+
+.footer {
+  display: flex;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding: 8px 14px;
+  font-size: 11px;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@keyframes search-overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes search-dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.975);
+  }
+}
+
+@media (max-width: 720px) {
+  .trigger {
+    width: 34px !important;
+    padding: 0 !important;
+    justify-content: center !important;
+  }
+
+  .triggerLabel,
+  .trigger kbd {
+    display: none;
+  }
+
+  .dialog {
+    top: 4.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .dialog,
+  .result {
+    animation: none;
+    transition: none;
+  }
+}

@@ -1,5 +1,13 @@
 # TheModCraft feature planning backlog
 
+## Current future plans and migration handoff
+
+- [Vessel HQ roadmap](vessel-hq-roadmap.md): current product and architecture direction.
+- [Add-on and plugin system](plugin-system.md): companion applications, scoped API access, and later UI slots; not implemented or scheduled.
+- [Migration changes and draft commit message](migration-change-summary.md): living summary while frontend migration is finalized.
+
+The dated discovery backlog below is retained as historical planning context.
+
 This is the discovery backlog for the planning window from **September 13 through October 12, 2026**. The current `2.39.3.2.24` release is the stabilization baseline. Items in this document are ideas to investigate, not scheduled implementation work or release commitments.
 
 > **September 20 update:** TMC-P10's React-only migration baseline has been completed. The source measurements and strangler proposal later in this document are retained as the historical starting point, not the current implementation state. See the [Vessel HQ product and architecture roadmap](vessel-hq-roadmap.md) for current decisions and future plans.

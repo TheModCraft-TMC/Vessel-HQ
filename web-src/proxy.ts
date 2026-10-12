@@ -10,16 +10,54 @@ const OAUTH_CALLBACK_PARAMETERS = [
   'error',
   'error_description',
 ] as const;
+const LOGROCKET_SCRIPT_ORIGINS = [
+  'https://cdn.logrocket.io',
+  'https://cdn.lr-ingest.io',
+  'https://cdn.lr-in.com',
+  'https://cdn.lr-in-prod.com',
+  'https://cdn.lr-ingest.com',
+  'https://cdn.ingest-lr.com',
+  'https://cdn.lr-intake.com',
+  'https://cdn.intake-lr.com',
+  'https://cdn.logr-ingest.com',
+  'https://cdn.lrkt-in.com',
+  'https://cdn.lgrckt-in.com',
+  'https://cdn.logr-in.com',
+].join(' ');
+const LOGROCKET_CONNECT_ORIGINS = [
+  'https://*.logrocket.io',
+  'https://*.lr-ingest.io',
+  'https://*.logrocket.com',
+  'https://*.lr-in.com',
+  'https://*.lr-in-prod.com',
+  'https://*.lr-ingest.com',
+  'https://*.ingest-lr.com',
+  'https://*.lr-intake.com',
+  'https://*.intake-lr.com',
+  'https://*.logr-ingest.com',
+  'https://*.lrkt-in.com',
+  'https://*.lgrckt-in.com',
+  'https://*.logr-in.com',
+].join(' ');
 
 export function buildContentSecurityPolicy(
   nonce: string,
   development = process.env.NODE_ENV === 'development'
 ) {
   const developmentScriptPolicy = development ? " 'unsafe-eval'" : '';
+  const logRocketScriptPolicy = development
+    ? ` ${LOGROCKET_SCRIPT_ORIGINS}`
+    : '';
+  const logRocketConnectPolicy = development
+    ? ` ${LOGROCKET_CONNECT_ORIGINS}`
+    : '';
 
   return [
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${developmentScriptPolicy} https://js.hsforms.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://static.cloudflareinsights.com`,
-    `connect-src 'self' https://cloudflareinsights.com`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${developmentScriptPolicy} https://js.hsforms.net https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://static.cloudflareinsights.com${logRocketScriptPolicy}`,
+    `connect-src 'self' https://cloudflareinsights.com${logRocketConnectPolicy}`,
+    ...(development
+      ? [`child-src 'self' blob:`, `worker-src 'self' blob:`]
+      : []),
     `object-src 'none'`,
     `frame-ancestors 'none'`,
     `frame-src https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/`,

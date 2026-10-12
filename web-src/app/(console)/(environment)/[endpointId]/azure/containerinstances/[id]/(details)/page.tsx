@@ -1,7 +1,7 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { PortsMappingField } from '@/domains/azure/components/ContainerInstances/PortsMappingField/PortsMappingField';
 import {
@@ -12,15 +12,14 @@ import {
 import { useContainerGroup } from '@/domains/azure/queries/useContainerGroup';
 import { useResourceGroup } from '@/domains/azure/queries/useResourceGroup';
 import { useSubscription } from '@/domains/azure/queries/useSubscription';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel/AccessControlPanel';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel/AccessControlPanel';
+import { ResourceControlType } from '@/domains/access-control/types';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { FormSectionTitle } from '@/ui/components/forms/FormSectionTitle';
 import { Input } from '@/ui/components/forms/Input';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 export default function Page() {
   const params = useRouteParams();

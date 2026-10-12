@@ -3,21 +3,20 @@ import { useReducer, useState } from 'react';
 import { object, SchemaOf, string } from 'yup';
 import { Network, Plug2 } from 'lucide-react';
 
-import { useCreateAzureEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
+import { useCreateAzureEnvironmentMutation } from '@/domains/environments/queries/useCreateEnvironmentMutation';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { Environment } from '@/domains/environments';
-import { EnvironmentMetadata } from '@/react/portainer/environments/environment.service/create';
+import { EnvironmentMetadata } from '@/domains/environments/services/createEnvironment';
 import {
   NameField,
   useNameValidation,
-} from '@/react/portainer/environments/common/NameField/NameField';
-import { metadataValidation } from '@/react/portainer/environments/common/MetadataFieldset/validation';
+} from '@/domains/environments/features/NameField/NameField';
+import { metadataValidation } from '@/domains/environments/features/MetadataFieldset/validation';
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 import { Input } from '@/ui/components/forms/Input';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
-
-import { BoxSelector, BoxSelectorOption } from '@@/BoxSelector';
+import { BoxSelector, BoxSelectorOption } from '@/ui/components/BoxSelector';
 
 import { AnalyticsStateKey } from '../types';
 import { MoreSettingsSection } from '../shared/MoreSettingsSection';

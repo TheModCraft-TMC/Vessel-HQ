@@ -37,6 +37,8 @@ describe('buildContentSecurityPolicy', () => {
     );
     expect(policy).not.toContain("'unsafe-inline'");
     expect(policy).not.toContain("'unsafe-eval'");
+    expect(policy).not.toContain('logrocket');
+    expect(policy).not.toContain('lr-ingest');
     expect(policy).toContain("object-src 'none'");
     expect(policy).toContain("frame-ancestors 'none'");
   });
@@ -45,6 +47,9 @@ describe('buildContentSecurityPolicy', () => {
     const policy = buildContentSecurityPolicy('test-nonce', true);
 
     expect(policy).toContain("'unsafe-eval'");
+    expect(policy).toContain('https://cdn.logrocket.io');
+    expect(policy).toContain('https://*.lr-ingest.io');
+    expect(policy).toContain("worker-src 'self' blob:");
   });
 });
 

@@ -1,4 +1,4 @@
-import { BoxSelector } from '@@/BoxSelector';
+import { BoxSelector } from '@/ui/components/BoxSelector';
 
 import { EnvironmentOption, EnvironmentOptionValue } from './environment-types';
 

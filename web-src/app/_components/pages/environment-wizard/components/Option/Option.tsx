@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import { ComponentType } from 'react';
 
-import { FeatureId } from '@/react/portainer/feature-flags/enums';
-import { isLimitedToBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import { FeatureId } from '@/shared/feature-flags/enums';
+import { isLimitedToBE } from '@/shared/feature-flags/feature-flags.service';
 
 import styles from './Option.module.css';
 

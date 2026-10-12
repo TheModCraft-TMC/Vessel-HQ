@@ -16,8 +16,7 @@ import { useRegistry } from '@/domains/registries/queries/useRegistry';
 import { updateRegistry } from '@/domains/registries/services/registry.service';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 import { toRegistryPayload } from './registryPayload';
 

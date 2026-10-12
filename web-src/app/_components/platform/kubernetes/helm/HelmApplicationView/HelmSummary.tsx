@@ -1,5 +1,5 @@
 import { Badge } from '@/ui/components/status/Badge';
-import { localizeDate } from '@/react/common/date-utils';
+import { localizeDate } from '@/shared/dates';
 import { Alert } from '@/ui/components/feedback/Alert';
 import { HelmRelease } from '@/domains/configuration/helm/types';
 import {
@@ -7,8 +7,7 @@ import {
   getStatusColor,
   getStatusText,
 } from '@/domains/configuration/helm/helm-status-utils';
-
-import { Card } from '@@/primitives/Card';
+import { Card } from '@/ui/components/primitives/Card';
 
 interface Props {
   release: HelmRelease;

@@ -1,12 +1,12 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Database, UserX } from 'lucide-react';
 
 import { notifySuccess } from '@/ui/components/toast/notifications';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useNamespacesQuery } from '@/domains/namespaces';
-import { updateEnvironmentRegistryAccess } from '@/react/portainer/environments/environment.service/registries';
+import { updateEnvironmentRegistryAccess } from '@/core/environment-management/environments/environment.service/registries';
 import { useRegistry, registryQueryKeys } from '@/domains/registries';
 import { withError } from '@/core/query';
 import { LoadingButton } from '@/ui/components/buttons';
@@ -14,10 +14,9 @@ import { FormSection } from '@/ui/components/forms/FormSection';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
-
-import { DetailsTable } from '@@/DetailsTable';
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
+import { DetailsTable } from '@/ui/components/DetailsTable';
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
 
 import { AccessTable } from './AccessTable';
 import { NamespacesSelector } from './NamespacesSelector';

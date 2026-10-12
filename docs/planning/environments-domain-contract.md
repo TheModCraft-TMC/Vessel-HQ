@@ -4,7 +4,7 @@ Status: shared domain contract extracted on September 21, 2026; workflow migrati
 
 ## What moved
 
-The canonical environment types now live in `app/domains/environments/types.ts` and are exported only through `app/domains/environments/index.ts`. The initial extraction used the superseded `app/features/environments` path; the former `app/react/portainer/environments/types.ts` path remains removed.
+The canonical environment types now live in `web-src/domains/environments/types.ts` and are exported only through `web-src/domains/environments/index.ts`. The initial extraction used the superseded `app/features/environments` path; the former `app/react/portainer/environments/types.ts` path remains removed.
 
 All 545 call sites now import the public `@/domains/environments` API. This includes Docker, Kubernetes, Azure, navigation, access control, registries, templates, tests, and the remaining legacy environment views. The move changes ownership and import direction only; runtime behavior, URLs, API payloads, and cache semantics are unchanged.
 

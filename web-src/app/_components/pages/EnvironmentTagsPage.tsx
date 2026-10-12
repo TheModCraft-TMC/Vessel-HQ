@@ -2,19 +2,19 @@
 
 import { FormEvent, useState } from 'react';
 import { Plus } from 'lucide-react';
+import { PageContent } from '@console/layout/PageContent';
 
 import {
   useCreateTagMutation,
   useDeleteTagsMutation,
   useTags,
-} from '@/portainer/tags/queries';
-import { TagsDatatable } from '@/react/portainer/environments/TagsView/TagsDatatable';
+} from '@/domains/tags';
+import { TagsDatatable } from '@/core/environment-management/environments/TagsView/TagsDatatable';
 import { LoadingButton } from '@/ui/components/buttons';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-
-import { Widget } from '@@/Widget';
+import { Widget } from '@/ui/components/Widget';
 
 export function EnvironmentTagsContent() {
   const tagsQuery = useTags();
@@ -22,22 +22,24 @@ export function EnvironmentTagsContent() {
 
   return (
     <div className="space-y-4">
+      <PageContent flushBottom>
         <CreateTagPanel
           existingNames={tagsQuery.data?.map((tag) => tag.Name)}
         />
-        <TagsDatatable
-          dataset={tagsQuery.data}
-          onRemove={(tags) =>
-            deleteTags.mutate(
-              tags.map((tag) => tag.ID),
-              {
-                onSuccess: () =>
-                  notifySuccess('Success', 'Tag(s) successfully removed'),
-              }
-            )
-          }
-        />
-      </div>
+      </PageContent>
+      <TagsDatatable
+        dataset={tagsQuery.data}
+        onRemove={(tags) =>
+          deleteTags.mutate(
+            tags.map((tag) => tag.ID),
+            {
+              onSuccess: () =>
+                notifySuccess('Success', 'Tag(s) successfully removed'),
+            }
+          )
+        }
+      />
+    </div>
   );
 }
 
@@ -48,7 +50,7 @@ function CreateTagPanel({ existingNames = [] }: { existingNames?: string[] }) {
   const duplicate = existingNames.includes(trimmedName);
 
   return (
-    <Widget className="mx-4">
+    <Widget>
       <Widget.Title icon={Plus} title="Add a new tag" />
       <Widget.Body>
         <form className="form-horizontal" onSubmit={handleSubmit}>

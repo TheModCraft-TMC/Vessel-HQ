@@ -1,12 +1,11 @@
 import { Wand2, Plug2 } from 'lucide-react';
+import { Link } from '@console/navigation/Link';
 
 import { EnvironmentType } from '@/domains/environments';
-import DockerIcon from '@/assets/ico/vendor/docker-icon.svg?c';
-import Kube from '@/assets/ico/kube.svg?c';
+import DockerIcon from '@/shared/assets/ico/vendor/docker-icon.svg?c';
+import Kube from '@/shared/assets/ico/kube.svg?c';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { Link } from '@/ui/components/links/Link';
-
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
 
 import { Option } from '../components/Option';
 

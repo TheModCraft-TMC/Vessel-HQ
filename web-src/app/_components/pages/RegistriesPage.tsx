@@ -1,8 +1,7 @@
 'use client';
 
 import { RegistriesDatatable } from '@/domains/registries/views/ListView/RegistriesDatatable';
-
-import { InformationPanel } from '@@/InformationPanel';
+import { InformationPanel } from '@/ui/components/feedback/InformationPanel';
 
 export function RegistriesContent() {
   return (

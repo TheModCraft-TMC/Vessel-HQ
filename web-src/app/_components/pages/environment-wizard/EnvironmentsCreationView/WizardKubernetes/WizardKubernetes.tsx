@@ -7,19 +7,18 @@ import {
   Environment,
 } from '@/domains/environments';
 import { commandsTabs } from '@/domains/edge/components/EdgeScriptForm/scripts';
-import { FeatureId } from '@/react/portainer/feature-flags/enums';
-import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import { FeatureId } from '@/shared/feature-flags/enums';
+import { isBE } from '@/shared/feature-flags/feature-flags.service';
 import EdgeAgentStandardIcon from '@/domains/edge/components/edge-agent-standard.svg?c';
 import EdgeAgentAsyncIcon from '@/domains/edge/components/edge-agent-async.svg?c';
 import { FormSection } from '@/ui/components/forms/FormSection';
 import { Badge } from '@/ui/components/status/Badge';
 import { useDocsUrl } from '@/ui/layouts/view-layout/page-header/ContextHelp';
 import { EdgeAgentTab } from '@/domains/edge/views/environments/EdgeAgentTab';
-
-import { BoxSelectorOption } from '@@/BoxSelector/types';
-import { BoxSelector } from '@@/BoxSelector';
-import { BEOverlay } from '@@/BEFeatureIndicator/BEOverlay';
-import { ExternalLink } from '@@/ExternalLink';
+import { BoxSelectorOption } from '@/ui/components/BoxSelector/types';
+import { BoxSelector } from '@/ui/components/BoxSelector';
+import { ExternalLink } from '@/ui/components/links/ExternalLink';
+import { BEOverlay } from '@/core/components/BEFeatureIndicator/BEOverlay';
 
 
 import { AnalyticsStateKey } from '../types';

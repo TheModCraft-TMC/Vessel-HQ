@@ -2,15 +2,15 @@
 
 import { FormikHelpers } from 'formik';
 import { useRouter } from 'next/navigation';
+import { PageContent } from '@console/layout/PageContent';
 
 import {
   GroupForm,
   GroupFormValues,
-} from '@/react/portainer/environments/environment-groups/components/GroupForm';
-import { useCreateGroupMutation } from '@/react/portainer/environments/environment-groups/queries/useCreateGroupMutation';
+} from '@/core/environment-management/environment-groups/components/GroupForm';
+import { useCreateGroupMutation } from '@/core/environment-management/environment-groups/queries/useCreateGroupMutation';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-
-import { Widget } from '@@/Widget';
+import { Widget } from '@/ui/components/Widget';
 
 const INITIAL_VALUES: GroupFormValues = {
   name: '',
@@ -24,18 +24,18 @@ export function EnvironmentGroupCreateContent() {
   const createGroup = useCreateGroupMutation();
 
   return (
-    <div className="mx-4 pb-20">
-        <Widget>
-          <Widget.Body>
-            <GroupForm
-              initialValues={INITIAL_VALUES}
-              onSubmit={handleSubmit}
-              submitLabel="Create"
-              submitLoadingLabel="Creating..."
-            />
-          </Widget.Body>
-        </Widget>
-      </div>
+    <PageContent className="pb-20">
+      <Widget>
+        <Widget.Body>
+          <GroupForm
+            initialValues={INITIAL_VALUES}
+            onSubmit={handleSubmit}
+            submitLabel="Create"
+            submitLoadingLabel="Creating..."
+          />
+        </Widget.Body>
+      </Widget>
+    </PageContent>
   );
 
   function handleSubmit(

@@ -1,10 +1,10 @@
-import { localizeDate } from '@/react/common/date-utils';
-import { Link } from '@/ui/components/links/Link';
+import { Link } from '@console/navigation/Link';
+
+import { localizeDate } from '@/shared/dates';
 import { Badge } from '@/ui/components/status/Badge';
 import { HelmRelease } from '@/domains/configuration/helm/types';
 import { getStatusColor, getStatusText } from '@/domains/configuration/helm/helm-status-utils';
-
-import { BlocklistItem } from '@@/Blocklist/BlocklistItem';
+import { BlocklistItem } from '@/core/components/Blocklist/BlocklistItem';
 
 export function HelmRevisionItem({
   item,

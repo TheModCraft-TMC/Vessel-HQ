@@ -4,24 +4,23 @@ import { useCallback, useMemo } from 'react';
 import { Clipboard, Code, Copy } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { withError } from '@/core/query';
 import { ConfigViewModel } from '@/domains/services/configs/model';
 import { queryKeys } from '@/domains/services/configs/queries/query-keys';
 import { deleteConfig } from '@/domains/services/configs/queries/useDeleteConfigMutation';
 import { getConfig } from '@/domains/services/configs/queries/useConfig';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { Authorized } from '@/react/hooks/useUser';
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel/AccessControlPanel';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { Authorized } from '@/core/session/useUser';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel/AccessControlPanel';
+import { ResourceControlType } from '@/domains/access-control/types';
 import { Button } from '@/ui/components/buttons';
 import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { CodeEditor } from '@@/CodeEditor';
+import { CodeEditor } from '@/ui/components/CodeEditor';
 
 import { DockerObjectDetails } from '../../../_components/DockerObjectDetails';
 

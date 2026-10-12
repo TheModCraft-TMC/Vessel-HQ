@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { NodeStatsContent } from '@app/_components/platform/kubernetes/cluster/NodeStatsView/NodeStatsView';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';

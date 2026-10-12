@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 
 import { useNamespacesQuery } from '@/domains/namespaces';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
@@ -9,8 +9,7 @@ import { PortainerSelect } from '@/ui/components/forms/PortainerSelect';
 import { FormSection } from '@/ui/components/forms/FormSection';
 import { K8sRegistryAccessNotice } from '@/domains/clusters';
 import { HelmTemplates } from '@/domains/configuration/helm/HelmTemplates/HelmTemplates';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 
 export function HelmInstallView() {

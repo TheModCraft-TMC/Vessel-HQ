@@ -8,7 +8,7 @@ import {
   createKubeDatatableStore as createStore,
   useKubernetesVersion,
 } from '@/domains/clusters';
-import { useEnvironment } from '@/react/portainer/environments/queries';
+import { useEnvironment } from '@/domains/environments';
 import {
   notifyError,
   notifySuccess,

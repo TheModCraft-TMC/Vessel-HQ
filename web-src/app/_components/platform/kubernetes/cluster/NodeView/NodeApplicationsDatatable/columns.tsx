@@ -1,10 +1,10 @@
 import _, { round } from 'lodash';
 import { useMemo } from 'react';
+import { Link } from '@console/navigation/Link';
 
-import { truncate } from '@/portainer/filters/filters';
+import { truncate } from '@/shared/formatters';
 import { usePublicSettings } from '@/domains/settings';
 import { bytesToReadableFormat } from '@/domains/clusters/utils';
-import { Link } from '@/ui/components/links/Link';
 
 import { helper } from './columns.helper';
 import { name } from './columns.name';

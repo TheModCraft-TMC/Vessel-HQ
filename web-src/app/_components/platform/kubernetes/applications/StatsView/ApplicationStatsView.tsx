@@ -1,7 +1,8 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useEffect, useState } from 'react';
+import { PageContent } from '@console/layout/PageContent';
 
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import {
   CpuUsageChart,
   MemoryUsageChart,
@@ -11,7 +12,7 @@ import {
   useNodeQuery,
   usePodMetricsQuery,
 } from '@/domains/clusters';
-import MemoryIcon from '@/assets/ico/memory.svg?c';
+import MemoryIcon from '@/shared/assets/ico/memory.svg?c';
 import { Alert } from '@/ui/components/feedback/Alert';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 
@@ -111,7 +112,7 @@ export function ApplicationStatsContent({
           ]}
         />
       )}
-      <div className="mx-4 mb-4 space-y-4">
+      <PageContent>
         {metricsState === 'unavailable' && (
           <Alert color="warn" title="Unable to retrieve container metrics">
             Vessel HQ was unable to retrieve any metrics associated with that
@@ -140,7 +141,7 @@ export function ApplicationStatsContent({
             </div>
           </>
         )}
-      </div>
+      </PageContent>
     </>
   );
 }

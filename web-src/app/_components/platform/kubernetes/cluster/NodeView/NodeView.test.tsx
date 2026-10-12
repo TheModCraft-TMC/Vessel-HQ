@@ -1,56 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import { ReactNode } from 'react';
 
-import { withTestRouter } from '@/react/test-utils/withRouter';
+import { withTestRouter } from '@/core/test-support/withRouter';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { UserViewModel } from '@/portainer/models/user';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
+import { UserViewModel } from '@/domains/users';
+import { configureTestNavigation } from '@/core/test-support/next-navigation';
 
 import { NodeView } from './NodeView';
-
-let mockParams: { endpointId: number; nodeName: string; tab?: string } = {
-  endpointId: 1,
-  nodeName: 'test-node',
-};
-
-vi.mock(
-  '@console/console/routing/useRouteParams',
-  async (importOriginal: () => Promise<Record<string, unknown>>) => ({
-    ...(await importOriginal()),
-    useRouteParams: () =>
-      Object.fromEntries(
-        Object.entries(mockParams).map(([key, value]) => [key, String(value)])
-      ),
-  })
-);
-
-// Mock Link component to avoid ui-router relative state resolution in tests
-vi.mock('@/ui/components/links/Link', () => ({
-  Link: ({
-    children,
-    'data-cy': dataCy,
-    params,
-    ...props
-  }: {
-    children: ReactNode;
-    'data-cy'?: string;
-    params?: { tab?: string };
-  }) => (
-    <a
-      {...props}
-      data-cy={dataCy}
-      href={`#?tab=${params?.tab ?? ''}`}
-      onClick={() => {
-        if (params?.tab) {
-          mockParams = { ...mockParams, tab: params.tab };
-        }
-      }}
-    >
-      {children}
-    </a>
-  ),
-}));
 
 vi.mock('./NodeApplicationsDatatable/NodeApplicationsDatatable', () => ({
   NodeApplicationsDatatable: () => <div data-cy="apps-table" />,
@@ -73,7 +30,7 @@ vi.mock('./NodeYamlInspector', () => ({
   NodeYamlInspector: () => <div data-cy="yaml-view">YAML content</div>,
 }));
 
-vi.mock('@/react/hooks/useEnvironmentId', () => ({
+vi.mock('@/core/routing/useEnvironmentId', () => ({
   useEnvironmentId: () => 1,
 }));
 
@@ -103,31 +60,32 @@ function getWrapped() {
 }
 
 describe('NodeView tabs', () => {
-  it('switches tabs when user clicks different tab', async () => {
+  it('renders the tab selected by the navigation state', async () => {
+    configureTestNavigation();
     const Wrapped = getWrapped();
-    const utils = render(<Wrapped />);
+    render(<Wrapped />);
 
     // initial tab is first: Node details
     expect(screen.queryByTestId('node-details')).toBeVisible();
     expect(screen.queryByTestId('events-table')).toBeNull();
     expect(screen.queryByTestId('yaml-view')).toBeNull();
 
-    // click Events tab and rerender
-    screen.getByTestId('tab-1').click();
-    utils.rerender(<Wrapped />);
-    expect(screen.queryByTestId('node-details')).toBeNull();
-    expect(screen.queryByTestId('events-table')).toBeVisible();
+    act(() => configureTestNavigation({ searchParams: { tab: 'events' } }));
+    await waitFor(() => {
+      expect(screen.queryByTestId('node-details')).toBeNull();
+      expect(screen.queryByTestId('events-table')).toBeVisible();
+    });
 
-    // click YAML tab and rerender
-    screen.getByTestId('tab-2').click();
-    utils.rerender(<Wrapped />);
-    expect(screen.queryByTestId('events-table')).toBeNull();
-    expect(screen.queryByTestId('yaml-view')).toBeVisible();
+    act(() => configureTestNavigation({ searchParams: { tab: 'yaml' } }));
+    await waitFor(() => {
+      expect(screen.queryByTestId('events-table')).toBeNull();
+      expect(screen.queryByTestId('yaml-view')).toBeVisible();
+    });
 
-    // back to Node tab (namespace) and rerender
-    screen.getByTestId('tab-0').click();
-    utils.rerender(<Wrapped />);
-    expect(screen.queryByTestId('yaml-view')).toBeNull();
-    expect(screen.queryByTestId('node-details')).toBeVisible();
+    act(() => configureTestNavigation({ searchParams: { tab: 'namespace' } }));
+    await waitFor(() => {
+      expect(screen.queryByTestId('yaml-view')).toBeNull();
+      expect(screen.queryByTestId('node-details')).toBeVisible();
+    });
   });
 });

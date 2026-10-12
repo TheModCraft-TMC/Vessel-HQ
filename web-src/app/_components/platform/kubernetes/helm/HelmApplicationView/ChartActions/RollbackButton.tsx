@@ -1,6 +1,6 @@
 import { RotateCcw } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 
 import { EnvironmentId } from '@/domains/environments';
 import { notifySuccess } from '@/ui/components/toast/notifications';

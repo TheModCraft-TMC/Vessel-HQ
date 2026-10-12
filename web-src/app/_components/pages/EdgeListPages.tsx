@@ -1,6 +1,7 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
+import { Link } from '@console/navigation/Link';
 
 import { queryKeys } from '@/domains/edge/queries/edge-stacks/query-keys';
 import {
@@ -13,10 +14,8 @@ import { EdgeJobsDatatable } from '@/domains/edge/views/edge-jobs/ListView/EdgeJ
 import { EdgeStacksDatatable } from '@/domains/edge/views/edge-stacks/ListView/EdgeStacksDatatable';
 import { Alert } from '@/ui/components/feedback/Alert';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
-import { Link } from '@/ui/components/links/Link';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { InformationPanel } from '@@/InformationPanel';
+import { InformationPanel } from '@/ui/components/feedback/InformationPanel';
 
 export function EdgeGroupsContent() {
   return <EdgeGroupsDatatable />;

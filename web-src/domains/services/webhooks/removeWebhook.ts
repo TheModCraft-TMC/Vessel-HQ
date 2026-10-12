@@ -1,0 +1,25 @@
+import axios, { parseAxiosError } from '@/shared/http';
+import { EnvironmentId } from '@/domains/environments';
+import { promiseSequence } from '@/shared/promise-utils';
+
+import { getWebhooks } from './getWebhooks';
+import { Webhook } from './types';
+import { buildUrl } from './build-url';
+
+export async function removeWebhooksForService(
+  environmentId: EnvironmentId,
+  serviceId: string
+) {
+  const webhooks = await getWebhooks(environmentId, serviceId);
+  return promiseSequence(
+    webhooks.map((webhook) => () => removeWebhook(webhook.Id))
+  );
+}
+
+export async function removeWebhook(webhookId: Webhook['Id']) {
+  try {
+    await axios.delete(buildUrl(webhookId));
+  } catch (err) {
+    throw parseAxiosError(err);
+  }
+}

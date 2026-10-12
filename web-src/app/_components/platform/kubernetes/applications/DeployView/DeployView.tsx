@@ -1,8 +1,8 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useCallback, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import stripAnsi from 'strip-ansi';
 import uuidv4 from 'uuid/v4';
 
@@ -10,9 +10,9 @@ import { notifySuccess } from '@/ui/components/toast/notifications';
 import {
   baseStackWebhookUrl,
   createWebhookId,
-} from '@/portainer/helpers/webhookHelper';
+} from '@/shared/webhook';
 import { useCreateStack, StackType } from '@/domains/stacks';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { K8sRegistryAccessNotice } from '@/domains/clusters';
 import { useNamespacesQuery } from '@/domains/namespaces';
 import { GitForm, validateGitForm } from '@/domains/gitops';
@@ -42,18 +42,17 @@ import {
   StackName,
   StackNameLabelInsight,
 } from '@/domains/applications';
-
-import { CustomTemplateSelector } from '@@/CustomTemplateSelector';
+import { BoxSelector, BoxSelectorOption } from '@/ui/components/BoxSelector';
+import { usePreventExit, WebEditorForm } from '@/ui/components/WebEditorForm';
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
 import {
   customTemplate,
   editor,
   git,
   url,
-} from '@@/BoxSelector/common-options/build-methods';
-import { BoxSelector, BoxSelectorOption } from '@@/BoxSelector';
-import { usePreventExit, WebEditorForm } from '@@/WebEditorForm';
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
+} from '@/core/components/BoxSelector/common-options/build-methods';
+import { CustomTemplateSelector } from '@/core/components/CustomTemplateSelector';
 
 
 

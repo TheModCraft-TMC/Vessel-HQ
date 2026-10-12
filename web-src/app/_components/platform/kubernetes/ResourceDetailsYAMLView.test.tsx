@@ -2,15 +2,16 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { HttpResponse } from 'msw';
 import { ReactNode } from 'react';
 
-import { server, http } from '@/setup-tests/server';
+import { server, http } from '@/core/test-support/setup/server';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
+import { configureTestNavigation } from '@/core/test-support/next-navigation';
 import { ResourceDetailsYAMLView } from '@app/_components/platform/kubernetes/ResourceDetailsYAMLView';
 
 vi.mock('@/ui/layouts/view-layout/page-header', () => ({
   PageHeader: ({ title }: { title: string }) => <h1>{title}</h1>,
 }));
 
-vi.mock('@/ui/components/links/Link', () => ({
+vi.mock('@console/navigation/Link', () => ({
   Link: ({
     children,
     ...props
@@ -39,7 +40,7 @@ let mockParams: Record<string, string> = {
   tab: 'yaml',
 };
 
-vi.mock('@console/console/routing/useRouteParams', () => {
+vi.mock('@console/routing/useRouteParams', () => {
   return {
     useRouteParams: () => mockParams,
   };
@@ -67,7 +68,7 @@ vi.mock('../components/YAMLInspector', () => ({
   },
 }));
 
-vi.mock('@@/CodeEditor', () => ({
+vi.mock('@/ui/components/CodeEditor', () => ({
   CodeEditor: ({
     value,
     id,
@@ -83,7 +84,7 @@ vi.mock('@@/CodeEditor', () => ({
   ),
 }));
 
-vi.mock('@/react/hooks/useEnvironmentId', () => ({
+vi.mock('@/core/routing/useEnvironmentId', () => ({
   useEnvironmentId: () => 1,
 }));
 
@@ -97,6 +98,7 @@ function renderView() {
 describe('ResourceDetailsYAMLView', () => {
   beforeEach(() => {
     server.resetHandlers();
+    configureTestNavigation({ searchParams: { tab: 'yaml' } });
     mockParams = {
       name: 'my-cm',
       namespace: 'default',
@@ -128,6 +130,7 @@ describe('ResourceDetailsYAMLView', () => {
   });
 
   it('renders Describe output when the Describe tab is selected', async () => {
+    configureTestNavigation({ searchParams: { tab: 'describe' } });
     mockParams = {
       name: 'my-cm',
       namespace: 'default',

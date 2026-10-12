@@ -1,5 +1,5 @@
 import tokenize from '@nxmix/tokenize-ansi';
-import { FontWeight } from '@xterm/xterm';
+import type { FontWeight } from '@xterm/xterm';
 
 import {
   colors,

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { GitCommit, PenBoxIcon, Settings, UsersIcon } from 'lucide-react';
+import { PageContent } from '@console/layout/PageContent';
 
 import { AccessTab } from '@/domains/gitops/sources/ItemView/AccessTab';
 import { SettingsTab } from '@/domains/gitops/sources/ItemView/SettingsTab/SettingsTab';
@@ -12,14 +13,13 @@ import {
   SourceDetail,
   useSource,
 } from '@/domains/gitops/sources/queries/useSource';
-import { useCurrentUser } from '@/react/hooks/useUser';
+import { useCurrentUser } from '@/core/session/useUser';
 import { Button } from '@/ui/components/buttons';
 import { Alert } from '@/ui/components/feedback/Alert';
 import { Badge } from '@/ui/components/status/Badge';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { ResourceDetailHeaderSkeleton } from '@@/ResourceDetailHeader/ResourceDetailHeaderSkeleton';
-import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
+import { ResourceDetailHeaderSkeleton } from '@/ui/components/ResourceDetailHeader/ResourceDetailHeaderSkeleton';
+import { Tab, WidgetTabs, useCurrentTabIndex } from '@/ui/components/Widget/WidgetTabs';
 
 export function SourceDetailsHeader({ sourceId }: { sourceId: number }) {
   const sourceQuery = useSource(sourceId);
@@ -93,22 +93,22 @@ function SourceContent({ source }: { source: SourceDetail }) {
   const currentTabIndex = useCurrentTabIndex(tabs);
 
   return (
-    <div className="mx-4 space-y-4 pb-4">
-        <SourceResourceHeader source={source} />
-        <div className="flex items-center gap-2">
-          <WidgetTabs
-            tabs={tabs}
-            currentTabIndex={currentTabIndex}
-            useContainer={false}
-          />
-          <SourceEditAction
-            editable={Boolean(tabs[currentTabIndex]?.isEditable)}
-            editing={isEditing}
-            onEdit={() => setIsEditing(true)}
-          />
-        </div>
-        {tabs[currentTabIndex].widget}
+    <PageContent>
+      <SourceResourceHeader source={source} />
+      <div className="flex items-center gap-2">
+        <WidgetTabs
+          tabs={tabs}
+          currentTabIndex={currentTabIndex}
+          useContainer={false}
+        />
+        <SourceEditAction
+          editable={Boolean(tabs[currentTabIndex]?.isEditable)}
+          editing={isEditing}
+          onEdit={() => setIsEditing(true)}
+        />
       </div>
+      {tabs[currentTabIndex].widget}
+    </PageContent>
   );
 }
 
@@ -143,19 +143,19 @@ function SourceEditAction({
 
 function SourceLoading() {
   return (
-    <div className="mx-4 mb-4 space-y-4">
+    <PageContent>
       <ResourceDetailHeaderSkeleton statBlockCount={2} />
-    </div>
+    </PageContent>
   );
 }
 
 function SourceError({ error }: { error: unknown }) {
   return (
-    <div className="mx-4 mb-4 space-y-4">
+    <PageContent>
       <Alert color="error">
         Failed loading source:{' '}
         {error instanceof Error ? error.message : 'Unknown error'}
       </Alert>
-    </div>
+    </PageContent>
   );
 }

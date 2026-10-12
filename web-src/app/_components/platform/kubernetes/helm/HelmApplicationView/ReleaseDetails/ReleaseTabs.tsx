@@ -1,18 +1,17 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useState } from 'react';
 import { compact } from 'lodash';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { AlertTriangle } from 'lucide-react';
 
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useEvents } from '@/domains/clusters';
 import { Badge } from '@/ui/components/status/Badge';
 import { Icon } from '@/ui/components/icons/Icon';
 import { HelmRelease } from '@/domains/configuration/helm/types';
 import { useHelmHistory } from '@/domains/configuration/helm/helmReleaseQueries/useHelmHistory';
-
-import { NavTabs, Option } from '@@/NavTabs';
+import { NavTabs, Option } from '@/ui/components/NavTabs';
 
 import { ManifestDetails } from './ManifestDetails';
 import { NotesDetails } from './NotesDetails';

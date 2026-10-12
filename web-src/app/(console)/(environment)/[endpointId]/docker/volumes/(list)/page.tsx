@@ -4,19 +4,19 @@ import { useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { withError } from '@/core/query';
-import { getServices } from '@/domains/services';
 import { ServiceViewModel } from '@/domains/services/models/service';
+import { getServices } from '@/domains/services/queries/useServices';
 import { VolumesDatatable } from '@/domains/volumes/components/VolumesDatatable/VolumesDatatable';
 import type { DecoratedVolume } from '@/domains/volumes/models/types';
 import { queryKeys } from '@/domains/volumes/queries/query-keys';
 import { getVolumeList } from '@/domains/volumes/queries/useVolumes';
 import { removeVolume } from '@/domains/volumes/services/remove-volume.service';
-import { processItemsInBatches } from '@/react/common/processItemsInBatches';
-import { useIsSwarmManager } from '@/react/docker/proxy/queries/useInfo';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useCurrentUser } from '@/react/hooks/useUser';
-import { useEnvironment } from '@/react/portainer/environments/queries';
-import { isAgentEnvironment } from '@/react/portainer/environments/utils';
+import { processItemsInBatches } from '@/shared/processItemsInBatches';
+import { useIsSwarmManager } from '@/core/composition/useDockerInfo';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useCurrentUser } from '@/core/session/useUser';
+import { useEnvironment } from '@/domains/environments/queries/useEnvironment';
+import { isAgentEnvironment } from '@/domains/environments/utils';
 import {
   notifyError,
   notifySuccess,

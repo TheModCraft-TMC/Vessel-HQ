@@ -2,7 +2,7 @@
 
 Status: structural move complete as of September 21, 2026.
 
-Authentication now lives in `app/domains/auth`. The initial structural checkpoint used the superseded `app/features/auth` path; the accepted domain-and-provider architecture renamed that boundary without changing behavior. The domain owns login, logout, session initialization, administrator checks, and its lazy route components. Consumers use `@/domains/auth`; they no longer reach through a framework or product namespace to private authentication files.
+Authentication now lives in `web-src/domains/auth`. The initial structural checkpoint used the superseded `app/features/auth` path; the accepted domain-and-provider architecture renamed that boundary without changing behavior. The domain owns login, logout, session initialization, administrator checks, and its lazy route components. Consumers use `@/domains/auth`; they no longer reach through a framework or product namespace to private authentication files.
 
 ## Boundary
 

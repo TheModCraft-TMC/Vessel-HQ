@@ -1,17 +1,16 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { AlertTriangle, Code, History, HardDrive } from 'lucide-react';
 import { useMemo } from 'react';
 
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Badge } from '@/ui/components/status/Badge';
 import { Icon } from '@/ui/components/icons/Icon';
 import { useEventWarningsCount } from '@/domains/clusters/queries/useEvents';
 import { ResourceEventsDatatable } from '@/domains/clusters/components/EventsDatatable/ResourceEventsDatatable';
 import { useNodeQuery } from '@/domains/clusters/cluster/queries/useNodeQuery';
-
-import { Tab, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
-import { Widget, WidgetBody, WidgetTabs } from '@@/Widget';
+import { Tab, useCurrentTabIndex } from '@/ui/components/Widget/WidgetTabs';
+import { Widget, WidgetBody, WidgetTabs } from '@/ui/components/Widget';
 
 import { NodeApplicationsDatatable } from './NodeApplicationsDatatable/NodeApplicationsDatatable';
 import { NodeDetails } from './NodeDetails/NodeDetails';

@@ -24,7 +24,7 @@ This baseline is safe and simple, but global invalidation becomes wasteful as th
 | State class                                                                              | Owner                                              | Update strategy                                                            |
 | ---------------------------------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
 | Containers, stacks, images, networks, environments, users, and settings                  | TanStack Query                                     | REST snapshot followed by scoped invalidation or authoritative cache patch |
-| WebSocket connection lifecycle, authentication, sequencing, reconnect, and event routing | `app/core/realtime`                                | One connection coordinator outside domain components                       |
+| WebSocket connection lifecycle, authentication, sequencing, reconnect, and event routing | `web-src/core/realtime`                                | One connection coordinator outside domain components                       |
 | Query keys and event-to-cache mapping                                                    | Owning domain query modules                        | Invalidate the smallest authorized list/detail scope                       |
 | Logs and terminal data                                                                   | Dedicated stream adapters                          | Bounded buffers and imperative or throttled publication                    |
 | CPU, memory, network, and I/O samples                                                    | Domain-local external store or bounded ring buffer | Publish at an explicit frame/time budget rather than per packet            |
@@ -81,7 +81,7 @@ Domains must not open independent lifecycle sockets from React components. They 
 
 ## Delivery phases
 
-1. Move query-client, routing, and realtime coordination into `app/core` without behavioral changes.
+1. Move query-client, routing, and realtime coordination into `web-src/core` without behavioral changes.
 2. Add observable connection state and tests for login, logout, reconnect, sequence gaps, and resynchronization.
 3. Design and threat-model protocol version 2, including per-user and per-environment authorization filtering.
 4. Introduce a typed, batched event-to-query-key registry with Containers as the first consumer.

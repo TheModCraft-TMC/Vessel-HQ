@@ -1,7 +1,7 @@
 import { boolean, object, SchemaOf, string } from 'yup';
 
-import { useNameValidation } from '@/react/portainer/environments/common/NameField/NameField';
-import { metadataValidation } from '@/react/portainer/environments/common/MetadataFieldset/validation';
+import { useNameValidation } from '@/domains/environments/features/NameField/NameField';
+import { metadataValidation } from '@/domains/environments/features/MetadataFieldset/validation';
 
 import { FormValues } from './types';
 

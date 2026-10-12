@@ -1,7 +1,8 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useState } from 'react';
+import { PageContent } from '@console/layout/PageContent';
 
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useNodeMetricsQuery } from '@/domains/clusters/metrics/queries/useNodeMetricsQuery';
 import { useNodeQuery } from '@/domains/clusters/cluster/queries/useNodeQuery';
 import { parseCPU } from '@/domains/clusters/utils';
@@ -51,7 +52,7 @@ export function NodeStatsContent() {
   );
 
   return (
-    <div className="mx-4 mb-4 space-y-4">
+    <PageContent>
       {metricsState === 'unavailable' && (
         <Alert color="warn" title="Unable to retrieve node metrics">
           Vessel HQ was unable to retrieve any metrics associated with that
@@ -85,6 +86,6 @@ export function NodeStatsContent() {
           </div>
         </>
       )}
-    </div>
+    </PageContent>
   );
 }

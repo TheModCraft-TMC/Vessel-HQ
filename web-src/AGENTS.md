@@ -8,7 +8,15 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## Shared component organization
+## Frontend architecture and tooling
+
+- Follow the repository-wide [agent guidance](../AGENTS.md) and the [domain/provider architecture](../docs/planning/frontend-domain-provider-architecture.md).
+- `app/` owns Next.js routes/layouts; product behavior belongs in `domains/`, console/session/composition in `core/`, external adapters in `providers/`, reusable presentation in `ui/`, and dependency-light contracts/utilities in `shared/`.
+- Use public domain/provider APIs across ownership boundaries. Do not restore the removed `legacy/` tree or loosen architecture guards to make imports pass.
+- Development uses Turbopack; production currently builds with webpack. Read the installed Next.js guides before changing framework behavior, as required above.
+- Keep generated API consumers aligned with `core/generated-api/portainer`; regenerate rather than editing generated files.
+
+## Shared component conventions
 
 - Put each new or restructured shared React component in its own directory.
 - Colocate a same-named CSS Module with the component, for example

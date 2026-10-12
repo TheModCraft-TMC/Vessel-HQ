@@ -1,10 +1,10 @@
 'use client';
 
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { useTask } from '@/domains/services/tasks/queries/useTask';
 import { DockerLogsView } from '@app/_components/platform/docker/logs/DockerLogsView';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

@@ -1,18 +1,18 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { saveAs } from 'file-saver';
 
-import axios, { parseAxiosError } from '@/portainer/services/axios/axios';
+import axios, { parseAxiosError } from '@/shared/http';
 import {
   notifyError,
   notifySuccess,
 } from '@/ui/components/toast/notifications';
-import { useApiVersion } from '@/react/docker/agent/queries/useApiVersion';
-import { FileData } from '@/react/docker/components/FilesTable/types';
-import { getNode } from '@/react/docker/proxy/queries/nodes/useNode';
-import { withAgentTargetHeader } from '@/react/docker/proxy/queries/utils';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useApiVersion } from '@/core/composition/useAgentApiVersion';
+import { FileData } from '@/core/docker/components/FilesTable/types';
+import { getNode } from '@/core/docker/proxy/queries/nodes/useNode';
+import { withAgentTargetHeader } from '@/core/docker/proxy/queries/utils';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { withError } from '@/core/query';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { confirmDelete } from '@/ui/components/dialog/confirm';

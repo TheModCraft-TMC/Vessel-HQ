@@ -4,7 +4,7 @@ import { Bell } from 'lucide-react';
 import { useStore } from 'zustand';
 
 import { columns } from '@/domains/notifications/columns';
-import { useUser } from '@/react/hooks/useUser';
+import { useUser } from '@/core/session/useUser';
 import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
 import { Datatable } from '@/ui/components/data-table';
 import { createPersistedStore } from '@/ui/components/data-table/types';

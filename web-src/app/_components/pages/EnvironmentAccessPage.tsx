@@ -6,21 +6,21 @@ import {
   PortainerTeamAccessPolicies,
   PortainerUserAccessPolicies,
 } from '@api/types.gen';
+import { Link } from '@console/navigation/Link';
+import { PageContent } from '@console/layout/PageContent';
 
 import { Environment } from '@/domains/environments';
-import { stripProtocol } from '@/react/common/string-utils';
-import { AccessDatatable } from '@/react/portainer/access-control/AccessManagement/AccessDatatable/AccessDatatable';
-import { CreateAccessWidget } from '@/react/portainer/access-control/AccessManagement/CreateAccessWidget';
-import { Option } from '@/react/portainer/access-control/AccessManagement/PorAccessManagementUsersSelector';
-import { useAccesses } from '@/react/portainer/access-control/AccessManagement/useAccesses';
-import { useGroup } from '@/react/portainer/environments/environment-groups/queries/useGroup';
-import { useEnvironment } from '@/react/portainer/environments/queries';
-import { useUpdateEnvironmentMutation } from '@/react/portainer/environments/queries/useUpdateEnvironmentMutation';
-import { Link } from '@/ui/components/links/Link';
+import { stripProtocol } from '@/shared/strings';
+import { AccessDatatable } from '@/core/access-control/AccessManagement/AccessDatatable/AccessDatatable';
+import { CreateAccessWidget } from '@/core/access-control/AccessManagement/CreateAccessWidget';
+import { Option } from '@/core/access-control/AccessManagement/PorAccessManagementUsersSelector';
+import { useAccesses } from '@/core/access-control/AccessManagement/useAccesses';
+import { useGroup } from '@/domains/environments/queries/useGroup';
+import { useEnvironment } from '@/domains/environments';
+import { useUpdateEnvironmentMutation } from '@/core/environment-management/environments/queries/useUpdateEnvironmentMutation';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
 
 export function EnvironmentAccessHeader({
   environmentId,
@@ -64,7 +64,7 @@ export function EnvironmentAccessContent({
 
   return (
     <>
-      <div className="mx-4 space-y-4">
+      <PageContent>
         <EnvironmentAccessSummary
           environment={environment}
           group={group}
@@ -87,7 +87,7 @@ export function EnvironmentAccessContent({
             )
           }
         />
-      </div>
+      </PageContent>
       <AccessDatatable
         tableKey="access_endpoint"
         dataset={authorizedUsersAndTeams}

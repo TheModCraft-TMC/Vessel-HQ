@@ -1,4 +1,4 @@
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { HelmRelease } from '@/domains/configuration/helm/types';
 import { useHelmRelease } from '@/domains/configuration/helm/helmReleaseQueries/useHelmRelease';
 

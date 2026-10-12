@@ -1,14 +1,15 @@
 'use client';
 
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
+import { Link } from '@console/navigation/Link';
+import { PageContent } from '@console/layout/PageContent';
 
 import { useContainer } from '@/domains/containers/queries/useContainer';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { DockerLogsView } from '@app/_components/platform/docker/containers/ContainerLogs/DockerLogsView';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
-import { Link } from '@/ui/components/links/Link';
-
-import { InformationPanel } from '@@/InformationPanel';
+import { InformationPanel } from '@/ui/components/feedback/InformationPanel';
+import { ViewLoading } from '@/ui/components/feedback/ViewLoading';
 
 export default function Page() {
   const environmentId = useEnvironmentId();
@@ -20,7 +21,11 @@ export default function Page() {
       select: (c) => c,
     }
   );
-  if (!containerQuery.data || containerQuery.isLoading) {
+  if (containerQuery.isLoading) {
+    return <ViewLoading message="Loading container logs..." />;
+  }
+
+  if (!containerQuery.data) {
     return null;
   }
 
@@ -32,7 +37,7 @@ export default function Page() {
   const containerName = (container.Name || containerId).replace(/^\//, '');
 
   return (
-    <>
+    <PageContent>
       {!logsEnabled ? (
         <LogsDisabledInfoPanel />
       ) : (
@@ -45,7 +50,7 @@ export default function Page() {
           multiplexed={!container.Config?.Tty}
         />
       )}
-    </>
+    </PageContent>
   );
 }
 

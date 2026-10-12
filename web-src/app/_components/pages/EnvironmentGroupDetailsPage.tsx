@@ -3,19 +3,19 @@
 import { useMemo, useState } from 'react';
 import { Box, UsersRound } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { PageContent } from '@console/layout/PageContent';
 
-import { GroupHeader } from '@/react/portainer/environments/environment-groups/ItemView/GroupHeader';
-import { AccessTab } from '@/react/portainer/environments/environment-groups/ItemView/tabs/AccessTab';
-import { EnvironmentsTab } from '@/react/portainer/environments/environment-groups/ItemView/tabs/EnvironmentsTab';
-import { useDeleteEnvironmentGroupMutation } from '@/react/portainer/environments/environment-groups/queries/useDeleteEnvironmentGroupMutation';
-import { useGroup } from '@/react/portainer/environments/environment-groups/queries/useGroup';
+import { GroupHeader } from '@/core/environment-management/environment-groups/ItemView/GroupHeader';
+import { AccessTab } from '@/core/environment-management/environment-groups/ItemView/tabs/AccessTab';
+import { EnvironmentsTab } from '@/core/environment-management/environment-groups/ItemView/tabs/EnvironmentsTab';
+import { useDeleteEnvironmentGroupMutation } from '@/core/environment-management/environment-groups/queries/useDeleteEnvironmentGroupMutation';
+import { useGroup } from '@/domains/environments/queries/useGroup';
 import { confirm } from '@/ui/components/dialog/confirm';
 import { ModalType } from '@/ui/components/dialog/Modal';
 import { buildConfirmButton } from '@/ui/components/dialog/utils';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
+import { Tab, WidgetTabs, useCurrentTabIndex } from '@/ui/components/Widget/WidgetTabs';
 
 export function EnvironmentGroupDetailsHeader({
   groupId,
@@ -73,7 +73,7 @@ export function EnvironmentGroupDetailsContent({
 
   return (
     <>
-      <div className="mx-4 space-y-4">
+      <PageContent>
         <GroupHeader
           group={groupQuery.data}
           isLoading={groupQuery.isLoading}
@@ -86,7 +86,7 @@ export function EnvironmentGroupDetailsContent({
           currentTabIndex={currentTabIndex}
           useContainer={false}
         />
-      </div>
+      </PageContent>
       {tabs[currentTabIndex].widget}
     </>
   );

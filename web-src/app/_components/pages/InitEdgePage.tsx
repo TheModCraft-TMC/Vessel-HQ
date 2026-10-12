@@ -16,7 +16,7 @@ import {
   buildDefaultValue as buildUrlDefaultValue,
   PortainerUrlField,
   validation as urlValidation,
-} from '@/react/portainer/common/PortainerUrlField';
+} from '@/core/components/PortainerUrlField';
 import { Button } from '@/ui/components/buttons';
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';

@@ -1,0 +1,35 @@
+import { Team } from '@/domains/teams';
+import { BoxSelector } from '@/ui/components/BoxSelector';
+import { ResourceControlOwnership } from '@/domains/access-control';
+
+import { useOptions } from './useOptions';
+
+export function AccessTypeSelector({
+  name,
+  isAdmin,
+  isPublicVisible,
+  teams,
+  value,
+  onChange,
+  resourceName = 'resource',
+}: {
+  name: string;
+  isAdmin: boolean;
+  teams: Team[];
+  isPublicVisible: boolean;
+  value: ResourceControlOwnership;
+  onChange(value: ResourceControlOwnership): void;
+  resourceName?: string;
+}) {
+  const options = useOptions(isAdmin, teams, isPublicVisible, resourceName);
+
+  return (
+    <BoxSelector
+      slim
+      radioName={name}
+      value={value}
+      options={options}
+      onChange={onChange}
+    />
+  );
+}

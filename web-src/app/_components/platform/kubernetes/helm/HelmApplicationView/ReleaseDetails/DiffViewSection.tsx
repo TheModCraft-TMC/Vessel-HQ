@@ -1,8 +1,7 @@
-import { AutomationTestingProps } from '@/types';
+import { AutomationTestingProps } from '@/shared/types';
 import { Alert } from '@/ui/components/feedback/Alert';
-
-import { DiffViewer } from '@@/CodeEditor/DiffViewer';
-import { Loading } from '@@/Widget';
+import { DiffViewer } from '@/ui/components/CodeEditor/DiffViewer';
+import { Loading } from '@/ui/components/Widget';
 
 import { CompareRevisionNumberFetched, SelectedRevisionNumber } from './types';
 

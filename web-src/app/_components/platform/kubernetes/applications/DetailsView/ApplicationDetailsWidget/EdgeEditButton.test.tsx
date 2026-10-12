@@ -5,7 +5,7 @@ import { EdgeEditButton } from './EdgeEditButton';
 
 const mockUseIsEdgeAdmin = vi.fn();
 
-vi.mock('@/react/hooks/useUser', () => ({
+vi.mock('@/core/session/useUser', () => ({
   useIsEdgeAdmin: () => mockUseIsEdgeAdmin(),
 }));
 
@@ -23,7 +23,7 @@ vi.mock('@/ui/components/feedback/Tip/TooltipWithChildren', () => ({
   ),
 }));
 
-vi.mock('@/ui/components/links/Link', () => ({
+vi.mock('@console/navigation/Link', () => ({
   Link: ({ children }: { children: React.ReactNode }) => (
     <a href="/">{children}</a>
   ),

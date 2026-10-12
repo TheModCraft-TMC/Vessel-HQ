@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 
-import { useContainers } from '@/domains/containers';
+import { useContainers } from '@/domains/containers/queries/useContainers';
 import { ServiceViewModel } from '@/domains/services/models/service';
 import { TaskViewModel } from '@/domains/services/models/task';
 import { ServicesDatatable } from '@/domains/services/ListView/ServicesDatatable';
@@ -10,9 +10,9 @@ import { useServices } from '@/domains/services/queries/useServices';
 import { useTasks } from '@/domains/services/queries/useTasks';
 import { associateContainerToTask } from '@/domains/services/tasks/utils';
 import { associateServiceTasks } from '@/domains/services/utils';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useEnvironment } from '@/react/portainer/environments/queries';
-import { isAgentEnvironment } from '@/react/portainer/environments/utils';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useEnvironment } from '@/domains/environments/queries/useEnvironment';
+import { isAgentEnvironment } from '@/domains/environments/utils';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

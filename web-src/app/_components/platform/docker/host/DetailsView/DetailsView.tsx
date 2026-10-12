@@ -1,19 +1,19 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useQuery } from '@tanstack/react-query';
 
 import { Node } from '@/providers/infrastructure/docker';
-import { useApiVersion } from '@/react/docker/agent/queries/useApiVersion';
-import { getNode } from '@/react/docker/proxy/queries/nodes/useNode';
-import { useInfo } from '@/react/docker/proxy/queries/useInfo';
-import { useVersion } from '@/react/docker/proxy/queries/useVersion';
-import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useIsEdgeAdmin } from '@/react/hooks/useUser';
-import { isAgentEnvironment } from '@/react/portainer/environments/utils';
+import { useApiVersion } from '@/core/composition/useAgentApiVersion';
+import { getNode } from '@/core/docker/proxy/queries/nodes/useNode';
+import { useInfo } from '@/core/composition/useDockerInfo';
+import { useVersion } from '@/core/composition/useDockerVersion';
+import { useCurrentEnvironment } from '@/core/composition/useCurrentEnvironment';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useIsEdgeAdmin } from '@/core/session/useUser';
+import { isAgentEnvironment } from '@/domains/environments/utils';
 import { withError } from '@/core/query';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { HostDetailsPanel } from '@/react/docker/host/HostDetailsPanel/HostDetailsPanel';
-import { useAgentHostInfo } from '@/react/docker/host/queries/useAgentHostInfo';
+import { HostDetailsPanel } from '@/core/docker/host/HostDetailsPanel/HostDetailsPanel';
+import { useAgentHostInfo } from '@/core/docker/host/queries/useAgentHostInfo';
 
 import { EngineDetails, EngineDetailsPanel } from './EngineDetailsPanel';
 import { DevicesPanel, DisksPanel } from './HardwarePanel';

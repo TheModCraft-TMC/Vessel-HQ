@@ -1,0 +1,75 @@
+import { ReactNode } from 'react';
+import clsx from 'clsx';
+
+import { AutomationTestingProps } from '@/shared/types';
+import { SearchBar } from '@/ui/components/data-table/SearchBar';
+import { DropdownOption } from '@/ui/components/menu';
+
+import { SortByGroup, SortOption } from '../SortByGroup/SortByGroup';
+
+import styles from './SortableListHeader.module.css';
+
+export type { SortOption };
+
+interface Props<TSortKey extends string> {
+  sortDesc: boolean;
+  value: { group: TSortKey; groupValue: string | null };
+  onChange: (value: { group: TSortKey; groupValue: string | null }) => void;
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+  sortOptions: SortOption<TSortKey>[];
+  searchPlaceholder?: string;
+  actionButton?: ReactNode;
+  groupOptions?: Record<string, DropdownOption[]>;
+  headerButtons?: ReactNode;
+}
+
+export function SortableListHeader<TSortKey extends string>({
+  sortDesc,
+  value,
+  onChange,
+  searchTerm,
+  onSearchChange,
+  sortOptions,
+  searchPlaceholder = 'Filter...',
+  actionButton,
+  groupOptions,
+  headerButtons,
+  'data-cy': dataCy,
+}: Props<TSortKey> & AutomationTestingProps) {
+  return (
+    <div
+      className={clsx(
+        styles.root,
+        'flex flex-wrap items-center justify-between gap-3 px-3 py-3 sm:px-5',
+        'bg-gray-2 th-highcontrast:bg-black th-dark:bg-gray-iron-10'
+      )}
+    >
+      <SortByGroup
+        value={value}
+        sortDesc={sortDesc}
+        onChange={onChange}
+        sortOptions={sortOptions}
+        groupOptions={groupOptions}
+        dataCy={`${dataCy}-sort`}
+      />
+      <div className="ml-auto flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
+        {headerButtons}
+        <SearchBar
+          value={searchTerm}
+          placeholder={searchPlaceholder}
+          onChange={onSearchChange}
+          data-cy={`${dataCy}-search`}
+          className={clsx(
+            'rounded-md border border-solid border-gray-4',
+            'bg-white py-2 pl-9 pr-3 text-sm text-gray-10 placeholder-gray-6',
+            'focus:border-blue-6 focus:outline-none',
+            'th-dark:border-gray-7 th-dark:bg-gray-iron-10 th-dark:text-white th-dark:placeholder-gray-7',
+            'th-highcontrast:border-white th-highcontrast:bg-black th-highcontrast:text-white th-highcontrast:placeholder-gray-4 th-highcontrast:focus:border-blue-8'
+          )}
+        />
+        {actionButton}
+      </div>
+    </div>
+  );
+}

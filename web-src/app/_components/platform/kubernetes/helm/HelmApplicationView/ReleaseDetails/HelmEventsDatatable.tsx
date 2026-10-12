@@ -6,12 +6,11 @@ import {
   EventsDatatable,
   useEvents,
 } from '@/domains/clusters';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useTableState } from '@/ui/components/data-table/useTableState';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { GenericResource } from '@/domains/configuration/helm/types';
-
-import { Widget } from '@@/Widget';
+import { Widget } from '@/ui/components/Widget';
 
 
 export const storageKey = 'k8sHelmEventsDatatable';

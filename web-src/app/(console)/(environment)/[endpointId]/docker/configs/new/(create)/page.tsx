@@ -1,15 +1,15 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { withError } from '@/core/query';
 import { CreateConfigForm } from '@/domains/services/configs/CreateView/CreateView';
 import { ConfigViewModel } from '@/domains/services/configs/model';
 import { queryKeys } from '@/domains/services/configs/queries/query-keys';
 import { getConfig } from '@/domains/services/configs/queries/useConfig';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useCurrentUser, useIsEdgeAdmin } from '@/core/session/useUser';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

@@ -1,0 +1,32 @@
+import axios, { parseAxiosError } from '@/shared/http';
+import { EnvironmentId } from '@/domains/environments';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
+
+import { withAgentTargetHeader } from '../utils';
+
+/**
+ * Raw docker API proxy
+ * @param environmentId
+ * @param file
+ * @returns
+ */
+export async function uploadImages(
+  environmentId: EnvironmentId,
+  file: File,
+  { nodeName }: { nodeName?: string } = {}
+) {
+  try {
+    return await axios.post(
+      buildDockerProxyUrl(environmentId, 'images', 'load'),
+      file,
+      {
+        headers: {
+          'Content-Type': file.type, // 'application/x-tar',
+          ...withAgentTargetHeader(nodeName),
+        },
+      }
+    );
+  } catch (e) {
+    throw parseAxiosError(e, 'Unable to upload image');
+  }
+}

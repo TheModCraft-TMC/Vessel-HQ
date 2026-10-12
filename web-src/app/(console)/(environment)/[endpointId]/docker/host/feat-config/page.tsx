@@ -1,7 +1,7 @@
 'use client';
 
-import { FeaturesForm } from '@/react/docker/host/FeaturesConfigurationView/FeaturesConfigurationView';
-import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
+import { FeaturesForm } from '@/core/docker/host/FeaturesConfigurationView/FeaturesConfigurationView';
+import { useCurrentEnvironment } from '@/core/composition/useCurrentEnvironment';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

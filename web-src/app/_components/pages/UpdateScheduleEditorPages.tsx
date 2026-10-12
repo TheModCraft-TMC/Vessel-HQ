@@ -5,36 +5,35 @@ import { Settings } from 'lucide-react';
 import { Formik, Form as FormikForm, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
 import { object, SchemaOf } from 'yup';
+import { Link } from '@console/navigation/Link';
 
 import { EdgeGroup } from '@/domains/edge/models/edge-group';
 import { useEdgeGroups } from '@/domains/edge/queries/edge-groups/useEdgeGroups';
 import { EdgeGroupsField } from '@/domains/edge/views/environments/EdgeGroupsField/EdgeGroupsField';
-import { BetaAlert } from '@/react/portainer/environments/update-schedules/common/BetaAlert';
-import { FormValues } from '@/react/portainer/environments/update-schedules/common/types';
+import { BetaAlert } from '@/core/environment-management/update-schedules/common/BetaAlert';
+import { FormValues } from '@/core/environment-management/update-schedules/common/types';
 import {
   NameField,
   nameValidation,
-} from '@/react/portainer/environments/update-schedules/common/NameField';
-import { ScheduleTypeSelector } from '@/react/portainer/environments/update-schedules/common/ScheduleTypeSelector';
-import { defaultValue } from '@/react/portainer/environments/update-schedules/common/ScheduledTimeField';
-import { validation } from '@/react/portainer/environments/update-schedules/common/validation';
-import { useCreateMutation } from '@/react/portainer/environments/update-schedules/queries/create';
-import { useList } from '@/react/portainer/environments/update-schedules/queries/list';
-import { useItem } from '@/react/portainer/environments/update-schedules/queries/useItem';
-import { useUpdateMutation } from '@/react/portainer/environments/update-schedules/queries/useUpdateMutation';
+} from '@/core/environment-management/update-schedules/common/NameField';
+import { ScheduleTypeSelector } from '@/core/environment-management/update-schedules/common/ScheduleTypeSelector';
+import { defaultValue } from '@/core/environment-management/update-schedules/common/ScheduledTimeField';
+import { validation } from '@/core/environment-management/update-schedules/common/validation';
+import { useCreateMutation } from '@/core/environment-management/update-schedules/queries/create';
+import { useList } from '@/core/environment-management/update-schedules/queries/list';
+import { useItem } from '@/core/environment-management/update-schedules/queries/useItem';
+import { useUpdateMutation } from '@/core/environment-management/update-schedules/queries/useUpdateMutation';
 import {
   EdgeUpdateResponse,
   EdgeUpdateSchedule,
   ScheduleType,
-} from '@/react/portainer/environments/update-schedules/types';
+} from '@/core/environment-management/update-schedules/types';
 import { LoadingButton } from '@/ui/components/buttons';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
-import { Link } from '@/ui/components/links/Link';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { InformationPanel } from '@@/InformationPanel';
-import { Widget } from '@@/Widget';
+import { InformationPanel } from '@/ui/components/feedback/InformationPanel';
+import { Widget } from '@/ui/components/Widget';
 
 export function UpdateScheduleCreateContent() {
   const initialValues = useMemo<FormValues>(

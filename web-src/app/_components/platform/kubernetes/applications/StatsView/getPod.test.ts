@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-import { server } from '@/setup-tests/server';
+import { server } from '@/core/test-support/setup/server';
 
 import { getPod } from './getPod';
 

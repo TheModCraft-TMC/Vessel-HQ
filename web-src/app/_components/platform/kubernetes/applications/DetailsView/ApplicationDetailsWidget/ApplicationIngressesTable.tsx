@@ -1,11 +1,11 @@
 import { Service } from 'kubernetes-types/core/v1';
 import { useMemo } from 'react';
+import { Link } from '@console/navigation/Link';
 
 import { EnvironmentId } from '@/domains/environments';
 import { useIngresses } from '@/domains/ingress';
 import type { Ingress } from '@/domains/ingress';
-import { Authorized } from '@/react/hooks/useUser';
-import { Link } from '@/ui/components/links/Link';
+import { Authorized } from '@/core/session/useUser';
 
 type Props = {
   environmentId: EnvironmentId;

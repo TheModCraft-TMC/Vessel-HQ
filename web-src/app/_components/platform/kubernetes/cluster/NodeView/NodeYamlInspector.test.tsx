@@ -40,7 +40,7 @@ vi.mock('@/domains/clusters/cluster/queries/useNodeQuery', () => ({
 }));
 
 // Mock the useAuthorizations hook
-vi.mock('@/react/hooks/useUser', () => ({
+vi.mock('@/core/session/useUser', () => ({
   useAuthorizations: vi.fn(() => ({
     authorized: true,
     isLoading: false,
@@ -54,7 +54,7 @@ vi.mock('@/ui/components/dialog/confirm', () => ({
 }));
 
 // Mock the Widget components
-vi.mock('@@/Widget', () => ({
+vi.mock('@/ui/components/Widget', () => ({
   Widget: ({ children }: { children: React.ReactNode }) => (
     <div data-cy="widget">{children}</div>
   ),

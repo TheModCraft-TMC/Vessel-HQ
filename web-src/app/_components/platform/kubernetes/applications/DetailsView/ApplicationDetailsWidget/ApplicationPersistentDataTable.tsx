@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { Asterisk, Box, Boxes, Database } from 'lucide-react';
 import { Container, Pod, Volume } from 'kubernetes-types/core/v1';
 import { StatefulSet } from 'kubernetes-types/apps/v1';
+import { Link } from '@console/navigation/Link';
 
 import { EnvironmentId } from '@/domains/environments';
 import { Icon } from '@/ui/components/icons/Icon';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
-import { Link } from '@/ui/components/links/Link';
 import { Application } from '@/domains/applications/applications/types';
 import { applicationIsKind } from '@/domains/applications/applications/utils';
 import { useApplicationPods } from '@/domains/applications/applications/queries/useApplicationPods';

@@ -4,6 +4,9 @@ This directory is the maintenance handoff for behavior added by this fork. It ex
 
 ## Contents
 
+- [Future add-on and plugin system](../planning/plugin-system.md): companion applications, scoped capabilities, deployment lifecycle, and explicit UI slots; not implemented.
+- [Migration changes and draft commit message](../planning/migration-change-summary.md): living finalization handoff and verification record.
+
 - [Feature planning backlog](../planning/README.md): one-month discovery backlog, scoring rubric, and planning-ready gate for possible future fork features.
 - [Vessel HQ product and architecture roadmap](../planning/vessel-hq-roadmap.md): completed migration baseline, repository and image policy, React domain architecture, deeper rebranding, component adoption, and homelab-first responsive plans.
 - [Frontend module architecture](../planning/frontend-architecture.md): enforced boundaries and the incremental domain-slice migration procedure.

@@ -1,0 +1,28 @@
+import { ImageInspect } from '@/providers/infrastructure/docker';
+import axios, { parseAxiosError } from '@/shared/http';
+import { EnvironmentId } from '@/domains/environments';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
+
+import { withAgentTargetHeader } from '../utils';
+
+/**
+ * Raw docker API proxy
+ * @param environmentId
+ * @param id
+ * @returns
+ */
+export async function getImage(
+  environmentId: EnvironmentId,
+  id: Required<ImageInspect['Id']>,
+  { nodeName }: { nodeName?: string } = {}
+) {
+  try {
+    const { data } = await axios.get<ImageInspect>(
+      buildDockerProxyUrl(environmentId, 'images', id, 'json'),
+      { headers: { ...withAgentTargetHeader(nodeName) } }
+    );
+    return data;
+  } catch (e) {
+    throw parseAxiosError(e, 'Unable to retrieve image');
+  }
+}

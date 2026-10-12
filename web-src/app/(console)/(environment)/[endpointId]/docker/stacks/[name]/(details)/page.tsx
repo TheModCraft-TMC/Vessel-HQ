@@ -2,18 +2,18 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
+import { useStack } from '@/domains/stacks/queries/common/useStack';
 import { StackContainersDatatable } from '@/domains/stacks/views/ItemView/StackContainersDatatable';
 import { StackDetails } from '@/domains/stacks/views/ItemView/StackDetails';
 import { StackServicesDatatable } from '@/domains/stacks/views/ItemView/StackServicesDatatable';
 import { useUpdateStackResourcesOnDeployment } from '@/domains/stacks/views/ItemView/useUpdateStackResourcesOnDeployment';
-import { useStack } from '@/domains/stacks/queries/common/useStack';
 import { queryKeys } from '@/domains/stacks/queries/common/query-keys';
 import { Stack, StackType } from '@/domains/stacks/models/types';
-import { AccessControlPanel } from '@/react/portainer/access-control';
-import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
+import { AccessControlPanel } from '@/core/access-control';
+import { ResourceControlViewModel } from '@/domains/access-control/ResourceControlViewModel';
+import { ResourceControlType } from '@/domains/access-control/types';
 import { notifyError } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
 

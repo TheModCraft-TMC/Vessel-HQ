@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
 import type { Clipboard } from 'lucide-react';
 
-import { isoDate } from '@/portainer/filters/filters';
+import { isoDate } from '@/shared/formatters';
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
-
-import { DetailsTable } from '@@/DetailsTable';
+import { DetailsTable } from '@/ui/components/DetailsTable';
 
 export function DockerObjectDetails({
   icon,

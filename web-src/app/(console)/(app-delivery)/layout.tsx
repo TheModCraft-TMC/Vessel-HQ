@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { SectionLayout } from '@console/console/SectionLayout';
+import { SectionLayout } from '@console/SectionLayout';
 
 export default function AppDeliveryLayout({
   children,

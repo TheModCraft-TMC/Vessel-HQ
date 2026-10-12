@@ -1,0 +1,27 @@
+import axios, { parseAxiosError } from '@/shared/http';
+import { EnvironmentId } from '@/domains/environments';
+import { ImageId, ImageName } from '@/domains/images';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
+
+/**
+ * Raw docker API proxy
+ * @param environmentId
+ * @param id
+ * @param force
+ * @returns
+ */
+export async function removeImage(
+  environmentId: EnvironmentId,
+  id: ImageId | ImageName,
+  force?: boolean
+) {
+  try {
+    const { data } = await axios.delete(
+      buildDockerProxyUrl(environmentId, 'images', id),
+      { params: { force } }
+    );
+    return data;
+  } catch (e) {
+    throw parseAxiosError(e, 'Unable to remove image');
+  }
+}

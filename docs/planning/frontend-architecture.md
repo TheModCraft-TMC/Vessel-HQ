@@ -2,26 +2,26 @@
 
 Status: accepted migration contract as of September 21, 2026; destination terminology is defined by [Frontend domain and provider architecture](frontend-domain-provider-architecture.md).
 
-This document defines the incremental destination for the React frontend. It does not require a big-bang move of the existing `app/react` tree. New slices use the destination structure, and existing domains move one complete workflow at a time.
+This document defines the destination for the React frontend. Next.js routes remain in the reserved `web-src/app` tree; application modules live in the sibling canonical roots below.
 
 ## Module map
 
-| Path                                      | Responsibility                                                             | May depend on                                                                   |
-| ----------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `app/core`                                | Application boot, composition, routing, session, and realtime coordination | Public domain APIs, UI, shared contracts, and transitional legacy registrations |
-| `app/ui`                                  | Vessel HQ tokens, layouts, and reusable presentation primitives            | Shared contracts and external UI libraries                                      |
-| `app/domains/<domain>`                    | A product domain's routes, views, and vertical slice                       | Core contracts, UI, shared contracts, and public provider/domain APIs           |
-| `app/providers/infrastructure/<provider>` | Execution-environment and orchestrator adapters                            | Shared contracts and external SDKs                                              |
-| `app/providers/remotes/<provider>`        | Registry and external artifact-source adapters                             | Shared contracts and external SDKs                                              |
+| Path                                          | Responsibility                                                             | May depend on                                                         |
+| --------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `web-src/core`                                | Application boot, composition, routing, session, and realtime coordination | Public domain APIs, UI, and shared contracts                           |
+| `web-src/ui`                                  | Vessel HQ tokens, layouts, and reusable presentation primitives            | Shared contracts and external UI libraries                            |
+| `web-src/domains/<domain>`                    | A product domain's routes, views, and vertical slice                       | Core contracts, UI, shared contracts, and public provider/domain APIs |
+| `web-src/providers/infrastructure/<provider>` | Execution-environment and orchestrator adapters                            | Shared contracts and external SDKs                                              |
+| `web-src/providers/remotes/<provider>`        | Registry and external artifact-source adapters                             | Shared contracts and external SDKs                                              |
 
-The current boot and routing implementation lives in `app/core`. The application shell and reusable presentation converge under `app/ui`. Existing route registrars and sidebar code remain transitional dependencies until their owning domain slices move; moving their files without their routes, queries, and tests would only disguise the old coupling.
+Boot, routing, and stateful application-shell coordination live in `web-src/core`; the current console shell is grouped under `web-src/core/console`. Reusable, application-independent presentation lives under `web-src/ui`. Generic helpers belong in `web-src/shared` only when they are dependency-light and have proven owners in more than one domain; feature-specific helpers stay with their domain. Repository and build automation stays in the top-level `scripts` directory because it is not browser application code.
 
 ## Domain contract
 
 A domain can contain the sections it needs:
 
 ```text
-app/domains/containers/
+web-src/domains/containers/
   index.ts
   views/
   components/
@@ -34,23 +34,23 @@ app/domains/containers/
 ```
 
 - `index.ts` is the only cross-domain API. Another domain must not import a private subpath.
-- Migrated domains do not add dependencies on the transitional legacy tree. A behavior-preserving first move may snapshot unavoidable dependencies in `legacy-imports.json`; its exact module allowlist and import budget must move downward in later changes.
+- Domains cannot depend on source outside the canonical architecture roots.
 - Views own route-level composition, permissions, loading, and error states. `pages` is superseded terminology because the same surface may run in a browser, desktop shell, or embedded application.
 - Components are presentation-focused. Remote state and behavior arrive through explicit props.
 - Services contain domain operations. Provider clients own platform-native transport, DTOs, and error normalization. Neither imports React, Zustand, React Query, or React-facing domain sections.
 - Queries adapt services to React Query and own query keys, caching, mutation invalidation, and realtime invalidation.
 - Models remain dependency-light and distinguish transport DTOs from normalized domain or view models when those shapes differ.
 - Mappers translate provider DTOs into domain contracts so provider-native shapes do not leak into views.
-- A domain-private component stays private until at least one stable cross-domain use case justifies promotion to `app/ui`.
+- A domain-private component stays private until at least one stable cross-domain use case justifies promotion to `web-src/ui`.
 
 ## Automated enforcement
 
 `pnpm check:frontend-boundaries` scans JavaScript and TypeScript source under the destination roots. It rejects:
 
 - relative imports that cross architecture layers;
-- application or legacy dependencies from shared UI;
+- application dependencies from shared UI;
 - imports into another domain or provider's private files;
-- new imports from migrated domains into the transitional legacy tree, plus stale or increased migration allowlists;
+- imports from domains into source outside the canonical architecture roots;
 - private domain imports from core or UI;
 - query, service, hook, or view dependencies from presentation components;
 - provider imports from domain views, components, hooks, queries, or routes;

@@ -14,7 +14,7 @@ import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 
 export default defineConfig([
-  globalIgnores(['**/node_modules/', '**/.next/', '**/dist/', '**/test/', '.storybook/public/', 'coverage', 'web-src/legacy/react/portainer/generated-api/']),
+  globalIgnores(['**/node_modules/', '**/.next/', '**/dist/', '**/test/', '.storybook/public/', 'coverage', 'web-src/core/generated-api/']),
 
   js.configs.recommended,
 
@@ -86,8 +86,7 @@ export default defineConfig([
       'import/resolver': {
         alias: {
           map: [
-            ['@@', './web-src/legacy/react/components'],
-            ['@', './web-src/legacy'],
+            ['@', './web-src'],
             ['@app', './web-src/app'],
           ],
           extensions: ['.js', '.ts', '.tsx'],
@@ -290,7 +289,7 @@ export default defineConfig([
   },
 
   {
-    files: ['web-src/legacy/__mocks__/**'],
+    files: ['web-src/__mocks__/**'],
     rules: {
       // Module mocks are intentionally empty stubs
       'no-empty-function': 'off',

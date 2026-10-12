@@ -1,9 +1,9 @@
 import { Pod } from 'kubernetes-types/core/v1';
 import { Asterisk, File, FileCode, Key, Lock } from 'lucide-react';
+import { Link } from '@console/navigation/Link';
 
 import { Icon } from '@/ui/components/icons/Icon';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
-import { Link } from '@/ui/components/links/Link';
 import { Application } from '@/domains/applications/applications/types';
 import { applicationIsKind } from '@/domains/applications/applications/utils';
 

@@ -8,7 +8,7 @@ The destination is domain-first. React is an implementation detail, Portainer is
 
 ## Superseded feature-era checkpoint
 
-The following tree records the first migration checkpoint. Its `features`, `pages`, `design-system`, and top-level `layouts` names are superseded. The canonical destination is now `app/domains`, `app/providers`, and `app/ui`, with route-level UI named `views`; see [Frontend domain and provider architecture](frontend-domain-provider-architecture.md).
+The following tree records the first migration checkpoint. Its `features`, `pages`, `design-system`, and top-level `layouts` names are superseded. The canonical destination is now `web-src/domains`, `web-src/providers`, and `web-src/ui`, with route-level UI named `views`; see [Frontend domain and provider architecture](frontend-domain-provider-architecture.md).
 
 ```text
 app/
@@ -43,12 +43,12 @@ app/
   test-support/                 test-only providers, fixtures, and mocks
 ```
 
-At this checkpoint, `shared` and `test-support` were destinations rather than dumping grounds. That ownership rule remains: a module stays with its owning domain until a stable multi-domain use case exists. Reusable visual primitives now converge in `app/ui`; application lifecycle belongs in `app/core`; external-system adapters belong in `app/providers`.
+At this checkpoint, `shared` and `test-support` were destinations rather than dumping grounds. That ownership rule remains: a module stays with its owning domain until a stable multi-domain use case exists. Reusable visual primitives now converge in `web-src/ui`; application lifecycle belongs in `web-src/core`; external-system adapters belong in `web-src/providers`.
 
 ## Canonical domain shape
 
 ```text
-app/domains/<domain>/
+web-src/domains/<domain>/
   index.ts                      public API; the only cross-domain entry point
   routes.ts                     route registration and lazy views
   views/                        route-level application composition
@@ -62,7 +62,7 @@ app/domains/<domain>/
   legacy-imports.json           temporary, exact dependency-reduction ratchet
 ```
 
-Folders are created only when a domain needs them. Existing route-level names may remain during the first behavior-preserving move, then converge on `views` when the complete domain is touched. Provider clients, native DTOs, capability detection, and provider-specific errors use the corresponding `app/providers/infrastructure/<provider>` or `app/providers/remotes/<provider>` boundary.
+Folders are created only when a domain needs them. Existing route-level names may remain during the first behavior-preserving move, then converge on `views` when the complete domain is touched. Provider clients, native DTOs, capability detection, and provider-specific errors use the corresponding `web-src/providers/infrastructure/<provider>` or `web-src/providers/remotes/<provider>` boundary.
 
 ## Dependency direction
 
@@ -84,21 +84,21 @@ ui -X-> domains, providers, or legacy app code
 
 | Legacy source                                           | Destination                                                                                                              | Strategy                                                                                                        |
 | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `app/react/portainer/auth` + authentication routes      | `app/domains/auth`                                                                                                       | Complete structural move; all consumers use its public API and its frozen legacy budget can only decrease.      |
-| `app/react/azure` + `app/azure`                         | Product domains plus `app/providers/infrastructure/azure-aci`                                                            | Split workflows and views from Azure transport, DTOs, capability handling, and mapping.                         |
-| `app/react/docker/containers` + container routes        | `app/domains/containers` plus `app/providers/infrastructure/docker`                                                      | Keep container intent provider-neutral while moving Docker Engine details behind the provider API.              |
-| `app/react/portainer/environments/types.ts`             | `app/domains/environments`                                                                                               | Shared contract extracted; all consumers use the public API while queries, services, routes, and views migrate. |
-| Remaining `app/react/docker/*` + `app/docker/*`         | Docker domains plus `app/providers/infrastructure/docker`                                                                | Move one complete workflow at a time; do not create a product-domain umbrella named for Docker.                 |
-| `app/react/edge` + `app/edge`                           | Product domains plus `app/providers/infrastructure/edge-agent`                                                           | Separate device, group, job, and stack workflows from agent communication.                                      |
-| `app/react/kubernetes` + `app/kubernetes`               | Product domains plus `app/providers/infrastructure/kubernetes`                                                           | Separate application intent and views from Kubernetes-native communication and DTOs.                            |
+| `app/react/portainer/auth` + authentication routes      | `web-src/domains/auth`                                                                                                       | Complete structural move; all consumers use its public API and its frozen legacy budget can only decrease.      |
+| `app/react/azure` + `app/azure`                         | Product domains plus `web-src/providers/infrastructure/azure-aci`                                                            | Split workflows and views from Azure transport, DTOs, capability handling, and mapping.                         |
+| `app/react/docker/containers` + container routes        | `web-src/domains/containers` plus `web-src/providers/infrastructure/docker`                                                      | Keep container intent provider-neutral while moving Docker Engine details behind the provider API.              |
+| `app/react/portainer/environments/types.ts`             | `web-src/domains/environments`                                                                                               | Shared contract extracted; all consumers use the public API while queries, services, routes, and views migrate. |
+| Remaining `app/react/docker/*` + `app/docker/*`         | Docker domains plus `web-src/providers/infrastructure/docker`                                                                | Move one complete workflow at a time; do not create a product-domain umbrella named for Docker.                 |
+| `app/react/edge` + `app/edge`                           | Product domains plus `web-src/providers/infrastructure/edge-agent`                                                           | Separate device, group, job, and stack workflows from agent communication.                                      |
+| `app/react/kubernetes` + `app/kubernetes`               | Product domains plus `web-src/providers/infrastructure/kubernetes`                                                           | Separate application intent and views from Kubernetes-native communication and DTOs.                            |
 | `app/react/portainer/*` + `app/portainer/*`             | Product domains such as `environments`, `users`, `teams`, `registries`, `settings`, `templates`, `account`, and `gitops` | Never create `domains/portainer`; the upstream brand is not a domain.                                           |
-| Registry-native services and types                      | `app/providers/remotes/<provider>`                                                                                       | Normalize Docker Hub, GHCR, ECR, ACR, Quay, and Harbor behavior behind explicit adapter APIs.                   |
-| `app/react/components`                                  | `app/ui/components` or the owning domain                                                                                 | Promote only genuinely reusable presentation.                                                                   |
+| Registry-native services and types                      | `web-src/providers/remotes/<provider>`                                                                                       | Normalize Docker Hub, GHCR, ECR, ACR, Quay, and Harbor behavior behind explicit adapter APIs.                   |
+| `app/react/components`                                  | `web-src/ui/components` or the owning domain                                                                                 | Promote only genuinely reusable presentation.                                                                   |
 | `app/react/hooks`, `common`, `utils`, and `react-tools` | `core`, `shared`, `test-support`, or the owning domain                                                                   | Decide by responsibility, not by file type.                                                                     |
 
 ## Execution order
 
-1. Rename accepted feature-era checkpoints to `app/domains`, update imports and enforcement, and continue dependency reduction without behavior changes.
+1. Rename accepted feature-era checkpoints to `web-src/domains`, update imports and enforcement, and continue dependency reduction without behavior changes.
 2. Continue extracting environment and access-control contracts because most other domains depend on them.
 3. Migrate Docker workflows individually, starting with the lowest-coupled domain.
 4. Migrate account, users, teams, registries, templates, settings, and GitOps out of the Portainer umbrella.

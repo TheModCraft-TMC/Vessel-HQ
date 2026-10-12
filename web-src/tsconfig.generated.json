@@ -16,10 +16,10 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["legacy/*"]
+      "@/*": ["./*"]
     },
     "lib": ["dom", "dom.iterable", "esnext"]
   },
-  "include": ["legacy/react/portainer/generated-api"],
+  "include": ["core/generated-api"],
   "exclude": ["node_modules"]
 }

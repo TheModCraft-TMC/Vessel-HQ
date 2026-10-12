@@ -1,19 +1,20 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { Box, Database, Search, Settings } from 'lucide-react';
+import { Link } from '@console/navigation/Link';
 
-import { VolumeViewModel } from '@/domains/volumes/models/volume';
-import { isoDate } from '@/portainer/filters/filters';
-import { notifySuccess } from '@/ui/components/toast/notifications';
 import { useContainers } from '@/domains/containers';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { Authorized, useCurrentUser } from '@/react/hooks/useUser';
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
-import { useEnvironment } from '@/react/portainer/environments/queries';
-import { isAgentEnvironment } from '@/react/portainer/environments/utils';
+import { VolumeViewModel } from '@/domains/volumes/models/volume';
+import { isoDate } from '@/shared/formatters';
+import { notifySuccess } from '@/ui/components/toast/notifications';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { Authorized, useCurrentUser } from '@/core/session/useUser';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel';
+import { ResourceControlType } from '@/domains/access-control';
+import { useEnvironment } from '@/domains/environments';
+import { isAgentEnvironment } from '@/domains/environments/utils';
 import { withError } from '@/core/query';
 import { queryKeys } from '@/domains/volumes/queries/query-keys';
 import { getVolume } from '@/domains/volumes/services/volume.service';
@@ -21,11 +22,9 @@ import { removeVolume } from '@/domains/volumes/services/remove-volume.service';
 import { toVolume } from '@/domains/volumes/mappers/volume';
 import { Button } from '@/ui/components/buttons';
 import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
-import { Link } from '@/ui/components/links/Link';
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
-
-import { DetailsTable } from '@@/DetailsTable';
+import { DetailsTable } from '@/ui/components/DetailsTable';
 
 export function ItemView() {
   return (

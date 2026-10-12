@@ -1,6 +1,6 @@
 import { Taint } from 'kubernetes-types/core/v1';
 
-import { KubernetesPodNodeAffinityNodeSelectorRequirementOperators } from '@/kubernetes/pod/models';
+import { KubernetesPodNodeAffinityNodeSelectorRequirementOperators } from '@/core/kubernetes/pod/models';
 
 export interface Label {
   key: string;

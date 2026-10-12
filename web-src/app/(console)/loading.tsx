@@ -1,4 +1,4 @@
-import { PortainerPageLoading } from '@console/console/PortainerPageLoading';
+import { PortainerPageLoading } from '@console/PortainerPageLoading';
 
 export default function Loading() {
   return <PortainerPageLoading />;

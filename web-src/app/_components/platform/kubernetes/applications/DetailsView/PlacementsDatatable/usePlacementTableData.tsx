@@ -3,7 +3,7 @@ import { Pod, Taint, Node } from 'kubernetes-types/core/v1';
 import _ from 'lodash';
 
 import { useApplicationRouteParams } from '@/domains/applications/applications/useApplicationRouteParams';
-import { KubernetesPodNodeAffinityNodeSelectorRequirementOperators } from '@/kubernetes/pod/models';
+import { KubernetesPodNodeAffinityNodeSelectorRequirementOperators } from '@/core/kubernetes/pod/models';
 import { useNodesQuery } from '@/domains/clusters';
 import {
   BasicTableSettings,

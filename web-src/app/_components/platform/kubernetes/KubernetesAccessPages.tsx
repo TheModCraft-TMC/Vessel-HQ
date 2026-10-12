@@ -1,13 +1,12 @@
 'use client';
 
 import { Code, User } from 'lucide-react';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { ServiceAccountDetailsWidget } from '@/domains/kubernetes-access/more-resources/ServiceAccountsView/ItemView/ServiceAccountDetailsWidget';
 import { ServiceAccountYAMLEditor } from '@/domains/kubernetes-access/more-resources/ServiceAccountsView/ItemView/ServiceAccountYAMLEditor';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { Tab, useCurrentTabIndex, WidgetTabs } from '@@/Widget/WidgetTabs';
+import { Tab, useCurrentTabIndex, WidgetTabs } from '@/ui/components/Widget/WidgetTabs';
 
 export function KubernetesRegistryAccessHeader() {
   const params = useRouteParams();

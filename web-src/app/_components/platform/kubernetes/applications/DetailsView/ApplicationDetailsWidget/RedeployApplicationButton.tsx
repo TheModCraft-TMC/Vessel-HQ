@@ -7,7 +7,7 @@ import {
   notifySuccess,
   notifyError,
 } from '@/ui/components/toast/notifications';
-import { Authorized } from '@/react/hooks/useUser';
+import { Authorized } from '@/core/session/useUser';
 import { confirm } from '@/ui/components/dialog/confirm';
 import { ModalType } from '@/ui/components/dialog';
 import { buildConfirmButton } from '@/ui/components/dialog/utils';

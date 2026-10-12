@@ -1,7 +1,7 @@
 'use client';
 
 import { AlertTriangle, Code, History, Layers } from 'lucide-react';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import {
   ResourceEventsDatatable,
@@ -15,14 +15,13 @@ import { CreateNamespaceForm } from '@/domains/namespaces/namespaces/CreateView/
 import { NamespaceAppsDatatable } from '@/domains/namespaces/namespaces/ItemView/NamespaceAppsDatatable';
 import { UpdateNamespaceForm } from '@/domains/namespaces/namespaces/ItemView/UpdateNamespaceForm';
 import { NamespaceYAMLEditor } from '@/domains/namespaces/namespaces/components/NamespaceYamlEditor';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useUnauthorizedRedirect } from '@/react/hooks/useUnauthorizedRedirect';
-import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useUnauthorizedRedirect } from '@/core/routing/useUnauthorizedRedirect';
+import { isBE } from '@/shared/feature-flags/feature-flags.service';
 import { Icon } from '@/ui/components/icons/Icon';
 import { Badge } from '@/ui/components/status/Badge';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-
-import { Tab, useCurrentTabIndex, WidgetTabs } from '@@/Widget/WidgetTabs';
+import { Tab, useCurrentTabIndex, WidgetTabs } from '@/ui/components/Widget/WidgetTabs';
 
 export function KubernetesNamespaceCreateContent() {
   const environmentId = useEnvironmentId();

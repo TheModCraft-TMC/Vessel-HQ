@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback } from 'react';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
+import { PageContent } from '@console/layout/PageContent';
 
+import { useContainer } from '@/domains/containers/queries/useContainer';
 import type { ContainerDetails } from '@/domains/containers/models';
 import { ContainerActionsSection } from '@/domains/containers/components/ContainerDetails/ContainerActionsSection/ContainerActionsSection';
 import { ContainerStatusSection } from '@/domains/containers/components/ContainerDetails/ContainerStatusSection/ContainerStatusSection';
@@ -11,14 +13,13 @@ import { ContainerDetailsSection } from '@/domains/containers/components/Contain
 import { VolumesSection } from '@/domains/containers/components/ContainerDetails/VolumesSection/VolumesSection';
 import { ContainerNetworksDatatable } from '@/domains/containers/components/ContainerDetails/ContainerNetworksDatatable';
 import { HealthStatus } from '@/domains/containers/components/ContainerDetails/HealthStatus';
-import { useContainer } from '@/domains/containers/queries/useContainer';
-import { Registry } from '@/domains/registries';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel';
-import { ResourceControlType } from '@/react/portainer/access-control/types';
-import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
-
-import { findBestMatchRegistry } from '@@/ImageConfigFieldset/findRegistryMatch';
+import type { Registry } from '@/domains/registries/models/registry';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel';
+import { ResourceControlType } from '@/domains/access-control/types';
+import { useEnvironmentRegistries } from '@/domains/environments/queries/useEnvironmentRegistries';
+import { findBestMatchRegistry } from '@/domains/images/features/ImageConfigFieldset/findRegistryMatch';
+import { ViewLoading } from '@/ui/components/feedback/ViewLoading';
 
 export default function Page() {
   const environmentId = useEnvironmentId();
@@ -32,11 +33,11 @@ export default function Page() {
     await containerQuery.refetch();
   }, [containerQuery]);
 
-  if (
-    containerQuery.isLoading ||
-    !containerQuery.data ||
-    !registriesQuery.data
-  ) {
+  if (containerQuery.isLoading || registriesQuery.isLoading) {
+    return <ViewLoading message="Loading container details..." />;
+  }
+
+  if (!containerQuery.data || !registriesQuery.data) {
     return null;
   }
 
@@ -44,22 +45,20 @@ export default function Page() {
   const registryId = getRegistryId(container, registriesQuery.data);
 
   return (
-    <>
-      <div className="mx-4 mb-4 space-y-4 [&>*]:block">
-        <ContainerActionsSection
-          environmentId={environmentId}
-          nodeName={nodeName}
-          container={container}
-        />
-        <ContainerStatusSection
-          environmentId={environmentId}
-          nodeName={nodeName}
-          container={container}
-          registryId={registryId}
-        />
-      </div>
-
+    <PageContent>
+      <ContainerActionsSection
+        environmentId={environmentId}
+        nodeName={nodeName}
+        container={container}
+      />
+      <ContainerStatusSection
+        environmentId={environmentId}
+        nodeName={nodeName}
+        container={container}
+        registryId={registryId}
+      />
       <AccessControlPanel
+        flush
         resourceId={container.Id || ''}
         resourceControl={container.ResourceControl}
         resourceType={ResourceControlType.Container}
@@ -68,30 +67,29 @@ export default function Page() {
       />
 
       {container.State?.Health && (
-        <HealthStatus health={container.State.Health} />
+        <HealthStatus flush health={container.State.Health} />
       )}
 
-      <div className="mx-4 mb-4 space-y-4 [&>*]:block">
-        <CreateImageSection
-          environmentId={environmentId}
-          containerId={container.Id || ''}
-        />
-        <ContainerDetailsSection
-          environmentId={environmentId}
-          container={container}
-          nodeName={nodeName}
-        />
-        <VolumesSection volumes={container.Mounts} nodeName={nodeName} />
-      </div>
+      <CreateImageSection
+        environmentId={environmentId}
+        containerId={container.Id || ''}
+      />
+      <ContainerDetailsSection
+        environmentId={environmentId}
+        container={container}
+        nodeName={nodeName}
+      />
+      <VolumesSection volumes={container.Mounts} nodeName={nodeName} />
 
       {container.NetworkSettings?.Networks && (
         <ContainerNetworksDatatable
+          flush
           dataset={container.NetworkSettings.Networks}
           containerId={containerId}
           nodeName={nodeName}
         />
       )}
-    </>
+    </PageContent>
   );
 }
 

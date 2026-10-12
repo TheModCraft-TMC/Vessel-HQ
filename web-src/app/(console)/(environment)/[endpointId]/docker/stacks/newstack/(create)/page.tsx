@@ -4,11 +4,12 @@ import { useMemo, useState } from 'react';
 import { Formik } from 'formik';
 import { usePathname, useRouter } from 'next/navigation';
 import uuidv4 from 'uuid/v4';
-import { buildHref } from '@console/console/routing/buildHref';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { buildHref } from '@console/routing/buildHref';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
-import type { EnvironmentId } from '@/domains/environments';
-import { getDefaultModel, type RelativePathModel } from '@/domains/gitops';
+import type { EnvironmentId } from '@/domains/environments/types';
+import type { RelativePathModel } from '@/domains/gitops/RelativePathFieldset/types';
+import { getDefaultModel } from '@/domains/gitops/types';
 import {
   type CreateStackPayload,
   useCreateStack,
@@ -20,13 +21,12 @@ import {
 import { CreateStackInnerForm } from '@/domains/stacks/views/CreateView/CreateStackForm/CreateStackInnerForm';
 import type { FormValues } from '@/domains/stacks/views/CreateView/CreateStackForm/types';
 import { useValidationSchema } from '@/domains/stacks/views/CreateView/CreateStackForm/useValidationSchema';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useCurrentUser, useIsEdgeAdmin } from '@/react/hooks/useUser';
-import { defaultValues } from '@/react/portainer/access-control/utils';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useCurrentUser, useIsEdgeAdmin } from '@/core/session/useUser';
+import { defaultValues } from '@/domains/access-control/utils';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { Widget } from '@@/Widget';
+import { Widget } from '@/ui/components/Widget';
 
 export default function Page() {
   const environmentId = useEnvironmentId();

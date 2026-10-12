@@ -1,9 +1,8 @@
-import { humanize } from '@/portainer/filters/filters';
-import { AgentHostInfo } from '@/react/docker/host/queries/useAgentHostInfo';
-
-import { Widget } from '@@/Widget/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+import { humanize } from '@/shared/formatters';
+import { AgentHostInfo } from '@/core/docker/host/queries/useAgentHostInfo';
+import { Widget } from '@/ui/components/Widget/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 
 
 export function DevicesPanel({

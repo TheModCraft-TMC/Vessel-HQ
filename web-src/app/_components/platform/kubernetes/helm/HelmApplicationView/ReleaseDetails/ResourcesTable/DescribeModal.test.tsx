@@ -7,7 +7,7 @@ import { DescribeModal } from './DescribeModal';
 const mockUseDescribeResource = vi.fn();
 
 // Mock the CodeEditor component instead of yaml-schema
-vi.mock('@@/CodeEditor', () => ({
+vi.mock('@/ui/components/CodeEditor', () => ({
   CodeEditor: ({
     value,
     'data-cy': dataCy,

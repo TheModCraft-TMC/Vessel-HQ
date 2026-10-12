@@ -1,24 +1,24 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useState, useEffect, useMemo, useCallback, ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { v4 as uuidv4 } from 'uuid';
 import { debounce } from 'lodash';
+import { Link } from '@console/navigation/Link';
 
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useK8sSecrets } from '@/domains/configuration';
 import {
   notifyError,
   notifySuccess,
 } from '@/ui/components/toast/notifications';
-import { useAuthorizations } from '@/react/hooks/useUser';
+import { useAuthorizations } from '@/core/session/useUser';
 import type { Annotation } from '@/domains/applications';
 import { prepareAnnotations } from '@/domains/clusters';
 import {
   useNamespaceAccessRedirect,
   useNamespacesQuery,
 } from '@/domains/namespaces';
-import { Link } from '@/ui/components/links/Link';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Option } from '@/ui/components/forms/Input/Select';
 import { Button } from '@/ui/components/buttons';

@@ -1,10 +1,10 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useQueryClient } from '@tanstack/react-query';
 
-import helm from '@/assets/ico/vendor/helm.svg?c';
+import helm from '@/shared/assets/ico/vendor/helm.svg?c';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { Authorized } from '@/react/hooks/useUser';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { Authorized } from '@/core/session/useUser';
 import {
   useNamespaceAccessRedirect,
   useIsSystemNamespace,
@@ -13,9 +13,8 @@ import { Alert } from '@/ui/components/feedback/Alert';
 import { HelmRelease } from '@/domains/configuration/helm/types';
 import { useHelmRelease } from '@/domains/configuration/helm/helmReleaseQueries/useHelmRelease';
 import { useHelmHistory } from '@/domains/configuration/helm/helmReleaseQueries/useHelmHistory';
-
-import { Card } from '@@/primitives/Card';
-import { WidgetTitle, WidgetBody, Widget, Loading } from '@@/Widget';
+import { Card } from '@/ui/components/primitives/Card';
+import { WidgetTitle, WidgetBody, Widget, Loading } from '@/ui/components/Widget';
 
 import { HelmSummary } from './HelmSummary';
 import { ReleaseTabs } from './ReleaseDetails/ReleaseTabs';

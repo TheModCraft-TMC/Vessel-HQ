@@ -14,7 +14,7 @@ const rules = [
   {
     id: 'APPROUTER001',
     name: 'Route pages must not use console bridge modules',
-    description: 'App Router pages must own their route composition instead of importing transitional @console/console/pages or @console/console/platform bridge modules.',
+    description: 'App Router pages must own their route composition instead of importing transitional @console/pages or @console/platform bridge modules.',
     cleanCodeAttribute: 'MODULAR',
     type: 'CODE_SMELL',
     severity: 'CRITICAL',
@@ -92,7 +92,7 @@ function inspectPage(file) {
       clause.namedBindings.elements.forEach((element) => importedNames.set(element.name.text, moduleName));
     }
 
-    if (/^@console\/console\/(?:pages|platform)(?:\/|$)/.test(moduleName)) {
+    if (/^@console\/(?:pages|platform)(?:\/|$)/.test(moduleName)) {
       addIssue('APPROUTER001', file, sourceFile, statement, `Move route composition out of transitional bridge "${moduleName}" and into this App Router route.`);
     }
   }

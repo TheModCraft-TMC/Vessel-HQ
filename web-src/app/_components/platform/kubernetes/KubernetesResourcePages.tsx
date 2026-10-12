@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import type { ResourceEditorConfig } from '@app/_components/platform/kubernetes/configuration/ResourceEditorView';
 import type { ResourceConfig } from '@app/_components/platform/kubernetes/ResourceDetailsYAMLView';

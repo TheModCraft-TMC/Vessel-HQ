@@ -2,10 +2,10 @@ import { HttpResponse } from 'msw';
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { withTestRouter } from '@/react/test-utils/withRouter';
+import { withTestRouter } from '@/core/test-support/withRouter';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { server, http } from '@/setup-tests/server';
-import { createMockEnvironment } from '@/react-tools/test-mocks';
+import { server, http } from '@/core/test-support/setup/server';
+import { createMockEnvironment } from '@/core/test-support/test-mocks';
 
 import { WizardKubernetes } from './WizardKubernetes';
 

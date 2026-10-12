@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { PageContent } from '@console/layout/PageContent';
 
 import { Settings } from '@/domains/settings/models/types';
 import { useSettings } from '@/domains/settings/queries';
@@ -11,8 +12,8 @@ import { HelmCertPanel } from '@/domains/settings/views/SettingsView/HelmCertPan
 import { HiddenContainersPanel } from '@/domains/settings/views/SettingsView/HiddenContainersPanel/HiddenContainersPanel';
 import { KubeSettingsPanel } from '@/domains/settings/views/SettingsView/KubeSettingsPanel';
 import { SSLSettingsPanelWrapper } from '@/domains/settings/views/SettingsView/SSLSettingsPanel/SSLSettingsPanel';
-import { updateApplicationState } from '@/react/portainer/app-state';
-import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import { updateApplicationState } from '@/core/session/app-state';
+import { isBE } from '@/shared/feature-flags/feature-flags.service';
 
 export function SettingsContent() {
   const settingsQuery = useSettings();
@@ -25,16 +26,16 @@ export function SettingsContent() {
   }, [settingsQuery.data]);
 
   return (
-    <div className="mx-4 space-y-4">
-        {settingsQuery.data && (
-          <CoreSettingsPanels settings={settingsQuery.data} />
-        )}
-        <HelmCertPanel />
-        <SSLSettingsPanelWrapper />
-        {isBE && <ExperimentalFeatures />}
-        <HiddenContainersPanel />
-        <BackupSettingsPanel />
-      </div>
+    <PageContent>
+      {settingsQuery.data && (
+        <CoreSettingsPanels settings={settingsQuery.data} />
+      )}
+      <HelmCertPanel />
+      <SSLSettingsPanelWrapper />
+      {isBE && <ExperimentalFeatures />}
+      <HiddenContainersPanel />
+      <BackupSettingsPanel />
+    </PageContent>
   );
 }
 

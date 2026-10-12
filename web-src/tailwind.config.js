@@ -1,13 +1,12 @@
 const plugin = require('tailwindcss/plugin');
 const defaultTheme = require('tailwindcss/defaultTheme');
-const colors = require('./legacy/assets/css/colors.json');
+const colors = require('./shared/assets/css/colors.json');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     require('path').join(__dirname, 'app/**/*.{html,tsx}'),
-    require('path').join(__dirname, 'components/**/*.{ts,tsx}'),
-    require('path').join(__dirname, 'legacy/**/*.{html,js,jsx,ts,tsx}'),
+    require('path').join(__dirname, '{core,domains,providers,shared,ui}/**/*.{html,js,jsx,ts,tsx}'),
   ],
   corePlugins: {
     preflight: false,

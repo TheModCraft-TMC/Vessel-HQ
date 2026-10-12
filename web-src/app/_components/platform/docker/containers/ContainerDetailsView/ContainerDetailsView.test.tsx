@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
+import { TestSidebarProvider } from '@console/layout/SidebarState';
 
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { withTestRouter } from '@/react/test-utils/withRouter';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
+import { withTestRouter } from '@/core/test-support/withRouter';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { createMockContainer, createMockUser } from '@/react-tools/test-mocks';
-import { server } from '@/setup-tests/server';
+import { createMockContainer, createMockUser } from '@/core/test-support/test-mocks';
+import { server } from '@/core/test-support/setup/server';
 import { User } from '@/domains/users';
 import type { ContainerDetails } from '@/domains/containers/models';
 
@@ -83,5 +84,9 @@ function renderComponent({
     })
   );
 
-  return render(<Wrapped />);
+  return render(
+    <TestSidebarProvider>
+      <Wrapped />
+    </TestSidebarProvider>
+  );
 }

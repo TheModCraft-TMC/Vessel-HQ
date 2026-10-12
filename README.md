@@ -1,111 +1,113 @@
 <p align="center">
-  <img title="portainer" src='https://github.com/portainer/portainer/blob/develop/app/assets/images/portainer-github-banner.png?raw=true' />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./web-src/public/images/vessel-hq-logo.svg" />
+    <img src="./web-src/public/images/vessel-hq-logo-dark.svg" alt="Vessel HQ" width="440" />
+  </picture>
 </p>
 
-**Portainer Community Edition** is a lightweight service delivery platform for containerized applications that can be used to manage Docker, Swarm, Kubernetes and ACI environments. It is designed to be as simple to deploy as it is to use. The application allows you to manage all your orchestrator resources (containers, images, volumes, networks and more) through a ‘smart’ GUI and/or an extensive API.
+<p align="center">
+  <a href="https://github.com/TheModCraft-TMC/Vessel-HQ/releases/latest"><img src="https://img.shields.io/github/v/release/TheModCraft-TMC/Vessel-HQ?color=44cc11&amp;label=release&amp;style=for-the-badge" alt="Vessel HQ release" /></a>
+  <a href="https://github.com/portainer/portainer"><img src="https://img.shields.io/badge/Portainer-CE%20fork-13b8a6?style=for-the-badge" alt="Portainer CE fork" /></a>
+  <img src="./docs/assets/turbopack-badge.svg" alt="Development bundler: Turbopack" />
+  <img src="https://img.shields.io/badge/migration-GPT--5.6%20Sol%20only-10a37f?style=for-the-badge" alt="Migration built using GPT-5.6 Sol only" />
+</p>
 
-Portainer consists of a single container that can run on any cluster. It can be deployed as a Linux container or a Windows native container.
+![Vessel HQ Docker overview](./docs/assets/docker-overview.jpg)
 
-## TheModCraft maintained fork
+Vessel HQ is TheModCraft's independently maintained fork of Portainer Community Edition: a container management console for Docker, Docker Swarm, Podman, Kubernetes, and Azure Container Instances, with a homelab-first product direction.
 
-This repository is the TheModCraft Portainer CE fork. It preserves upstream API and datastore compatibility while adding maintained GitOps, Vault, access-control, performance, registry, audit, and release-engineering features. The current release is read from [`RELEASE_VERSION`](./RELEASE_VERSION) and published as an immutable version tag and its channel alias (`latest` for stable releases, `beta` for prereleases) at [`themodcrafttmc/portainer`](https://hub.docker.com/r/themodcrafttmc/portainer).
+The project combines Portainer's Go API with a Next.js/React console and maintained GitOps, Vault, access-control, registry, audit, and realtime features. The frontend follows explicit core, domain, provider, and UI boundaries; see the migration summary for verification details.
 
-[![TheModCraft release](https://img.shields.io/github/v/release/TheModCraft-TMC/Vessel-HQ?color=%2344cc11&label=TheModCraft%20release&style=for-the-badge)](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/latest)
+The frontend migration was built using GPT-5.6 Sol agents exclusively. Local frontend development now uses Turbopack; production builds currently use webpack.
 
-- [Release 2.39.3.2.27-beta.4 notes](./docs/releases/2.39.3.2.27-beta.4.md)
-- [Recent feature catalog](./docs/recent-features/README.md)
-- [Next-month feature planning backlog](./docs/planning/README.md)
-- [TheModCraft architecture and operations guide](./docs/themodcraft/README.md)
-- [Maintainer patch guide](./docs/maintainer-patches/README.md)
-- [Release and deployment instructions](./docs/themodcraft/release-and-deployment.md)
+## Project identity
 
-**Portainer Business Edition** builds on the open-source base and includes a range of advanced features and functions (like RBAC and Support) that are specific to the needs of business users.
+- Repository: [TheModCraft-TMC/Vessel-HQ](https://github.com/TheModCraft-TMC/Vessel-HQ).
+- Vessel release version: [RELEASE_VERSION](./RELEASE_VERSION).
+- Upstream API and datastore compatibility baseline: **Portainer 2.45.0**, separate from the Vessel release number.
+- Existing images: [themodcrafttmc/portainer](https://hub.docker.com/r/themodcrafttmc/portainer). A dedicated Vessel image repository is planned; see the [roadmap](./docs/planning/vessel-hq-roadmap.md).
 
-- [Compare Portainer CE and Compare Portainer BE](https://www.portainer.io/features)
-- [Take3 – get 3 free nodes of Portainer Business for as long as you want them](https://www.portainer.io/take-3)
-- [Portainer BE install guide](https://academy.portainer.io/install/)
+Vessel HQ is a community fork, not Portainer Business Edition. Future capabilities are documented separately from implemented behavior.
 
-## Upstream Portainer
+## What the fork adds
 
-This fork is based on Portainer Community Edition. Upstream Portainer CE is updated regularly and remains the source for general product documentation.
+- GitOps source/workflow improvements, force redeployment, and relative-path volume handling.
+- Vault deployment secrets, token validation, renewal, and internal-address fallback.
+- Custom roles, Authentik group synchronization, effective-access visibility, and per-stack read-only sharing.
+- GitHub Container Registry integration and authenticated repository/tag browsing.
+- Persistent activity logs and export workflows.
+- Cached overviews, authenticated realtime invalidation, live logs, and node metrics.
+- Fork-aware version reporting and multi-architecture release tooling.
 
-[![latest version](https://img.shields.io/github/v/release/portainer/portainer?color=%2344cc11&label=Latest%20release&style=for-the-badge)](https://github.com/portainer/portainer/releases/latest)
+See the [feature catalog](./docs/recent-features/README.md) and [customization guide](./docs/themodcraft/README.md) for details and constraints.
 
-## Getting started
+## Local development
 
-- [Deploy Portainer](https://docs.portainer.io/start/install-ce)
-- [Documentation](https://docs.portainer.io)
-- [Contribute to the project](https://docs.portainer.io/contribute/contribute)
-- [Build Portainer locally](./docs/build-guide.md)
-- [Set up a local development environment](./docs/development-setup.md)
-- [Learn Go by exploring this project](./docs/learning-go-and-portainer.md)
+Prerequisites: Docker, Go 1.26.6, Node.js 24.21.0 or newer in the 24.x line, and pnpm 10.26.2. Keep Docker running for the local backend.
 
-## Features & Functions
+```sh
+make deps
+./launch-dev.sh
+```
 
-View [this](https://www.portainer.io/features) table to see all of the Portainer CE functionality and compare to Portainer Business.
+Default development URLs are `http://localhost:8999` for the frontend and `https://localhost:9443` for the backend. The development launcher can enable automatic login; use it only locally.
 
-## Getting help
+See [development setup](./docs/development-setup.md) for separate processes and configuration, and [release and deployment](./docs/themodcraft/release-and-deployment.md) and the [build guide](./docs/build-guide.md) for image builds and rollback.
 
-Portainer CE is an open source project and is supported by the community. You can buy a supported version of Portainer at portainer.io
+## Source layout
 
-Learn more about Portainer's community support channels [here.](https://www.portainer.io/resources/get-help/get-support)
+```text
+backend-src/                 Go API, authorization, datastore, runtime integrations
+web-src/
+  app/                       Next.js App Router routes and layouts
+  core/                      composition, session, navigation, query, realtime
+  domains/                   product workflows and public APIs
+  providers/                 infrastructure and remote-system adapters
+  shared/                    cross-domain contracts and utilities
+  ui/                        reusable components, layouts, and tokens
+scripts/                     development, packaging, architecture checks
+docs/                        operations, decisions, plans, migration notes
+```
 
-- Issues: https://github.com/portainer/portainer/issues
-- Slack (chat): [https://portainer.io/slack](https://portainer.io/slack)
+The [domain/provider architecture](./docs/planning/frontend-domain-provider-architecture.md) defines ownership. The [frontend architecture guide](./docs/planning/frontend-architecture.md) describes enforcement.
 
-You can join the Portainer Community by visiting [https://www.portainer.io/join-our-community](https://www.portainer.io/join-our-community). This will give you advance notice of events, content and other related Portainer content.
+## Frontend verification
 
-## Reporting bugs and contributing
+```sh
+pnpm check:frontend-modernization
+pnpm check:frontend-boundaries
+pnpm check:app-router-compliance
+pnpm typecheck
+pnpm test
+pnpm lint:ci
+pnpm build
+```
 
-- Want to report a bug or request a feature? Please open [an issue](https://github.com/portainer/portainer/issues/new).
-- Want to help us build **_portainer_**? Follow our [contribution guidelines](https://docs.portainer.io/contribute/contribute) to build it locally and make a pull request.
+These are verification commands, not a claim that the current migration has passed them. Run backend tests appropriate to changed Go packages as well. See [verification guidance](./docs/themodcraft/verification.md).
 
-## Generating API types
+## Generated API client
 
-The frontend consumes a TypeScript API client (SDK functions and request/response types) that is generated from the Go API's Swagger annotations. Regenerate it after any API change — a new endpoint, a changed request/response shape, or a removed endpoint:
+After changing Go Swagger annotations:
 
-```bash
+```sh
 make generate-api
 ```
 
-This runs the following pipeline:
+The pipeline produces `backend-src/api/docs/swagger.yaml`, then `backend-src/api/docs/openapi.yaml`, and generates the TypeScript client in `web-src/core/generated-api/portainer/`. Configuration lives in [openapi-ts.config.ts](./openapi-ts.config.ts). Do not edit generated files by hand; consume their SDK functions and types through the configured application API boundary.
 
-```
-Go Swagger annotations
-  → dist/docs/swagger.yaml       (make docs-build, via swaggo/swag)
-  → dist/docs/openapi.yaml       (swagger2openapi + validation)
-  → app/react/portainer/generated-api/portainer/   (hey-api/openapi-ts)
-```
+## Documentation and future plans
 
-The generator is configured in [`openapi-ts.config.ts`](./openapi-ts.config.ts), which controls the output path, plugins, and tag filters (for example, `deprecated` endpoints and `edge_agent`-tagged routes are excluded).
+- [Product and architecture roadmap](./docs/planning/vessel-hq-roadmap.md).
+- [Future add-on and plugin system](./docs/planning/plugin-system.md): companion applications first, then explicit UI extension points. Plugin support is not implemented.
+- [Migration changes and draft commit message](./docs/planning/migration-change-summary.md): living handoff while migration work is finalized.
+- [Planning backlog](./docs/planning/README.md).
+- [Maintainer patch guide](./docs/maintainer-patches/README.md).
+- [Vault integration](./docs/vault-integration/README.md).
 
-The generated files live in `app/react/portainer/generated-api/portainer/` and must **not** be edited by hand — your changes would be overwritten on the next run. Import the generated SDK functions and types instead of writing direct HTTP calls:
+## Contributing and security
 
-- `@api/sdk.gen` — SDK functions
-- `@api/types.gen` — request/response types
+Report fork bugs and feature requests in the [Vessel HQ issue tracker](https://github.com/TheModCraft-TMC/Vessel-HQ/issues). Read [CONTRIBUTING.md](./CONTRIBUTING.md) and [SECURITY.md](./SECURITY.md) for contributor and vulnerability-reporting guidance. [Upstream documentation](https://docs.portainer.io/) remains useful for shared concepts; fork-specific behavior is documented here.
 
-See [Adding api docs](./CONTRIBUTING.md#adding-api-docs) for how to annotate handlers so they are picked up by the generator.
+## License and attribution
 
-## Security
-
-For information about reporting security vulnerabilities, please see our [Security Policy](SECURITY.md).
-
-## Work for us
-
-If you are a developer, and our code in this repo makes sense to you, we would love to hear from you. We are always on the hunt for awesome devs, either freelance or employed. Drop us a line to success@portainer.io with your details and/or visit our [careers page](https://apply.workable.com/portainer/).
-
-## Privacy
-
-**To make sure we focus our development effort in the right places we need to know which features get used most often. To give us this information we use [Matomo Analytics](https://matomo.org/), which is hosted in Germany and is fully GDPR compliant.**
-
-When Portainer first starts, you are given the option to DISABLE analytics. If you **don't** choose to disable it, we collect anonymous usage as per [our privacy policy](https://www.portainer.io/legal/privacy-policy). **Please note**, there is no personally identifiable information sent or stored at any time and we only use the data to help us improve Portainer.
-
-## Limitations
-
-Portainer supports "Current - 2 docker versions only. Prior versions may operate, however these are not supported.
-
-## Licensing
-
-Portainer is licensed under the zlib license. See [LICENSE](./LICENSE) for reference.
-
-Portainer also contains code from open source projects. See [ATTRIBUTIONS.md](./ATTRIBUTIONS.md) for a list.
+Vessel HQ derives from Portainer Community Edition and retains its zlib license. See [LICENSE](./LICENSE) and [ATTRIBUTIONS.md](./ATTRIBUTIONS.md).

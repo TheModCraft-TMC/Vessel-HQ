@@ -7,7 +7,7 @@ import { TeamAssociationSelector } from '@/domains/teams/ItemView/TeamAssociatio
 import { useTeam, useTeamMemberships } from '@/domains/teams/queries';
 import { usePublicSettings } from '@/domains/settings';
 import { useUsers } from '@/domains/users';
-import { useIsPureAdmin } from '@/react/hooks/useUser';
+import { useIsPureAdmin } from '@/core/session/useUser';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { PageHeader } from '@/ui/layouts/view-layout';
 

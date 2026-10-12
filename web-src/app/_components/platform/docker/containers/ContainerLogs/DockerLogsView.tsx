@@ -15,10 +15,9 @@ import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
 import { Select } from '@/ui/components/forms/Input/Select';
 import { SwitchField } from '@/ui/components/forms/SwitchField';
-
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 
 interface Props {
   environmentId: number;
@@ -92,7 +91,7 @@ export function DockerLogsView({
 
   useEffect(() => {
     if (live && logElement.current) {
-      logElement.current.scrollTop = logElement.current.scrollHeight;
+      scrollToBottom(logElement.current);
     }
   }, [filteredLogs, live]);
 
@@ -191,50 +190,50 @@ export function DockerLogsView({
         </WidgetBody>
       </Widget>
 
-      <div className="row h-[54%]">
-        <div className="col-sm-12 h-full">
-          <pre
-            ref={logElement}
-            className={clsx('log_viewer', { wrap_lines: wrapLines })}
-          >
-            {filteredLogs.map((log, index) =>
-              log.line ? (
-                <div className="line" key={`${index}-${log.line}`}>
-                  <button
-                    type="button"
-                    className={clsx(
-                      'inner_line w-full border-0 bg-transparent text-left',
-                      { line_selected: selectedLines.includes(log.line) }
-                    )}
-                    onClick={() => toggleLine(log.line)}
-                  >
-                    {log.spans.map((span, spanIndex) => (
-                      <span
-                        key={`${spanIndex}-${span.text}`}
-                        style={{
-                          color: span.fgColor,
-                          backgroundColor: span.bgColor,
-                          fontWeight: span.fontWeight,
-                        }}
-                      >
-                        {span.text}
-                      </span>
-                    ))}
-                  </button>
-                </div>
-              ) : null
-            )}
-            {!filteredLogs.length && (
-              <div className="line">
-                <p className="inner_line">
-                  {search
-                    ? `No log line matching the '${search}' filter`
-                    : 'No logs available'}
-                </p>
+      <div className="h-[clamp(20rem,55vh,48rem)] min-w-0 overflow-hidden">
+        <pre
+          ref={logElement}
+          className={clsx('log_viewer scroll-smooth', {
+            wrap_lines: wrapLines,
+          })}
+        >
+          {filteredLogs.map((log, index) =>
+            log.line ? (
+              <div className="line" key={`${index}-${log.line}`}>
+                <button
+                  type="button"
+                  className={clsx(
+                    'inner_line w-full border-0 bg-transparent text-left',
+                    { line_selected: selectedLines.includes(log.line) }
+                  )}
+                  onClick={() => toggleLine(log.line)}
+                >
+                  {log.spans.map((span, spanIndex) => (
+                    <span
+                      key={`${spanIndex}-${span.text}`}
+                      style={{
+                        color: span.fgColor,
+                        backgroundColor: span.bgColor,
+                        fontWeight: span.fontWeight,
+                      }}
+                    >
+                      {span.text}
+                    </span>
+                  ))}
+                </button>
               </div>
-            )}
-          </pre>
-        </div>
+            ) : null
+          )}
+          {!filteredLogs.length && (
+            <div className="line">
+              <p className="inner_line">
+                {search
+                  ? `No log line matching the '${search}' filter`
+                  : 'No logs available'}
+              </p>
+            </div>
+          )}
+        </pre>
       </div>
     </>
   );
@@ -253,6 +252,16 @@ export function DockerLogsView({
       `${resourceName}_logs.txt`
     );
   }
+}
+
+function scrollToBottom(element: HTMLPreElement) {
+  if (typeof element.scrollTo === 'function') {
+    element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+    return;
+  }
+
+  const fallbackElement = element;
+  fallbackElement.scrollTop = fallbackElement.scrollHeight;
 }
 
 function SwitchRow({

@@ -4,12 +4,12 @@ import { HttpResponse } from 'msw';
 import { vi } from 'vitest';
 
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { withTestRouter } from '@/react/test-utils/withRouter';
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { UserViewModel } from '@/portainer/models/user';
-import { server, http } from '@/setup-tests/server';
-import { mockLocalizeDate } from '@/setup-tests/mock-localizeDate';
-import { createMockEnvironment } from '@/react-tools/test-mocks';
+import { withTestRouter } from '@/core/test-support/withRouter';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
+import { UserViewModel } from '@/domains/users';
+import { server, http } from '@/core/test-support/setup/server';
+import { mockLocalizeDate } from '@/core/test-support/setup/mock-localizeDate';
+import { createMockEnvironment } from '@/core/test-support/test-mocks';
 import { confirmDelete } from '@/ui/components/dialog/confirm';
 
 import { ApplicationContainersDatatable } from './ApplicationContainersDatatable';
@@ -19,11 +19,11 @@ const mockUseEnvironmentId = vi.fn();
 
 mockLocalizeDate();
 
-vi.mock('@/react/hooks/useEnvironmentId', () => ({
+vi.mock('@/core/routing/useEnvironmentId', () => ({
   useEnvironmentId: () => mockUseEnvironmentId(),
 }));
 
-vi.mock('@/ui/components/links/Link', () => ({
+vi.mock('@console/navigation/Link', () => ({
   Link: ({
     children,
     to,

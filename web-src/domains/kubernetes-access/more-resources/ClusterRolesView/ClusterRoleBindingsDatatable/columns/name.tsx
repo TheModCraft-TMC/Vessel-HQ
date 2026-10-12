@@ -1,0 +1,30 @@
+import { Link } from '@console/navigation/Link';
+
+import { SystemBadge } from '@/ui/components/status/Badge/SystemBadge';
+
+import { columnHelper } from './helper';
+
+export const name = columnHelper.accessor(
+  (row) => {
+    if (row.isSystem) {
+      return `${row.name} system`;
+    }
+    return row.name;
+  },
+  {
+    header: 'Name',
+    id: 'name',
+    cell: ({ row }) => (
+      <div className="flex gap-2">
+        <Link
+          to="/:endpointId/kubernetes/moreResources/clusterRoleBindings/:name"
+          params={{ name: row.original.name }}
+          data-cy={`clusterrolebinding-name-link-${row.original.name}`}
+        >
+          {row.original.name}
+        </Link>
+        {row.original.isSystem && <SystemBadge className="ml-auto" />}
+      </div>
+    ),
+  }
+);

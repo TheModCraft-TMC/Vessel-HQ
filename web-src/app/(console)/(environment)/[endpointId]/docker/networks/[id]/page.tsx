@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { NetworkDetailsContent } from '@app/_components/platform/docker/networks/ItemView/ItemView';
 import { PageHeader } from '@/ui/layouts/view-layout';

@@ -1,12 +1,13 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
 import { OverviewTab } from '@/domains/gitops/workflows/ItemView/OverviewTab';
 import { WorkflowResourceHeader } from '@/domains/gitops/workflows/ItemView/WorkflowResourceHeader';
 import { useWorkflow } from '@/domains/gitops/workflows/queries/useWorkflow';
 import { Alert } from '@/ui/components/feedback/Alert';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { ResourceDetailHeaderSkeleton } from '@@/ResourceDetailHeader/ResourceDetailHeaderSkeleton';
+import { ResourceDetailHeaderSkeleton } from '@/ui/components/ResourceDetailHeader/ResourceDetailHeaderSkeleton';
 
 export function WorkflowDetailsHeader({ workflowId }: { workflowId: number }) {
   const workflowQuery = useWorkflow(workflowId);
@@ -34,28 +35,28 @@ export function WorkflowDetailsContent({ workflowId }: { workflowId: number }) {
   }
 
   return (
-    <div className="mx-4 space-y-4 pb-4">
-        <WorkflowResourceHeader workflow={workflowQuery.data} />
-        <OverviewTab workflow={workflowQuery.data} />
-      </div>
+    <PageContent>
+      <WorkflowResourceHeader workflow={workflowQuery.data} />
+      <OverviewTab workflow={workflowQuery.data} />
+    </PageContent>
   );
 }
 
 function WorkflowLoading() {
   return (
-    <div className="mx-4 mb-4 space-y-4">
+    <PageContent>
       <ResourceDetailHeaderSkeleton statBlockCount={1} />
-    </div>
+    </PageContent>
   );
 }
 
 function WorkflowError({ error }: { error: unknown }) {
   return (
-    <div className="mx-4 mb-4 space-y-4">
+    <PageContent>
       <Alert color="error">
         Failed loading workflow:{' '}
         {error instanceof Error ? error.message : 'Unknown error'}
       </Alert>
-    </div>
+    </PageContent>
   );
 }

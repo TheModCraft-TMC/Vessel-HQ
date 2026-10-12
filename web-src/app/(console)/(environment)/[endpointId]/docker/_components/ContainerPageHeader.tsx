@@ -1,8 +1,10 @@
 'use client';
 
 import { useSelectedLayoutSegment } from 'next/navigation';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
+import { useContainer } from '@/domains/containers';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 const routeHeaders: Record<string, { title: string; suffix: string }> = {
@@ -33,6 +35,19 @@ export function ContainerPageHeader({
   suffix?: string;
 }) {
   const params = useRouteParams();
+  const environmentId = useEnvironmentId();
+  const containerQuery = useContainer(
+    {
+      environmentId,
+      containerId: params.id,
+      nodeName: params.nodeName,
+    },
+    {
+      select: (container) =>
+        container.Name?.replace(/^\//, '') || container.Id || params.id,
+    }
+  );
+  const containerName = containerQuery.data || params.id;
 
   return (
     <PageHeader
@@ -40,7 +55,7 @@ export function ContainerPageHeader({
       breadcrumbs={[
         { label: 'Containers', link: '/:endpointId/docker/containers' },
         {
-          label: params.id,
+          label: containerName,
           link: '/:endpointId/docker/containers/:id',
           linkParams: { id: params.id, nodeName: params.nodeName },
         },

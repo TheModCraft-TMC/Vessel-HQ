@@ -3,19 +3,18 @@
 import { useState } from 'react';
 
 import { EnvironmentId } from '@/domains/environments';
-import { baseHref } from '@/portainer/helpers/pathHelper';
-import { terminalClose } from '@/portainer/services/terminal-window';
-import { isVersionSmaller } from '@/react/common/semver-utils';
-import { useEnvironment } from '@/react/portainer/environments/queries';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { baseHref } from '@/shared/browser-path';
+import { terminalClose } from '@/core/realtime/terminal-window';
+import { isVersionSmaller } from '@/shared/semver';
+import { useEnvironment } from '@/domains/environments';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { Button } from '@/ui/components/buttons';
 import { Alert } from '@/ui/components/feedback/Alert';
-
 import {
   LINUX_SHELL_INIT_COMMANDS,
   ShellState,
   Terminal,
-} from '@@/Terminal/Terminal';
+} from '@/core/realtime/Terminal/Terminal';
 
 const RESIZE_LAST_UNSUPPORTED_AGENT_VERSION = '2.40.0';
 
@@ -79,6 +78,7 @@ export function KubectlTerminal({
 }) {
   return (
     <Terminal
+      fill
       url={buildUrl(environmentId)}
       connect
       onStateChange={onStateChange}

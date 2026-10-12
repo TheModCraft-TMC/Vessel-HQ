@@ -1,6 +1,5 @@
 import { CellContext } from '@tanstack/react-table';
-
-import { Link } from '@/ui/components/links/Link';
+import { Link } from '@console/navigation/Link';
 
 import { ResourceRow } from '../types';
 

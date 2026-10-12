@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import moment from 'moment';
 
-import { useEvents } from '@/react/docker/proxy/queries/useEvents';
-import { EventsDatatable } from '@/react/docker/events/EventsDatatables';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEvents } from '@/core/docker/proxy/queries/useEvents';
+import { EventsDatatable } from '@/core/docker/events/EventsDatatables';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {

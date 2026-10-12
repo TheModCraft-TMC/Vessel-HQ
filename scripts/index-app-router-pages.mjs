@@ -43,7 +43,7 @@ const lines = [
   '## Status definitions',
   '',
   '- `migrated`: the route owns its composition in `page.tsx` or App Router-local modules and has no compliance violations.',
-  '- `partial`: the route is compliant, but its main `*Content`, `*View`, or `*Page` implementation is still imported from `web-src/legacy`.',
+  '- `partial`: the route is compliant, but its main `*Content`, `*View`, or `*Page` implementation is still imported from a transitional source root.',
   '- `redirect`: the file is an intentional redirect-only route.',
   '- `noncompliant`: the Sonar/App Router compliance report contains an issue for the page.',
   '',
@@ -91,7 +91,7 @@ function indexPage(file) {
     ts.ScriptKind.TSX
   );
   const issues = complianceIssues.get(relativePath) || [];
-  const legacyOwners = findLegacyOwners(sourceFile);
+  const externalOwners = findExternalRouteOwners(sourceFile);
 
   if (issues.length) {
     return {
@@ -111,12 +111,12 @@ function indexPage(file) {
     };
   }
 
-  if (legacyOwners.length) {
+  if (externalOwners.length) {
     return {
       relativePath,
       route: toRoute(file),
       status: 'partial',
-      note: legacyOwners
+      note: externalOwners
         .map(({ name, moduleName }) => `\`${name}\` from \`${moduleName}\``)
         .join('<br>'),
     };
@@ -130,7 +130,7 @@ function indexPage(file) {
   };
 }
 
-function findLegacyOwners(sourceFile) {
+function findExternalRouteOwners(sourceFile) {
   const owners = [];
 
   for (const statement of sourceFile.statements) {

@@ -1,8 +1,8 @@
 import { PencilIcon } from 'lucide-react';
 import { PropsWithChildren } from 'react';
+import { Link } from '@console/navigation/Link';
 
 import { Button } from '@/ui/components/buttons';
-import { Link } from '@/ui/components/links/Link';
 
 interface Props {
   to: string;

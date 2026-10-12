@@ -1,0 +1,14 @@
+.root {
+  border: 1px inset #252527;
+  border-radius: var(--radius-md);
+  background-color: #252527;
+  corner-shape: squircle;
+}
+
+.closeBtn {
+  background-color: transparent;
+}
+
+.closeBtn:hover {
+  background-color: var(--graphite-500);
+}

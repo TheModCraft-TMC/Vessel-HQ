@@ -21,27 +21,27 @@ The 12 tasks are grouped into three batches of four. Tasks inside a group can ru
 
 ### 1. Kubernetes domain public APIs
 
-**Own:** `app/domains/applications`, `clusters`, `configuration`, `ingress`, `kubernetes-access`, and `namespaces`.
+**Own:** `web-src/domains/applications`, `clusters`, `configuration`, `ingress`, `kubernetes-access`, and `namespaces`.
 
 - Replace private imports between these domains with explicit public exports or dependency-light shared contracts.
-- Keep Kubernetes transport DTOs in `app/providers/infrastructure/kubernetes`.
+- Keep Kubernetes transport DTOs in `web-src/providers/infrastructure/kubernetes`.
 - Remove resolved entries from each domain's `legacy-imports.json`.
 
 **Done when:** these domains have no private cross-domain imports and their focused tests and typecheck pass.
 
 ### 2. Docker resource domain public APIs
 
-**Own:** `app/domains/containers`, `images`, `networks`, `services`, `stacks`, `swarm`, and `volumes`.
+**Own:** `web-src/domains/containers`, `images`, `networks`, `services`, `stacks`, `swarm`, and `volumes`.
 
 - Define the smallest public types and operations used across resource domains.
-- Move Docker-native DTO access behind `app/providers/infrastructure/docker`.
+- Move Docker-native DTO access behind `web-src/providers/infrastructure/docker`.
 - Preserve query keys and route behavior while replacing deep imports.
 
 **Done when:** Docker resource domains consume public APIs and the private-import boundary count falls for every owned folder.
 
 ### 3. Administration domain public APIs
 
-**Own:** `app/domains/environments`, `registries`, `settings`, `teams`, `templates`, and `users`.
+**Own:** `web-src/domains/environments`, `registries`, `settings`, `teams`, `templates`, and `users`.
 
 - Separate dependency-light models from route, view, and query exports.
 - Stop test helpers and consumers from loading route trees through model imports.
@@ -51,7 +51,7 @@ The 12 tasks are grouped into three batches of four. Tasks inside a group can ru
 
 ### 4. Route and manifest isolation
 
-**Own:** `app/core/routing`, domain `routes.ts`, and domain `route-manifest.ts` files.
+**Own:** `web-src/core/routing`, domain `routes.ts`, and domain `route-manifest.ts` files.
 
 - Keep the routing public API free of eager imports back into the route registry.
 - Make manifest registration one-way from core composition into domain manifests.
@@ -63,7 +63,7 @@ The 12 tasks are grouped into three batches of four. Tasks inside a group can ru
 
 ### 5. UI dependency inversion
 
-**Own:** `app/ui` and only the adapter props required in consuming domains.
+**Own:** `web-src/ui` and only the adapter props required in consuming domains.
 
 - Remove UI imports from domains, providers, generated clients, and legacy application services.
 - Replace environment-specific behavior with props, callbacks, or dependency-light UI contracts.
@@ -73,7 +73,7 @@ The 12 tasks are grouped into three batches of four. Tasks inside a group can ru
 
 ### 6. Presentation and service purity
 
-**Own:** boundary findings for `components`, `models`, and `services` across `app/domains`.
+**Own:** boundary findings for `components`, `models`, and `services` across `web-src/domains`.
 
 - Move query ownership and workflow state out of presentation components.
 - Remove framework imports from the three flagged services.
@@ -83,7 +83,7 @@ The 12 tasks are grouped into three batches of four. Tasks inside a group can ru
 
 ### 7. Provider contract isolation
 
-**Own:** `app/providers` and composition adapters in `app/core/composition`.
+**Own:** `web-src/providers` and composition adapters in `web-src/core/composition`.
 
 - Fix the remaining provider dependency violation.
 - Expose provider-neutral capabilities through provider public APIs.
@@ -145,7 +145,7 @@ The 12 tasks are grouped into three batches of four. Tasks inside a group can ru
 
 ## Merge controls
 
-- One owner edits `app/core/routing/registry`, a domain `index.ts`, or a domain ratchet at a time.
+- One owner edits `web-src/core/routing/registry`, a domain `index.ts`, or a domain ratchet at a time.
 - Each task reports before and after boundary counts for its owned category.
 - Rebase before handing off public API changes to another group.
 - Do not add broad allowlists to make a gate pass; snapshots must name exact current modules.

@@ -1,8 +1,7 @@
 import { ReactNode } from 'react';
 
 import { Values } from '@/domains/configuration/helm/types';
-
-import { CodeEditor } from '@@/CodeEditor';
+import { CodeEditor } from '@/ui/components/CodeEditor';
 
 
 import { DiffViewMode } from './DiffControl';

@@ -2,7 +2,7 @@ import { Pod } from 'kubernetes-types/core/v1';
 import { RotateCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { Authorized } from '@/react/hooks/useUser';
+import { Authorized } from '@/core/session/useUser';
 import {
   notifySuccess,
   notifyError,

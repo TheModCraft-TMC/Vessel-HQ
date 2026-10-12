@@ -1,8 +1,7 @@
 import { InlineLoader } from '@/ui/components/feedback/InlineLoader';
 import { YAMLInspector } from '@/domains/clusters';
-
-import { Widget } from '@@/Widget/Widget';
-import { WidgetBody } from '@@/Widget';
+import { Widget } from '@/ui/components/Widget/Widget';
+import { WidgetBody } from '@/ui/components/Widget';
 
 
 import { useApplicationYAML } from './useApplicationYAML';

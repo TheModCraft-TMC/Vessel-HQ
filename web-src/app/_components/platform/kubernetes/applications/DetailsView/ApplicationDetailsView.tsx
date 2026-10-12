@@ -1,14 +1,13 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { AlertTriangle, Code, History, Minimize2 } from 'lucide-react';
 
-import LaptopCode from '@/assets/ico/laptop-code.svg?c';
+import LaptopCode from '@/shared/assets/ico/laptop-code.svg?c';
 import { useNamespaceAccessRedirect } from '@/domains/namespaces';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Icon } from '@/ui/components/icons/Icon';
 import { Badge } from '@/ui/components/status/Badge';
 import { EventsDatatable } from '@/domains/clusters';
-
-import { Tab, WidgetTabs, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
+import { Tab, WidgetTabs, useCurrentTabIndex } from '@/ui/components/Widget/WidgetTabs';
 
 import {
   PlacementsDatatable,

@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { HttpResponse, http } from 'msw';
 import { vi, type Mock } from 'vitest';
 
-import { server } from '@/setup-tests/server';
+import { server } from '@/core/test-support/setup/server';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { withTestRouter } from '@/react/test-utils/withRouter';
+import { withTestRouter } from '@/core/test-support/withRouter';
 import { confirm } from '@/ui/components/dialog/confirm';
 
 import { RollbackButton } from './RollbackButton';

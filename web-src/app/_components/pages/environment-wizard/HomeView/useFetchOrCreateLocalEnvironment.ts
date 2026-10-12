@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 
-import { useEnvironmentList } from '@/react/portainer/environments/queries/useEnvironmentList';
+import { useEnvironmentList } from '@/domains/environments/queries/useEnvironmentList';
 import {
   ContainerEngine,
   Environment,
@@ -10,7 +10,7 @@ import {
 import {
   createLocalDockerEnvironment,
   createLocalKubernetesEnvironment,
-} from '@/react/portainer/environments/environment.service/create';
+} from '@/domains/environments/services/createEnvironment';
 
 export function useConnectLocalEnvironment(): {
   status: 'error' | 'loading' | 'success';

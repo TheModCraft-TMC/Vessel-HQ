@@ -1,5 +1,8 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
+import { useSourcesSummary } from '@/domains/gitops';
 import {
   Source,
   SOURCE_TYPES,
@@ -8,14 +11,12 @@ import {
 import { SourceCard } from '@/domains/gitops/sources/ListView/SourceCard';
 import { useListState } from '@/domains/gitops/sources/ListView/useListState';
 import { useSources } from '@/domains/gitops/sources/queries/useSources';
-import { useSourcesSummary } from '@/domains/gitops/sources/queries/useSourcesSummary';
-
 import {
   SortableGroup,
   SortableList,
   SortOption,
-} from '@@/SortableList/SortableList';
-import { StatusSummaryBar } from '@@/StatusSummaryBar/StatusSummaryBar';
+} from '@/ui/components/SortableList/SortableList';
+import { StatusSummaryBar } from '@/ui/components/StatusSummaryBar/StatusSummaryBar';
 
 const STATUS_CONFIG: Array<{
   key: SourceStatus;
@@ -65,33 +66,33 @@ export function SourcesContent() {
     : 0;
 
   return (
-    <div className="mx-4 mb-4 space-y-4">
-        <StatusSummaryBar
-          total={summaryTotal}
-          segments={statusSegments}
-          value={listState.status}
-          onChange={listState.setStatus}
-          radioGroupName="sources-status"
-          isLoading={summaryQuery.isLoading}
-        />
-        <SortableList
-          tableState={listState}
-          sortOptions={SORT_OPTIONS}
-          groupOptions={{
-            status: statusSegments,
-            type: TYPE_CONFIG,
-          }}
-          groups={buildSourceGroups(sourcesQuery.data?.data, sortBy)}
-          totalCount={sourcesQuery.data?.totalCount ?? 0}
-          isLoading={sourcesQuery.isLoading}
-          getItemKey={(source) => source.id}
-          showGroupHeaders
-          emptyMessage="No sources found"
-          searchPlaceholder="Search"
-          renderItem={(source) => <SourceCard item={source} />}
-          data-cy="sources-list"
-        />
-      </div>
+    <PageContent>
+      <StatusSummaryBar
+        total={summaryTotal}
+        segments={statusSegments}
+        value={listState.status}
+        onChange={listState.setStatus}
+        radioGroupName="sources-status"
+        isLoading={summaryQuery.isLoading}
+      />
+      <SortableList
+        tableState={listState}
+        sortOptions={SORT_OPTIONS}
+        groupOptions={{
+          status: statusSegments,
+          type: TYPE_CONFIG,
+        }}
+        groups={buildSourceGroups(sourcesQuery.data?.data, sortBy)}
+        totalCount={sourcesQuery.data?.totalCount ?? 0}
+        isLoading={sourcesQuery.isLoading}
+        getItemKey={(source) => source.id}
+        showGroupHeaders
+        emptyMessage="No sources found"
+        searchPlaceholder="Search"
+        renderItem={(source) => <SourceCard item={source} />}
+        data-cy="sources-list"
+      />
+    </PageContent>
   );
 }
 

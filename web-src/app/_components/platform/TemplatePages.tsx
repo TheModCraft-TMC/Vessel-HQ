@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { ContainerEngine } from '@/domains/environments';
 import { StackType } from '@/domains/stacks';
@@ -21,18 +21,17 @@ import {
   TemplateViewType,
   useViewType,
 } from '@/domains/templates/custom-templates/useViewType';
-import { useParamState } from '@/react/hooks/useParamState';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useParamState } from '@/core/hooks/useParamState';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import {
   useIsSwarm,
   useIsSwarmManager,
-} from '@/react/docker/proxy/queries/useInfo';
-import { useApiVersion } from '@/react/docker/proxy/queries/useVersion';
-import { useAuthorizations } from '@/react/hooks/useUser';
+} from '@/core/composition/useDockerInfo';
+import { useApiVersion } from '@/core/composition/useDockerVersion';
+import { useAuthorizations } from '@/core/session/useUser';
 import { confirmDelete } from '@/ui/components/dialog/confirm';
 import { notifySuccess } from '@/ui/components/toast/notifications';
-
-import { Widget } from '@@/Widget';
+import { Widget } from '@/ui/components/Widget';
 
 export function AppTemplatesContent() {
   const environmentId = useEnvironmentId(false);

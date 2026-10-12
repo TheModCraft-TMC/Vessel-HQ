@@ -6,6 +6,23 @@ The current Vessel HQ release is `1.3.0`; its [release notes](../releases/1.3.0.
 
 A dedicated Vessel HQ Docker Hub repository is planned but has not been created or selected yet. Future publishing must not switch registries, retag historical images, or change update discovery until that repository name and its migration plan are explicitly approved. Once approved, update the build script, release workflow, update checker, UI links, and this document together.
 
+## One-time 1.3.0 replacement
+
+On October 12, 2026 the maintainer explicitly requested replacing the existing
+1.3.0 publication with the finalized frontend migration. Preserve the original
+source/release as `v1.3.0-beta.1` and the original image as
+`themodcrafttmc/portainer:1.3.0-beta.1` before moving stable references. Its OCI
+index is `sha256:0dfafdaa5d3037c5eec78a23295411962fa4a57b53a0173bec87facc41a43d45`.
+The archive keeps its original embedded version. See the
+[prerelease notes](../releases/1.3.0-beta.1.md).
+
+This specific replacement is an exception to the immutable-version rule below;
+it does not authorize future tag reuse or registry changes. Publish the new
+multi-architecture image, verify it, then move `latest` to that same digest.
+Consumers must explicitly pull/recreate because the version string is unchanged.
+The normal CI guard remains in place; perform this authorized replacement through
+the local release publishing path.
+
 ## Build and publish
 
 The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`, with binary checksums in `SHA256SUMS`. Use Node 24.21.0 LTS, pnpm 10.26.2, and the Go version in `backend-src/go.mod`.

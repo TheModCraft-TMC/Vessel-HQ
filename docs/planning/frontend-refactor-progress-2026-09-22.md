@@ -7,7 +7,7 @@ for the current state.
 
 ## What changed today
 
-- Consolidated the moved frontend into the canonical `app/core`, `app/domains`, `app/providers`, and `app/ui` roots.
+- Consolidated the moved frontend into the canonical `web-src/core`, `web-src/domains`, `web-src/providers`, and `web-src/ui` roots.
 - Expanded domain ownership across applications, clusters, configuration, containers, edge, environments, GitOps, images, ingress, Kubernetes access, namespaces, networks, notifications, registries, services, settings, stacks, Swarm, teams, templates, users, and volumes.
 - Expanded provider ownership across Docker, Podman, Kubernetes, Azure ACI, edge agent, and remote registry adapters.
 - Repaired public exports and import paths exposed by the folder moves, including routing guards, dialogs, menus, registries, settings, and teams.
@@ -24,9 +24,9 @@ for the current state.
 | ---------------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TypeScript                   | Passed                                        | `pnpm typecheck`                                                                                                                                                             |
 | Production bundle            | Passed with three existing CSS-order warnings | `pnpm run build`                                                                                                                                                             |
-| Session lifecycle regression | Passed, 5 tests                               | `pnpm exec vitest run app/core/session/session.test.ts`                                                                                                                      |
+| Session lifecycle regression | Passed, 5 tests                               | `pnpm exec vitest run web-src/core/session/session.test.ts`                                                                                                                      |
 | Full frontend tests          | Confirmation run remains for tomorrow         | The last full run found three provider-wrapper failures; all affected files now pass focused verification: 13 tests across three files                                       |
-| ESLint on canonical roots    | Passed with 147 existing warnings             | 0 errors across `app/core`, `app/domains`, `app/providers`, and `app/ui`                                                                                                     |
+| ESLint on canonical roots    | Passed with 147 existing warnings             | 0 errors across `web-src/core`, `web-src/domains`, `web-src/providers`, and `web-src/ui`                                                                                                     |
 | Frontend boundaries          | 570 violations remain                         | 380 private cross-domain imports, 164 invalid UI dependencies, 21 component behavior dependencies, 3 framework-bound services, 1 model dependency, and 1 provider dependency |
 
 ## Current structural state

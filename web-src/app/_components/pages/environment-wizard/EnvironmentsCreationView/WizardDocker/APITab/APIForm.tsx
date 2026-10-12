@@ -2,14 +2,14 @@ import { Field, Form, Formik } from 'formik';
 import { useReducer } from 'react';
 import { Plug2 } from 'lucide-react';
 
-import { useCreateRemoteEnvironmentMutation } from '@/react/portainer/environments/queries/useCreateEnvironmentMutation';
+import { useCreateRemoteEnvironmentMutation } from '@/domains/environments/queries/useCreateEnvironmentMutation';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import {
   Environment,
   EnvironmentCreationTypes,
 } from '@/domains/environments';
-import { TLSFieldset } from '@/react/components/TLSFieldset/TLSFieldset';
-import { NameField } from '@/react/portainer/environments/common/NameField/NameField';
+import { TLSFieldset } from '@/core/components/TLSFieldset/TLSFieldset';
+import { NameField } from '@/domains/environments/features/NameField/NameField';
 import { LoadingButton } from '@/ui/components/buttons/LoadingButton';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';

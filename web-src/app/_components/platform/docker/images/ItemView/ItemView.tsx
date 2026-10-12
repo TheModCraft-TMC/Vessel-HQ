@@ -1,14 +1,15 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { Download, List, Tag, Trash2, Upload } from 'lucide-react';
 import { saveAs } from 'file-saver';
+import { Link } from '@console/navigation/Link';
 
 import { ImageDetailsViewModel } from '@/domains/images/models/imageDetails';
 import { ImageLayerViewModel } from '@/domains/images/models/imageLayer';
-import { humanize, isoDate } from '@/portainer/filters/filters';
+import { humanize, isoDate } from '@/shared/formatters';
 import {
   notifyError,
   notifySuccess,
@@ -28,30 +29,28 @@ import {
   tagImage,
 } from '@/domains/images/services/imageService';
 import { deleteImage } from '@/domains/images/queries/useDeleteImageMutation';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { Authorized } from '@/react/hooks/useUser';
-import { useEnvironmentRegistries } from '@/react/portainer/environments/queries/useEnvironmentRegistries';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { Authorized } from '@/core/session/useUser';
+import { useEnvironmentRegistries } from '@/domains/environments/queries/useEnvironmentRegistries';
 import { Registry } from '@/domains/registries';
 import { withError } from '@/core/query';
 import { Button, LoadingButton } from '@/ui/components/buttons';
 import { DeleteButton } from '@/ui/components/buttons/DeleteButton';
-import { Link } from '@/ui/components/links/Link';
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
 import { confirmDelete } from '@/ui/components/dialog/confirm';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { confirmImageExport } from '@/domains/images/components/common/ConfirmExportModal';
-
 import {
   getDefaultImageConfig,
   getImageConfig,
-} from '@@/ImageConfigFieldset/getImageConfig';
-import { findBestMatchRegistry } from '@@/ImageConfigFieldset/findRegistryMatch';
-import { ImageConfigFieldset, ImageConfigValues } from '@@/ImageConfigFieldset';
-import { DetailsTable } from '@@/DetailsTable';
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+} from '@/domains/images/features/ImageConfigFieldset/getImageConfig';
+import { findBestMatchRegistry } from '@/domains/images/features/ImageConfigFieldset/findRegistryMatch';
+import { ImageConfigFieldset, ImageConfigValues } from '@/domains/images/features/ImageConfigFieldset';
+import { DetailsTable } from '@/ui/components/DetailsTable';
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 
 
 import { DockerfileDetails } from './DockerfileDetails';

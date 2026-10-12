@@ -1,4 +1,4 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { saveAs } from 'file-saver';
@@ -7,8 +7,8 @@ import {
   notifyError,
   notifySuccess,
 } from '@/ui/components/toast/notifications';
-import { useApiVersion } from '@/react/docker/agent/queries/useApiVersion';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useApiVersion } from '@/core/composition/useAgentApiVersion';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { withError } from '@/core/query';
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { confirmDelete } from '@/ui/components/dialog/confirm';

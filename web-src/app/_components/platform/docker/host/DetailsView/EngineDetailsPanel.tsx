@@ -1,7 +1,7 @@
-import { Widget } from '@@/Widget/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
-import { DetailsTable } from '@@/DetailsTable/DetailsTable';
+import { Widget } from '@/ui/components/Widget/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
+import { DetailsTable } from '@/ui/components/DetailsTable/DetailsTable';
 
 export type EngineDetails = {
   releaseVersion?: string;

@@ -17,8 +17,7 @@ import {
   WizardProvider,
   WizardStep,
 } from '@/domains/gitops/sources/CreateView/WizardContext';
-
-import { useWizardSteps } from '@@/Stepper/useWizardSteps';
+import { useWizardSteps } from '@/ui/components/Stepper/useWizardSteps';
 
 const STEPS: WizardStep[] = [
   {

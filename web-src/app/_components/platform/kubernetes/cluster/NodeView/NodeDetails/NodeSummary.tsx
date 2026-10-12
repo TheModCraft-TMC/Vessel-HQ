@@ -1,7 +1,7 @@
 import { Node, Endpoints } from 'kubernetes-types/core/v1';
 import { useMemo } from 'react';
 
-import { formatDate } from '@/portainer/filters/filters';
+import { formatDate } from '@/shared/formatters';
 import {
   getRole,
   getInternalNodeIpAddress,
@@ -18,8 +18,7 @@ import { PortainerSelect, Option } from '@/ui/components/forms/PortainerSelect';
 import { FormError } from '@/ui/components/forms/FormError';
 import { NodeAvailability } from '@/domains/clusters/cluster/types';
 import { DrainOptions as DrainOptionsValues } from '@/domains/clusters';
-
-import { DetailsTable } from '@@/DetailsTable';
+import { DetailsTable } from '@/ui/components/DetailsTable';
 
 
 import { DrainOptions } from './DrainOptions';

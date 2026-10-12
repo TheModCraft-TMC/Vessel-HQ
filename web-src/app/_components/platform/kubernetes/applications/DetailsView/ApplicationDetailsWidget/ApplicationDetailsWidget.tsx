@@ -1,14 +1,13 @@
+import { useStack } from '@/domains/stacks';
 import { useApplicationRouteParams } from '@/domains/applications/applications/useApplicationRouteParams';
 import { useNamespaceQuery } from '@/domains/namespaces';
-import { useStack } from '@/domains/stacks';
 import { GitReferenceCard } from '@/domains/gitops';
 import { isExternalApplication } from '@/domains/applications/applications/utils';
 import { appStackIdLabel, appStackKindLabel } from '@/domains/applications/applications/constants';
 import { useApplication } from '@/domains/applications/applications/queries/useApplication';
 import { useApplicationServices } from '@/domains/applications/applications/queries/useApplicationServices';
 import { Application } from '@/domains/applications/applications/types';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 import { ApplicationServicesTable } from './ApplicationServicesTable';
 import { ApplicationIngressesTable } from './ApplicationIngressesTable';

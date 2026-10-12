@@ -1,17 +1,17 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { AccessControlPanel } from '@/react/portainer/access-control/AccessControlPanel/AccessControlPanel';
+import { useContainers } from '@/domains/containers';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { AccessControlPanel } from '@/core/access-control/AccessControlPanel/AccessControlPanel';
 import {
   ResourceControlResponse,
   ResourceControlType,
-} from '@/react/portainer/access-control/types';
+} from '@/domains/access-control';
 import type { ContainerListViewModel } from '@/domains/containers';
-import { ResourceControlViewModel } from '@/react/portainer/access-control/models/ResourceControlViewModel';
-import { useContainers } from '@/domains/containers';
+import { ResourceControlViewModel } from '@/domains/access-control';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { useDeleteNetwork } from '@/domains/networks/queries/useDeleteNetworkMutation';

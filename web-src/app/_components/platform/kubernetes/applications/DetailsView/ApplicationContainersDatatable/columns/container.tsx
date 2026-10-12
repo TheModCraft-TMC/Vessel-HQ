@@ -1,15 +1,14 @@
 import { CellContext, createColumnHelper } from '@tanstack/react-table';
 import { BarChart, FileText, Terminal } from 'lucide-react';
+import { Link } from '@console/navigation/Link';
 
-import { Authorized } from '@/react/hooks/useUser';
-import { pluralize } from '@/react/common/string-utils';
+import { Authorized } from '@/core/session/useUser';
+import { pluralize } from '@/shared/strings';
 import { Badge } from '@/ui/components/status/Badge';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
-import { Link } from '@/ui/components/links/Link';
 import { Icon } from '@/ui/components/icons/Icon';
 import { TooltipWithChildren } from '@/ui/components/feedback/Tip/TooltipWithChildren';
-
-import { ExternalLink } from '@@/ExternalLink';
+import { ExternalLink } from '@/ui/components/links/ExternalLink';
 
 import { ContainerRowData } from '../types';
 

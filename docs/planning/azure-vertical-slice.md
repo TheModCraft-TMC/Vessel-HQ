@@ -2,7 +2,7 @@
 
 Status: structural ownership completed September 21, 2026; dependency cleanup remains incremental.
 
-Azure Container Instances was first consolidated under the superseded `app/features/azure` checkpoint. The accepted destination splits that code between product domains and the external adapter at `app/providers/infrastructure/azure-aci`. GoLand's Move and Rename refactorings relocated the initial implementation and route ownership, updated project references, and renamed the legacy route component file to `routes.ts`.
+Azure Container Instances was first consolidated under the superseded `app/features/azure` checkpoint. The accepted destination splits that code between product domains and the external adapter at `web-src/providers/infrastructure/azure-aci`. GoLand's Move and Rename refactorings relocated the initial implementation and route ownership, updated project references, and renamed the legacy route component file to `routes.ts`.
 
 ## Ownership
 
@@ -21,6 +21,6 @@ The old `app/react/azure` implementation and `app/azure` route registration cont
 
 1. publish environment identity/types through the Environments domain API;
 2. publish access-control contracts through an Access domain boundary;
-3. promote shared form, table, dashboard, and view primitives into `app/ui`;
+3. promote shared form, table, dashboard, and view primitives into `web-src/ui`;
 4. move notification, Axios, and test helpers to explicit core or test-support contracts; and
 5. extract the Azure Container Instances provider and lower the transition budget with each replacement until the allowlist can be removed.

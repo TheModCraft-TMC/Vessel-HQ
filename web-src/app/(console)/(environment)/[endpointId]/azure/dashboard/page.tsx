@@ -1,15 +1,15 @@
 'use client';
 
 import { Package } from 'lucide-react';
+import { PageContent } from '@console/layout/PageContent';
 
-import SubscriptionIcon from '@/assets/ico/subscription.svg?c';
+import SubscriptionIcon from '@/shared/assets/ico/subscription.svg?c';
 import { useResourceGroups } from '@/domains/azure/queries/useResourceGroups';
 import { useSubscriptions } from '@/domains/azure/queries/useSubscriptions';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { DashboardItem } from '@@/DashboardItem';
-import { DashboardGrid } from '@@/DashboardItem/DashboardGrid';
+import { DashboardItem } from '@/ui/components/DashboardItem';
+import { DashboardGrid } from '@/ui/components/DashboardItem/DashboardGrid';
 
 export default function Page() {
   const environmentId = useEnvironmentId();
@@ -22,7 +22,7 @@ export default function Page() {
   return (
     <>
       <PageHeader title="Home" breadcrumbs={[{ label: 'Dashboard' }]} reload />
-      <div className="mx-4">
+      <PageContent>
         {subscriptions.data && (
           <DashboardGrid>
             <DashboardItem
@@ -44,7 +44,7 @@ export default function Page() {
             )}
           </DashboardGrid>
         )}
-      </div>
+      </PageContent>
     </>
   );
 }

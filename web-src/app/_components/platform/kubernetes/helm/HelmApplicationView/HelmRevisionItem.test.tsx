@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { withTestRouter } from '@/react/test-utils/withRouter';
-import { mockLocalizeDate } from '@/setup-tests/mock-localizeDate';
+import { withTestRouter } from '@/core/test-support/withRouter';
+import { mockLocalizeDate } from '@/core/test-support/setup/mock-localizeDate';
 import { HelmRelease } from '@/domains/configuration/helm/types';
 
 import { HelmRevisionItem } from './HelmRevisionItem';
@@ -26,7 +26,7 @@ const mockHelmRelease: HelmRelease = {
 mockLocalizeDate();
 
 vi.mock(
-  '@console/console/routing/useRouteParams',
+  '@console/routing/useRouteParams',
   async (importOriginal: () => Promise<object>) => ({
     ...(await importOriginal()),
     useRouteParams: () => ({ namespace: 'default', name: 'my-release' }),

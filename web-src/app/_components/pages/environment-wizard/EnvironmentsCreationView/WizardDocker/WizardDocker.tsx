@@ -7,7 +7,7 @@ import {
   Environment,
 } from '@/domains/environments';
 import { commandsTabs } from '@/domains/edge/components/EdgeScriptForm/scripts';
-import { isBE } from '@/react/portainer/feature-flags/feature-flags.service';
+import { isBE } from '@/shared/feature-flags/feature-flags.service';
 import EdgeAgentStandardIcon from '@/domains/edge/components/edge-agent-standard.svg?c';
 import EdgeAgentAsyncIcon from '@/domains/edge/components/edge-agent-async.svg?c';
 import { BadgeIcon } from '@/ui/components/status/BadgeIcon';
@@ -16,9 +16,8 @@ import { FormSection } from '@/ui/components/forms/FormSection';
 import { Badge } from '@/ui/components/status/Badge';
 import { useDocsUrl } from '@/ui/layouts/view-layout/page-header/ContextHelp';
 import { EdgeAgentTab } from '@/domains/edge/views/environments/EdgeAgentTab';
-
-import { ExternalLink } from '@@/ExternalLink';
-import { BoxSelector, type BoxSelectorOption } from '@@/BoxSelector';
+import { ExternalLink } from '@/ui/components/links/ExternalLink';
+import { BoxSelector, type BoxSelectorOption } from '@/ui/components/BoxSelector';
 
 import { AnalyticsStateKey } from '../types';
 

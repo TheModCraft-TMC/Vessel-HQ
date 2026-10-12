@@ -1,8 +1,7 @@
 'use client';
 
 import { CreateHelmRepositoryForm } from '@/domains/users/account/helm-repositories/CreateHelmRepositoryView/CreateHelmRespositoriesForm';
-
-import { Widget, WidgetBody } from '@@/Widget';
+import { Widget, WidgetBody } from '@/ui/components/Widget';
 
 export function HelmRepositoryCreateContent() {
   return (

@@ -4,8 +4,8 @@ import {
   ClusterPageHeader,
   KubernetesConfigureContent,
 } from '@app/_components/platform/kubernetes/KubernetesClusterPages';
-import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { useUnauthorizedRedirect } from '@/react/hooks/useUnauthorizedRedirect';
+import { useCurrentEnvironment } from '@/core/composition/useCurrentEnvironment';
+import { useUnauthorizedRedirect } from '@/core/routing/useUnauthorizedRedirect';
 
 export default function Page() {
   const { data: environment } = useCurrentEnvironment();

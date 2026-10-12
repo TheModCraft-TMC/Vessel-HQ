@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { saveAs } from 'file-saver';
 import { Download, FileText } from 'lucide-react';
 
 import {
   concatLogsToString,
   openKubernetesLogsStream,
-} from '@/docker/helpers/logHelper';
-import { FormattedLine } from '@/docker/helpers/logHelper/types';
+} from '@/shared/docker/helpers/logHelper';
+import { FormattedLine } from '@/shared/docker/helpers/logHelper/types';
 import { notifyError } from '@/ui/components/toast/notifications';
 import { withError } from '@/core/query';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { Button } from '@/ui/components/buttons';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
@@ -20,10 +20,9 @@ import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { ViewLoading } from '@/ui/components/feedback/ViewLoading';
 import { getApplications } from '@/domains/applications/applications/queries/useApplications';
 import { Application } from '@/domains/applications/applications/ListView/ApplicationsDatatable/types';
-
-import { Widget } from '@@/Widget';
-import { WidgetBody } from '@@/Widget/WidgetBody';
-import { WidgetTitle } from '@@/Widget/WidgetTitle';
+import { Widget } from '@/ui/components/Widget';
+import { WidgetBody } from '@/ui/components/Widget/WidgetBody';
+import { WidgetTitle } from '@/ui/components/Widget/WidgetTitle';
 
 
 const colors = [
@@ -201,7 +200,7 @@ function LogsPage({
 
   useEffect(() => {
     if (live && logElement.current) {
-      logElement.current.scrollTop = logElement.current.scrollHeight;
+      scrollToBottom(logElement.current);
     }
   }, [filteredLogs, live]);
 
@@ -320,7 +319,7 @@ function LogsPage({
         <div className="col-sm-12 h-full">
           <pre
             ref={logElement}
-            className={`log_viewer widget${wrapLines ? 'wrap_lines' : ''}`}
+            className={`log_viewer widget scroll-smooth${wrapLines ? ' wrap_lines' : ''}`}
           >
             {filteredLogs.map((log, index) => (
               <LogLine key={`${index}-${log.source}-${log.line}`} log={log} />
@@ -353,6 +352,16 @@ function LogsPage({
       `${name}_logs.txt`
     );
   }
+}
+
+function scrollToBottom(element: HTMLPreElement) {
+  if (typeof element.scrollTo === 'function') {
+    element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+    return;
+  }
+
+  const fallbackElement = element;
+  fallbackElement.scrollTop = fallbackElement.scrollHeight;
 }
 
 function LogLine({ log }: { log: DisplayLine }) {

@@ -5,46 +5,46 @@ import { useRouter } from 'next/navigation';
 import { Lock, Palette } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { userUpdatePassword } from '@api/sdk.gen';
-import { useCanExit } from '@console/console/routing/useCanExit';
+import { useCanExit } from '@console/routing/useCanExit';
+import { Link } from '@console/navigation/Link';
+import { PageContent } from '@console/layout/PageContent';
 
 import { AuthenticationMethod, usePublicSettings } from '@/domains/settings';
 import { useLoadCurrentUser } from '@/domains/users';
 import { AccessTokensDatatable } from '@/domains/users/account/AccountView/AccessTokensDatatable';
 import { ApplicationSettingsWidget } from '@/domains/users/account/AccountView/ApplicationSettings';
 import { HelmRepositoryDatatable } from '@/domains/users/account/AccountView/HelmRepositoryDatatable';
-import { useCurrentUser } from '@/react/hooks/useUser';
+import { useCurrentUser } from '@/core/session/useUser';
 import {
   getSkippedPasswordChanges,
   resetPasswordChangeSkips,
   setPasswordChangeSkipped,
-} from '@/react/portainer/app-state';
+} from '@/core/session/app-state';
 import { Button, LoadingButton } from '@/ui/components/buttons';
 import { confirmChangePassword } from '@/ui/components/dialog/confirm';
 import { openDialog } from '@/ui/components/dialog/Dialog';
 import { buildConfirmButton } from '@/ui/components/dialog/utils';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
-import { Link } from '@/ui/components/links/Link';
 import {
   notifyError,
   notifySuccess,
 } from '@/ui/components/toast/notifications';
 import { ThemeSelector } from '@/ui/layouts/view-layout';
-
-import { PasswordCheckHint } from '@@/PasswordCheckHint';
-import { Widget } from '@@/Widget';
+import { PasswordCheckHint } from '@/domains/settings/features/PasswordCheckHint';
+import { Widget } from '@/ui/components/Widget';
 
 export function AccountContent() {
   const { user } = useCurrentUser();
 
   return (
-    <div className="mx-4 space-y-4">
+    <PageContent>
       <AccountThemePanel user={user} />
       <AccountPasswordPanel />
       <ApplicationSettingsWidget />
       <AccessTokensDatatable />
       <HelmRepositoryDatatable />
-    </div>
+    </PageContent>
   );
 }
 

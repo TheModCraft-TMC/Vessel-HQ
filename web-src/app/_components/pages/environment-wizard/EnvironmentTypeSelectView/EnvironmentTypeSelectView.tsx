@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { buildHref } from '@console/console/routing/buildHref';
+import { buildHref } from '@console/routing/buildHref';
 import { Wand2 } from 'lucide-react';
 
 import { Button } from '@/ui/components/buttons';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { FormSection } from '@/ui/components/forms/FormSection';
-
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
 
 import { EnvironmentSelector } from './EnvironmentSelector';
 import {

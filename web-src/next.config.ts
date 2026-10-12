@@ -4,13 +4,33 @@ import type { NextConfig } from 'next';
 
 const apiOrigin = process.env.PORTAINER_API_ORIGIN || 'http://localhost:9000';
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   output: 'standalone',
   env: {
     DEV_AUTO_LOGIN: process.env.DEV_AUTO_LOGIN || '',
   },
   poweredByHeader: false,
+  reactCompiler: true,
   reactStrictMode: true,
+  turbopack: {
+    root: path.resolve(process.cwd()),
+    resolveAlias: {
+      'yaml-schema': 'codemirror-json-schema/yaml',
+    },
+    rules: {
+      '*.svg': [
+        {
+          condition: { query: /c/ },
+          loaders: [{ loader: '@svgr/webpack', options: { icon: true } }],
+          as: '*.js',
+        },
+        {
+          condition: { not: { query: /c/ } },
+          type: 'asset',
+        },
+      ],
+    },
+  },
   webpack(nextWebpackConfig) {
     const config = nextWebpackConfig;
     const fileLoaderRule = config.module.rules.find(
@@ -52,6 +72,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-};
+} satisfies NextConfig;
 
 export default nextConfig;

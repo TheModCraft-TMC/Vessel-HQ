@@ -1,9 +1,8 @@
-import { Node } from 'kubernetes-types/core/v1';
+import { Endpoints, Node } from 'kubernetes-types/core/v1';
 import { Form, Formik, useFormikContext } from 'formik';
 import { useRouter } from 'next/navigation';
 
-import { KubernetesEndpoint } from '@/kubernetes/endpoint/models';
-import { useAuthorizations } from '@/react/hooks/useUser';
+import { useAuthorizations } from '@/core/session/useUser';
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import { useApplications } from '@/domains/applications';
 import { Alert } from '@/ui/components/feedback/Alert';
@@ -17,8 +16,7 @@ import { useUpdateNodeMutation } from '@/domains/clusters/cluster/queries/useUpd
 import { useDrainNodeMutation } from '@/domains/clusters/cluster/queries/useDrainNodeMutation';
 import { useNodesQuery } from '@/domains/clusters/cluster/queries/useNodesQuery';
 import { NodeFormValues, defaultDrainOptions } from '@/domains/clusters';
-
-import { Loading } from '@@/Widget';
+import { Loading } from '@/ui/components/Widget';
 
 import { confirmUpdateNode } from '../ConfirmUpdateNode';
 
@@ -152,7 +150,7 @@ function NodeDetailsForm({
   environmentId,
 }: {
   node: Node;
-  endpoints: KubernetesEndpoint[];
+  endpoints: Endpoints[];
   nodeName: string;
   environmentId: number;
 }) {

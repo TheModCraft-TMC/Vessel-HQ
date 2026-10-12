@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 import { Code, FileText } from 'lucide-react';
 
 import { useDescribeResource } from '@/domains/configuration';
@@ -7,11 +7,10 @@ import { useResourceYAML, YAMLInspector } from '@/domains/clusters';
 import { PageHeader } from '@/ui/layouts/view-layout/page-header';
 import { Alert } from '@/ui/components/feedback/Alert';
 import { InlineLoader } from '@/ui/components/feedback/InlineLoader';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-
-import { Widget, WidgetBody, WidgetTabs } from '@@/Widget';
-import { Tab, useCurrentTabIndex } from '@@/Widget/WidgetTabs';
-import { CodeEditor } from '@@/CodeEditor';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { Widget, WidgetBody, WidgetTabs } from '@/ui/components/Widget';
+import { Tab, useCurrentTabIndex } from '@/ui/components/Widget/WidgetTabs';
+import { CodeEditor } from '@/ui/components/CodeEditor';
 
 export type ResourceConfig = {
   title: string;

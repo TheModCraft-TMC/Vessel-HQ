@@ -1,7 +1,7 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
-import { withTestRouter } from '@/react/test-utils/withRouter';
+import { withTestRouter } from '@/core/test-support/withRouter';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import { GenericResource } from '@/domains/configuration/helm/types';
 
@@ -12,7 +12,7 @@ const mockUseCurrentStateAndParams = vi.fn();
 const mockUseEnvironmentId = vi.fn();
 const mockUseHelmRelease = vi.fn();
 
-vi.mock('@/react/hooks/useEnvironmentId', () => ({
+vi.mock('@/core/routing/useEnvironmentId', () => ({
   useEnvironmentId: () => mockUseEnvironmentId(),
 }));
 

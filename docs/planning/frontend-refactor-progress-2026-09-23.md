@@ -25,7 +25,7 @@ have both been verified against the running backend.
 - Added a deterministic nullable canvas context to jsdom setup so xterm's
   import-time capability probe no longer floods every test worker with errors.
 - Moved the remaining Kubernetes resource transport behind
-  `app/providers/infrastructure/kubernetes`, including typed mutation methods,
+  `web-src/providers/infrastructure/kubernetes`, including typed mutation methods,
   error normalization, and the configuration-service and ingress adapters.
 - Kept Kubernetes provider DTOs and transport contracts behind the provider
   public index; migrated service and ingress callers no longer import legacy
@@ -99,9 +99,9 @@ The remaining compatibility surface is intentional and measured:
 - The 23 domain `legacy-imports.json` files retain exact allowlists for the
   transitional application tree. The current aggregate is 2,674 checked
   source files with 2,086 retained legacy imports across those ratchets.
-- `app/shared/http/index.ts` remains the compatibility gateway to the
+- `web-src/shared/http/index.ts` remains the compatibility gateway to the
   configured legacy Axios client while provider transports are migrated.
-- `app/core/routing/registry/domain-manifests.ts` retains the legacy route
+- `web-src/core/routing/registry/domain-manifests.ts` retains the legacy route
   definitions that have not yet moved to domain-owned manifests.
 - Provider clients expose stable public indexes; internal DTOs, mappers, and
   transport adapters are not imported directly by domains.

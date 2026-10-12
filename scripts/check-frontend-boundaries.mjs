@@ -5,15 +5,12 @@ import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const appRoot = join(repoRoot, 'web-src', 'legacy');
+const appRoot = join(repoRoot, 'web-src');
 const canonicalRoots = ['core', 'domains', 'providers', 'shared', 'ui'];
 const transitionalRoots = ['design-system', 'layouts'];
 const architectureRoots = [...canonicalRoots, ...transitionalRoots];
 const sourceExtensions = new Set(['.js', '.jsx', '.ts', '.tsx']);
 const importPattern = /(?:\bfrom\s*|\bimport\s*\(\s*|\brequire\s*\(\s*|\bimport\s*)['"]([^'"]+)['"]/g;
-const legacyImportPolicies = loadLegacyImportPolicies();
-const legacyImportCounts = new Map();
-const legacyImportModulesSeen = new Map();
 
 const violations = [];
 const files = architectureRoots.flatMap((root) => walk(join(appRoot, root)).filter(isSourceFile));
@@ -30,7 +27,6 @@ for (const file of files) {
 checkDeprecatedFeatureRoot();
 checkDomainPublicApis();
 checkProviderPublicApis();
-checkLegacyImportBudgets();
 
 if (violations.length > 0) {
   console.error('Frontend architecture boundary violations:');
@@ -41,9 +37,6 @@ if (violations.length > 0) {
 }
 
 console.log(`Frontend architecture boundaries: ${files.length} source files checked`);
-for (const [domain, count] of legacyImportCounts) {
-  console.log(`Transitional ${domain} legacy imports: ${count}`);
-}
 
 function checkImport(file, specifier) {
   const sourcePath = toAppPath(file);
@@ -63,12 +56,20 @@ function checkImport(file, specifier) {
   }
 
   if (targetLayer === 'features') {
-    report(sourcePath, specifier, 'app/features has been replaced by app/domains');
+    report(
+      sourcePath,
+      specifier,
+      'web-src/features has been replaced by web-src/domains'
+    );
   }
 
   if (sourceLayer === 'design-system' && targetPath) {
     if (!targetPath.startsWith('design-system/')) {
-      report(sourcePath, specifier, 'the design system cannot depend on application layers or legacy app code');
+      report(
+        sourcePath,
+        specifier,
+        'the design system cannot depend on application layers outside itself'
+      );
     }
   }
 
@@ -112,15 +113,11 @@ function checkImport(file, specifier) {
   }
 
   if (targetLayer && !architectureRoots.includes(targetLayer)) {
-    const policy = legacyImportPolicies.get(sourceDomain);
-    if (policy?.modules.has(specifier)) {
-      legacyImportCounts.set(sourceDomain, (legacyImportCounts.get(sourceDomain) ?? 0) + 1);
-      const modulesSeen = legacyImportModulesSeen.get(sourceDomain) ?? new Set();
-      modulesSeen.add(specifier);
-      legacyImportModulesSeen.set(sourceDomain, modulesSeen);
-    } else {
-      report(sourcePath, specifier, 'migrated domains cannot add dependencies on the transitional legacy tree');
-    }
+    report(
+      sourcePath,
+      specifier,
+      'domains cannot depend on source outside the canonical architecture roots'
+    );
   }
 
   const sourceSection = sourceParts[2];
@@ -148,7 +145,9 @@ function checkImport(file, specifier) {
 function checkDeprecatedFeatureRoot() {
   const featuresRoot = join(appRoot, 'features');
   if (existsSync(featuresRoot)) {
-    violations.push('features: app/features has been replaced by app/domains');
+    violations.push(
+      'features: web-src/features has been replaced by web-src/domains'
+    );
   }
 }
 
@@ -195,49 +194,7 @@ function checkProviderPublicApis() {
   }
 }
 
-function loadLegacyImportPolicies() {
-  const policies = new Map();
-  const domainsRoot = join(appRoot, 'domains');
-  if (!existsSync(domainsRoot)) {
-    return policies;
-  }
-
-  for (const entry of readdirSync(domainsRoot)) {
-    const policyPath = join(domainsRoot, entry, 'legacy-imports.json');
-    if (!existsSync(policyPath)) {
-      continue;
-    }
-
-    const policy = JSON.parse(readFileSync(policyPath, 'utf8'));
-    policies.set(entry, {
-      maxImports: policy.maxImports,
-      modules: new Set(policy.modules),
-    });
-  }
-
-  return policies;
-}
-
-function checkLegacyImportBudgets() {
-  for (const [domain, policy] of legacyImportPolicies) {
-    const actual = legacyImportCounts.get(domain) ?? 0;
-    if (actual !== policy.maxImports) {
-      violations.push(`domains/${domain}: transitional legacy import budget is ${policy.maxImports}, but ${actual} remain; update the budget in the same change`);
-    }
-
-    const modulesSeen = legacyImportModulesSeen.get(domain) ?? new Set();
-    const unusedModules = [...policy.modules].filter((module) => !modulesSeen.has(module));
-    if (unusedModules.length > 0) {
-      violations.push(`domains/${domain}: remove unused legacy allowlist modules: ${unusedModules.join(', ')}`);
-    }
-  }
-}
-
 function resolveInternalImport(file, specifier) {
-  if (specifier.startsWith('@@/')) {
-    return `react/components/${specifier.slice(3)}`;
-  }
-
   if (specifier.startsWith('@/')) {
     return specifier.slice(2);
   }

@@ -1,0 +1,48 @@
+.root {
+  --page-content-gap: 1rem;
+  display: flex;
+  min-width: 0;
+  margin: 0 1rem 1rem;
+  flex-direction: column;
+  gap: var(--page-content-gap);
+  animation: page-content-enter 180ms ease-out both;
+}
+
+@keyframes page-content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@supports (view-transition-name: none) {
+  .root {
+    animation: none;
+  }
+}
+
+.root > * {
+  min-width: 0;
+}
+
+.gap-none {
+  --page-content-gap: 0;
+}
+
+.gap-small {
+  --page-content-gap: 0.5rem;
+}
+
+.gap-large {
+  --page-content-gap: 1.5rem;
+}
+
+.flush-bottom {
+  margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
+  }
+}

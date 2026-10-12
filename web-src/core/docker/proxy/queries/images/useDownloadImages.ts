@@ -1,0 +1,34 @@
+import axios, { parseAxiosError } from '@/shared/http';
+import { EnvironmentId } from '@/domains/environments';
+import { buildDockerProxyUrl } from '@/providers/infrastructure/docker';
+
+import { formatArrayQueryParamsForDockerAPI } from '../utils';
+import { withAgentTargetHeader } from '../utils';
+
+/**
+ * Raw docker API proxy
+ */
+export async function downloadImages(
+  environmentId: EnvironmentId,
+  images: { tags: string[]; id: string }[],
+  { nodeName }: { nodeName?: string } = {}
+) {
+  const names = images.map((image) =>
+    image.tags[0] !== '<none>:<none>' ? image.tags[0] : image.id
+  );
+
+  try {
+    const { data } = await axios.get(
+      buildDockerProxyUrl(environmentId, 'images', 'get'),
+      {
+        params: { names },
+        responseType: 'blob',
+        paramsSerializer: formatArrayQueryParamsForDockerAPI,
+        headers: { ...withAgentTargetHeader(nodeName) },
+      }
+    );
+    return data;
+  } catch (e) {
+    throw parseAxiosError(e, 'Unable to download images');
+  }
+}

@@ -4,8 +4,7 @@ import { Modal } from '@/ui/components/dialog';
 import { ModalBody } from '@/ui/components/dialog/Modal/ModalBody';
 import { ModalHeader } from '@/ui/components/dialog/Modal/ModalHeader';
 import { useDescribeResource } from '@/domains/configuration';
-
-import { CodeEditor } from '@@/CodeEditor';
+import { CodeEditor } from '@/ui/components/CodeEditor';
 
 
 type Props = {

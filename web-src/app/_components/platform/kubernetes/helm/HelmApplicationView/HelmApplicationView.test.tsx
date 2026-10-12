@@ -2,13 +2,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { HttpResponse } from 'msw';
 
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { server, http } from '@/setup-tests/server';
-import { withTestRouter } from '@/react/test-utils/withRouter';
-import { UserViewModel } from '@/portainer/models/user';
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { mockCodeMirror } from '@/setup-tests/mock-codemirror';
-import { mockLocalizeDate } from '@/setup-tests/mock-localizeDate';
-import { suppressConsoleLogs } from '@/setup-tests/suppress-console';
+import { server, http } from '@/core/test-support/setup/server';
+import { withTestRouter } from '@/core/test-support/withRouter';
+import { UserViewModel } from '@/domains/users';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
+import { mockCodeMirror } from '@/core/test-support/setup/mock-codemirror';
+import { mockLocalizeDate } from '@/core/test-support/setup/mock-localizeDate';
+import { suppressConsoleLogs } from '@/core/test-support/setup/suppress-console';
 
 import { HelmApplicationView } from './HelmApplicationView';
 
@@ -20,7 +20,7 @@ vi.mock('./ChartActions/UpgradeHelmModal', () => ({
 const mockUseEnvironmentId = vi.fn();
 mockLocalizeDate();
 
-vi.mock('@/react/hooks/useEnvironmentId', () => ({
+vi.mock('@/core/routing/useEnvironmentId', () => ({
   useEnvironmentId: () => mockUseEnvironmentId(),
 }));
 

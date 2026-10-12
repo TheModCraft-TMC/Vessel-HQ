@@ -89,6 +89,7 @@ jobs:
       - name: Validate release and frontend
         run: |
           bash scripts/check-release-version.test.sh
+          node --test build/next-entrypoint.test.cjs
           pnpm typecheck
           pnpm lint:ci
           pnpm test

@@ -1,14 +1,13 @@
 import { Info } from 'lucide-react';
 
-import { getAgentShortVersion } from '@/portainer/views/endpoints/helpers';
-import { useAgentDetails } from '@/react/portainer/environments/queries/useAgentDetails';
+import { getAgentShortVersion } from '@/core/environment-management/helpers/endpoints';
+import { useAgentDetails } from '@/core/composition/useAgentDetails';
 import { CopyButton } from '@/ui/components/buttons/CopyButton';
 import { FormSectionTitle } from '@/ui/components/forms/FormSectionTitle';
 import { Icon } from '@/ui/components/icons/Icon';
-
-import { Code } from '@@/Code';
-import { NavTabs } from '@@/NavTabs';
-import { NavContainer } from '@@/NavTabs/NavContainer';
+import { Code } from '@/ui/components/Code';
+import { NavTabs } from '@/ui/components/NavTabs';
+import { NavContainer } from '@/ui/components/NavTabs/NavContainer';
 
 export const deployments = [
   {

@@ -32,15 +32,15 @@ for (const signal of ['SIGINT', 'SIGTERM']) {
 frontend.on('exit', (code, signal) => {
   if (!shuttingDown) {
     shuttingDown = true;
+    process.exitCode = code ?? (signal ? 1 : 0);
     backend.kill('SIGTERM');
   }
-  process.exitCode = code ?? (signal ? 1 : 0);
 });
 
 backend.on('exit', (code, signal) => {
   if (!shuttingDown) {
     shuttingDown = true;
+    process.exitCode = code ?? (signal ? 1 : 0);
     frontend.kill('SIGTERM');
   }
-  process.exitCode = code ?? (signal ? 1 : 0);
 });

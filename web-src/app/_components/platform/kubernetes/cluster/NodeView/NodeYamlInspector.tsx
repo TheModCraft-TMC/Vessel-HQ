@@ -1,8 +1,7 @@
 
 import { YAMLInspector } from '@/domains/clusters/components/YAMLInspector';
 import { useNodeQuery } from '@/domains/clusters/cluster/queries/useNodeQuery';
-
-import { WidgetBody, Widget } from '@@/Widget';
+import { WidgetBody, Widget } from '@/ui/components/Widget';
 
 export function NodeYamlInspector({
   environmentId,

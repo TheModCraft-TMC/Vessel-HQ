@@ -1,0 +1,262 @@
+import {
+  AccessControlFormData,
+  ResourceControlOwnership,
+} from '@/domains/access-control';
+
+import { formValuesToCreatePayload, gitFormValuesToTestPayload } from './type';
+
+const baseGit = {
+  url: 'https://github.com/org/repo.git',
+  tlsSkipVerify: false,
+  polling: { enabled: false, interval: '' },
+  connectionOk: false,
+};
+
+const baseVault = {
+  address: 'https://vault.example.com',
+  internalAddress: 'http://vault:8200',
+  namespace: '',
+  kvVersion: 2 as const,
+  tlsSkipVerify: false,
+  authentication: {
+    method: 'token' as const,
+    token: 'secret-token',
+  },
+  connectionOk: false,
+};
+
+const baseUAC: AccessControlFormData = {
+  authorizedTeams: [],
+  authorizedUsers: [],
+  ownership: ResourceControlOwnership.ADMINISTRATORS,
+};
+
+function expectGitPayload(
+  payload: ReturnType<typeof formValuesToCreatePayload>
+) {
+  expect(payload.type).toBe('git');
+  if (payload.type !== 'git') {
+    throw new Error('expected git payload');
+  }
+  return payload.git;
+}
+
+function expectVaultPayload(
+  payload: ReturnType<typeof formValuesToCreatePayload>
+) {
+  expect(payload.type).toBe('vault');
+  if (payload.type !== 'vault') {
+    throw new Error('expected vault payload');
+  }
+  return payload.vault;
+}
+
+describe('formValuesToCreatePayload', () => {
+  it('populates authentication when authEnabled with username and password', () => {
+    const payload = expectGitPayload(
+      formValuesToCreatePayload({
+        ...baseUAC,
+        name: 'my-source',
+        type: 'git',
+        git: {
+          ...baseGit,
+          authentication: {
+            authEnabled: true,
+            username: 'alice',
+            password: 'secret',
+          },
+        },
+        vault: baseVault,
+      })
+    );
+
+    expect(payload.authentication).toEqual({
+      username: 'alice',
+      password: 'secret',
+    });
+  });
+
+  it('omits authentication when authEnabled is false', () => {
+    const payload = expectGitPayload(
+      formValuesToCreatePayload({
+        ...baseUAC,
+        name: 'my-source',
+        type: 'git',
+        git: {
+          ...baseGit,
+          authentication: { authEnabled: false },
+        },
+        vault: baseVault,
+      })
+    );
+
+    expect(payload.authentication).toBeUndefined();
+  });
+
+  it('omits authentication when authEnabled but username is missing', () => {
+    const payload = expectGitPayload(
+      formValuesToCreatePayload({
+        ...baseUAC,
+        name: 'my-source',
+        type: 'git',
+        git: {
+          ...baseGit,
+          authentication: {
+            authEnabled: true,
+            password: 'secret',
+          },
+        },
+        vault: baseVault,
+      })
+    );
+
+    expect(payload.authentication).toBeUndefined();
+  });
+
+  it('omits authentication when authEnabled but password is missing', () => {
+    const payload = expectGitPayload(
+      formValuesToCreatePayload({
+        ...baseUAC,
+        name: 'my-source',
+        type: 'git',
+        git: {
+          ...baseGit,
+          authentication: {
+            authEnabled: true,
+            username: 'alice',
+          },
+        },
+        vault: baseVault,
+      })
+    );
+
+    expect(payload.authentication).toBeUndefined();
+  });
+
+  it('sends the interval when polling is enabled', () => {
+    const payload = formValuesToCreatePayload({
+      ...baseUAC,
+      name: 'my-source',
+      type: 'git',
+      git: {
+        ...baseGit,
+        authentication: { authEnabled: false },
+        polling: { enabled: true, interval: '5m' },
+      },
+      vault: baseVault,
+    });
+
+    expect(payload.git.interval).toBe('5m');
+  });
+
+  it('sends an empty interval when polling is disabled', () => {
+    const payload = formValuesToCreatePayload({
+      ...baseUAC,
+      name: 'my-source',
+      type: 'git',
+      git: {
+        ...baseGit,
+        authentication: { authEnabled: false },
+        polling: { enabled: false, interval: '5m' },
+      },
+      vault: baseVault,
+    });
+
+    expect(payload.git.interval).toBe('');
+  });
+
+  it('does not include connectionOk in the create payload', () => {
+    const payload = expectGitPayload(
+      formValuesToCreatePayload({
+        ...baseUAC,
+        name: 'my-source',
+        type: 'git',
+        git: {
+          ...baseGit,
+          connectionOk: true,
+          authentication: { authEnabled: false },
+        },
+        vault: baseVault,
+      })
+    );
+
+    expect(payload).not.toHaveProperty('connectionOk');
+  });
+
+  it('maps access-control fields into git payloads', () => {
+    const payload = expectGitPayload(
+      formValuesToCreatePayload({
+        name: 'my-source',
+        type: 'git',
+        git: {
+          ...baseGit,
+          authentication: { authEnabled: false },
+        },
+        vault: baseVault,
+        authorizedTeams: [1],
+        authorizedUsers: [2],
+        ownership: ResourceControlOwnership.RESTRICTED,
+      })
+    );
+
+    expect(payload).toMatchObject({
+      administratorsOnly: false,
+      public: false,
+      teamAccesses: [1],
+      userAccesses: [2],
+    });
+  });
+
+  it('creates vault payloads with access-control fields', () => {
+    const payload = expectVaultPayload(
+      formValuesToCreatePayload({
+        ...baseUAC,
+        name: 'vault-source',
+        type: 'vault',
+        git: {
+          ...baseGit,
+          authentication: { authEnabled: false },
+        },
+        vault: baseVault,
+      })
+    );
+
+    expect(payload).toMatchObject({
+      name: 'vault-source',
+      address: baseVault.address,
+      internalAddress: baseVault.internalAddress,
+      authentication: baseVault.authentication,
+      administratorsOnly: true,
+      public: false,
+      teamAccesses: [],
+      userAccesses: [],
+    });
+  });
+});
+
+describe('gitFormValuesToTestPayload', () => {
+  it('populates authentication when authEnabled with username and password', () => {
+    const payload = gitFormValuesToTestPayload({
+      ...baseGit,
+      authentication: {
+        authEnabled: true,
+        username: 'alice',
+        password: 'secret',
+      },
+    });
+
+    expect(payload.authentication).toEqual({
+      username: 'alice',
+      password: 'secret',
+    });
+  });
+
+  it('omits authentication when authEnabled is false', () => {
+    const payload = gitFormValuesToTestPayload({
+      ...baseGit,
+      authentication: { authEnabled: false },
+    });
+
+    expect(payload.authentication).toBeUndefined();
+  });
+});

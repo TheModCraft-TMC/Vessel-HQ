@@ -2,17 +2,17 @@
 
 Status: repository inventory and migration guide for the accepted domain/provider architecture, September 21, 2026.
 
-This document maps the current frontend implementation to `app/providers/infrastructure` and `app/providers/remotes`. It is deliberately an inventory, not permission to move every platform-named directory wholesale. Current platform trees mix route-level views, user workflows, cache orchestration, transport code, provider-native DTOs, and mappers. Each slice must separate those responsibilities before it moves.
+This document maps the current frontend implementation to `web-src/providers/infrastructure` and `web-src/providers/remotes`. It is deliberately an inventory, not permission to move every platform-named directory wholesale. Current platform trees mix route-level views, user workflows, cache orchestration, transport code, provider-native DTOs, and mappers. Each slice must separate those responsibilities before it moves.
 
 ## Classification rule
 
 | Responsibility                                                                                                                                               | Owner                                     |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
-| Routes, authorization-aware workflows, TanStack Query cache behavior, forms, tables, and route-level `views`                                                 | `app/domains/<domain>`                    |
-| Protocol URLs, HTTP/SDK calls to an execution target, provider-native request/response DTOs, provider capability detection, and provider error normalization | `app/providers/infrastructure/<provider>` |
-| Registry-specific authentication, URL defaults, catalog/repository/tag/manifest transport, and registry capability differences                               | `app/providers/remotes/<provider>`        |
-| Portainer's persisted registry configuration, registry access policy, and the registry management UI                                                         | `app/domains/registries`                  |
-| Application wiring that selects an adapter for an environment or registry type                                                                               | `app/core/composition`                    |
+| Routes, authorization-aware workflows, TanStack Query cache behavior, forms, tables, and route-level `views`                                                 | `web-src/domains/<domain>`                    |
+| Protocol URLs, HTTP/SDK calls to an execution target, provider-native request/response DTOs, provider capability detection, and provider error normalization | `web-src/providers/infrastructure/<provider>` |
+| Registry-specific authentication, URL defaults, catalog/repository/tag/manifest transport, and registry capability differences                               | `web-src/providers/remotes/<provider>`        |
+| Portainer's persisted registry configuration, registry access policy, and the registry management UI                                                         | `web-src/domains/registries`                  |
+| Application wiring that selects an adapter for an environment or registry type                                                                               | `web-src/core/composition`                    |
 
 Query hooks do not move to providers merely because they call an API. A domain query owns cache keys, invalidation, loading behavior, and user-facing errors; it calls a provider client or capability interface for data. Provider modules must not import domain views, hooks, routes, or query caches.
 
@@ -20,7 +20,7 @@ Query hooks do not move to providers merely because they call an API. A domain q
 
 ### Docker
 
-Destination: `app/providers/infrastructure/docker`.
+Destination: `web-src/providers/infrastructure/docker`.
 
 | Current source                                                                                                                             | Destination responsibility                                                                                                                                                                | Keep outside the provider                                                                                                     |
 | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -31,15 +31,15 @@ Destination: `app/providers/infrastructure/docker`.
 | `app/docker/helpers/containers.ts` and Docker-native conversions scattered in view/query folders                                           | Pure Engine conversions move to `mappers/`; general form-to-domain conversion remains in a domain                                                                                         | `app/docker/helpers/logHelper/**` should remain domain/shared until its transport ownership is proven                         |
 | `app/react/docker/agent/queries/**`                                                                                                        | Docker agent client or `edge-agent` capability, based on the endpoint actually called                                                                                                     | Node selection UI remains domain-owned                                                                                        |
 
-The current Docker surface is the largest coupling hotspot. Repository references include about 154 files importing `@/react/docker` and 73 importing `@/docker`; direct HTTP operations are spread across dozens of workflow query directories. The existing `app/domains/containers` migration must not be reversed: its `*View` components, actions, forms, cache hooks, and request intent remain the container domain. Only native Engine transport and DTO conversion should cross into the Docker provider.
+The current Docker surface is the largest coupling hotspot. Repository references include about 154 files importing `@/react/docker` and 73 importing `@/docker`; direct HTTP operations are spread across dozens of workflow query directories. The existing `web-src/domains/containers` migration must not be reversed: its `*View` components, actions, forms, cache hooks, and request intent remain the container domain. Only native Engine transport and DTO conversion should cross into the Docker provider.
 
 Recommended first slice: move `buildDockerProxyUrl`, the proxy query-key-independent HTTP functions for one read-only resource (for example Engine version or ping), and their native response types behind a small public `DockerClient` contract. Keep the existing hooks in place and change only their data source. This proves dependency direction without moving a route.
 
 ### Podman
 
-Destination: `app/providers/infrastructure/podman`.
+Destination: `web-src/providers/infrastructure/podman`.
 
-There is no cohesive Podman client tree today. Podman is treated as Docker-compatible and detected through scattered conditionals. Evidence includes `app/react/portainer/environments/queries/useIsPodman.ts`, the Podman environment wizard under `app/react/portainer/environments/wizard/EnvironmentsCreationView/WizardPodman`, Docker plugin filtering in `app/react/docker/proxy/queries/usePlugins.ts`, networking defaults in `app/domains/containers/CreateView/NetworkTab/toViewModel.ts`, container action capability checks, stats normalization in `app/docker/models/containerStats.ts`, and Podman-specific environment/sidebar labels.
+There is no cohesive Podman client tree today. Podman is treated as Docker-compatible and detected through scattered conditionals. Evidence includes `app/react/portainer/environments/queries/useIsPodman.ts`, the Podman environment wizard under `app/react/portainer/environments/wizard/EnvironmentsCreationView/WizardPodman`, Docker plugin filtering in `app/react/docker/proxy/queries/usePlugins.ts`, networking defaults in `web-src/domains/containers/CreateView/NetworkTab/toViewModel.ts`, container action capability checks, stats normalization in `app/docker/models/containerStats.ts`, and Podman-specific environment/sidebar labels.
 
 | Current source                                                           | Destination responsibility                                                    | Keep outside the provider                                                             |
 | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -51,7 +51,7 @@ Recommended first slice: define a provider-neutral container capability contract
 
 ### Kubernetes
 
-Destination: `app/providers/infrastructure/kubernetes`.
+Destination: `web-src/providers/infrastructure/kubernetes`.
 
 | Current source                                                                                                                                       | Destination responsibility                                                                                                | Keep outside the provider                                                                                    |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -67,16 +67,16 @@ Recommended first slice: extract the read-only Kubernetes version operation from
 
 ### Azure Container Instances
 
-Destination: `app/providers/infrastructure/azure-aci`.
+Destination: `web-src/providers/infrastructure/azure-aci`.
 
-The temporary Azure slice under `app/domains/azure` (formerly `app/features/azure`) still combines domain views with Azure Resource Manager transport.
+The temporary Azure slice under `web-src/domains/azure` (formerly `app/features/azure`) still combines domain views with Azure Resource Manager transport.
 
 | Current source                                                                                                                        | Destination responsibility                                                                                               | Keep outside the provider                                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `app/domains/azure/services/azure-urls.ts`, `container-groups.service.ts`, and transport utilities                                    | `client/` for ACI/ARM requests through the environment proxy                                                             | Create/delete workflow orchestration stays in the container domain                                         |
-| `app/domains/azure/queries/useProvider.ts`, `useSubscriptions.ts`, `useResourceGroups.ts`, `useContainerGroups.ts`, and item variants | Extract their HTTP fetchers and Azure-native DTOs to the provider                                                        | Hooks, cache keys, loading states, and invalidation stay domain-owned                                      |
-| `app/domains/azure/types.ts`                                                                                                          | Split Azure subscription/resource-group/container-group shapes into `dto/`; stable workload/form models go to the domain | Avoid exporting ARM response shapes from a domain public API                                               |
-| `app/domains/azure/services/container-groups.service.ts::transformToPayload`                                                          | `mappers/` because it constructs an ACI-native container-group payload                                                   | Form validation and form values remain with the view/workflow                                              |
+| `web-src/domains/azure/services/azure-urls.ts`, `container-groups.service.ts`, and transport utilities                                    | `client/` for ACI/ARM requests through the environment proxy                                                             | Create/delete workflow orchestration stays in the container domain                                         |
+| `web-src/domains/azure/queries/useProvider.ts`, `useSubscriptions.ts`, `useResourceGroups.ts`, `useContainerGroups.ts`, and item variants | Extract their HTTP fetchers and Azure-native DTOs to the provider                                                        | Hooks, cache keys, loading states, and invalidation stay domain-owned                                      |
+| `web-src/domains/azure/types.ts`                                                                                                          | Split Azure subscription/resource-group/container-group shapes into `dto/`; stable workload/form models go to the domain | Avoid exporting ARM response shapes from a domain public API                                               |
+| `web-src/domains/azure/services/container-groups.service.ts::transformToPayload`                                                          | `mappers/` because it constructs an ACI-native container-group payload                                                   | Form validation and form values remain with the view/workflow                                              |
 | `DashboardView/**` and `container-instances/{CreateView,ItemView,ListView}/**`                                                        | No provider destination                                                                                                  | These remain domain views, preferably under the container workload domain once the adapter boundary exists |
 | Azure environment forms and wizard code under `app/react/portainer/environments/**`                                                   | Azure connection fields/capability details may call the adapter                                                          | Route-level environment setup remains in `domains/environments/views`                                      |
 
@@ -84,7 +84,7 @@ Recommended first slice: move the URL builders, ACI DTOs, `transformToPayload`, 
 
 ### Edge agent
 
-Destination: `app/providers/infrastructure/edge-agent`.
+Destination: `web-src/providers/infrastructure/edge-agent`.
 
 `app/react/edge` is mostly product workflow code, not an infrastructure adapter. Edge groups, jobs, stacks, device waiting-room behavior, association tables, and their route views belong to edge-oriented domains. The narrower provider boundary is agent enrollment and communication.
 

@@ -17,8 +17,7 @@ import { UpdateHelmReleasePayload } from '@/domains/configuration/helm/types';
 import { HelmValuesInput } from '@/domains/configuration/helm/components/HelmValuesInput';
 import { useHelmChartValues } from '@/domains/configuration/helm/helmChartSourceQueries/useHelmChartValues';
 import { ManifestPreviewFormSection } from '@/domains/configuration/helm/components/ManifestPreviewFormSection';
-
-import { WidgetIcon } from '@@/Widget/WidgetIcon';
+import { WidgetIcon } from '@/ui/components/Widget/WidgetIcon';
 
 interface Props {
   onSubmit: OnSubmit<UpdateHelmReleasePayload>;

@@ -1,6 +1,6 @@
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { useHelmRelease } from '@/domains/configuration/helm/helmReleaseQueries/useHelmRelease';
 import { Datatable, TableSettingsMenu } from '@/ui/components/data-table';
 import {
@@ -11,8 +11,7 @@ import {
 import { useTableState } from '@/ui/components/data-table/useTableState';
 import { TableSettingsMenuAutoRefresh } from '@/ui/components/data-table/TableSettingsMenuAutoRefresh';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
-
-import { Widget } from '@@/Widget';
+import { Widget } from '@/ui/components/Widget';
 
 import { columns } from './columns';
 import { useResourceRows } from './useResourceRows';

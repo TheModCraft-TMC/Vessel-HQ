@@ -1,11 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { openDockerLogsStream as openServiceLogsStream } from '@/docker/helpers/logHelper';
+import { openDockerLogsStream as openServiceLogsStream } from '@/shared/docker/helpers/logHelper';
 import { DockerLogsView as ContainerLogsView } from '@app/_components/platform/docker/containers/ContainerLogs/DockerLogsView';
 import { openDockerLogsStream } from '@app/_components/platform/docker/containers/ContainerLogs/logHelper';
 
 import { DockerLogsView as ServiceLogsView } from './DockerLogsView';
+
+const scrollTo = vi.fn();
 
 vi.mock(
   '@app/_components/platform/docker/containers/ContainerLogs/logHelper',
@@ -15,12 +17,18 @@ vi.mock(
   })
 );
 
-vi.mock('@/docker/helpers/logHelper', () => ({
+vi.mock('@/shared/docker/helpers/logHelper', () => ({
   openDockerLogsStream: vi.fn(),
   concatLogsToString: vi.fn(),
 }));
 
 beforeEach(() => {
+  scrollTo.mockReset();
+  Object.defineProperty(HTMLElement.prototype, 'scrollTo', {
+    configurable: true,
+    value: scrollTo,
+  });
+
   function openStream({ onLogs }: Parameters<typeof openDockerLogsStream>[0]) {
     onLogs([
       { line: 'First log line', spans: [{ text: 'First log line' }] },
@@ -55,12 +63,27 @@ describe.each([
       .getByRole('button', { name: 'First log line' })
       .closest('pre');
 
-    expect(viewer).toHaveClass('log_viewer', 'wrap_lines');
+    expect(viewer).toHaveClass('log_viewer', 'scroll-smooth', 'wrap_lines');
+    expect(viewer?.parentElement).toHaveClass(
+      'h-[clamp(20rem,55vh,48rem)]',
+      'overflow-hidden'
+    );
 
     await user.click(screen.getByRole('checkbox', { name: 'Wrap lines' }));
 
     expect(viewer).toHaveClass('log_viewer');
     expect(viewer).not.toHaveClass('wrap_lines');
+  });
+
+  it('smoothly follows live output inside the bounded viewer', async () => {
+    renderLogs();
+
+    await waitFor(() =>
+      expect(scrollTo).toHaveBeenCalledWith({
+        top: expect.any(Number),
+        behavior: 'smooth',
+      })
+    );
   });
 
   it('highlights selected lines and clears their highlights on unselect', async () => {

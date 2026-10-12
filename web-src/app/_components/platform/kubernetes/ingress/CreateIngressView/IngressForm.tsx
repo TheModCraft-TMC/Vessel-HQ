@@ -1,8 +1,8 @@
 import { ChangeEvent, useEffect } from 'react';
 import { Plus, RefreshCw, Trash2 } from 'lucide-react';
+import { Link } from '@console/navigation/Link';
 
-import Route from '@/assets/ico/route.svg?c';
-import { Link } from '@/ui/components/links/Link';
+import Route from '@/shared/assets/ico/route.svg?c';
 import { Option } from '@/ui/components/forms/Input/Select';
 import { FormError } from '@/ui/components/forms/FormError';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
@@ -14,9 +14,8 @@ import { Select } from '@/ui/components/forms/ReactSelect';
 import { InputGroup } from '@/ui/components/forms/InputGroup';
 import { Input } from '@/ui/components/forms/Input';
 import { AnnotationsForm } from '@/domains/applications';
-
-import { Card } from '@@/primitives/Card';
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { Card } from '@/ui/components/primitives/Card';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
 
 import {
   GroupedServiceOptions,

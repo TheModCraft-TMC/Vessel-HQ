@@ -2,17 +2,16 @@
 
 import { FileText, List } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useRouteParams } from '@console/console/routing/useRouteParams';
+import { useRouteParams } from '@console/routing/useRouteParams';
 
 import { useService } from '@/domains/services/queries/useService';
 import { useTask } from '@/domains/services/tasks/queries/useTask';
-import { isoDate } from '@/portainer/filters/filters';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
+import { isoDate } from '@/shared/formatters';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
 import { Button } from '@/ui/components/buttons';
 import { TableContainer, TableTitle } from '@/ui/components/data-table';
 import { PageHeader } from '@/ui/layouts/view-layout';
-
-import { DetailsTable } from '@@/DetailsTable';
+import { DetailsTable } from '@/ui/components/DetailsTable';
 
 export default function Page() {
   const environmentId = useEnvironmentId();

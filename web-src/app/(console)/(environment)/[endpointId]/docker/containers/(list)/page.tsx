@@ -1,10 +1,12 @@
 'use client';
 
-import { EnvironmentType } from '@/domains/environments';
+import { PageContent } from '@console/layout/PageContent';
+
+import { EnvironmentType } from '@/domains/environments/types';
 import { ContainersDatatable } from '@/domains/containers/views/ContainersDatatable/ContainersDatatable';
-import { useCurrentEnvironment } from '@/react/hooks/useCurrentEnvironment';
-import { useEnvironmentId } from '@/react/hooks/useEnvironmentId';
-import { useInfo } from '@/react/docker/proxy/queries/useInfo';
+import { useCurrentEnvironment } from '@/core/composition/useCurrentEnvironment';
+import { useEnvironmentId } from '@/core/routing/useEnvironmentId';
+import { useInfo } from '@/core/composition/useDockerInfo';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
 export default function Page() {
@@ -24,10 +26,13 @@ export default function Page() {
   return (
     <>
       <PageHeader title="Container list" breadcrumbs="Containers" reload />
-      <ContainersDatatable
-        isHostColumnVisible={isAgent && Boolean(swarmQuery.data)}
-        environment={environment}
-      />
+      <PageContent gap="none">
+        <ContainersDatatable
+          flush
+          isHostColumnVisible={isAgent && Boolean(swarmQuery.data)}
+          environment={environment}
+        />
+      </PageContent>
     </>
   );
 }

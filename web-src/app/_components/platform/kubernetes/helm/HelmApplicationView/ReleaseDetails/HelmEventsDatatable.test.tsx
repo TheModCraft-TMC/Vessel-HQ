@@ -2,12 +2,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { HttpResponse } from 'msw';
 
 import type { KubernetesEvent as Event } from '@/domains/clusters';
-import { server, http } from '@/setup-tests/server';
+import { server, http } from '@/core/test-support/setup/server';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { withTestRouter } from '@/react/test-utils/withRouter';
-import { UserViewModel } from '@/portainer/models/user';
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
-import { mockLocalizeDate } from '@/setup-tests/mock-localizeDate';
+import { withTestRouter } from '@/core/test-support/withRouter';
+import { UserViewModel } from '@/domains/users';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
+import { mockLocalizeDate } from '@/core/test-support/setup/mock-localizeDate';
 import { GenericResource } from '@/domains/configuration/helm/types';
 
 import {
@@ -18,7 +18,7 @@ import {
 const mockUseEnvironmentId = vi.fn();
 mockLocalizeDate();
 
-vi.mock('@/react/hooks/useEnvironmentId', () => ({
+vi.mock('@/core/routing/useEnvironmentId', () => ({
   useEnvironmentId: () => mockUseEnvironmentId(),
 }));
 

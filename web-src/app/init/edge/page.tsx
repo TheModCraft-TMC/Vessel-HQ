@@ -9,8 +9,7 @@ import {
   useInitEdgeSetup,
   validationSchema,
 } from '@app/_components/pages/InitEdgePage';
-
-import { Widget, WidgetBody, WidgetTitle } from '@@/Widget';
+import { Widget, WidgetBody, WidgetTitle } from '@/ui/components/Widget';
 
 export default function Page() {
   const setup = useInitEdgeSetup();

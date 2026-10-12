@@ -26,7 +26,7 @@ vi.mock('@/ui/components/icons/Icon', () => ({
 
 // Mock the Link component to capture routing props
 const mockLink = vi.fn();
-vi.mock('@/ui/components/links/Link', () => ({
+vi.mock('@console/navigation/Link', () => ({
   Link: ({
     children,
     to,

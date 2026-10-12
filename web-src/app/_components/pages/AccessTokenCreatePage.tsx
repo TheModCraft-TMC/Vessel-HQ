@@ -9,9 +9,8 @@ import { DisplayUserAccessToken } from '@/domains/users/account/CreateAccessToke
 import { ApiKeyFormValues } from '@/domains/users/account/CreateAccessTokenView/types';
 import { useCreateUserAccessTokenMutation } from '@/domains/users/account/CreateAccessTokenView/useCreateUserAccessTokenMutation';
 import { AuthenticationMethod, usePublicSettings } from '@/domains/settings';
-import { useCurrentUser } from '@/react/hooks/useUser';
-
-import { Widget } from '@@/Widget';
+import { useCurrentUser } from '@/core/session/useUser';
+import { Widget } from '@/ui/components/Widget';
 
 const INITIAL_VALUES: ApiKeyFormValues = { password: '', description: '' };
 

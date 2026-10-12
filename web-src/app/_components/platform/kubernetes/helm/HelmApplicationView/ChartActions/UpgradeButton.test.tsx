@@ -3,8 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
-import { withTestRouter } from '@/react/test-utils/withRouter';
-import { withUserProvider } from '@/react/test-utils/withUserProvider';
+import { withTestRouter } from '@/core/test-support/withRouter';
+import { withUserProvider } from '@/core/test-support/withUserProvider';
 import {
   useHelmRepoVersions,
   ChartVersion,
