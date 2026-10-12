@@ -40,15 +40,27 @@ stale selection; both passed after the fix.
 - Compile shared table components in Vitest to exercise the production behavior;
   cover arriving, removed, and replaced datasets without remounting.
 - Local browser verification: Images populated after a full reload; Networks
-  populated on navigation. Production was inspected only; deployment is pending.
+  populated on navigation. Production deployment and smoke results follow.
 - Fresh architecture guards (3,263 source files; 166 routes), typecheck, and
   production webpack build with standalone packaging passed. Lint passed with
   zero errors and 196 warnings. Focused compiler-enabled table tests passed:
   six files, 101 tests. The full suite passed: 340 files, 2,289 passed, five
   skipped, 11 todo; the newly added variant file passed separately (four tests).
   No live Kubernetes, Swarm, Podman, or Azure ACI verification was performed
-  for this follow-up. The maintainer authorized overwriting 1.3.0 again and
-  deploying this fix to Node4; publication/deployment verification follows.
+  for this follow-up.
+- Published the maintainer-authorized replacement `1.3.0` image for AMD64 and
+  ARM64; both executed `--version` successfully. Source revision: `ad82c982b`.
+  OCI index: `sha256:759c58b7501b4fe23cd07dde2a3c7c4ec0bc4016e7abaffa2b01e1af3ab951c8`.
+  Updated the GitHub `v1.3.0` tag and release notes; beta archive unchanged.
+- Deployed that exact digest to Node4, preserving ports, mounts, bridge
+  networking, and restart policy. `/api/status` passed and the binary reports
+  `1.3.0`. Retained `portainer-rollback-1.3.0-before-table-fix-20261012`.
+  An initial health script hit an authenticated version endpoint (401) and
+  restored the prior container; the corrected binary-version check passed.
+- Production browser smoke passed: Images showed 54 data rows on first visit
+  and after a full reload; Networks showed 10 data rows on its first page and
+  after return navigation; Containers showed 25 data rows on its first page.
+  The `latest` channel remains unchanged pending explicit approval.
 
 ## Observed migration changes
 
