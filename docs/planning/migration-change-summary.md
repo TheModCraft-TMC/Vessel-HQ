@@ -662,3 +662,33 @@ suite. A duplicate Linux attempt was terminated during local Docker resource
 contention, and its disposable container was removed after Docker recovered.
 The normal port-8999 console still opened the dark six-node/four-edge traffic
 drawer and completed a fresh Docker traffic refresh without errors.
+
+## 2026-10-16: Node4 production-host beta smoke
+
+Smoked the immutable Docker Hub `1.3.1-beta.1` index
+`sha256:445416b2b37c21d0f6df4278b8a1e3004092fd988df2a481764dd0923fa9012d`
+on Node4 as an isolated sidecar using a private production-data copy. A stable
+bbolt metadata window and offline integrity check verified the copy. Its selected
+Docker environment was adapted to a read-only local socket proxy, with other
+environment connections disabled and external networking isolated. Workflow
+definitions were retained for stack inspection. Browser access used an SSH tunnel.
+This exercised production data and real Docker reads, rather than upgrading the
+live datastore or testing the original agent transport.
+
+Passed application/stack/container/network/image reads, extension package upload
+and scoped approval, real stack topology, label-derived Traefik configuration,
+live byte counters and measured edge animation. Browser checks covered the inline
+drawer position, mobile fitting without horizontal overflow, light/dark themes,
+manual zoom across live samples, and header Escape/focus restoration. The notes
+UI and released Go SDK exchanged writes through the private mTLS Unix gateway;
+the note survived a sidecar restart. Out-of-scope reads, stale revision/digest
+requests, stale note writes, revoked service-write permission and disabled
+extension access were denied. Browser console errors: zero.
+
+Cleanup removed the sidecar, internal network, proxy, temporary login fixtures and
+private production-data copy. The original running-container baseline was
+restored. The live Portainer container retained its original ID, image, start
+time, ports, mounts and restart policy; its HTTPS status returned 200 and its
+version remains `1.3.0`. The sanitized local receipt is
+`dist/native-extension-production-smoke/results.json`. This Docker smoke does not
+establish production activation support or Kubernetes/Swarm/ACI coverage.
