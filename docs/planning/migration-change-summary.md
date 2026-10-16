@@ -600,3 +600,65 @@ Fresh verification after extraction:
 At the user's request, SDK commits were pushed normally to the configured `TheModCraft-TMC/Vessel-HQ-Extension-SDK` origin. Final SDK commit `e60737f8524d1e614e4d1d4e360266f7e8baddfb` replaces the sole owned Python packager with dependency-light Node.js builtins and system tar. SDK documentation, AGENTS instructions and CI now use `node scripts/package-source.mjs`; CI pins Node.js 24.21.0. The public source allowlist, rejection of symlinks, readonly independent Go build, archive root/layout, atomic no-overwrite installation and SHA-256 output are preserved. Three focused packaging tests passed, including a fresh extracted-module build. No owned `.py` source remains, and the previous provisional Python-containing archive was moved outside the SDK workspace.
 
 The [final independent SDK workflow](https://github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/actions/runs/38934645677) completed successfully for Go 1.25.x and 1.26.x. It passed race tests/vet, all three CLI builds for Linux amd64/arm64, generated-contract verification, Node packaging tests and source artifact upload. No module identity or immutable beta.1 tag changed. The locally built Node source archive is `vesselhq-extension-sdk/dist/vessel-extension-sdk-v0.1.0-beta.1-node.tar.gz`, SHA-256 `666b7ea951c3fda02e843b8b7366ec3b5d4903dec36911e8778b3507386189e2`. The main workspace guide now selects an ignored `go.work.local` explicitly for joint development, preserving the tracked root `go.work`; CI verification remains `GOWORK=off`.
+
+## 2026-10-16: beta publication and verified Docker Hub mirror
+
+The immutable application tag `v1.3.1-beta.1` and historical SDK submodule tag
+`sdk/go/v0.1.0-beta.1` identify source commit
+`27ddd4d89fb3bac3b9c7f73f916dab757cd02abc`. The [canonical tagged workflow](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/38931660052)
+passed every frontend, backend and SDK gate, fresh application/SDK distribution
+builds, and actual backend status plus Next.js HTML startup checks on Linux amd64
+and arm64. It published [application assets](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.1-beta.1)
+and the [historical SDK prerelease](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/sdk/go/v0.1.0-beta.1).
+All nine downloaded binary/archive/extension assets matched the published
+`SHA256SUMS`. An independent consumer fetched the SDK through the public Go proxy
+and checksum database without a local replacement and built successfully.
+
+The user selected `themodcrafttmc/vessel-hq` on Docker Hub. Feature commit
+`a40a9abfe6f78b300cce4ddcce55eb01afbf72e0` adds the SDK source cutover and registry
+configuration. Its [mirror-only workflow](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/38935854273)
+passed, with the application build job skipped. Skopeo copied the already validated
+OCI index, both platform manifests, attestations and all blobs while preserving
+index digest `sha256:445416b2b37c21d0f6df4278b8a1e3004092fd988df2a481764dd0923fa9012d`.
+Both public Docker Hub tags `themodcrafttmc/vessel-hq:1.3.1-beta.1` and `:beta`
+resolve to that digest and contain `linux/amd64` and `linux/arm64`. Anonymous Hub
+HTTP metadata confirmed active public tags; a fresh Hub ARM64 pull and execution
+returned `1.3.1-beta.1`. The GHCR package currently requires authentication.
+No `latest` alias, historical image, original release asset/checksum, or immutable
+source tag was changed. The application release has an additive Docker Hub note
+and `IMAGE-DockerHub.txt` verification receipt.
+
+Future workflows build once, mirror all OCI content to Docker Hub and GHCR with
+preserved digests, reject conflicting immutable tags, and move the matching
+channel only after immutable copies verify. Focused publishing tests cover
+immutable conflicts, denied lookups, failed copies and promotion order; they,
+workflow actionlint, shell syntax and whitespace checks passed. These publication
+results concern the frozen beta source; checks on later source-extraction and
+update-link edits are recorded separately.
+
+## 2026-10-16: final SDK separation and registry verification
+
+Feature commit `a40a9abfe` separates SDK authoring/distribution from Vessel,
+configures Docker Hub publication, and aligns version discovery and update links
+with `themodcrafttmc/vessel-hq`. Commit `69b2edd76` adds a read-only frontend
+validation dispatch to the existing image workflow. Its publishing jobs are
+skipped when `verify_only` is selected; SDK builds remain in the independent SDK
+repository.
+
+[Fresh GitHub verification](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/38938071247)
+passed on exact commit `69b2edd7639475d85bb338a2ab577468fc7f3b3c`:
+modernization, boundaries (3,299 source files), App Router compliance (168 pages),
+typecheck, 19 extension tests across five files, 2,357 frontend tests across 351
+files (5 skipped, 11 todo), lint (0 errors, 196 warnings), and the production
+webpack build with standalone packaging. Both image-publication jobs were
+confirmed skipped. The isolated local build from committed `a40a9abfe` also
+passed and produced a standalone server and static assets. Published-SDK host
+race tests and the affected backend system/version tests passed.
+
+A local full-suite attempt encountered an async-query timeout in the unchanged
+AppTemplateFieldset test after 191 files and 1,424 tests passed. That test passed
+alone without source changes; the fresh GitHub run subsequently passed the whole
+suite. A duplicate Linux attempt was terminated during local Docker resource
+contention, and its disposable container was removed after Docker recovered.
+The normal port-8999 console still opened the dark six-node/four-edge traffic
+drawer and completed a fresh Docker traffic refresh without errors.
