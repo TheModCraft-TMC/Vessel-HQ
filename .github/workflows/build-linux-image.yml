@@ -6,6 +6,11 @@ on:
       - develop
   workflow_dispatch:
     inputs:
+      verify_only:
+        description: Run frontend validation and production build without publishing anything
+        required: false
+        default: false
+        type: boolean
       version_tag:
         description: Release version (blank uses RELEASE_VERSION; must match it)
         required: false
@@ -32,7 +37,7 @@ concurrency:
 jobs:
   build-linux-image:
     name: Validate, build, and publish Linux image
-    if: inputs.mirror_source_digest == ''
+    if: inputs.mirror_source_digest == '' && !inputs.verify_only
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -178,7 +183,7 @@ jobs:
 
   mirror-validated-beta:
     name: Mirror validated beta without rebuilding
-    if: github.event_name == 'workflow_dispatch' && inputs.mirror_source_digest != ''
+    if: github.event_name == 'workflow_dispatch' && inputs.mirror_source_digest != '' && !inputs.verify_only
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -222,3 +227,39 @@ jobs:
           bash scripts/publish-release-mirrors.sh ghcr.io/themodcraft-tmc/vessel-hq "$VERSION" "$DIGEST" \
             docker.io/themodcrafttmc/vessel-hq
           printf 'docker.io/themodcrafttmc/vessel-hq:%s@%s\n' "$VERSION" "$DIGEST" >> "$GITHUB_STEP_SUMMARY"
+
+  verify-frontend:
+    name: Verify frontend without publishing
+    if: github.event_name == 'workflow_dispatch' && inputs.verify_only
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+          cache: pnpm
+      - name: Install frozen dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check architecture and types
+        run: |
+          pnpm check:frontend-modernization
+          pnpm check:frontend-boundaries
+          pnpm check:app-router-compliance
+          pnpm typecheck
+      - name: Test extensions and frontend
+        run: |
+          pnpm test:extensions --maxWorkers=4
+          pnpm test --maxWorkers=4
+      - name: Lint frontend
+        run: pnpm lint:ci
+      - name: Build production frontend
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: pnpm build
