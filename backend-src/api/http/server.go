@@ -3,6 +3,8 @@ package http
 import (
 	"context"
 	"crypto/tls"
+	"encoding/base64"
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -35,6 +37,7 @@ import (
 	kubehandler "github.com/portainer/portainer/api/http/handler/kubernetes"
 	"github.com/portainer/portainer/api/http/handler/ldap"
 	"github.com/portainer/portainer/api/http/handler/motd"
+	"github.com/portainer/portainer/api/http/handler/nativeextensions"
 	"github.com/portainer/portainer/api/http/handler/registries"
 	"github.com/portainer/portainer/api/http/handler/resourcecontrols"
 	"github.com/portainer/portainer/api/http/handler/roles"
@@ -65,6 +68,9 @@ import (
 	k8s "github.com/portainer/portainer/api/kubernetes"
 	"github.com/portainer/portainer/api/kubernetes/cli"
 	motdservice "github.com/portainer/portainer/api/motd"
+	extensiondomain "github.com/portainer/portainer/api/nativeextensions"
+	extensionrpc "github.com/portainer/portainer/api/nativeextensions/rpc"
+	extensiontopology "github.com/portainer/portainer/api/nativeextensions/topology"
 	"github.com/portainer/portainer/api/pendingactions"
 	"github.com/portainer/portainer/api/platform"
 	"github.com/portainer/portainer/api/stacks/deployments"
@@ -122,6 +128,67 @@ type Server struct {
 
 // Start starts the HTTP server
 func (server *Server) Start(ctx context.Context) error {
+	extensionConfig, err := extensionrpc.ConfigFromEnvironment()
+	if err != nil {
+		return err
+	}
+	if extensionConfig.Address != "" {
+		extensionCtx, stopExtensions := context.WithCancel(ctx)
+		defer stopExtensions()
+		result, err := extensionrpc.Start(extensionCtx, extensionConfig, func(ctx context.Context, id string) (extensiondomain.Record, error) {
+			if err := ctx.Err(); err != nil {
+				return extensiondomain.Record{}, err
+			}
+			records, err := server.DataStore.NativeExtension().ReadAll(func(r extensiondomain.Record) bool { return r.Manifest.ID == id })
+			if err != nil {
+				return extensiondomain.Record{}, err
+			}
+			if len(records) != 1 {
+				return extensiondomain.Record{}, errors.New("extension registration unavailable")
+			}
+			return records[0], nil
+		}, func(ctx context.Context, id int) (extensionrpc.Environment, error) {
+			if err := ctx.Err(); err != nil {
+				return extensionrpc.Environment{}, err
+			}
+			endpoint, err := server.DataStore.Endpoint().Endpoint(portainer.EndpointID(id))
+			if server.DataStore.IsErrObjectNotFound(err) {
+				return extensionrpc.Environment{}, extensionrpc.ErrEnvironmentNotFound
+			}
+			if err != nil {
+				return extensionrpc.Environment{}, err
+			}
+			return extensionrpc.Environment{ID: int64(endpoint.ID), Name: endpoint.Name, Type: int32(endpoint.Type), Status: int32(endpoint.Status)}, nil
+		}, func(ctx context.Context, event extensionrpc.AccessEvent) error {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+			payload, err := json.Marshal(event)
+			if err != nil {
+				return err
+			}
+			action := "extension.grpc.denied"
+			if event.Outcome == "allowed" {
+				action = "extension.grpc.read"
+			} else if event.Outcome == "failed" {
+				action = "extension.grpc.failed"
+			}
+			return server.DataStore.ActivityLog().Create(&portainer.ActivityLog{Timestamp: time.Now().Unix(), Username: "extension:" + event.ExtensionID, Action: action, Context: "native-extensions", Payload: base64.StdEncoding.EncodeToString(payload)})
+		}, extensionrpc.NewNoteStorage(server.DataStore))
+		if err != nil {
+			return errors.Wrap(err, "unable to start native extension gRPC")
+		}
+		go func() {
+			err := <-result
+			if extensionCtx.Err() == nil {
+				log.Error().Err(err).Msg("native extension gRPC listener stopped unexpectedly")
+				if server.ShutdownTrigger != nil {
+					server.ShutdownTrigger()
+				}
+			}
+		}()
+	}
+
 	kubernetesTokenCacheManager := server.KubernetesTokenCacheManager
 
 	// Shared security helpers are created once and passed to every route group.
@@ -236,6 +303,50 @@ func (server *Server) Start(ctx context.Context) error {
 	var resourceControlHandler = resourcecontrols.NewHandler(requestBouncer)
 	resourceControlHandler.DataStore = server.DataStore
 
+	nativeExtensionsHandler := nativeextensions.NewHandler(requestBouncer)
+	nativeExtensionsHandler.DataStore = server.DataStore
+	nativeExtensionsHandler.FileService = server.FileService
+	nativeExtensionsHandler.AuthorizeUser = func(ctx context.Context, user, env, stack int) error {
+		return extensiontopology.AuthorizeUser(ctx, server.DataStore, user, env, stack)
+	}
+	brokerCtx, stopBroker := context.WithCancel(ctx)
+	defer stopBroker()
+	nativeExtensionsHandler.Broker, err = extensionrpc.NewInternalBroker(brokerCtx, func(ctx context.Context, id string) (extensiondomain.Record, error) {
+		if err := ctx.Err(); err != nil {
+			return extensiondomain.Record{}, err
+		}
+		records, err := server.DataStore.NativeExtension().ReadAll(func(r extensiondomain.Record) bool { return r.Manifest.ID == id })
+		if err != nil {
+			return extensiondomain.Record{}, err
+		}
+		if len(records) != 1 {
+			return extensiondomain.Record{}, errors.New("extension registration unavailable")
+		}
+		return records[0], nil
+	}, func(ctx context.Context, env, stack int) (extensiontopology.Graph, error) {
+		return extensiontopology.ReadDocker(ctx, server.DataStore, server.DockerClientFactory, env, stack)
+	}, nativeExtensionsHandler.AuthorizeUser, func(ctx context.Context, event extensionrpc.AccessEvent) error {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		payload, err := json.Marshal(event)
+		if err != nil {
+			return err
+		}
+		action := "extension.grpc.denied"
+		if event.Outcome == "allowed" {
+			action = "extension.grpc.read"
+		} else if event.Outcome == "failed" {
+			action = "extension.grpc.failed"
+		}
+		return server.DataStore.ActivityLog().Create(&portainer.ActivityLog{Timestamp: time.Now().Unix(), Username: "extension:" + event.ExtensionID, Action: action, Context: "native-extensions", Payload: base64.StdEncoding.EncodeToString(payload)})
+	}, func(ctx context.Context, env, stack int) (extensiontopology.Graph, error) {
+		return extensiontopology.ReadDockerTraffic(ctx, server.DataStore, server.DockerClientFactory, env, stack)
+	})
+	if err != nil {
+		return errors.Wrap(err, "cannot start internal extension gRPC broker")
+	}
+
 	var settingsHandler = settings.NewHandler(requestBouncer)
 	settingsHandler.DataStore = server.DataStore
 	settingsHandler.FileService = server.FileService
@@ -317,41 +428,42 @@ func (server *Server) Start(ctx context.Context) error {
 
 	// The top-level handler combines all feature routers into one http.Handler.
 	server.Handler = &handler.Handler{
-		RoleHandler:            roleHandler,
-		AuthHandler:            authHandler,
-		BackupHandler:          backupHandler,
-		CustomTemplatesHandler: customTemplatesHandler,
-		DockerHandler:          dockerHandler,
-		EdgeGroupsHandler:      edgeGroupsHandler,
-		EdgeJobsHandler:        edgeJobsHandler,
-		EdgeStacksHandler:      edgeStacksHandler,
-		EndpointGroupHandler:   endpointGroupHandler,
-		EndpointHandler:        endpointHandler,
-		EndpointHelmHandler:    endpointHelmHandler,
-		EndpointEdgeHandler:    endpointEdgeHandler,
-		EndpointProxyHandler:   endpointProxyHandler,
-		GitOperationHandler:    gitOperationHandler,
-		FileHandler:            fileHandler,
-		LDAPHandler:            ldapHandler,
-		HelmTemplatesHandler:   helmTemplatesHandler,
-		KubernetesHandler:      kubernetesHandler,
-		MOTDHandler:            motdHandler,
-		RegistryHandler:        registryHandler,
-		ResourceControlHandler: resourceControlHandler,
-		SettingsHandler:        settingsHandler,
-		SSLHandler:             sslHandler,
-		StackHandler:           stackHandler,
-		StorybookHandler:       storybookHandler,
-		SystemHandler:          systemHandler,
-		TagHandler:             tagHandler,
-		TeamHandler:            teamHandler,
-		TeamMembershipHandler:  teamMembershipHandler,
-		TemplatesHandler:       templatesHandler,
-		UploadHandler:          uploadHandler,
-		UserHandler:            userHandler,
-		UserActivityHandler:    userActivityHandler,
-		WebSocketHandler:       websocketHandler,
-		WebhookHandler:         webhookHandler,
+		RoleHandler:             roleHandler,
+		AuthHandler:             authHandler,
+		BackupHandler:           backupHandler,
+		CustomTemplatesHandler:  customTemplatesHandler,
+		DockerHandler:           dockerHandler,
+		EdgeGroupsHandler:       edgeGroupsHandler,
+		EdgeJobsHandler:         edgeJobsHandler,
+		EdgeStacksHandler:       edgeStacksHandler,
+		EndpointGroupHandler:    endpointGroupHandler,
+		EndpointHandler:         endpointHandler,
+		EndpointHelmHandler:     endpointHelmHandler,
+		EndpointEdgeHandler:     endpointEdgeHandler,
+		EndpointProxyHandler:    endpointProxyHandler,
+		GitOperationHandler:     gitOperationHandler,
+		FileHandler:             fileHandler,
+		LDAPHandler:             ldapHandler,
+		HelmTemplatesHandler:    helmTemplatesHandler,
+		KubernetesHandler:       kubernetesHandler,
+		MOTDHandler:             motdHandler,
+		RegistryHandler:         registryHandler,
+		ResourceControlHandler:  resourceControlHandler,
+		SettingsHandler:         settingsHandler,
+		NativeExtensionsHandler: nativeExtensionsHandler,
+		SSLHandler:              sslHandler,
+		StackHandler:            stackHandler,
+		StorybookHandler:        storybookHandler,
+		SystemHandler:           systemHandler,
+		TagHandler:              tagHandler,
+		TeamHandler:             teamHandler,
+		TeamMembershipHandler:   teamMembershipHandler,
+		TemplatesHandler:        templatesHandler,
+		UploadHandler:           uploadHandler,
+		UserHandler:             userHandler,
+		UserActivityHandler:     userActivityHandler,
+		WebSocketHandler:        websocketHandler,
+		WebhookHandler:          webhookHandler,
 	}
 
 	errorLogger := NewHTTPLogger()
@@ -362,7 +474,7 @@ func (server *Server) Start(ctx context.Context) error {
 
 	handler = middlewares.WithPanicLogger(middlewares.WithSlowRequestsLogger(handler))
 
-	handler, err := csrf.WithProtect(handler, server.TrustedOrigins)
+	handler, err = csrf.WithProtect(handler, server.TrustedOrigins)
 	if err != nil {
 		return errors.Wrap(err, "failed to create CSRF middleware")
 	}

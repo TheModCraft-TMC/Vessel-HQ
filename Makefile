@@ -52,8 +52,18 @@ clean: ## Remove all build and download artifacts
 	@rm -rf dist/*
 
 ##@ Testing
-.PHONY: test test-client test-server
-test: test-server test-client ## Run all tests
+.PHONY: test test-client test-server test-extension-sdk generate-extension-proto package-extension-sdk
+test: test-server test-client test-extension-sdk ## Run all tests
+
+test-extension-sdk: ## Test the independent Go extension SDK with the race detector
+	GOWORK=off go -C sdk/go test -race ./...
+	GOWORK=off go -C sdk/go vet ./...
+
+generate-extension-proto: ## Regenerate the extension wire contract with pinned generators on PATH
+	./sdk/go/generate.sh
+
+package-extension-sdk: ## Build and archive the independent SDK source (requires Python 3)
+	python3 scripts/native-extensions/package-go-sdk.py
 
 test-client: ## Run client tests
 	pnpm run test $(ARGS) --coverage

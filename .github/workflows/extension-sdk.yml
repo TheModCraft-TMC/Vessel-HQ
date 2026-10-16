@@ -1,0 +1,79 @@
+name: Go extension SDK
+
+on:
+  pull_request:
+    paths:
+      - 'sdk/go/**'
+      - 'backend-src/api/nativeextensions/**'
+      - 'backend-src/api/http/handler/nativeextensions/**'
+      - 'backend-src/cmd/vessel-extension-example/**'
+      - 'backend-src/go.mod'
+      - 'backend-src/go.sum'
+      - 'Makefile'
+      - 'scripts/native-extensions/package-go-sdk.py'
+      - '.github/workflows/extension-sdk.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'sdk/go/**'
+      - 'backend-src/api/nativeextensions/**'
+      - 'backend-src/api/http/handler/nativeextensions/**'
+      - 'backend-src/cmd/vessel-extension-example/**'
+      - 'backend-src/go.mod'
+      - 'backend-src/go.sum'
+      - 'Makefile'
+      - 'scripts/native-extensions/package-go-sdk.py'
+      - '.github/workflows/extension-sdk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sdk:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ['1.25.x', '1.26.x']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: sdk/go/go.sum
+      - name: Test independent SDK
+        run: make test-extension-sdk
+      - name: Build standalone examples for both Linux architectures
+        working-directory: sdk/go
+        env:
+          GOWORK: 'off'
+          CGO_ENABLED: '0'
+          GOOS: linux
+        run: |
+          GOARCH=amd64 go build -o /tmp/extension-amd64 ./examples/environment-summary
+          GOARCH=arm64 go build -o /tmp/extension-arm64 ./examples/environment-summary
+      - name: Verify generated contract
+        if: matrix.go == '1.26.x'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.11
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
+          ./sdk/go/generate.sh --check
+      - name: Package public SDK source
+        if: matrix.go == '1.26.x'
+        run: make package-extension-sdk
+
+  host-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend-src/go.mod
+          cache-dependency-path: |
+            backend-src/go.sum
+            sdk/go/go.sum
+      - name: Test public SDK against host authorization
+        working-directory: backend-src
+        run: go test -race ./api/nativeextensions/... ./api/http/handler/nativeextensions ./cmd/vessel-extension-example

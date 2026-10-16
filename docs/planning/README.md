@@ -3,7 +3,7 @@
 ## Current future plans and migration handoff
 
 - [Vessel HQ roadmap](vessel-hq-roadmap.md): current product and architecture direction.
-- [Add-on and plugin system](plugin-system.md): companion applications, scoped API access, and later UI slots; not implemented or scheduled.
+- [Native extension system](plugin-system.md): experimental whole-package upload, scoped grants, native preview, protected builds, and gRPC metadata reads; managed execution and activation/rollback remain future work. See [development scope](../native-extensions.md).
 - [Migration changes and draft commit message](migration-change-summary.md): living summary while frontend migration is finalized.
 
 The dated discovery backlog below is retained as historical planning context.

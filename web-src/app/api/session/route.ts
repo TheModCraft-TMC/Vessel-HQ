@@ -73,9 +73,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const environmentError = await ensureDevelopmentLocalEnvironment(auth.jwt);
-    if (environmentError) {
-      return environmentError;
+    if (process.env.DEV_AUTO_CREATE_LOCAL_ENVIRONMENT !== 'false') {
+      const environmentError = await ensureDevelopmentLocalEnvironment(
+        auth.jwt
+      );
+      if (environmentError) {
+        return environmentError;
+      }
     }
   }
 

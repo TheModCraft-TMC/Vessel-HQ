@@ -173,11 +173,26 @@ This sequence is planning context and has not been started:
 
 ## Future add-on and plugin support
 
-Status: proposed, not implemented or scheduled. Start with trusted companion applications running as separate services, a manifest and settings registry, sidebar integration, and scoped API access. Support Docker-based installations alongside Kubernetes; add managed Compose/Helm deployment after a manually deployed reference add-on works.
+Status: experimental implementation started October 15; full platform delivery is not scheduled. Administrator-installed native React extensions are the selected direction, with separately isolated backend services and a dedicated gRPC capability API. The current slice implements `.vesselhq` upload/storage of native UI and declared Linux executable artifacts, persistent registration/approval/revocation, native candidate preview, protected staging/validation tooling, mTLS registration diagnostics, scoped environment metadata reads, and delegated user-authorized Docker stack topology reads through native action slots. A development operator can compile an approved package set in isolation and select its generated modules after integrity/revision checks. An administrator-only notes example demonstrates persistent extension-owned writes, separate read/write grants, optimistic concurrency, and transactional audit. Automatic background orchestration, managed backend startup, additional workload RPCs, production activation, and rollback remain future work. Administrators explicitly trust installed frontend code; native JavaScript is not isolated from the console's browser context. See [current development scope](../native-extensions.md).
 
-Later phases can introduce explicit dashboard widgets, resource tabs, and resource actions through a versioned SDK. Browser isolation, authorization, revocation, compatibility, and upgrade recovery must be defined before widening plugin access. Portainer add-on package compatibility is not assumed.
+Start with one read-only resource tab and scoped grants. Protect core permission/authentication/build inputs with read-only baselines and trusted integrity checks; failed builds or validation leave the active console untouched. Define atomic activation, rollback, emergency disable, fresh approval for additional permissions, and current-policy enforcement on gRPC calls. Checksums protect source integrity, not runtime behavior of trusted UI code. Expand versioned slots and managed Compose/Helm deployment after the reference lifecycle works. Blueprint and Portainer package compatibility are not assumed; iframes are not the selected UI model.
 
-See the [plugin system proposal](plugin-system.md) for architecture, effort estimates, acceptance criteria, and open decisions. Finish the current frontend migration before implementation. Track the migration handoff in [Migration changes and draft commit message](migration-change-summary.md).
+The [standalone Go SDK](../../sdk/go/README.md) owns the shared protobuf contract
+and handles service mTLS, package verification, deadlines, typed metadata reads
+and persistent extension-owned note read/write calls. Independent machine grants,
+approval revision checks, transactional metadata audits and optimistic concurrency
+protect service notes. A private shared Unix gateway and a no-network container
+example avoid per-stack published ports. The stack drawer additionally reads
+sanitized Traefik routing labels and bounded live Docker network byte counters.
+Future traffic work includes explicitly scoped Traefik request/latency metrics
+and Swarm task-level counter sampling. Future SDK work includes a published version/tag, production
+identity provisioning and rotation, compatibility policy, and additional RPCs
+only after their capabilities and grants are designed. Host-only delegated stack
+leases remain private, and administrator HTTP storage grants do not imply machine
+storage access. General reverse service routing and managed container startup are
+still future work.
+
+See the [plugin system proposal](plugin-system.md) for architecture, trust limitations, build/activation gates, acceptance criteria, and open decisions. Implementation requires a separate authorized scope and fresh baseline verification; historical migration notes do not establish readiness. Track this documentation follow-up separately in [Migration changes and draft commit message](migration-change-summary.md).
 
 ## Decisions still open
 

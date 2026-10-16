@@ -1,0 +1,42 @@
+{
+  "id": "stack-network-overview",
+  "name": "Stack network overview",
+  "version": "0.3.0",
+  "description": "Stack networks, label-based Traefik routing and live Docker network byte counters.",
+  "apiVersion": "v1",
+  "packageDigest": "sha256:54bf467c2c600bd2d84c85d1d55bf6dc73eaf388b838ebfb6c9265fec9e70300",
+  "permissions": [
+    {
+      "capability": "ui.native",
+      "environmentIds": []
+    },
+    {
+      "capability": "stacks.network.read",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    },
+    {
+      "capability": "stacks.traffic.read",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    }
+  ],
+  "ui": {
+    "entry": "ui/index.tsx",
+    "slots": [
+      {
+        "id": "network-overview",
+        "title": "Network overview",
+        "slot": "docker.stack.detail.action"
+      }
+    ]
+  }
+}

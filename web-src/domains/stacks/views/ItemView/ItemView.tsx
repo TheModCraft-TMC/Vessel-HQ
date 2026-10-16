@@ -1,9 +1,10 @@
 import { useRouteParams } from '@console/routing/useRouteParams';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { StackContainersDatatable } from '@/domains/stacks/views/ItemView/StackContainersDatatable';
 import { AccessControlPanel } from '@/core/access-control';
+import { StackDetailExtensionActions } from '@/core/native-extensions/StackDetailExtensionActions';
 import { useStack } from '@/domains/stacks/queries/common/useStack';
 import { Stack, StackType } from '@/domains/stacks/models/types';
 import { ResourceControlViewModel } from '@/domains/access-control';
@@ -45,9 +46,17 @@ export function StackDetailsContent() {
 
   useUpdateStackResourcesOnDeployment(stack);
 
-  const resourceControl = stack?.ResourceControl
-    ? new ResourceControlViewModel(stack.ResourceControl)
-    : undefined;
+  const resourceControl = useMemo(
+    () =>
+      stack?.ResourceControl
+        ? new ResourceControlViewModel(stack.ResourceControl)
+        : undefined,
+    [stack]
+  );
+  const handleAccessUpdate = useCallback(
+    () => queryClient.invalidateQueries(queryKeys.stack(stackId)),
+    [queryClient, stackId]
+  );
 
   useEffect(() => {
     if (
@@ -72,6 +81,18 @@ export function StackDetailsContent() {
         stackName={stackName}
         stack={stack}
       />
+      {stack &&
+        !isOrphaned &&
+        (stack.Type === StackType.DockerCompose ||
+          stack.Type === StackType.DockerSwarm) && (
+          <StackDetailExtensionActions
+            context={{
+              environmentId: stack.EndpointId,
+              stackId: stack.Id,
+              stackName: stack.Name,
+            }}
+          />
+        )}
       <div className="space-y-4">
         {(!isOrphaned || isOrphanedRunning) && (
           <>
@@ -90,9 +111,7 @@ export function StackDetailsContent() {
             resourceControl={resourceControl}
             resourceType={ResourceControlType.Stack}
             disableOwnershipChange={stack.ReadOnly}
-            onUpdateSuccess={() =>
-              queryClient.invalidateQueries(queryKeys.stack(stackId))
-            }
+            onUpdateSuccess={handleAccessUpdate}
           />
         )}
       </div>

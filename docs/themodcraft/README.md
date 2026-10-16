@@ -4,7 +4,7 @@ This directory is the maintenance handoff for behavior added by this fork. It ex
 
 ## Contents
 
-- [Future add-on and plugin system](../planning/plugin-system.md): companion applications, scoped capabilities, deployment lifecycle, and explicit UI slots; not implemented.
+- [Experimental native extensions](../native-extensions.md): whole-package upload, administrator grants, native preview, protected candidate tooling, and scoped gRPC metadata reads; production activation and managed execution remain future work. See the [design](../planning/plugin-system.md).
 - [Migration changes and draft commit message](../planning/migration-change-summary.md): living finalization handoff and verification record.
 
 - [Feature planning backlog](../planning/README.md): one-month discovery backlog, scoring rubric, and planning-ready gate for possible future fork features.
