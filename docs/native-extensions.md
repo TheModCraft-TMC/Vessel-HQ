@@ -70,7 +70,7 @@ activation or managed service startup. See the
 - A source integrity gate and isolated Docker validation CLI stage extension
   packages without changing the running checkout. See the
   [builder instructions](../scripts/native-extensions/README.md) and
-  [reference package](../examples/native-extensions/environment-summary/manifest.json).
+  [simple plugin workspace](extension-sdk-workspace.md).
 - Whole-package validation and immutable archive storage support native UI and
   optional Go/Rust-compatible Linux executable artifacts. Uploading clears old
   approvals and never executes code. Cards show uploaded/approval/backend state.
@@ -249,34 +249,23 @@ general infrastructure access. Do not share this CA with
 ordinary users or unrelated workloads. Certificate issuance/rotation and service
 provisioning are operator-managed in this slice.
 
-The [Go SDK](../sdk/go/README.md) is an independent module with a reusable mTLS
+The [Go SDK workspace](extension-sdk-workspace.md) is an independent module with a reusable mTLS
 client, bounded calls, context cancellation and typed registration/environment
 responses. It verifies the package identity on connection and preserves gRPC
 status codes. It has no dependency on Vessel's backend module. The
-[working operator example](../backend-src/cmd/vessel-extension-example/README.md)
+[working operator example in the SDK project](extension-sdk-workspace.md)
 generates private development mTLS credentials and uses the SDK for its calls.
 The SDK also includes an independent environment-configured executable example.
 Rust or other gRPC clients can use the same protobuf contract.
 
-The shared contract is [extension.proto](../sdk/go/proto/v1/extension.proto).
-The host imports this exact generated package through a local module replacement;
-there is no second copy of the wire types in the backend. Wire service names and
-field numbers are unchanged. SDK module publication remains a separate release
-step; the guide documents local consumption until a version is published.
-Generated Go stubs use `protoc-gen-go` v1.36.11 and `protoc-gen-go-grpc` v1.5.1.
-From the repository root, with those generators on PATH:
-
-```sh
-./sdk/go/generate.sh
-./sdk/go/generate.sh --check
-```
+The shared [wire contract](https://github.com/TheModCraft-TMC/Vessel-HQ/blob/sdk/go/v0.1.0-beta.1/sdk/go/proto/v1/extension.proto) comes from the pinned published SDK module. Vessel has no local SDK replacement or duplicate generated Go wire types. SDK authoring and pinned protobuf generation now belong to the [independent SDK workspace](extension-sdk-workspace.md); host integration tests run with `GOWORK=off make test-extension-host`.
 
 See the [design and remaining milestones](planning/plugin-system.md) and
 [roadmap](planning/vessel-hq-roadmap.md) before expanding this experimental API.
 
 ## Persistent write-back example
 
-The [persistent notes extension](../examples/native-extensions/persistent-notes/README.md)
+The [persistent notes extension in the SDK project](extension-sdk-workspace.md)
 adds an administrator page at `/extensions/persistent-notes`. It demonstrates
 saving data back to Vessel, reading it after a reload, and detecting concurrent
 edits. `storage.read` and `storage.write` are separate, explicitly approved global
@@ -341,7 +330,7 @@ is bounded to 32 selected running workloads, with four concurrent stats reads.
 
 ## Go services: shared gateway and explicit note writes
 
-The [Go SDK](../sdk/go/README.md) now provides `GetNote` and `PutNote` with independent
+The [Go SDK workspace](extension-sdk-workspace.md) now provides `GetNote` and `PutNote` with independent
 `storage.service.read` / `storage.service.write` global grants. These explicitly
 authorize service access without an administrator session; the browser-only
 `storage.read` / `storage.write` grants do not grant machine access. A caller

@@ -16,6 +16,7 @@ import (
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/datastore"
 	"github.com/portainer/portainer/api/http/security"
+	"github.com/portainer/portainer/api/internal/extensiontest"
 	domain "github.com/portainer/portainer/api/nativeextensions"
 	"github.com/stretchr/testify/require"
 )
@@ -30,9 +31,8 @@ func uploadedFixture(t *testing.T) []byte {
 	t.Helper()
 	var data bytes.Buffer
 	writer := zip.NewWriter(&data)
-	for _, name := range []string{"manifest.json", "ui/index.tsx"} {
-		contents, err := os.ReadFile("../../../../../examples/native-extensions/environment-summary/" + name)
-		require.NoError(t, err)
+	for _, fixture := range []struct{ name, source string }{{"manifest.json", extensiontest.Manifest}, {"ui/index.tsx", extensiontest.Source}} {
+		name, contents := fixture.name, []byte(fixture.source)
 		header := &zip.FileHeader{Name: name, Method: zip.Store}
 		header.SetMode(0o644)
 		file, err := writer.CreateHeader(header)

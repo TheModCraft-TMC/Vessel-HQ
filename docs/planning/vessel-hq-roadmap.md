@@ -177,7 +177,7 @@ Status: experimental implementation started October 15; full platform delivery i
 
 Start with one read-only resource tab and scoped grants. Protect core permission/authentication/build inputs with read-only baselines and trusted integrity checks; failed builds or validation leave the active console untouched. Define atomic activation, rollback, emergency disable, fresh approval for additional permissions, and current-policy enforcement on gRPC calls. Checksums protect source integrity, not runtime behavior of trusted UI code. Expand versioned slots and managed Compose/Helm deployment after the reference lifecycle works. Blueprint and Portainer package compatibility are not assumed; iframes are not the selected UI model.
 
-The [standalone Go SDK](../../sdk/go/README.md) owns the shared protobuf contract
+The [standalone Go SDK](../extension-sdk-workspace.md) owns the shared protobuf contract
 and handles service mTLS, package verification, deadlines, typed metadata reads
 and persistent extension-owned note read/write calls. Independent machine grants,
 approval revision checks, transactional metadata audits and optimistic concurrency
@@ -204,3 +204,8 @@ See the [plugin system proposal](plugin-system.md) for architecture, trust limit
 - The first stable Vessel HQ release number after the WIP line.
 
 No implementation should be inferred from these open items. Record the decision and migration impact before changing production behavior.
+
+
+### Independent extension SDK workspace follow-up (2026-10-16)
+
+SDK and simple demo authoring sources now live in the [separate SDK workspace](../extension-sdk-workspace.md); Vessel consumes the immutable published beta.1 module without a local replacement. The configured target Git origin is preserved, while Go import identity remains unchanged. Next publication work must explicitly select the new module/release identity and verify proxy/checksum discovery before bumping Vessel. Do not repoint existing beta.1 tags. The UniFi-style React Flow extension and host integration remain in Vessel; installed compiled payloads are separate from authoring examples. Managed runtime, infrastructure writes and production identity lifecycle remain future work.

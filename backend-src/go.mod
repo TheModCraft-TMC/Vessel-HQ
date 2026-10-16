@@ -2,10 +2,6 @@ module github.com/portainer/portainer
 
 go 1.26.6
 
-// Build the host and wire contract from the same checkout; independent extensions
-// consume the separately tagged SDK module without this replacement.
-replace github.com/TheModCraft-TMC/Vessel-HQ/sdk/go => ../sdk/go
-
 replace github.com/robfig/cron/v3 => github.com/robfig/cron/v3 v3.0.1 // Not actively maintained. Pinned to last known good version. Review needed when upgrading.
 
 require (

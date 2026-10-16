@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/portainer/portainer/api/internal/extensiontest"
 	"github.com/stretchr/testify/require"
 )
 
@@ -40,12 +41,7 @@ func makeArchive(t *testing.T, inputs []archiveInput) []byte {
 }
 func referenceInputs(t *testing.T) []archiveInput {
 	t.Helper()
-	root := "../../../examples/native-extensions/environment-summary/"
-	manifest, err := os.ReadFile(root + "manifest.json")
-	require.NoError(t, err)
-	source, err := os.ReadFile(root + "ui/index.tsx")
-	require.NoError(t, err)
-	return []archiveInput{{name: "manifest.json", data: manifest}, {name: "ui/index.tsx", data: source}}
+	return []archiveInput{{name: "manifest.json", data: []byte(extensiontest.Manifest)}, {name: "ui/index.tsx", data: []byte(extensiontest.Source)}}
 }
 func TestPackageMatchesNodeReferenceDigest(t *testing.T) {
 	bundle, err := InspectPackage(makeArchive(t, referenceInputs(t)))

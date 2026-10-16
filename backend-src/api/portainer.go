@@ -2204,7 +2204,7 @@ const (
 	// MessageOfTheDayURL represents the URL where Portainer MOTD message can be retrieved
 	MessageOfTheDayURL = AssetsServerURL + "/motd.json"
 	// VersionCheckURL represents the URL used to retrieve releases maintained by this fork.
-	VersionCheckURL = "https://hub.docker.com/v2/repositories/themodcrafttmc/portainer/tags?page_size=100&ordering=last_updated"
+	VersionCheckURL = "https://hub.docker.com/v2/repositories/themodcrafttmc/vessel-hq/tags?page_size=100&ordering=last_updated"
 	// PortainerAgentHeader represents the name of the header available in any agent response
 	PortainerAgentHeader = "Portainer-Agent"
 	// PortainerAgentEdgeIDHeader represent the name of the header containing the Edge ID associated to an agent/agent cluster

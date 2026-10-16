@@ -36,8 +36,8 @@ git_commit=$(git rev-parse --short HEAD)
 build_date=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 cat > "$release_context/BUILD-IMAGE.txt" <<EOF
-docker buildx build --platform linux/amd64,linux/arm64 --build-arg RELEASE_VERSION=$release_version --build-arg GIT_COMMIT=$git_commit --build-arg BUILD_DATE=$build_date -t themodcrafttmc/portainer:$release_version --push .
-docker buildx imagetools create -t themodcrafttmc/portainer:$channel_tag themodcrafttmc/portainer:$release_version
+docker buildx build --platform linux/amd64,linux/arm64 --build-arg RELEASE_VERSION=$release_version --build-arg GIT_COMMIT=$git_commit --build-arg BUILD_DATE=$build_date -t themodcrafttmc/vessel-hq:$release_version --push .
+docker buildx imagetools create -t themodcrafttmc/vessel-hq:$channel_tag themodcrafttmc/vessel-hq:$release_version
 EOF
 
 echo

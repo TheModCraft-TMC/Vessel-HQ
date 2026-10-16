@@ -15,8 +15,8 @@ after an extension changes files defeats the integrity boundary.
 node scripts/native-extensions/builder.mjs baseline /trusted/vessel /tmp/vessel-baseline.json
 # Copy the printed digest from trusted release metadata for subsequent commands.
 node scripts/native-extensions/builder.mjs verify /trusted/vessel /tmp/vessel-baseline.json TRUSTED_SHA256
-node scripts/native-extensions/builder.mjs inspect examples/native-extensions/environment-summary
-node scripts/native-extensions/builder.mjs stage /trusted/vessel /tmp/vessel-baseline.json TRUSTED_SHA256 /tmp/vessel-candidate examples/native-extensions/environment-summary
+node scripts/native-extensions/builder.mjs inspect /path/to/vesselhq-extension-sdk/plugins/environment-summary
+node scripts/native-extensions/builder.mjs stage /trusted/vessel /tmp/vessel-baseline.json TRUSTED_SHA256 /tmp/vessel-candidate /path/to/vesselhq-extension-sdk/plugins/environment-summary
 ```
 
 The candidate directory must not exist and must be outside the source checkout.
@@ -70,7 +70,7 @@ attestation, permission grant or production activation authorization.
 ## Create an uploadable .vesselhq package
 
 ```sh
-node scripts/native-extensions/builder.mjs pack examples/native-extensions/environment-summary /tmp/environment-summary.vesselhq
+node scripts/native-extensions/builder.mjs pack /path/to/vesselhq-extension-sdk/plugins/environment-summary /tmp/environment-summary.vesselhq
 ```
 
 The new output file is a standard ZIP named `.vesselhq`; upload it through the
@@ -114,7 +114,7 @@ ELF64 executables or shared-position executables with matching AMD64/AARCH64
 machine headers. Shell scripts, install hooks and undeclared backend files are
 rejected. A package may supply UI, backend, or both. Uploaded binaries remain inert;
 packaging and storage do not authorize execution or grant capabilities. See the
-[Go backend package example](../../examples/native-extensions/environment-summary-service/README.md)
+[Go backend package example](../../docs/extension-sdk-workspace.md)
 for building a real reference binary without committing artifacts.
 
 ## Provision a trusted builder image
@@ -280,7 +280,7 @@ must remain unchanged for the entire build and selection. The initial developmen
 controller still requires an empty compiled namespace; use a fresh disposable
 checkout for a new complete-set build rather than overwriting an existing set.
 
-[Persistent Notes](../../examples/native-extensions/persistent-notes/README.md)
+[Persistent Notes](../../docs/extension-sdk-workspace.md)
 demonstrates explicit write-back with independent note-read and note-write grants,
 transactional persistence/audit and optimistic concurrency. It needs no executable
 backend or separately configured external gRPC listener.

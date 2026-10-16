@@ -25,7 +25,7 @@ The frontend migration was built using GPT-5.6 Sol agents exclusively. Local fro
 - Repository: [TheModCraft-TMC/Vessel-HQ](https://github.com/TheModCraft-TMC/Vessel-HQ).
 - Vessel release version: [RELEASE_VERSION](./RELEASE_VERSION).
 - Upstream API and datastore compatibility baseline: **Portainer 2.45.0**, separate from the Vessel release number.
-- Existing images: [themodcrafttmc/portainer](https://hub.docker.com/r/themodcrafttmc/portainer). A dedicated Vessel image repository is planned; see the [roadmap](./docs/planning/vessel-hq-roadmap.md).
+- Vessel images: [themodcrafttmc/vessel-hq](https://hub.docker.com/r/themodcrafttmc/vessel-hq), also mirrored at `ghcr.io/themodcraft-tmc/vessel-hq`. Preview releases use the `beta` channel; stable releases use `latest`. Historical images remain at [themodcrafttmc/portainer](https://hub.docker.com/r/themodcrafttmc/portainer).
 
 Vessel HQ is a community fork, not Portainer Business Edition. Future capabilities are documented separately from implemented behavior.
 
@@ -58,7 +58,6 @@ See [development setup](./docs/development-setup.md) for separate processes and 
 
 ```text
 backend-src/                 Go API, authorization, datastore, runtime integrations
-sdk/go/                      Independent Go extension SDK and public gRPC contract
 web-src/
   app/                       Next.js App Router routes and layouts
   core/                      composition, session, navigation, query, realtime
@@ -99,7 +98,7 @@ The pipeline produces `backend-src/api/docs/swagger.yaml`, then `backend-src/api
 ## Documentation and future plans
 
 - [Product and architecture roadmap](./docs/planning/vessel-hq-roadmap.md).
-- [Experimental native extensions](./docs/native-extensions.md): whole-package upload, admin grants, protected multi-package builds, inline stack drawers, label-based Traefik routing, live Docker byte counters, and persistent notes. The [Go SDK](./sdk/go/README.md) supports typed reads and extension-owned note writes through a shared mTLS TCP/Unix gateway, without per-stack published ports. Managed execution and production activation remain planned; see the [design](./docs/planning/plugin-system.md). The [prerelease guide](./docs/releases/native-extensions-prerelease.md) includes distribution instructions and the [upstream security review](./docs/security/upstream-2026-10-16.md).
+- [Experimental native extensions](./docs/native-extensions.md): whole-package upload, admin grants, protected multi-package builds, inline stack drawers, label-based Traefik routing, live Docker byte counters, and persistent notes. The [Go SDK workspace](./docs/extension-sdk-workspace.md) supports typed reads and extension-owned note writes through a shared mTLS TCP/Unix gateway, without per-stack published ports. Managed execution and production activation remain planned; see the [design](./docs/planning/plugin-system.md). The [prerelease guide](./docs/releases/native-extensions-prerelease.md) includes distribution instructions and the [upstream security review](./docs/security/upstream-2026-10-16.md).
 - [Migration changes and draft commit message](./docs/planning/migration-change-summary.md): living handoff while migration work is finalized.
 - [Planning backlog](./docs/planning/README.md).
 - [Maintainer patch guide](./docs/maintainer-patches/README.md).

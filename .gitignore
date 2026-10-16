@@ -18,6 +18,8 @@ __debug_bin*
 .idea
 .env
 go.work.sum
+go.work.local
+go.work.local.sum
 
 .vitest
 # Generated SonarQube external-issues reports

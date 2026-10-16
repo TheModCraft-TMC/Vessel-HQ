@@ -4,7 +4,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { test } from 'node:test';
+import { after, test } from 'node:test';
 
 import { baseline, verify, inspectPackage, stage, build, pack } from './builder.mjs';
 
@@ -22,7 +22,12 @@ async function fixture(t) {
   await fs.writeFile(file, value);
   return { temp, root, file, digest: sha(value) };
 }
-const example = path.resolve('examples/native-extensions/environment-summary');
+// Fixed package regression vector, independent of external SDK example sources.
+const example = await fs.mkdtemp(path.join(os.tmpdir(), 'vessel-builder-reference-'));
+after(() => fs.rm(example, { recursive: true, force: true }));
+await fs.mkdir(path.join(example, 'ui'));
+await fs.writeFile(path.join(example, 'manifest.json'), "{\n  \"id\": \"environment-summary\",\n  \"name\": \"Environment summary\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Native UI reference package; no infrastructure operations.\",\n  \"apiVersion\": \"v1\",\n  \"packageDigest\": \"sha256:7352da43730269f8c7720f389d89865efd42364932e0d85f541fb7d9d98af4b9\",\n  \"permissions\": [{ \"capability\": \"ui.native\", \"environmentIds\": [] }],\n  \"ui\": {\n    \"entry\": \"ui/index.tsx\",\n    \"slots\": [{ \"id\": \"overview\", \"title\": \"Environment summary\", \"slot\": \"extension.page\" }]\n  }\n}\n");
+await fs.writeFile(path.join(example, 'ui/index.tsx'), "export default function EnvironmentSummary() {\n  return (\n    <section aria-label=\"Environment summary extension\">\n      <h2>Environment summary</h2>\n      <p>This native extension was compiled into a candidate Vessel console.</p>\n      <p>Infrastructure access remains unavailable until a scoped gateway is connected.</p>\n    </section>\n  );\n}\n");
 
 test('trusted inventory verifies unmodified sources', async (t) => {
   const f = await fixture(t);

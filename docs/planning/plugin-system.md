@@ -6,7 +6,7 @@ This design replaces the October 12 companion-application-first proposal. The se
 
 ## Product direction and trust model
 
-The current [Go SDK](../../sdk/go/README.md) is a standalone module used by the
+The current [Go SDK](../extension-sdk-workspace.md) is a standalone module used by the
 operator example and host wire contract. It handles TLS 1.3, package identity
 verification, registration/environment calls, separately granted extension-owned
 note reads/writes, bounded deadlines and cancellation. A shared private Unix
