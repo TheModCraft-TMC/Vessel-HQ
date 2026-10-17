@@ -1,0 +1,59 @@
+name: Sync SonarCloud issues
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Preview changes without modifying issues
+        type: boolean
+        default: false
+  push:
+    branches: [develop]
+    paths:
+      - '.github/workflows/sonarcloud-issues.yml'
+      - 'scripts/sync-sonarcloud-issues.py'
+      - 'scripts/test_sync_sonarcloud_issues.py'
+  pull_request:
+    paths:
+      - '.github/workflows/sonarcloud-issues.yml'
+      - 'scripts/sync-sonarcloud-issues.py'
+      - 'scripts/test_sync_sonarcloud_issues.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sonarcloud-issues-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - run: python3 -m unittest discover -s scripts -p test_sync_sonarcloud_issues.py
+
+  sync:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Synchronize main-branch findings
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run || false }}
+        run: |
+          if [ "$DRY_RUN" = true ]; then
+            python3 scripts/sync-sonarcloud-issues.py --dry-run
+          else
+            python3 scripts/sync-sonarcloud-issues.py
+          fi
