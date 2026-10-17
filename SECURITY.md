@@ -24,7 +24,7 @@ The Portainer team takes the security of our products seriously. If you believe 
 1. **Report**: You can report in one of two ways:
    - **GitHub**: Use the **Report a vulnerability** button on the **Security** tab of this repository.
 
-   - **Email**: Send your findings to security@portainer.io.
+   - **Email**: Send your findings to dev@themodcraft.net.
 
 2. **Details**: To help us verify the issue, please include:
    - A description of the vulnerability and its potential impact.
