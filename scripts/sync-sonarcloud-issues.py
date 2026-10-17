@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Mirror open main-branch SonarCloud findings into GitHub Issues (stdlib only)."""
+import argparse
+import json
+import os
+import re
+import time
+from urllib.error import HTTPError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+
+PROJECT = "TheModCraft-TMC_Vessel-HQ"
+BRANCH = "develop"
+LABEL = "sonarcloud"
+START = "<!-- sonarcloud-sync:start -->"
+END = "<!-- sonarcloud-sync:end -->"
+ACTIVE = {"OPEN", "CONFIRMED", "REOPENED"}
+TERMINAL = {"FIXED", "FALSE_POSITIVE", "ACCEPTED", "CLOSED"}
+MARKER = re.compile(r"<!-- sonarcloud:([^:]+):([^:]+):([^\s]+) -->")
+
+
+class Api:
+    def __init__(self, github_token, sonar_token=""):
+        self.github_token = github_token
+        self.sonar_token = sonar_token
+
+    def request(self, service, path, method="GET", data=None):
+        base = "https://api.github.com" if service == "github" else "https://sonarcloud.io"
+        token = self.github_token if service == "github" else self.sonar_token
+        headers = {"Accept": "application/json", "User-Agent": "vessel-sonarcloud-sync"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        if service == "github":
+            headers["X-GitHub-Api-Version"] = "2022-11-28"
+        body = json.dumps(data).encode() if data is not None else None
+        if body:
+            headers["Content-Type"] = "application/json"
+        for attempt in range(4):
+            try:
+                with urlopen(Request(base + path, data=body, headers=headers, method=method), timeout=45) as response:
+                    raw = response.read()
+                    return json.loads(raw) if raw else None
+            except HTTPError as error:
+                # Do not retry ambiguous writes: the next run deduplicates any committed creation.
+                retry = error.code == 429 or (error.code == 403 and error.headers.get("Retry-After"))
+                retry = retry or (method == "GET" and error.code >= 500)
+                if not retry or attempt == 3:
+                    raise RuntimeError(f"{service} {method} failed: HTTP {error.code}") from None
+                time.sleep(max(60, int(error.headers.get("Retry-After", "60"))))
+        raise RuntimeError("API retry limit exceeded")
+
+    def sonar(self, **params):
+        return self.request("sonar", "/api/issues/search?" + urlencode(params))
+
+
+def status(issue):
+    return issue.get("issueStatus") or issue.get("status")
+
+
+def marker(key):
+    return f"<!-- sonarcloud:{PROJECT}:{BRANCH}:{key} -->"
+
+
+def content(issue):
+    key = issue["key"]
+    path = issue["component"].removeprefix(PROJECT + ":")
+    location = path + (f":{issue['line']}" if issue.get("line") else "")
+    impacts = ", ".join(f"{i['softwareQuality']}: {i['severity']}" for i in issue.get("impacts", []))
+    link = "https://sonarcloud.io/project/issues?" + urlencode({"id": PROJECT, "open": key, "branch": BRANCH})
+    title = f"[SonarCloud] {issue['rule']} in {path}"[:250]
+    body = "\n".join([
+        START, marker(key), f"SonarCloud finding: [{key}]({link})", "",
+        f"- Rule: `{issue['rule']}`", f"- Location: `{location}`",
+        f"- Branch: `{BRANCH}`", f"- Impact: {impacts or issue.get('severity', 'Unknown')}",
+        f"- SonarCloud status: `{status(issue)}`", "",
+        "See SonarCloud for the finding description and remediation. Source snippets and secret values are not copied here.",
+        END,
+    ])
+    return title, body
+
+
+def replace_content(previous, generated):
+    if previous.count(START) != 1 or previous.count(END) != 1 or previous.index(START) > previous.index(END):
+        raise RuntimeError("Managed issue content was removed or malformed; restore its sync markers first")
+    before, rest = previous.split(START, 1)
+    _, after = rest.split(END, 1)
+    return before + generated + after
+
+
+def fetch_active(api):
+    findings = []
+    expected = None
+    for page in range(1, 21):
+        data = api.sonar(componentKeys=PROJECT, branch=BRANCH, issueStatuses="OPEN,CONFIRMED", ps=500, p=page)
+        total = data["paging"]["total"]
+        if expected is None:
+            expected = total
+        if total != expected or total > 10000:
+            raise RuntimeError("SonarCloud results changed or exceed the search limit; retry or partition the query")
+        findings.extend(data["issues"])
+        if len(findings) >= total:
+            if len(findings) != total or len({i['key'] for i in findings}) != total:
+                raise RuntimeError("Incomplete or duplicate SonarCloud results; no issues changed")
+            if any(i.get("project") != PROJECT or status(i) not in ACTIVE for i in findings):
+                raise RuntimeError("Unexpected SonarCloud project or status; no issues changed")
+            return findings
+        if not data["issues"]:
+            raise RuntimeError("Incomplete SonarCloud pagination; no issues changed")
+    raise RuntimeError("SonarCloud pagination limit reached")
+
+
+def sync(api, repo, dry_run=False):
+    findings = fetch_active(api)
+    existing = {}
+    for page in range(1, 1001):
+        batch = api.request("github", f"/repos/{repo}/issues?" + urlencode({"state": "all", "per_page": 100, "page": page}))
+        for issue in batch:
+            if "pull_request" in issue:
+                continue
+            match = MARKER.search(issue.get("body") or "")
+            if match and match.group(1, 2) == (PROJECT, BRANCH):
+                key = match.group(3)
+                if key in existing:
+                    raise RuntimeError(f"Duplicate managed GitHub issues for {key}; resolve before syncing")
+                existing[key] = issue
+        if len(batch) < 100:
+            break
+    else:
+        raise RuntimeError("GitHub pagination limit reached")
+
+    # Read explicit status for missing findings before any writes. Absence alone never closes an issue.
+    active_keys = {i["key"] for i in findings}
+    missing = [key for key, issue in existing.items() if key not in active_keys and issue["state"] == "open"]
+    resolved = {}
+    for offset in range(0, len(missing), 100):
+        data = api.sonar(componentKeys=PROJECT, branch=BRANCH, issues=",".join(missing[offset:offset + 100]), ps=100)
+        for issue in data["issues"]:
+            if issue.get("project") == PROJECT and status(issue) in TERMINAL:
+                resolved[issue["key"]] = issue
+
+    changes = []
+    for finding in findings:
+        title, generated = content(finding)
+        current = existing.get(finding["key"])
+        if current is None:
+            changes.append(("POST", f"/repos/{repo}/issues", {"title": title, "body": generated + "\n\n", "labels": [LABEL]}))
+        else:
+            body = replace_content(current.get("body") or "", generated)
+            patch = {}
+            if body != current["body"]:
+                patch["body"] = body
+            if title != current["title"]:
+                patch["title"] = title
+            if current["state"] != "open":
+                patch.update(state="open", state_reason="reopened")
+            if patch:
+                changes.append(("PATCH", f"/repos/{repo}/issues/{current['number']}", patch))
+    for key, finding in resolved.items():
+        current = existing[key]
+        _, generated = content(finding)
+        changes.append(("PATCH", f"/repos/{repo}/issues/{current['number']}", {
+            "body": replace_content(current.get("body") or "", generated), "state": "closed",
+            "state_reason": "completed" if status(finding) in {"FIXED", "CLOSED"} else "not_planned",
+        }))
+
+    summary = {"open_findings": len(findings), "create": sum(m == "POST" for m, _, _ in changes),
+               "update_or_close": sum(m == "PATCH" for m, _, _ in changes), "dry_run": dry_run}
+    print(json.dumps(summary), flush=True)
+    if not dry_run and changes:
+        labels = api.request("github", f"/repos/{repo}/labels?per_page=100")
+        if LABEL not in {label["name"] for label in labels}:
+            api.request("github", f"/repos/{repo}/labels", "POST", {
+                "name": LABEL, "color": "F3702A", "description": "Automatically synchronized SonarCloud finding"})
+            time.sleep(1.1)
+        for method, path, data in changes:
+            result = api.request("github", path, method, data)
+            print(f"Synced GitHub issue #{result['number']}", flush=True)
+            time.sleep(1.1)  # Stay below GitHub's secondary content-creation limits.
+    return summary
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPOSITORY", "TheModCraft-TMC/Vessel-HQ")
+    if repo != "TheModCraft-TMC/Vessel-HQ":
+        raise SystemExit("This sync is scoped to TheModCraft-TMC/Vessel-HQ")
+    if not token:
+        raise SystemExit("GH_TOKEN or GITHUB_TOKEN is required")
+    sync(Api(token, os.environ.get("SONAR_TOKEN", "")), repo, args.dry_run)
