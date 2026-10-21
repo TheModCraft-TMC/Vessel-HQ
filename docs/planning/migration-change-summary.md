@@ -77,9 +77,6 @@ fix: #233 and 225 synchronized SonarCloud findings. It does not change
 
 ### Independent remediation review verification
 
-<!-- REVIEW: Record fresh checks for the complete remediation and the review's
-keyboard, toolkit identity, and security-rationale corrections, not historical results. -->
-
 - Restore keyboard access to the shared multi-select filter with registered
   Radix checkbox items; keep multi-selection open and restore trigger focus on
   Escape. A compiler-enabled regression covers keyboard selection and navigation.
@@ -89,6 +86,13 @@ keyboard, toolkit identity, and security-rationale corrections, not historical r
 - Correct the Chisel review rationale: the client connects through loopback, but
   existing per-agent reverse forwards can listen on all interfaces. Preserve the
   agent wire contract and document required network restrictions.
+- Preserve the historical detached Compose teardown lifetime while retaining
+  caller context values; a browser disconnect or Next.js proxy timeout must not
+  interrupt a long-running stack stop/delete.
+- Fix variable-width Docker timestamp prefixes in both structured-log helper
+  owners. A bounded shared splitter replaces fixed-width slicing; preserve the
+  original timestamp and separator, and keep malformed/unprefixed input raw.
+  Scope API-generation formatting to generated output, avoiding unrelated churn.
 - Fresh checks pass: architecture guards (3274 files, 166 routes), typecheck,
   frontend tests (353 files, 2352 passed, 5 skipped, 11 todo), lint (no errors),
   production webpack/standalone build, 12 binary-build/router-script tests, and

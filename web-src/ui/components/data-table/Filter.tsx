@@ -54,7 +54,7 @@ export function MultipleSelectionFilter({
           <div className="tableMenu">
             <div className="menuHeader">{menuTitle}</div>
             <div className="menuContent">
-              {/* REVIEW: Native inputs are not Radix menu items: Tab is suppressed
+              {/* Native inputs are not Radix menu items: Tab is suppressed
                   and arrow keys cannot reach them. Keep the menu open while its
                   registered checkbox items support arrows, typeahead and Space. */}
               {optionsWithValues.map((option, index) => (

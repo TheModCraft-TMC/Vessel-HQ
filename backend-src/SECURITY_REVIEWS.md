@@ -42,8 +42,6 @@ in `api/chisel/tunnel.go` returns **127.0.0.1 plus the local tunnel port**, not 
 remote agent's network address. HTTP/WebSocket is the inner protocol transported
 through the authenticated, encrypted Chisel/SSH reverse tunnel. Chisel uses the
 server's persisted private key and exposes its fingerprint for agents.
-<!-- REVIEW: Distinguish bootstrap credentials from the actual reverse-forward
-allowlist; a loopback client URL does not prove a loopback-only listener. -->
 The bootstrap user is restricted to `127.0.0.1` (`api/chisel/service.go`), while
 per-agent credentials allow the exact `R:0.0.0.0:<allocated-port>` reverse forward
 (`api/chisel/tunnel.go`). The existing reverse listener can therefore bind all
