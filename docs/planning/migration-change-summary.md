@@ -25,6 +25,31 @@ the stable release and image at the maintainer's explicit request.
 
 Reconcile this draft with the final diff and add exact validation results before committing. Plugin support is documentation only. Maintaining this file does not create a commit or release.
 
+## 1.3.1 dependency and CSS Module fix — October 21, 2026
+
+Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates
+(`bootstrap` 5, `uuid` 14, `yaml` 2, `vitest` 5) without CI, and the `develop`
+image build failed on typecheck.
+
+- `uuid` 14 has no default export or `uuid/v4` path: use the named `v4` export,
+  drop `@types/uuid`, and give `SwitchField` a React `useId` ID. Webhook tests
+  mock only `v4` so switch IDs do not count as webhook IDs.
+- Keep `bootstrap` ^3.4.1 (CSS only, Bootstrap 3 markup), `yaml` ^1.10.3
+  (patched 1.x), and `vitest`/`@vitest/coverage-v8` ^4.1.12 (patched 4.x).
+- The former webpack build exported camelCase CSS Module aliases; Next.js does
+  not. Since the migration, 48 reads in 21 files, such as `styles.copyButton`
+  for `.copy-button`, were `undefined`. Rename those classes to camelCase,
+  remove the dead `styles.check` read, and add
+  `scripts/check-css-module-classes.mjs` to `lint:ci`.
+- Fresh local results: architecture guards (3,263 source files; 166 routes;
+  102 CSS Module imports), typecheck, and lint (zero errors in repository
+  source) passed. Full suite: 341 files, 2,293 passed, five skipped, 11 todo.
+  `go test ./...` passed. Release context and an ARM64 image built; the image
+  ran `--version`. Browser check on that image: switches toggle, webhook URLs
+  are generated, the copy tick stays hidden until clicked, and sort icons get
+  their classes. No AMD64 local run, and no Kubernetes, Swarm, Podman, or
+  Azure ACI verification.
+
 ## Post-1.3.0 table rendering fix — October 12, 2026
 
 This follow-up is separate from the historical release scope below. Production
