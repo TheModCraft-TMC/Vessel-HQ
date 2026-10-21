@@ -60,7 +60,7 @@ func (factory *ClientFactory) CreateClient(endpoint *portainer.Endpoint, nodeNam
 			return nil, err
 		}
 
-		endpointURL := "http://" + tunnelAddr
+		endpointURL := "http://" + tunnelAddr // NOSONAR S5332: loopback entry to encrypted Edge tunnel; see SECURITY_REVIEWS.md #180.
 
 		return createAgentClient(endpoint, endpointURL, factory.signatureService, nodeName, timeout)
 	}

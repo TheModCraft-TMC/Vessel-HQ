@@ -360,7 +360,7 @@ func (factory *ClientFactory) buildEdgeConfig(endpoint *portainer.Endpoint, fips
 	if err != nil {
 		return nil, pkgerrors.Wrap(err, "failed to activate the chisel reverse tunnel. check if the tunnel port is open at the portainer instance")
 	}
-	endpointURL := fmt.Sprintf("http://%s/kubernetes", tunnelAddr)
+	endpointURL := fmt.Sprintf("http://%s/kubernetes", tunnelAddr) // NOSONAR S5332: loopback entry to encrypted Edge tunnel; see SECURITY_REVIEWS.md #185.
 
 	config, err := clientcmd.BuildConfigFromFlags(endpointURL, "")
 	if err != nil {

@@ -603,7 +603,7 @@ func extractBearerToken(r *http.Request) (string, bool) {
 
 // AddAuthCookie adds the jwt token to the response cookie.
 func AddAuthCookie(w http.ResponseWriter, token string, expirationTime time.Time, secure bool) {
-	http.SetCookie(w, &http.Cookie{
+	http.SetCookie(w, &http.Cookie{ // NOSONAR S2092: Secure is transport/settings-derived below; see SECURITY_REVIEWS.md #191.
 		Name:     portainer.AuthCookieKey,
 		Value:    token,
 		Path:     "/",
@@ -616,7 +616,7 @@ func AddAuthCookie(w http.ResponseWriter, token string, expirationTime time.Time
 
 // RemoveAuthCookie removes the jwt token from the response cookie.
 func RemoveAuthCookie(w http.ResponseWriter, secure bool) {
-	http.SetCookie(w, &http.Cookie{
+	http.SetCookie(w, &http.Cookie{ // NOSONAR S2092: Secure is transport/settings-derived below; see SECURITY_REVIEWS.md #192.
 		Name:     portainer.AuthCookieKey,
 		Value:    "",
 		Path:     "/",

@@ -40,7 +40,7 @@ func (factory *ProxyFactory) newDockerHTTPProxy(endpoint *portainer.Endpoint) (h
 		if err != nil {
 			return nil, err
 		}
-		rawURL = "http://" + tunnelAddr
+		rawURL = "http://" + tunnelAddr // NOSONAR S5332: loopback entry to encrypted Edge tunnel; see SECURITY_REVIEWS.md #183.
 	}
 
 	endpointURL, err := url.ParseURL(rawURL)

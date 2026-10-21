@@ -19,6 +19,16 @@ func Test_IsURL(t *testing.T) {
 			expectedResult: true,
 		},
 		{
+			name:           "explicit HTTP integration",
+			url:            "http://registry.internal:5000/v2/",
+			expectedResult: true,
+		},
+		{
+			name:           "schemeless local host and port",
+			url:            "localhost:9000/path",
+			expectedResult: true,
+		},
+		{
 			name:           "empty",
 			url:            "",
 			expectedResult: false,

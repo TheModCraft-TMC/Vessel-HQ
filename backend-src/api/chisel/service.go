@@ -76,7 +76,7 @@ func (service *Service) pingAgent(endpointID portainer.EndpointID) error {
 		return err
 	}
 
-	requestURL := fmt.Sprintf("http://%s/ping", tunnelAddr)
+	requestURL := fmt.Sprintf("http://%s/ping", tunnelAddr) // NOSONAR S5332: loopback entry to authenticated encrypted Edge tunnel; see SECURITY_REVIEWS.md #179.
 	req, err := http.NewRequest(http.MethodHead, requestURL, nil)
 	if err != nil {
 		return err

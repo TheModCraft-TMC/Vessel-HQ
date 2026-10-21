@@ -583,3 +583,34 @@ func TestCSPHeaderDisabled(t *testing.T) {
 
 	require.NotContains(t, resp.Header, "Content-Security-Policy")
 }
+
+func TestAuthCookieHonorsTransportSecurityForSetAndDelete(t *testing.T) {
+	t.Parallel()
+	for _, secure := range []bool{true, false} {
+		for _, remove := range []bool{true, false} {
+			rr := httptest.NewRecorder()
+			expires := time.Now().Add(time.Hour).UTC().Truncate(time.Second)
+			if remove {
+				RemoveAuthCookie(rr, secure)
+			} else {
+				AddAuthCookie(rr, "session-token", expires, secure)
+			}
+			cookies := rr.Result().Cookies()
+			require.Len(t, cookies, 1)
+			cookie := cookies[0]
+			require.Equal(t, secure, cookie.Secure)
+			require.Equal(t, portainer.AuthCookieKey, cookie.Name)
+			require.Equal(t, "/", cookie.Path)
+			require.True(t, cookie.HttpOnly)
+			require.Equal(t, http.SameSiteStrictMode, cookie.SameSite)
+			if remove {
+				require.Empty(t, cookie.Value)
+				require.Equal(t, -1, cookie.MaxAge)
+				require.True(t, cookie.Expires.Before(time.Now()))
+			} else {
+				require.Equal(t, "session-token", cookie.Value)
+				require.Equal(t, expires, cookie.Expires)
+			}
+		}
+	}
+}

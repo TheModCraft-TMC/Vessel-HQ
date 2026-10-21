@@ -91,10 +91,10 @@ func RunOAuthServer(code string, config *portainer.OAuthSettings) (*httptest.Ser
 
 	addr := srv.Listener.Addr()
 
-	config.AuthorizationURI = fmt.Sprintf("http://%s/authorize", addr)
-	config.AccessTokenURI = fmt.Sprintf("http://%s/access_token", addr)
-	config.ResourceURI = fmt.Sprintf("http://%s/user", addr)
-	config.RedirectURI = fmt.Sprintf("http://%s/", addr)
+	config.AuthorizationURI = fmt.Sprintf("http://%s/authorize", addr)  // NOSONAR S5332: httptest loopback fixture, no real credentials; see SECURITY_REVIEWS.md #212.
+	config.AccessTokenURI = fmt.Sprintf("http://%s/access_token", addr) // NOSONAR S5332: httptest loopback fixture, no real credentials; see SECURITY_REVIEWS.md #213.
+	config.ResourceURI = fmt.Sprintf("http://%s/user", addr)            // NOSONAR S5332: httptest loopback fixture, no real credentials; see SECURITY_REVIEWS.md #214.
+	config.RedirectURI = fmt.Sprintf("http://%s/", addr)                // NOSONAR S5332: httptest loopback fixture, no real credentials; see SECURITY_REVIEWS.md #215.
 
 	srv.Config.Handler = OAuthRoutes(code, config)
 	srv.Start()

@@ -54,7 +54,7 @@ func (factory *ProxyFactory) newKubernetesEdgeHTTPProxy(endpoint *portainer.Endp
 	if err != nil {
 		return nil, err
 	}
-	rawURL := "http://" + tunnelAddr
+	rawURL := "http://" + tunnelAddr // NOSONAR S5332: loopback entry to encrypted Edge tunnel; see SECURITY_REVIEWS.md #184.
 
 	endpointURL, err := url.Parse(rawURL)
 	if err != nil {
