@@ -1,9 +1,11 @@
 import copy
 import importlib.util
+import io
 from functools import partial
 from pathlib import Path
 import unittest
 from unittest.mock import Mock, patch
+from urllib.error import HTTPError
 
 spec = importlib.util.spec_from_file_location("sync", Path(__file__).with_name("sync-sonarcloud-issues.py"))
 sync = importlib.util.module_from_spec(spec)
@@ -174,6 +176,33 @@ class SyncTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "malformed"):
             self.run_sync(api)
         self.assertEqual(api.writes, [])
+
+
+class ApiRetryTests(unittest.TestCase):
+    # Exercise the real HTTP retry layer, which FakeApi bypasses. A
+    # rate-limit backoff must not retry a mutation outside sync's head guard.
+    def test_rate_limited_writes_fail_without_retrying_an_obsolete_plan(self):
+        for method in ("POST", "PATCH"):
+            for code in (403, 429, 500):
+                with self.subTest(method=method, code=code):
+                    error = HTTPError("https://api.github.com/test", code, "limited", {"Retry-After": "60"}, None)
+                    with patch.object(sync, "urlopen", side_effect=[error, io.BytesIO(b'{}')]) as request:
+                        with patch.object(sync.time, "sleep") as sleep:
+                            with self.assertRaisesRegex(RuntimeError, f"HTTP {code}"):
+                                sync.Api("test-token").request("github", "/test", method, {"state": "open"})
+                    self.assertEqual(request.call_count, 1)
+                    sleep.assert_not_called()
+
+    def test_safe_reads_still_retry_transient_errors(self):
+        for code in (403, 429, 500):
+            with self.subTest(code=code):
+                error = HTTPError("https://api.github.com/test", code, "limited", {"Retry-After": "60"}, None)
+                with patch.object(sync, "urlopen", side_effect=[error, io.BytesIO(b'{"sha":"fresh"}')]) as request:
+                    with patch.object(sync.time, "sleep") as sleep:
+                        result = sync.Api("test-token").request("github", "/test")
+                self.assertEqual(result, {"sha": "fresh"})
+                self.assertEqual(request.call_count, 2)
+                sleep.assert_called_once_with(60)
 
 
 class FreshnessTests(unittest.TestCase):

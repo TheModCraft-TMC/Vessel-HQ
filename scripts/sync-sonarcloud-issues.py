@@ -41,9 +41,13 @@ class Api:
                     raw = response.read()
                     return json.loads(raw) if raw else None
             except HTTPError as error:
-                # Do not retry ambiguous writes: the next run deduplicates any committed creation.
-                retry = error.code == 429 or (error.code == 403 and error.headers.get("Retry-After"))
-                retry = retry or (method == "GET" and error.code >= 500)
+                # Never retry writes after sleeping: the live-head guard
+                # belongs to sync(), and a push during backoff makes its plan stale.
+                # The next run rechecks freshness and deduplicates committed creations.
+                retry = method == "GET" and (
+                    error.code == 429 or (error.code == 403 and error.headers.get("Retry-After"))
+                    or error.code >= 500
+                )
                 if not retry or attempt == 3:
                     raise RuntimeError(f"{service} {method} failed: HTTP {error.code}") from None
                 time.sleep(max(60, int(error.headers.get("Retry-After", "60"))))

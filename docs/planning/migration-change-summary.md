@@ -164,6 +164,15 @@ tests and release-version checks pass. A live read-only smoke at `5b175344b`
 verifies matching revisions and a dry-run plan with mutation methods forbidden.
 No cross-service atomicity is claimed for an already in-flight individual write.
 
+Round-three review found a separate retry-layer gap: a rate-limited POST/PATCH
+could sleep and retry after the branch advanced, outside the per-write guard.
+Fail closed on write errors rather than retrying an old plan; retain retries for
+safe GET requests. The next scheduled run resolves freshness and deduplicates
+any committed creations before planning again. A real loopback HTTP 429
+reproduction confirmed the stale second attempt before the fix; regression
+coverage checks POST/PATCH 403/429/500 failures and preserved GET retries.
+All 26 Python tests pass after this review fix.
+
 **Not done yet: the intentional Docker root findings require an authorized
 SonarCloud review.** Automatic Analysis ignores the attempted multicriteria
 configuration, and Dockerfiles do not support `NOSONAR`. Remove the ineffective
