@@ -31,11 +31,12 @@ export function AdvancedCronFieldset() {
 }
 /**
  * Based on https://regexr.com/573i2. A field is a number, a list, a range or
- * step, or `*`. The `(?<!\d)` guard stops the unanchored search from retrying
- * inside a digit run, which keeps matching linear without changing what passes.
+ * step, or `*`. The bounded lookbehind prevents restarting inside a digit
+ * run or a numeric list. A preceding digit-comma pair belongs to the same
+ * list, so scanning its suffix again would make malformed input quadratic.
  */
 export const cronRegex =
-  /@(?:annually|yearly|monthly|weekly|daily|hourly|reboot)|@every (?:\d+(?:ns|us|µs|ms|s|m|h))+|(?:(?:(?<!\d)\d+(?:(?:,\d+)+|[/-]\d+)?|\*) ){4,6}(?:(?<!\d)\d+(?:(?:,\d+)+|[/-]\d+)?|\*)/;
+  /@(?:annually|yearly|monthly|weekly|daily|hourly|reboot)|@every (?:\d+(?:ns|us|µs|ms|s|m|h))+|(?:(?:(?<!\d|\d,)\d+(?:(?:,\d+)+|[/-]\d+)?|\*) ){4,6}(?:(?<!\d|\d,)\d+(?:(?:,\d+)+|[/-]\d+)?|\*)/;
 
 export function cronValidation() {
   return string()
