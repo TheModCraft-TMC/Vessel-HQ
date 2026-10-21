@@ -171,7 +171,23 @@ safe GET requests. The next scheduled run resolves freshness and deduplicates
 any committed creations before planning again. A real loopback HTTP 429
 reproduction confirmed the stale second attempt before the fix; regression
 coverage checks POST/PATCH 403/429/500 failures and preserved GET retries.
-All 26 Python tests pass after this review fix.
+All 26 Python tests pass after this review fix. The manager independently
+repeats the loopback before/after proof: the old code attempts revisions `a`
+and `b`; the fixed code attempts only `a`, with no backoff or stale retry.
+
+Both mandated reviewers complete a third whole-scope review of all 222 paths
+through `d28be6c4b` and the retry fix. Opus independently repeats the full 2,424-test
+frontend suite, all 210 Go packages, typecheck, guards, lint and production build.
+Both repeat affected Go race checks and production-browser keyboard/filter/
+390px checks; Sol also verifies timestamped logs and copied text. There is no
+further introduced defect established in this round.
+
+The other clear pre-existing finding is fixed separately: parse `Retry-After`
+HTTP-date values as well as seconds, treating legacy timezone-less HTTP dates
+as UTC and retaining the conservative 60-second minimum for missing, invalid,
+expired or short values. All 28 Python tests pass, including date-format and
+real request-layer retry cases. Writes still never retry. This small protocol
+fix does not change the backend or frontend source tested by both reviewers.
 
 **Not done yet: the intentional Docker root findings require an authorized
 SonarCloud review.** Automatic Analysis ignores the attempted multicriteria
