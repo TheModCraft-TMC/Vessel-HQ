@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
 import ts from 'typescript';
+
+import { renderPageTree } from './app-router-page-tree.mjs';
 
 const ROOT = process.cwd();
 const APP_ROOT = path.join(ROOT, 'web-src/app');
@@ -14,11 +15,7 @@ const COMPLIANCE_REPORT = path.join(
 );
 const OUTPUT_PATH = path.join(ROOT, 'reports/app-router-page-index.md');
 
-const tree = execFileSync(
-  'tree',
-  ['web-src/app', '-P', 'page.tsx', '--prune', '--noreport'],
-  { cwd: ROOT, encoding: 'utf8' }
-).trimEnd();
+const tree = renderPageTree(APP_ROOT);
 
 const complianceIssues = readComplianceIssues();
 const pageFiles = walk(APP_ROOT)

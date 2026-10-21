@@ -135,9 +135,14 @@ function inspectLayout(file) {
   if (descendantPages.length !== 1) return;
 
   const sourceText = fs.readFileSync(file, 'utf8');
-  if (!/(?:PageHeader|\w+Header)/.test(sourceText)) return;
-
   const sourceFile = ts.createSourceFile(file, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  // Inspect identifiers instead of retrying a greedy suffix regex at every
+  // character. Comments and string literals are not header components.
+  const hasHeader = (node) =>
+    (ts.isIdentifier(node) && node.text.length > 'Header'.length && node.text.endsWith('Header')) ||
+    ts.forEachChild(node, hasHeader);
+  if (!hasHeader(sourceFile)) return;
+
   addIssue('APPROUTER003', file, sourceFile, sourceFile, 'This header layout wraps only one page. Promote it to a shared parent boundary or compose the header in the page.');
 }
 
