@@ -1,6 +1,5 @@
 import clsx from 'clsx';
-import uuid from 'uuid';
-import { ComponentProps, PropsWithChildren, ReactNode, useState } from 'react';
+import { ComponentProps, PropsWithChildren, ReactNode, useId } from 'react';
 
 import type { AutomationTestingProps } from '@/ui/types';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
@@ -44,7 +43,7 @@ export function SwitchField({
   setTooltipHtmlMessage,
   valueExplanation,
 }: PropsWithChildren<Props>) {
-  const [toggleId] = useState(() => `toggle_${uuid()}`);
+  const toggleId = `toggle_${useId()}`;
   const toggleName = name ? `toggle_${name}` : '';
 
   if (isLimitedToBE(featureId)) {

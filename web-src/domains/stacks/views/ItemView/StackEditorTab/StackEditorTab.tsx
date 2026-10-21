@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import { useRouter } from 'next/navigation';
 import _ from 'lodash';
 import { useState } from 'react';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Stack, StackType } from '@/domains/stacks/models/types';
 import { useDockerComposeSchema } from '@/core/hooks/useDockerComposeSchema/useDockerComposeSchema';

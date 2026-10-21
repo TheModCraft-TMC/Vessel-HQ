@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import { usePathname, useRouter } from 'next/navigation';
 import { buildHref } from '@console/routing/buildHref';
 import { useState } from 'react';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { EnvironmentId } from '@/domains/environments';
 import {

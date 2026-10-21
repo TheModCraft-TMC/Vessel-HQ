@@ -82,14 +82,13 @@ describe('azureAciClient', () => {
       provider
     );
 
-    expect(get.mock.calls.map(([, config]) => config?.params?.['api-version']))
-      .toEqual([
-        '2016-06-01',
-        '2016-06-01',
-        '2018-02-01',
-        '2018-02-01',
-        '2018-02-01',
-      ]);
+    expect(get.mock.calls.map(([, config]) => config?.params)).toEqual([
+      { 'api-version': '2016-06-01' },
+      { 'api-version': '2016-06-01' },
+      { 'api-version': '2018-02-01' },
+      { 'api-version': '2018-02-01' },
+      { 'api-version': '2018-02-01' },
+    ]);
   });
 
   test('loads one container group', async () => {
