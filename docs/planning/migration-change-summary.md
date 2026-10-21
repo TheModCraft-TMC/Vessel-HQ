@@ -56,6 +56,10 @@ image build failed on typecheck.
   JavaScript-only advisories (GHSA-vxmc-5x29-h64v, GHSA-q58r-hwc8-rm9j); the
   console loads only the stylesheet. The roadmap records replacing Bootstrap 3
   and the separate YAML/Vitest major upgrades.
+- Include Dependabot PR #231: `sanitize-html` ^2.18.0 (resolves 2.18.1, three
+  XSS advisories) and `vite` ^8.1.6 (resolves 8.3.5). Typecheck, the full suite
+  (341 files), and a fresh ARM64 release image (`--version` 1.3.1) passed after
+  the bump.
 
 ## Post-1.3.0 table rendering fix — October 12, 2026
 
