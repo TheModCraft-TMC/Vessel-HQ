@@ -178,6 +178,27 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(api.writes, [])
 
 
+class RetryDelayTests(unittest.TestCase):
+    def test_seconds_and_http_date_formats(self):
+        headers = [
+            "120",
+            "Thu, 01 Jan 2026 00:02:00 GMT",
+            "Thursday, 01-Jan-26 00:02:00 GMT",
+            "Thu Jan  1 00:02:00 2026",
+        ]
+        with patch.object(sync.time, "time", return_value=1767225600):
+            for header in headers:
+                with self.subTest(header=header):
+                    self.assertEqual(sync.retry_delay(header), 120)
+
+    def test_missing_malformed_and_expired_headers_keep_minimum_backoff(self):
+        headers = [None, "", "later", "-5", "1", "Wed, 31 Dec 2025 23:59:00 GMT"]
+        with patch.object(sync.time, "time", return_value=1767225600):
+            for header in headers:
+                with self.subTest(header=header):
+                    self.assertEqual(sync.retry_delay(header), 60)
+
+
 class ApiRetryTests(unittest.TestCase):
     # Exercise the real HTTP retry layer, which FakeApi bypasses. A
     # rate-limit backoff must not retry a mutation outside sync's head guard.
@@ -194,15 +215,18 @@ class ApiRetryTests(unittest.TestCase):
                     sleep.assert_not_called()
 
     def test_safe_reads_still_retry_transient_errors(self):
-        for code in (403, 429, 500):
-            with self.subTest(code=code):
-                error = HTTPError("https://api.github.com/test", code, "limited", {"Retry-After": "60"}, None)
-                with patch.object(sync, "urlopen", side_effect=[error, io.BytesIO(b'{"sha":"fresh"}')]) as request:
-                    with patch.object(sync.time, "sleep") as sleep:
-                        result = sync.Api("test-token").request("github", "/test")
-                self.assertEqual(result, {"sha": "fresh"})
-                self.assertEqual(request.call_count, 2)
-                sleep.assert_called_once_with(60)
+        headers = [("60", 60), ("Thu, 01 Jan 2026 00:02:00 GMT", 120)]
+        with patch.object(sync.time, "time", return_value=1767225600):
+            for code in (403, 429, 500):
+                for header, delay in headers:
+                    with self.subTest(code=code, header=header):
+                        error = HTTPError("https://api.github.com/test", code, "limited", {"Retry-After": header}, None)
+                        with patch.object(sync, "urlopen", side_effect=[error, io.BytesIO(b'{"sha":"fresh"}')]) as request:
+                            with patch.object(sync.time, "sleep") as sleep:
+                                result = sync.Api("test-token").request("github", "/test")
+                        self.assertEqual(result, {"sha": "fresh"})
+                        self.assertEqual(request.call_count, 2)
+                        sleep.assert_called_once_with(delay)
 
 
 class FreshnessTests(unittest.TestCase):

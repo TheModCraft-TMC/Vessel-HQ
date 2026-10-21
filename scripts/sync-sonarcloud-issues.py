@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Mirror open main-branch SonarCloud findings into GitHub Issues (stdlib only)."""
 import argparse
+from datetime import timezone
+from email.utils import parsedate_to_datetime
 import json
 import os
 import re
@@ -17,6 +19,20 @@ END = "<!-- sonarcloud-sync:end -->"
 ACTIVE = {"OPEN", "CONFIRMED", "REOPENED"}
 TERMINAL = {"FIXED", "FALSE_POSITIVE", "ACCEPTED", "CLOSED"}
 MARKER = re.compile(r"<!-- sonarcloud:([^:]+):([^:]+):([^\s]+) -->")
+
+
+def retry_delay(value):
+    try:
+        delay = int(value)
+    except (TypeError, ValueError):
+        try:
+            retry_at = parsedate_to_datetime(value)
+            if retry_at.tzinfo is None:
+                retry_at = retry_at.replace(tzinfo=timezone.utc)
+            delay = retry_at.timestamp() - time.time()
+        except (TypeError, ValueError, OverflowError):
+            delay = 60
+    return max(60, delay)
 
 
 class Api:
@@ -50,7 +66,7 @@ class Api:
                 )
                 if not retry or attempt == 3:
                     raise RuntimeError(f"{service} {method} failed: HTTP {error.code}") from None
-                time.sleep(max(60, int(error.headers.get("Retry-After", "60"))))
+                time.sleep(retry_delay(error.headers.get("Retry-After")))
         raise RuntimeError("API retry limit exceeded")
 
     def sonar(self, **params):
