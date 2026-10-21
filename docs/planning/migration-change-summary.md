@@ -148,7 +148,21 @@ The decrease is 68 duplicate cases removed and one ownership contract added.
 All three architecture guards, typecheck, uncached lint (zero errors, 192
 warnings), and the production build/standalone packaging pass after consolidation.
 The hosted Linux-image pipeline also passed its first PR revision, including
-AMD64/ARM64 execution checks; the latest PR checks remain authoritative.
+AMD64/ARM64 execution checks; the latest PR checks remain authoritative. The
+next Sonar scan at `c551f9803` confirms 0.6% new-code duplication (3% limit),
+reliability/maintainability A and 100% reviewed hotspots; only the toolkit-root
+case still blocks its security rating.
+
+A final integration check found that scheduled/push issue synchronization could
+undo PR issue closures while Sonar still reported the previous source revision.
+Require a completed Sonar `develop` analysis matching the live GitHub head,
+with read-only polling bounded to ten minutes. Pin that revision through
+planning, check it again before applying a plan, and guard each mutation against
+a newer push. This does not suppress fresh findings or change valid reopening,
+closure, or human-note preservation. Twenty-four Python tests, 19 Node tooling
+tests and release-version checks pass. A live read-only smoke at `5b175344b`
+verifies matching revisions and a dry-run plan with mutation methods forbidden.
+No cross-service atomicity is claimed for an already in-flight individual write.
 
 **Not done yet: the intentional Docker root findings require an authorized
 SonarCloud review.** Automatic Analysis ignores the attempted multicriteria
