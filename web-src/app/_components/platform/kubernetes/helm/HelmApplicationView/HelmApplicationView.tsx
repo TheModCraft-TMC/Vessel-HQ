@@ -43,7 +43,7 @@ export function HelmApplicationContent({
   const earlistRevision =
     helmHistoryQuery.data?.[helmHistoryQuery.data.length - 1]?.version;
   // when loading the page fresh, the revision is undefined, so use the latest revision
-  const selectedRevision = revision ? parseInt(revision, 10) : latestRevision;
+  const selectedRevision = revision ? Number.parseInt(revision, 10) : latestRevision;
 
   const helmReleaseQuery = useHelmRelease(environmentId, name, namespace, {
     showResources: true,

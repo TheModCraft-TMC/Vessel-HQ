@@ -31,6 +31,6 @@ export function GroupField({ name = 'meta.groupId' }: { name?: string }) {
   );
 
   function handleChange(value: string) {
-    helpers.setValue(value ? parseInt(value, 10) : 1);
+    helpers.setValue(value ? Number.parseInt(value, 10) : 1);
   }
 }

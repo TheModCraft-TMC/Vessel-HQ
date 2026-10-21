@@ -76,7 +76,7 @@ function RollEdit({
         data-cy="role-select"
         value={value}
         options={rolesQuery.data}
-        onChange={(e) => onChange(parseInt(e.target.value, 10))}
+        onChange={(e) => onChange(Number.parseInt(e.target.value, 10))}
       />
       <Button
         color="none"

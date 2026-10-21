@@ -194,16 +194,16 @@ function getUnmatchedRequiredNodeAffinities(node: Node, pod: Pod): Affinity[] {
               (matchExpression.operator === 'NotIn' && !isIn) ||
               (matchExpression.operator === 'Gt' &&
                 exists &&
-                parseInt(
+                Number.parseInt(
                   node.metadata?.labels?.[matchExpression.key] || '',
                   10
-                ) > parseInt(matchExpression.values?.[0] || '', 10)) ||
+                ) > Number.parseInt(matchExpression.values?.[0] || '', 10)) ||
               (matchExpression.operator === 'Lt' &&
                 exists &&
-                parseInt(
+                Number.parseInt(
                   node.metadata?.labels?.[matchExpression.key] || '',
                   10
-                ) < parseInt(matchExpression.values?.[0] || '', 10))
+                ) < Number.parseInt(matchExpression.values?.[0] || '', 10))
             ) {
               return [];
             }

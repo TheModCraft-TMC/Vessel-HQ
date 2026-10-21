@@ -20,7 +20,7 @@ async function getApiVersion(environmentId: EnvironmentId) {
     const { headers } = await axios.get(
       buildDockerProxyUrl(environmentId, 'ping')
     );
-    return parseInt(headers['portainer-agent-api-version'], 10) || 1;
+    return Number.parseInt(headers['portainer-agent-api-version'], 10) || 1;
   } catch (error) {
     // 404 - agent is up - set version to 1
     if (isAxiosError(error) && error.response?.status === 404) {

@@ -19,5 +19,5 @@ export function useEnvironmentId(force = true): EnvironmentId {
     throw new Error('endpointId url param is required');
   }
 
-  return parseInt(environmentId, 10);
+  return Number.parseInt(environmentId, 10);
 }

@@ -34,7 +34,7 @@ export function ResourcesTable() {
   const environmentId = useEnvironmentId();
   const params = useRouteParams();
   const { name, namespace, revision } = params;
-  const revisionNumber = revision ? parseInt(revision, 10) : undefined;
+  const revisionNumber = revision ? Number.parseInt(revision, 10) : undefined;
 
   const tableState = useTableState(settingsStore, storageKey);
   const helmReleaseQuery = useHelmRelease(environmentId, name, namespace, {

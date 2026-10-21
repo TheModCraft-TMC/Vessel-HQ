@@ -39,9 +39,9 @@ export function ReleaseTabs({ release, selectedRevision }: Props) {
   const environmentId = useEnvironmentId();
   // state is here so that the state isn't lost when the tab changes
   const [isUserSupplied, setIsUserSupplied] = useState(true);
-  // start with NaN so that the input is empty (see <Input /> for more details)
+  // start with Number.NaN so that the input is empty (see <Input /> for more details)
   const [selectedCompareRevisionNumber, setSelectedCompareRevisionNumber] =
-    useState(NaN);
+    useState(Number.NaN);
   const [diffViewMode, setDiffViewMode] = useState<DiffViewMode>('view');
 
   const historyQuery = useHelmHistory(
@@ -112,7 +112,7 @@ export function ReleaseTabs({ release, selectedRevision }: Props) {
       return;
     }
 
-    // if the input for compare revision number is NaN, set it to the previous revision number
+    // if the input for compare revision number is Number.NaN, set it to the previous revision number
     if (
       Number.isNaN(selectedCompareRevisionNumber) &&
       diffViewMode === 'specific'

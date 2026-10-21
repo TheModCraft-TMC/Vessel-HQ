@@ -152,7 +152,7 @@ export function parseIntOrDefault<T>(
   fallback: T
 ): number | T {
   if (!raw) return fallback;
-  const n = parseInt(raw, 10);
+  const n = Number.parseInt(raw, 10);
   return Number.isFinite(n) ? n : fallback;
 }
 

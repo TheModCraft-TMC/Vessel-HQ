@@ -51,7 +51,7 @@ export function EnvironmentCreationView({
 
   const [environmentIds, setEnvironmentIds] = useState<EnvironmentId[]>(() => {
     const localEndpointId =
-      localEnvironmentId || parseInt(localEndpointIdParam, 10);
+      localEnvironmentId || Number.parseInt(localEndpointIdParam, 10);
 
     if (!localEndpointId || Number.isNaN(localEndpointId)) {
       return [];

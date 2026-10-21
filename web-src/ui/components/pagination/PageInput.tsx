@@ -57,7 +57,7 @@ export function PageInput({ onChange, totalPages }: Props) {
   }
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const value = parseInt(e.target.value, 10);
+    const value = Number.parseInt(e.target.value, 10);
     setFieldValue('page', Number.isNaN(value) ? '' : value);
   }
 }

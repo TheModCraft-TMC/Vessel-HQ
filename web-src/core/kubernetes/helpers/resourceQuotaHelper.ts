@@ -16,7 +16,7 @@ class KubernetesResourceQuotaHelper {
     const index = Math.floor(Math.log(bytes) / Math.log(unit));
 
     return {
-      size: parseFloat((bytes / unit ** index).toFixed(precision)),
+      size: Number.parseFloat((bytes / unit ** index).toFixed(precision)),
       sizeUnit: sizes[index],
     };
   }

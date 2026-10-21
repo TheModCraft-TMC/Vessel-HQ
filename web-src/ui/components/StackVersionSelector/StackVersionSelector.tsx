@@ -44,7 +44,7 @@ export function StackVersionSelector({ versions, onChange }: Props) {
               borderColor: 'hsl(0, 0%, 80%)',
               padding: '2px 8px',
             }}
-            onChange={(e) => onChange(parseInt(e.target.value, 10))}
+            onChange={(e) => onChange(Number.parseInt(e.target.value, 10))}
           >
             {versionOptions.map((option) => (
               <option key={option.value} value={option.value}>

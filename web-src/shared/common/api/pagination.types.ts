@@ -103,8 +103,8 @@ export function withPaginationHeaders<T = unknown>({
   data: AxiosResponse<T>['data'];
   headers: AxiosResponse<T>['headers'];
 }): PaginatedResults<T> {
-  const totalCount = parseInt(headers['x-total-count'], 10);
-  const totalAvailable = parseInt(headers['x-total-available'], 10);
+  const totalCount = Number.parseInt(headers['x-total-count'], 10);
+  const totalAvailable = Number.parseInt(headers['x-total-available'], 10);
 
   return {
     data,

@@ -82,7 +82,7 @@ function SelectField({
         className="form-control"
         data-cy="select"
         value={value}
-        onChange={(e) => setValue(parseInt(e.target.value, 10))}
+        onChange={(e) => setValue(Number.parseInt(e.target.value, 10))}
         options={options}
       />
     </FormControl>

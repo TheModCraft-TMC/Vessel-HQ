@@ -132,10 +132,10 @@ function useStackRouteParams() {
   const isOrphanedRunning = params.orphanedRunning === 'true';
   const stackName = params.name || ('' as string);
   const stackId = params.id
-    ? (parseInt(params.id, 10) as Stack['Id'])
+    ? (Number.parseInt(params.id, 10) as Stack['Id'])
     : undefined;
   const stackType = ['1', '2', '3'].includes(params.type)
-    ? (parseInt(params.type, 10) as StackType)
+    ? (Number.parseInt(params.type, 10) as StackType)
     : undefined;
 
   return {

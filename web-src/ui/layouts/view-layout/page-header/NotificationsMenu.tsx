@@ -195,7 +195,7 @@ function MenuLink({
 function formatTime(timeCreated: Date) {
   const timeStamp = new Date(timeCreated).valueOf().toString();
 
-  const diff = Math.floor((Date.now() - parseInt(timeStamp, 10)) / 1000);
+  const diff = Math.floor((Date.now() - Number.parseInt(timeStamp, 10)) / 1000);
 
   if (diff <= 86400) {
     let interval = Math.floor(diff / 3600);

@@ -98,7 +98,7 @@ function SelectAndInputItem({
         type="number"
         value={item.value}
         onChange={(e) =>
-          onChange({ ...item, value: parseInt(e.target.value, 10) })
+          onChange({ ...item, value: Number.parseInt(e.target.value, 10) })
         }
         data-cy="input"
       />

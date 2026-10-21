@@ -109,9 +109,9 @@ export async function getEnvironments(
   const updateAvailable = response.headers['x-update-available'] === 'true';
 
   return {
-    totalCount: parseInt(totalCount, 10),
+    totalCount: Number.parseInt(totalCount, 10),
     value: (response.data ?? []).map(toEnvironment),
-    totalAvailable: parseInt(totalAvailable, 10),
+    totalAvailable: Number.parseInt(totalAvailable, 10),
     updateAvailable,
   };
 }
