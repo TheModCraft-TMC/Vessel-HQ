@@ -1,6 +1,6 @@
 name: Vessel HQ bug report
 description: Report a bug in Vessel HQ.
-labels: kind/bug,bug/need-confirmation
+labels: [bug]
 body:
   - type: markdown
     attributes:
