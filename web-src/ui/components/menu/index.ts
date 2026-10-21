@@ -4,6 +4,7 @@ export {
   Menu,
   MenuButton,
   MenuItem,
+  MenuCheckboxItem,
   MenuLink,
   MenuList,
   MenuPopover,

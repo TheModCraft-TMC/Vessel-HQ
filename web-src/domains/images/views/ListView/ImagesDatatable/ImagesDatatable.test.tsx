@@ -134,19 +134,19 @@ describe('ImagesDatatable', () => {
       await user.click(
         within(idHeader).getByRole('button', { name: 'Filter' })
       );
-      await user.click(screen.getByRole('checkbox', { name: /^Unused$/ }));
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Unused$/ }));
       await waitFor(() =>
         expect(screen.queryByText('used:latest')).not.toBeInTheDocument()
       );
       expect(screen.getByText('unused:latest')).toBeVisible();
-      await user.click(screen.getByRole('checkbox', { name: /^Used$/ }));
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Used$/ }));
       expect(await screen.findByText('used:latest')).toBeVisible();
-      await user.click(screen.getByRole('checkbox', { name: /^Unused$/ }));
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Unused$/ }));
       await waitFor(() =>
         expect(screen.queryByText('unused:latest')).not.toBeInTheDocument()
       );
       expect(screen.getByText('used:latest')).toBeVisible();
-      await user.click(screen.getByRole('checkbox', { name: /^Used$/ }));
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Used$/ }));
       expect(await screen.findByText('unused:latest')).toBeVisible();
     });
   });

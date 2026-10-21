@@ -99,13 +99,13 @@ describe('MultipleSelectionFilter', () => {
     const button = screen.getByRole('button', { name: /filter/i });
     await user.click(button);
 
-    const runningCheckbox = screen.getByLabelText<HTMLInputElement>('Running');
-    const stoppedCheckbox = screen.getByLabelText<HTMLInputElement>('Stopped');
-    const pausedCheckbox = screen.getByLabelText<HTMLInputElement>('Paused');
+    const runningCheckbox = screen.getByLabelText('Running');
+    const stoppedCheckbox = screen.getByLabelText('Stopped');
+    const pausedCheckbox = screen.getByLabelText('Paused');
 
-    expect(runningCheckbox.checked).toBe(true);
-    expect(stoppedCheckbox.checked).toBe(false);
-    expect(pausedCheckbox.checked).toBe(true);
+    expect(runningCheckbox).toBeChecked();
+    expect(stoppedCheckbox).not.toBeChecked();
+    expect(pausedCheckbox).toBeChecked();
   });
 
   it.each([
@@ -182,10 +182,10 @@ describe('MultipleSelectionFilter', () => {
     expect(screen.getByLabelText('Paused')).toBeInTheDocument();
 
     // Check that 'Running' and 'Paused' are checked
-    const runningCheckbox = screen.getByLabelText<HTMLInputElement>('Running');
-    const pausedCheckbox = screen.getByLabelText<HTMLInputElement>('Paused');
-    expect(runningCheckbox.checked).toBe(true);
-    expect(pausedCheckbox.checked).toBe(true);
+    const runningCheckbox = screen.getByLabelText('Running');
+    const pausedCheckbox = screen.getByLabelText('Paused');
+    expect(runningCheckbox).toBeChecked();
+    expect(pausedCheckbox).toBeChecked();
   });
 
   it('should handle empty options array', async () => {
@@ -196,7 +196,9 @@ describe('MultipleSelectionFilter', () => {
     await user.click(button);
 
     const menuContent = screen.getByText('Filter by state').parentElement;
-    const checkboxes = menuContent?.querySelectorAll('input[type="checkbox"]');
+    const checkboxes = menuContent?.querySelectorAll(
+      '[role="menuitemcheckbox"]'
+    );
     expect(checkboxes?.length).toBe(0);
   });
 
@@ -246,7 +248,7 @@ describe('MultipleSelectionFilter', () => {
     await user.click(button);
 
     const menuContent = screen.getByText('Filter by state').parentElement;
-    const checkboxes = within(menuContent!).getAllByRole('checkbox');
+    const checkboxes = within(menuContent!).getAllByRole('menuitemcheckbox');
 
     // Should only have 3 unique options: Running, Stopped, Paused
     expect(checkboxes.length).toBe(3);
@@ -285,13 +287,13 @@ describe('MultipleSelectionFilter', () => {
       await user.click(button);
     }
 
-    const runningCheckbox = screen.getByLabelText<HTMLInputElement>('Running');
-    const stoppedCheckbox = screen.getByLabelText<HTMLInputElement>('Stopped');
-    const pausedCheckbox = screen.getByLabelText<HTMLInputElement>('Paused');
+    const runningCheckbox = screen.getByLabelText('Running');
+    const stoppedCheckbox = screen.getByLabelText('Stopped');
+    const pausedCheckbox = screen.getByLabelText('Paused');
 
-    expect(runningCheckbox.checked).toBe(true);
-    expect(stoppedCheckbox.checked).toBe(true);
-    expect(pausedCheckbox.checked).toBe(false);
+    expect(runningCheckbox).toBeChecked();
+    expect(stoppedCheckbox).toBeChecked();
+    expect(pausedCheckbox).not.toBeChecked();
   });
 });
 
@@ -364,4 +366,30 @@ it('refreshes faceted filter options after data changes on the same column insta
   rerender(<StatefulFilter rows={[{ id: '3', status: 'Paused' }]} />);
   expect(screen.getByLabelText('Paused')).toBeInTheDocument();
   expect(screen.queryByLabelText('Running')).not.toBeInTheDocument();
+});
+
+// REVIEW: Exercise real Radix keyboard navigation, not only pointer clicks.
+it('opens, navigates, toggles multiple choices and restores focus using only keys', async () => {
+  const user = userEvent.setup();
+  render(<StatefulFilter />);
+  const trigger = screen.getByRole('button', { name: /filter/i });
+  await user.tab();
+  expect(trigger).toHaveFocus();
+  await user.keyboard('{Enter}');
+  const running = await screen.findByRole('menuitemcheckbox', {
+    name: 'Running',
+  });
+  const stopped = screen.getByRole('menuitemcheckbox', { name: 'Stopped' });
+  expect(running).toHaveFocus();
+  await user.keyboard(' ');
+  expect(running).toBeChecked();
+  expect(screen.getByLabelText('Filtered rows')).toHaveTextContent(/^1$/);
+  await user.keyboard('{ArrowDown}');
+  expect(stopped).toHaveFocus();
+  await user.keyboard('{Enter}');
+  expect(stopped).toBeChecked();
+  expect(screen.getByLabelText('Filtered rows')).toHaveTextContent(/^1,2$/);
+  await user.keyboard('{Escape}');
+  expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  expect(trigger).toHaveFocus();
 });

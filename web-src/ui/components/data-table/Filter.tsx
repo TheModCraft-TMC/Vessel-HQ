@@ -4,7 +4,12 @@ import { Column, Row, TableMeta } from '@tanstack/react-table';
 import { Check, Filter } from 'lucide-react';
 import _ from 'lodash';
 
-import { Menu, MenuButton, MenuPopover } from '@/ui/components/menu';
+import {
+  Menu,
+  MenuButton,
+  MenuCheckboxItem,
+  MenuPopover,
+} from '@/ui/components/menu';
 import { Icon } from '@/ui/components/icons/Icon';
 
 import { getValueAsArrayOfStrings } from './utils';
@@ -49,19 +54,27 @@ export function MultipleSelectionFilter({
           <div className="tableMenu">
             <div className="menuHeader">{menuTitle}</div>
             <div className="menuContent">
+              {/* REVIEW: Native inputs are not Radix menu items: Tab is suppressed
+                  and arrow keys cannot reach them. Keep the menu open while its
+                  registered checkbox items support arrows, typeahead and Space. */}
               {optionsWithValues.map((option, index) => (
-                <div className="md-checkbox" key={index}>
-                  <input
-                    id={`filter_${filterKey}_${index}`}
-                    type="checkbox"
-                    checked={value.includes(option)}
-                    onChange={() => handleChange(option)}
-                    data-cy={`filter_${filterKey}_${index}`}
-                  />
-                  <label htmlFor={`filter_${filterKey}_${index}`}>
-                    {option}
-                  </label>
-                </div>
+                <MenuCheckboxItem
+                  key={option}
+                  aria-label={option}
+                  checked={value.includes(option)}
+                  onCheckedChange={() => handleChange(option)}
+                  onSelect={(event) => event.preventDefault()}
+                  data-cy={`filter_${filterKey}_${index}`}
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 outline-none focus:bg-graphite-100 th-highcontrast:focus:bg-graphite-700 th-dark:focus:bg-graphite-700"
+                >
+                  <span
+                    aria-hidden
+                    className="flex h-4 w-4 items-center justify-center rounded border border-solid border-current"
+                  >
+                    {value.includes(option) && <Icon icon={Check} size="sm" />}
+                  </span>
+                  {option}
+                </MenuCheckboxItem>
               ))}
             </div>
           </div>

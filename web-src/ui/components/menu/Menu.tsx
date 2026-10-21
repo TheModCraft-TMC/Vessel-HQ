@@ -125,6 +125,9 @@ export function MenuPopover({
 }
 
 export const MenuItem = DropdownMenu.Item;
+// REVIEW: Register filter choices with Radix's roving-focus collection so
+// keyboard users can reach and toggle them, not just open an empty menu.
+export const MenuCheckboxItem = DropdownMenu.CheckboxItem;
 
 export function MenuLink({
   children,
