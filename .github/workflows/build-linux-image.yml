@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    branches:
+      - develop
   workflow_dispatch:
     inputs:
       version_tag:
@@ -22,12 +25,13 @@ env:
   DEFAULT_COMPOSE_UNPACKER_TAG: '2.39.3.2.3'
 
 concurrency:
-  group: linux-image-release
-  cancel-in-progress: false
+  # Keep untrusted PR checks isolated from the serialized publication queue.
+  group: linux-image-${{ github.event_name == 'pull_request' && github.ref || 'release' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-linux-image:
-    name: Validate, build, and publish Linux image
+    name: Validate and build Linux image
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -54,7 +58,7 @@ jobs:
           echo "channel_tag=$channel_tag" >> "$GITHUB_OUTPUT"
 
       - name: Require an unused immutable tag
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
         env:
           VERSION_TAG: ${{ steps.image.outputs.version_tag }}
         run: |
@@ -123,7 +127,7 @@ jobs:
           done
 
       - name: Login to Docker Hub
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -134,7 +138,7 @@ jobs:
         run: echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
 
       - name: Publish immutable image
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
         id: publish
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
@@ -149,7 +153,7 @@ jobs:
             COMPOSE_UNPACKER_IMAGE=${{ env.UNPACKER_IMAGE_NAME }}:${{ steps.image.outputs.compose_unpacker_tag }}
 
       - name: Verify immutable image and promote channel
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
         env:
           VERSION_TAG: ${{ steps.image.outputs.version_tag }}
           IMAGE_DIGEST: ${{ steps.publish.outputs.digest }}
