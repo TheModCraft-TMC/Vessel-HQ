@@ -77,7 +77,7 @@ func BuildAndDeploy(ctx context.Context, dataStore dataservices.DataStore, build
 	}
 
 	// Not tied to ctx: canceling on client disconnect could orphan cluster resources with no stack record.
-	deployCtx, cancel := context.WithTimeout(context.Background(), stackutils.InlineDeployTimeout)
+	deployCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), stackutils.InlineDeployTimeout)
 	defer cancel()
 
 	if err := builder.deploy(deployCtx, endpoint); err != nil {

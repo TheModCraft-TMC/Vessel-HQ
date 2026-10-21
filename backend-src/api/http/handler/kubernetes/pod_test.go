@@ -297,6 +297,7 @@ func TestRelayPodLogStream(t *testing.T) {
 		t.Parallel()
 		rr := httptest.NewRecorder()
 		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
 		stream := readerFunc(func(p []byte) (int, error) {
 			cancel()
 			return 0, errors.New("context canceled")

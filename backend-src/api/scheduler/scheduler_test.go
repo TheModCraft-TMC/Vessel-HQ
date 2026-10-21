@@ -25,6 +25,7 @@ func Test_ScheduledJobRuns(t *testing.T) {
 		defer requireNoShutdownErr(t, s.Shutdown)
 
 		ctx, cancel := context.WithTimeout(t.Context(), 2*jobInterval)
+		defer cancel()
 
 		var workDone bool
 		s.StartJobEvery(jobInterval, func() error {
@@ -47,6 +48,7 @@ func Test_JobCanBeStopped(t *testing.T) {
 		defer requireNoShutdownErr(t, s.Shutdown)
 
 		ctx, cancel := context.WithTimeout(t.Context(), 2*jobInterval)
+		defer cancel()
 
 		var workDone bool
 		jobID := s.StartJobEvery(jobInterval, func() error {
@@ -118,6 +120,7 @@ func Test_CanTerminateAllJobs_ByShuttingDownScheduler(t *testing.T) {
 		s := NewScheduler(t.Context())
 
 		ctx, cancel := context.WithTimeout(t.Context(), 2*jobInterval)
+		defer cancel()
 
 		var workDone bool
 		s.StartJobEvery(jobInterval, func() error {
@@ -138,6 +141,7 @@ func Test_CanTerminateAllJobs_ByCancellingParentContext(t *testing.T) {
 	t.Parallel()
 	synctest.Test(t, func(t *testing.T) {
 		ctx, cancel := context.WithTimeout(t.Context(), 2*jobInterval)
+		defer cancel()
 		s := NewScheduler(ctx)
 
 		var workDone bool
@@ -159,6 +163,7 @@ func Test_StartJobEvery_Concurrently(t *testing.T) {
 	t.Parallel()
 	synctest.Test(t, func(t *testing.T) {
 		ctx, cancel := context.WithTimeout(t.Context(), 2*jobInterval)
+		defer cancel()
 		s := NewScheduler(ctx)
 
 		f := func() error {

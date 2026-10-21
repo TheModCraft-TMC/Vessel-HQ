@@ -2,6 +2,9 @@ package crypto
 
 import (
 	"crypto/tls"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	portainer "github.com/portainer/portainer/api"
@@ -89,4 +92,54 @@ func TestCreateTLSConfigurationFromDiskFIPS(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, config)
 	require.False(t, config.InsecureSkipVerify) //nolint:forbidigo
+}
+
+func TestTLSConfigurationOnlyAllowsForwardSecretAEAD(t *testing.T) {
+	t.Parallel()
+	for _, fipsEnabled := range []bool{false, true} {
+		config := createTLSConfiguration(fipsEnabled, false)
+		for _, suiteID := range config.CipherSuites {
+			name := tls.CipherSuiteName(suiteID)
+			require.Contains(t, name, "ECDHE_", "TLS 1.2 must have forward secrecy")
+			require.True(t, strings.Contains(name, "GCM_") || strings.Contains(name, "CHACHA20_POLY1305_"), name)
+		}
+	}
+}
+
+func TestTLSConfigurationHandshake(t *testing.T) {
+	t.Parallel()
+	srv := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	srv.TLS = createTLSConfiguration(false, false)
+	srv.StartTLS()
+	defer srv.Close()
+
+	for _, tc := range []struct {
+		name      string
+		version   uint16
+		suite     uint16
+		wantError bool
+	}{
+		{"TLS12_AEAD", tls.VersionTLS12, tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, false},
+		{"TLS12_CBC_rejected", tls.VersionTLS12, tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, true},
+		{"TLS12_static_RSA_rejected", tls.VersionTLS12, tls.TLS_RSA_WITH_AES_128_GCM_SHA256, true},
+		{"TLS13_automatic_suites", tls.VersionTLS13, 0, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			// Use the test server's certificate rather than disabling verification.
+			config := srv.Client().Transport.(*http.Transport).TLSClientConfig.Clone()
+			config.MinVersion, config.MaxVersion = tc.version, tc.version
+			if tc.suite != 0 {
+				config.CipherSuites = []uint16{tc.suite}
+			}
+			conn, err := tls.Dial("tcp", srv.Listener.Addr().String(), config)
+			if tc.wantError {
+				require.Error(t, err)
+				return
+			}
+			require.NoError(t, err)
+			require.NoError(t, conn.Close())
+		})
+	}
 }

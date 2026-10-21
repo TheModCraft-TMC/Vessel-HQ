@@ -116,7 +116,7 @@ services:
 	})
 
 	ctx, cancel := context.WithTimeout(t.Context(), time.Minute)
-	t.Cleanup(func() { cancel() })
+	defer cancel()
 
 	result := deployer.WaitForStatus(ctx, projectName, Options{}, libstack.StatusRunning)
 	require.Empty(t, result.ErrorMsg)
@@ -170,7 +170,7 @@ services:
 	})
 
 	ctx, cancel := context.WithTimeout(t.Context(), time.Minute)
-	t.Cleanup(func() { cancel() })
+	defer cancel()
 
 	result := deployer.WaitForStatus(ctx, projectName, Options{}, libstack.StatusRunning)
 	require.Empty(t, result.ErrorMsg)

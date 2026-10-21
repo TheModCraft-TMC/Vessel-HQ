@@ -33,12 +33,10 @@ var mu sync.Mutex
 // WithCli creates and initialises a DockerCli, injects registry credentials,
 // and calls cliFn with the ready client. The client is closed after cliFn returns.
 func WithCli(
-	ctx context.Context, //nolint:staticcheck
+	ctx context.Context,
 	options DockerCliOptions,
 	cliFn func(context.Context, *command.DockerCli) error,
 ) error {
-	ctx = context.Background() //nolint:staticcheck
-
 	cli, err := command.NewDockerCli(command.WithCombinedStreams(log.Logger))
 	if err != nil {
 		return fmt.Errorf("unable to create a Docker client: %w", err)
