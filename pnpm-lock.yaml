@@ -21,6 +21,9 @@ overrides:
 pnpmfileChecksum: sha256-nVOmFZ6JT8FxIhcN+S5sJXuP1DtIhTre5ZGvjJU+4tk=
 
 patchedDependencies:
+  '@hey-api/openapi-ts@0.99.0':
+    hash: cae8f9d520b1e41500d5eae222f5deb6f7739408020ad29a95421f6f098d8578
+    path: patches/@hey-api__openapi-ts@0.99.0.patch
   '@tippyjs/react@4.2.6':
     hash: cd96316793f98bcaac72363c388cf7fc50549bbdac7300efe7d861c760e5b704
     path: patches/@tippyjs__react@4.2.6.patch
@@ -368,7 +371,7 @@ importers:
         version: 10.0.1(eslint@9.39.4(jiti@2.7.0))
       '@hey-api/openapi-ts':
         specifier: 0.99.0
-        version: 0.99.0(magicast@0.5.2)(typescript@6.0.2)
+        version: 0.99.0(patch_hash=cae8f9d520b1e41500d5eae222f5deb6f7739408020ad29a95421f6f098d8578)(magicast@0.5.2)(typescript@6.0.2)
       '@simbathesailor/use-what-changed':
         specifier: ^2.0.0
         version: 2.0.0(react@19.3.0)
@@ -10120,7 +10123,7 @@ snapshots:
       '@types/json-schema': 7.0.15
       js-yaml: 4.2.0
 
-  '@hey-api/openapi-ts@0.99.0(magicast@0.5.2)(typescript@6.0.2)':
+  '@hey-api/openapi-ts@0.99.0(patch_hash=cae8f9d520b1e41500d5eae222f5deb6f7739408020ad29a95421f6f098d8578)(magicast@0.5.2)(typescript@6.0.2)':
     dependencies:
       '@hey-api/codegen-core': 0.9.1(magicast@0.5.2)
       '@hey-api/json-schema-ref-parser': 1.4.4

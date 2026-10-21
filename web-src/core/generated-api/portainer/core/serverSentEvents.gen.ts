@@ -155,11 +155,10 @@ export function createSseClient<TData = unknown>({
         let buffer = '';
 
         const abortHandler = () => {
-          try {
-            reader.cancel();
-          } catch {
-            // noop
-          }
+          // Cancellation may reject when the stream has already failed or closed.
+          void reader.cancel().catch(() => {
+            // The stream read path reports failures; abort cleanup is best effort.
+          });
         };
 
         signal.addEventListener('abort', abortHandler);
