@@ -37,6 +37,12 @@ func WithCli(
 	options DockerCliOptions,
 	cliFn func(context.Context, *command.DockerCli) error,
 ) error {
+	// REVIEW: keep caller values but not cancellation. Stack stop/delete pass
+	// r.Context(), and the Next.js API rewrite aborts upstream requests after
+	// 30s; propagating that cancellation would interrupt compose down midway.
+	// The base behavior (context.Background) also ignored cancellation.
+	ctx = context.WithoutCancel(ctx)
+
 	cli, err := command.NewDockerCli(command.WithCombinedStreams(log.Logger))
 	if err != nil {
 		return fmt.Errorf("unable to create a Docker client: %w", err)

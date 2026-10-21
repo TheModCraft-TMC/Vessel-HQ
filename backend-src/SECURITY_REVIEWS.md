@@ -13,7 +13,7 @@ They do not exempt new call sites or unrelated security rules from review.
 | #186, #187, #188, #189 | go:S5547 | Remove all four TLS 1.2 CBC suites. Also remove static-RSA suites, duplicate ChaCha aliases and inapplicable TLS 1.3 entries. Keep only ECDHE + AEAD for TLS 1.2; Go manages TLS 1.3 suites. FIPS policy remains unchanged. |
 | #229 | godre:S8239 | Derive graceful-shutdown context from `context.WithoutCancel(shutdownCtx)` with a fresh 30-second deadline. Directly using the already-canceled shutdown context would abort graceful draining. |
 | #149 | godre:S8239 | Derive inline deployment context from `context.WithoutCancel(ctx)` with the existing deployment timeout. Retain values without abandoning a deployment on browser disconnect and orphaning cluster resources. |
-| #159 | godre:S8239 | Pass the caller's context through `WithCli`, including cancellation, deadlines and values, instead of replacing it with a background context. |
+| #159 | godre:S8239 | Derive the `WithCli` context from the caller with `context.WithoutCancel`: values are preserved, while cancellation is detached as before so client disconnects or the 30s Next.js rewrite timeout cannot interrupt `compose down` during stack stop/delete. |
 | #168, #169, #170 | godre:S8188 | Defer scheduler test timeout cancellation immediately, including failure/unused-job paths. |
 | #160, #161 | godre:S8188 | Defer Swarm test timeout cancellation immediately. Existing `t.Cleanup(cancel)` was safe but less explicit to the analyzer. |
 | #147 | godre:S8188 | Defer pod-log test cancellation in addition to simulating client cancellation in the reader. |
