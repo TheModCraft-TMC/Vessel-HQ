@@ -41,8 +41,15 @@ These URLs use `ReverseTunnelService.TunnelAddr`, whose production implementatio
 in `api/chisel/tunnel.go` returns **127.0.0.1 plus the local tunnel port**, not the
 remote agent's network address. HTTP/WebSocket is the inner protocol transported
 through the authenticated, encrypted Chisel/SSH reverse tunnel. Chisel uses the
-server's persisted private key, exposes its fingerprint for agents, and installs
-per-agent tunnel credentials restricted to loopback (`api/chisel/service.go`).
+server's persisted private key and exposes its fingerprint for agents.
+<!-- REVIEW: Distinguish bootstrap credentials from the actual reverse-forward
+allowlist; a loopback client URL does not prove a loopback-only listener. -->
+The bootstrap user is restricted to `127.0.0.1` (`api/chisel/service.go`), while
+per-agent credentials allow the exact `R:0.0.0.0:<allocated-port>` reverse forward
+(`api/chisel/tunnel.go`). The existing reverse listener can therefore bind all
+interfaces; operators must keep allocated tunnel ports (49152–65535) inaccessible
+to untrusted networks. These changes do not alter that agent wire contract or
+claim the listener is loopback-only. The application connects through loopback.
 Replacing these inner URLs with HTTPS would require TLS on the loopback tunnel
 entry/remote inner HTTP service and break existing Edge connectivity; it would not
 secure the already-encrypted outer channel. Preserve existing TLS settings where

@@ -75,6 +75,32 @@ fix: #233 and 225 synchronized SonarCloud findings. It does not change
   No live Kubernetes, Swarm, Podman, Azure ACI, external Edge tunnel, or real OAuth
   provider was available; corresponding fixtures/unit tests are not live coverage.
 
+### Independent remediation review verification
+
+<!-- REVIEW: Record fresh checks for the complete remediation and the review's
+keyboard, toolkit identity, and security-rationale corrections, not historical results. -->
+
+- Restore keyboard access to the shared multi-select filter with registered
+  Radix checkbox items; keep multi-selection open and restore trigger focus on
+  Escape. A compiler-enabled regression covers keyboard selection and navigation.
+- Remove the unused Node-image UID/GID 1000 account before the toolkit creates
+  the host identity. Both ARM64 and AMD64 images build and their real entrypoint
+  runs as requested UID/GID 1000 with Go 1.26.6, Node 24.22.1 and pnpm 10.26.2.
+- Correct the Chisel review rationale: the client connects through loopback, but
+  existing per-agent reverse forwards can listen on all interfaces. Preserve the
+  agent wire contract and document required network restrictions.
+- Fresh checks pass: architecture guards (3274 files, 166 routes), typecheck,
+  frontend tests (353 files, 2352 passed, 5 skipped, 11 todo), lint (no errors),
+  production webpack/standalone build, 12 binary-build/router-script tests, and
+  nine affected backend race-test packages. Generator regeneration plus scoped
+  formatting produces no generated-client drift with the installed patch.
+- Independent production-browser checks use isolated controlled API fixtures,
+  not private infrastructure: reproduce the original keyboard failure, verify
+  Used/Unused/both/clear and Escape focus restoration after the fix, and inspect
+  filter positioning, build-info definitions and team row headers at 390px.
+  Live Edge/Swarm/OAuth-provider workflows, remote Sonar analysis and GitHub-hosted
+  PR CI are not claimed by these checks.
+
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
 Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates
