@@ -1,6 +1,8 @@
 import tokenize from '@nxmix/tokenize-ansi';
 import type { FontWeight } from '@xterm/xterm';
 
+import { splitTimestampPrefix } from '@/shared/docker/helpers/logHelper/splitTimestampPrefix';
+
 import {
   colors,
   BACKGROUND_COLORS_BY_ANSI,
@@ -9,7 +11,7 @@ import {
 } from './colors';
 import { formatJSONLine } from './formatJSONLogs';
 import { formatZerologLogs, ZerologRegex } from './formatZerologLogs';
-import { Token, Span, TIMESTAMP_LENGTH, FormattedLine } from './types';
+import { Token, Span, FormattedLine } from './types';
 
 type FormatOptions = {
   stripHeaders?: boolean;
@@ -88,18 +90,14 @@ export function formatLogs(
         }
 
         const text = stripEscapeCodes(tokenLine);
+        const payload = withTimestamps
+          ? splitTimestampPrefix(text)?.text
+          : text;
         try {
-          if (
-            (!withTimestamps && text.startsWith('{')) ||
-            (withTimestamps && text.substring(TIMESTAMP_LENGTH).startsWith('{'))
-          ) {
+          if (payload?.startsWith('{')) {
             const lines = formatJSONLine(text, withTimestamps);
             formattedLogs.push(...lines);
-          } else if (
-            (!withTimestamps && ZerologRegex.test(text)) ||
-            (withTimestamps &&
-              ZerologRegex.test(text.substring(TIMESTAMP_LENGTH)))
-          ) {
+          } else if (payload !== undefined && ZerologRegex.test(payload)) {
             const lines = formatZerologLogs(text, withTimestamps);
             formattedLogs.push(...lines);
           } else {

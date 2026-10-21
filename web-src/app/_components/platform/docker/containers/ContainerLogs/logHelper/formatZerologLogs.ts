@@ -1,3 +1,5 @@
+import { splitTimestampPrefix } from '@/shared/docker/helpers/logHelper/splitTimestampPrefix';
+
 import {
   formatCaller,
   formatKeyValuePair,
@@ -6,13 +8,7 @@ import {
   formatStackTrace,
   formatTime,
 } from './formatters';
-import {
-  FormattedLine,
-  JSONStackTrace,
-  Level,
-  Span,
-  TIMESTAMP_LENGTH,
-} from './types';
+import { FormattedLine, JSONStackTrace, Level, Span } from './types';
 
 const dateRegex = /^(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}[AP]M) /; // "2022/02/01 04:30AM "
 const levelRegex = /(\w{3})/; // "INF " or "ERR "
@@ -55,12 +51,14 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
   const lines: FormattedLine[] = [];
   let line = '';
 
-  const text = withTimestamps ? rawText.substring(TIMESTAMP_LENGTH) : rawText;
+  const timestamp = withTimestamps ? splitTimestampPrefix(rawText) : undefined;
+  if (withTimestamps && !timestamp) {
+    return [{ line: rawText, spans: [{ text: rawText }] }];
+  }
+  const text = timestamp ? timestamp.text : rawText;
 
-  if (withTimestamps) {
-    const timestamp = rawText.substring(0, TIMESTAMP_LENGTH);
-    spans.push({ text: timestamp });
-    line += `${timestamp} `;
+  if (timestamp) {
+    spans.push({ text: timestamp.prefix });
   }
 
   const [, date, level, caller, messageAndPairs] =
@@ -90,7 +88,8 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
       idx === pairs.length - 1
     );
   });
-  lines.push({ line, spans });
+  // Add the original prefix once, outside the body formatters.
+  lines.push({ line: `${timestamp?.prefix ?? ''}${line}`, spans });
 
   formatStackTrace(stackTrace, lines);
 
