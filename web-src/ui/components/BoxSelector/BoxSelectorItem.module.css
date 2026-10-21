@@ -1,8 +1,8 @@
-.box-selector-item {
+.boxSelectorItem {
   flex: 1;
 }
 
-.box-selector-item .header {
+.boxSelectorItem .header {
   @apply text-black;
   @apply th-dark:text-white;
   @apply th-highcontrast:text-white;
@@ -12,7 +12,7 @@
   user-select: none;
 }
 
-.image-container {
+.imageContainer {
   margin-bottom: 0;
   text-align: left;
 }
@@ -39,8 +39,8 @@
 }
 
 /* used for BE teaser */
-.box-selector-item.limited.business label,
-.box-selector-item.limited.business input:checked + label {
+.boxSelectorItem.limited.business label,
+.boxSelectorItem.limited.business input:checked + label {
   @apply border-gray-6 bg-gray-6 bg-opacity-10;
   @apply th-dark:border-gray-6 th-dark:bg-gray-6 th-dark:bg-opacity-10;
   @apply th-highcontrast:border-gray-6 th-highcontrast:bg-gray-6 th-highcontrast:bg-opacity-10;

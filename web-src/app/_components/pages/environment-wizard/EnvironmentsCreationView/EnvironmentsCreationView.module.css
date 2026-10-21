@@ -5,7 +5,7 @@
   border-top: 1px solid #777;
 }
 
-.wizard-wrapper {
+.wizardWrapper {
   display: grid;
   grid-template-columns: 2fr minmax(300px, 1fr);
   grid-template-areas:

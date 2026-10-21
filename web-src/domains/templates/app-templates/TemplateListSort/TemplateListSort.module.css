@@ -1,15 +1,15 @@
-.sort-by-container {
+.sortByContainer {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 5px;
 }
 
-.sort-by-element {
+.sortByElement {
   display: inline-block;
 }
 
-.sort-button {
+.sortButton {
   --text-color: var(--grey-6);
   background-color: var(--bg-sortbutton-color);
   color: var(--text-color);
@@ -19,7 +19,7 @@
   border-radius: 5px;
 }
 
-:global([theme='dark']) .sort-button,
-:global([theme='highcontrast']) .sort-button {
+:global([theme='dark']) .sortButton,
+:global([theme='highcontrast']) .sortButton {
   --text-color: var(--white-color);
 }

@@ -25,19 +25,19 @@
   min-width: 0;
 }
 
-.gap-none {
+.gapNone {
   --page-content-gap: 0;
 }
 
-.gap-small {
+.gapSmall {
   --page-content-gap: 0.5rem;
 }
 
-.gap-large {
+.gapLarge {
   --page-content-gap: 1.5rem;
 }
 
-.flush-bottom {
+.flushBottom {
   margin-bottom: 0;
 }
 

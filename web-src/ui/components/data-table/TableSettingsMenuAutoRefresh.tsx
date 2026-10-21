@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { useState } from 'react';
 import { Check } from 'lucide-react';
 
@@ -49,10 +48,9 @@ export function TableSettingsMenuAutoRefresh({ onChange, value }: Props) {
             <option value={300 * SECOND_MS}>5min</option>
           </select>
           <span
-            className={clsx(
-              isCheckVisible ? styles.alertVisible : styles.alertHidden,
-              styles.check
-            )}
+            className={
+              isCheckVisible ? styles.alertVisible : styles.alertHidden
+            }
             onTransitionEnd={() => setIsCheckVisible(false)}
           >
             <Icon icon={Check} className="!ml-1" mode="success" />
