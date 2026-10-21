@@ -92,6 +92,40 @@ describe.each(formats)(
   }
 );
 
+describe('structured copy and download text', () => {
+  it.each([false, true])(
+    'matches visible JSON spans with timestamps=%s',
+    (withTimestamps) => {
+      const prefix = withTimestamps ? '2026-02-01T04:30:00.1Z ' : '';
+      const payload = JSON.stringify({
+        time: 1769920200,
+        level: 'info',
+        caller: 'service/worker.go:42',
+        message: 'Completed once',
+        count: 2,
+        healthy: true,
+      });
+      const [result] = formatJSONLine(prefix + payload, withTimestamps);
+      expect(result.line).toBe(result.spans.map(({ text }) => text).join(''));
+      expect(result.line.match(/Completed once/g)).toHaveLength(1);
+      expect(result.line.startsWith(prefix)).toBe(true);
+    }
+  );
+
+  it.each([false, true])(
+    'matches visible zerolog spans with timestamps=%s',
+    (withTimestamps) => {
+      const prefix = withTimestamps ? '2026-02-01T04:30:00.1Z ' : '';
+      const payload =
+        '2026/02/01 04:30AM INF service/worker.go:42 > Completed once | count=2 healthy=true';
+      const [result] = formatZerologLogs(prefix + payload, withTimestamps);
+      expect(result.line).toBe(result.spans.map(({ text }) => text).join(''));
+      expect(result.line.match(/Completed once/g)).toHaveLength(1);
+      expect(result.line.startsWith(prefix)).toBe(true);
+    }
+  );
+});
+
 describe('timestamp raw fallback', () => {
   it.each([
     'ordinary unprefixed line with spaces',

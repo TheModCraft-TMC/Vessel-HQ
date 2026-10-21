@@ -65,10 +65,10 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
 
   const [message, pairs] = extractPairs(messageAndPairs);
 
-  line += formatTime(date, spans, line);
-  line += formatLevel(level as Level, spans, line);
-  line += formatCaller(caller, spans, line);
-  line += formatMessage(message, spans, line, !!pairs.length);
+  line = formatTime(date, spans, line);
+  line = formatLevel(level as Level, spans, line);
+  line = formatCaller(caller, spans, line);
+  line = formatMessage(message, spans, line, !!pairs.length);
 
   let stackTrace: JSONStackTrace | undefined;
   const stackTraceIndex = pairs.findIndex((p) => p.key === 'stack_trace');
@@ -79,7 +79,7 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
   }
 
   pairs.forEach(({ key, value }, idx) => {
-    line += formatKeyValuePair(
+    line = formatKeyValuePair(
       key,
       value,
       spans,

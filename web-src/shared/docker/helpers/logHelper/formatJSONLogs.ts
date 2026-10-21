@@ -36,13 +36,13 @@ export function formatJSONLine(
   if (timestamp) {
     spans.push({ text: timestamp.prefix });
   }
-  line += formatTime(time, spans, line);
-  line += formatLevel(level, spans, line);
-  line += formatCaller(caller, spans, line);
-  line += formatMessage(message, spans, line, !!keys.length);
+  line = formatTime(time, spans, line);
+  line = formatLevel(level, spans, line);
+  line = formatCaller(caller, spans, line);
+  line = formatMessage(message, spans, line, !!keys.length);
 
   keys.forEach((key, idx) => {
-    line += formatKeyValuePair(
+    line = formatKeyValuePair(
       key,
       json[key],
       spans,
