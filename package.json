@@ -36,7 +36,7 @@
     "check:css-module-classes": "node ./scripts/check-css-module-classes.mjs",
     "index:app-router-pages": "pnpm check:app-router-compliance && node ./scripts/index-app-router-pages.mjs",
     "generate-api": "openapi-ts",
-    "postgenerate-api": "pnpm format"
+    "postgenerate-api": "prettier --log-level warn --write web-src/core/generated-api/portainer"
   },
   "engines": {
     "node": "^24.21.0"

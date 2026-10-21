@@ -40,7 +40,7 @@ RUN npm install --global --ignore-scripts --registry=https://registry.npmjs.org 
     && npm cache clean --force
 COPY --from=go-toolchain /usr/local/go /usr/local/go
 
-# REVIEW: the Node base image ships a "node" user/group with UID/GID 1000, the
+# The Node base image ships a "node" user/group with UID/GID 1000, the
 # usual host developer IDs. run.sh must create PUSER with the host PUID/PGID,
 # so free those IDs as the previous ubuntu base did.
 RUN userdel --remove node \
