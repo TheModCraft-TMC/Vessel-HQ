@@ -1,7 +1,13 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getFacetedRowModel,
+} from '@tanstack/react-table';
 
-import { MultipleSelectionFilter } from './Filter';
+import { MultipleSelectionFilter, filterHOC } from './Filter';
 
 function renderDefault({
   options = ['Option 1', 'Option 2', 'Option 3'],
@@ -287,4 +293,75 @@ describe('MultipleSelectionFilter', () => {
     expect(stoppedCheckbox.checked).toBe(true);
     expect(pausedCheckbox.checked).toBe(false);
   });
+});
+
+// Filter.tsx is compiled by the Vitest Babel transform, as it is in production.
+// TanStack methods stay referentially stable while their return values change.
+const StatusFilter = filterHOC<{ id: string; status: string }>('Filter status');
+const statusColumns = [
+  {
+    accessorKey: 'status',
+    filterFn: (
+      row: import('@tanstack/react-table').Row<{ id: string; status: string }>,
+      id: string,
+      values: string[]
+    ) => values.includes(row.getValue(id)),
+  },
+];
+const statusRows = [
+  { id: '1', status: 'Running' },
+  { id: '2', status: 'Stopped' },
+];
+const tableMeta = {};
+
+function StatefulFilter({ rows = statusRows }: { rows?: typeof statusRows }) {
+  const table = useReactTable({
+    data: rows,
+    autoResetPageIndex: false,
+    columns: statusColumns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+  });
+  return (
+    <>
+      <StatusFilter column={table.getColumn('status')!} tableMeta={tableMeta} />
+      <output aria-label="Filtered rows">
+        {table
+          .getRowModel()
+          .rows.map((row) => row.original.id)
+          .join(',')}
+      </output>
+    </>
+  );
+}
+
+it('keeps checkbox state and row filtering current with stable TanStack column methods', async () => {
+  const user = userEvent.setup();
+  render(<StatefulFilter />);
+  await user.click(screen.getByRole('button', { name: /filter/i }));
+  await user.click(screen.getByLabelText('Running'));
+  expect(screen.getByLabelText('Running')).toBeChecked();
+  expect(screen.getByLabelText('Stopped')).not.toBeChecked();
+  expect(screen.getByLabelText('Filtered rows')).toHaveTextContent(/^1$/);
+
+  await user.click(screen.getByLabelText('Stopped'));
+  expect(screen.getByLabelText('Running')).toBeChecked();
+  expect(screen.getByLabelText('Stopped')).toBeChecked();
+  expect(screen.getByLabelText('Filtered rows')).toHaveTextContent(/^1,2$/);
+
+  await user.click(screen.getByLabelText('Running'));
+  expect(screen.getByLabelText('Running')).not.toBeChecked();
+  expect(screen.getByLabelText('Stopped')).toBeChecked();
+  expect(screen.getByLabelText('Filtered rows')).toHaveTextContent(/^2$/);
+});
+
+it('refreshes faceted filter options after data changes on the same column instance', async () => {
+  const user = userEvent.setup();
+  const { rerender } = render(<StatefulFilter />);
+  await user.click(screen.getByRole('button', { name: /filter/i }));
+  expect(screen.getByLabelText('Running')).toBeInTheDocument();
+  rerender(<StatefulFilter rows={[{ id: '3', status: 'Paused' }]} />);
+  expect(screen.getByLabelText('Paused')).toBeInTheDocument();
+  expect(screen.queryByLabelText('Running')).not.toBeInTheDocument();
 });

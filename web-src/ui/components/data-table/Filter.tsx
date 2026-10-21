@@ -98,6 +98,9 @@ export function filterHOC<TData extends DefaultType>(
     column: Column<TData>;
     tableMeta: TableMeta<TData>;
   }) {
+    'use no memo';
+    // TanStack getters are stable references over mutable filter/facet state.
+    // Do not cache their results by method identity (including in future compilers).
     const { flatRows } = getFacetedRowModel();
 
     const options = useMemo(
