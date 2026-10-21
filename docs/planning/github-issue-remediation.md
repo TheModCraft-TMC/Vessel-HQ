@@ -10,13 +10,42 @@ HTTP, root access, or historical cryptography is generally recommended.
 
 - Backend security rationale and compatibility tests: [backend review](../../backend-src/SECURITY_REVIEWS.md).
 - Generator repair and regeneration ownership: [dependency patch](../../patches/README.md).
-- Root startup reviews: [Sonar configuration](../../sonar-project.properties) and comments in the listed Dockerfiles. No source tree is excluded.
+- Root startup reviews: comments in the listed Dockerfiles and the required [SonarCloud review](#sonarcloud-review-access) below. No source tree is excluded.
 - Vault examples and the test URL are placeholders/parsing bases, not requests.
 - Reconnect randomness only spreads load; identifiers and fixtures were changed.
 - Verification and exact combined scope: [migration change summary](migration-change-summary.md#github-issue-remediation--october-21-2026).
 
 Issue locations below refer to the current owning files, not stale original line
 numbers. New defects and new call sites remain subject to analysis.
+
+## SonarCloud review access
+
+**Not done yet: remote acceptance of the five intentional root-bootstrap cases
+requires SonarCloud issue-review access.** The source rationale is reviewed, but
+that does not change the remote finding's status.
+
+The actual PR analysis established that Automatic Analysis ignores
+`sonar.issue.ignore.multicriteria` in `sonar-project.properties`. Sonar's Docker
+analyzer also does not support `NOSONAR`, because Dockerfiles do not permit
+trailing comments. The ineffective ignore block was removed, not replaced with
+file exclusions or a weaker quality gate.
+
+An authorized SonarCloud reviewer must review these documented cases in the UI:
+
+- #146: `AaFI-OLnL6mSFxVklHVC` — release-context Dockerfile.
+- #156: `AaFI-OMJL6mSFxVklHVJ` — root Dockerfile.
+- #165: `AaFI-OLfL6mSFxVklHVB` — Linux Dockerfile.
+- #166: `AaFI-OKkL6mSFxVklHVA` — Alpine Dockerfile.
+- #221: `AaFI-OJvL6mSFxVklHU2` — toolkit Dockerfile.
+- PR #234 has the toolkit counterpart `AaFgfrDLBmL4uU2_jom2`.
+
+Production needs existing data-directory and Docker/Podman socket access. The
+toolkit needs privileged host-identity/socket-group setup before dropping to the
+requested UID/GID. Changing these defaults merely to satisfy the scanner would
+change supported behavior. The PR must not be described as Sonar-green until the
+service records an authorized review and the gate is rerun.
+
+## Issue ledger
 
 | Issue | Rule | Disposition | Resolution | Source |
 | --- | --- | --- | --- | --- |

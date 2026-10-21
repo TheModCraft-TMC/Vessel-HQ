@@ -136,6 +136,28 @@ Fresh combined results, superseding the earlier intermediate counts above:
   coverage remains limited as described above. No release/image was published,
   and no Portler/Workler configuration or runtime files are included.
 
+### PR analysis correction and access requirement
+
+PR #234's first remote scan reported 19% duplication and a new toolkit-root
+finding. Consolidate the three app formatter entry points onto the canonical
+shared implementation and replace duplicate app test bodies with an export
+identity contract. The shared regression cases and stream tests remain intact;
+no duplication exclusion or quality-gate threshold was added. The integrated
+full suite now passes 355 files with 2,424 tests, five skipped and 11 todo.
+The decrease is 68 duplicate cases removed and one ownership contract added.
+All three architecture guards, typecheck, uncached lint (zero errors, 192
+warnings), and the production build/standalone packaging pass after consolidation.
+The hosted Linux-image pipeline also passed its first PR revision, including
+AMD64/ARM64 execution checks; the latest PR checks remain authoritative.
+
+**Not done yet: the intentional Docker root findings require an authorized
+SonarCloud review.** Automatic Analysis ignores the attempted multicriteria
+configuration, and Dockerfiles do not support `NOSONAR`. Remove the ineffective
+ignore block rather than claiming it works. The [issue ledger](github-issue-remediation.md#sonarcloud-review-access)
+lists the five default-branch cases and the PR counterpart for an authorized
+reviewer. No SonarCloud review credential is available to this task; the PR
+must not be described as passing that gate until the service records the review.
+
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
 Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates
