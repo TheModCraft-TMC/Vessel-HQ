@@ -38,11 +38,14 @@ export const id = columnHelper.accessor('id', {
   },
 });
 
-function FilterByUsage<TData extends { Used: boolean }>({
+function FilterByUsage<TData extends { used: boolean }>({
   column: { getFilterValue, setFilterValue, id },
 }: {
   column: Column<TData>;
 }) {
+  'use no memo';
+  // TanStack columns keep stable method references while their filter state changes.
+
   const options = ['Used', 'Unused'];
 
   const value = getFilterValue();

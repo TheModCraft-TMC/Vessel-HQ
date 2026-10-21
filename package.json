@@ -5,10 +5,10 @@
   "version": "2.45.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:portainer/portainer.git"
+    "url": "git+https://github.com/TheModCraft-TMC/Vessel-HQ.git"
   },
   "bugs": {
-    "url": "https://github.com/portainer/portainer/issues"
+    "url": "https://github.com/TheModCraft-TMC/Vessel-HQ/issues"
   },
   "licenses": [
     {

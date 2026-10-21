@@ -1,0 +1,9 @@
+.root[data-state='open'] {
+  /* Radix portals do not have Bootstrap's legacy .open parent. */
+  display: block;
+  /* Let Radix measure and position the content, not Bootstrap's dropdown rules. */
+  position: relative;
+  inset: auto;
+  float: none;
+  margin: 0;
+}
