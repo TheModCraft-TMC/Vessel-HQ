@@ -55,24 +55,24 @@ class FakeApi:
         return {"paging": {"total": len(self.active)}, "issues": self.active}
 
     def request(self, service, path, method="GET", data=None):
-        if method == "GET":
-            self.reads.append((service, path))
-            if service == "sonar" and path.startswith("/api/project_analyses/search?"):
-                self.event("analysis")
-                return self.analysis_responses.pop(0) if self.analysis_responses else {"analyses": self.analyses}
-            if service == "github" and path == f"/repos/{REPO}/commits/{sync.BRANCH}":
-                self.event("head")
-                return {"sha": self.head_responses.pop(0) if self.head_responses else self.head}
-            if service == "github" and "/labels?" in path:
-                self.event("labels")
-                return self.labels
-            if service == "github" and "/issues?" in path:
-                self.event("tickets")
-                return self.tickets
-            raise AssertionError(f"Unexpected read: {service} {path}")
-        self.writes.append((method, path, data))
-        self.event("write")
-        return {"number": 17}
+        if method != "GET":
+            self.writes.append((method, path, data))
+            self.event("write")
+            return {"number": 17}
+        self.reads.append((service, path))
+        if service == "sonar" and path.startswith("/api/project_analyses/search?"):
+            self.event("analysis")
+            return self.analysis_responses.pop(0) if self.analysis_responses else {"analyses": self.analyses}
+        if service == "github" and path == f"/repos/{REPO}/commits/{sync.BRANCH}":
+            self.event("head")
+            return {"sha": self.head_responses.pop(0) if self.head_responses else self.head}
+        if service == "github" and "/labels?" in path:
+            self.event("labels")
+            return self.labels
+        if service == "github" and "/issues?" in path:
+            self.event("tickets")
+            return self.tickets
+        raise AssertionError(f"Unexpected read: {service} {path}")
 
 
 class Clock:
