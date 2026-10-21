@@ -49,6 +49,13 @@ image build failed on typecheck.
   are generated, the copy tick stays hidden until clicked, and sort icons get
   their classes. No AMD64 local run, and no Kubernetes, Swarm, Podman, or
   Azure ACI verification.
+- Review fixes: the CSS Module guard resolves every tsconfig alias, checks
+  namespace imports, reports unresolvable imports, ignores shadowed `styles`
+  variables and declaration values, and has CLI fixture tests in `lint:ci`.
+  The release guide now points at 1.3.1. Pinning Bootstrap 3.4.1 reopens two
+  JavaScript-only advisories (GHSA-vxmc-5x29-h64v, GHSA-q58r-hwc8-rm9j); the
+  console loads only the stylesheet. The roadmap records replacing Bootstrap 3
+  and the separate YAML/Vitest major upgrades.
 
 ## Post-1.3.0 table rendering fix — October 12, 2026
 

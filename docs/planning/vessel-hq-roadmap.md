@@ -59,8 +59,6 @@ The upstream API and datastore compatibility version remains `2.45.0`. That valu
 
 ## Dependency compatibility follow-up — planned, not started
 
-<!-- REVIEW: Track the EOL CSS dependency rather than treating the 1.3.1
-compatibility downgrade as a long-term security remediation. -->
 - Replace the remaining Bootstrap 3 CSS/markup with maintained shared UI styles,
   then remove the end-of-life dependency. Do not load Bootstrap JavaScript in the
   meantime; 3.4.1 has known tooltip/popover XSS advisories.
