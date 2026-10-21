@@ -1,4 +1,4 @@
-.status-indicator {
+.statusIndicator {
   padding: 0 !important;
   margin-right: 1ch;
   border-radius: 50%;
@@ -8,6 +8,6 @@
   display: inline-block;
 }
 
-.status-indicator.ok {
+.statusIndicator.ok {
   background-color: var(--green-3);
 }

@@ -2,7 +2,7 @@
 
 Status: refactor foundation in progress; future product and design items in this document are not implementation commitments.
 
-Last updated: October 12, 2026.
+Last updated: October 21, 2026.
 
 This document records why the fork exists, what has already changed, and the direction agreed for future work. It is deliberately explicit about status so that roadmap context is not mistaken for shipped behavior.
 
@@ -56,6 +56,18 @@ The migration established the baseline for future product work:
 - The migration checkpoint passed the frontend test suite, type checking, linting, modernization guard, production build, and targeted backend tests.
 
 The upstream API and datastore compatibility version remains `2.45.0`. That value is not the Vessel HQ image release number and must not be changed merely for branding.
+
+## Dependency compatibility follow-up — planned, not started
+
+- Replace the remaining Bootstrap 3 CSS/markup with maintained shared UI styles,
+  then remove the end-of-life dependency. Do not load Bootstrap JavaScript in the
+  meantime; 3.4.1 has known tooltip/popover XSS advisories.
+- Upgrade YAML and Vitest majors in isolated changes with matching peers and
+  manifest/snapshot compatibility checks, rather than grouped release hotfixes.
+  The 1.3.1 lockfile supplies YAML 1.10.3 to Vite 8 despite its optional
+  `yaml: ^2.4.2` peer; restore a matching toolchain peer when isolating/upgrading
+  the application parser. Current TypeScript Vite/Vitest config does not depend
+  on Vite parsing YAML configuration.
 
 ## Target React architecture
 

@@ -22,13 +22,13 @@
   border-color: var(--white-color) !important;
 }
 
-.tooltip-container {
+.tooltipContainer {
   line-height: 18px;
   padding: 8px 10px !important;
   font-size: 12px !important;
 }
 
-.tooltip-message a {
+.tooltipMessage a {
   color: var(--blue-15) !important;
 }
 

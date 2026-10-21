@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
 import { buildHref } from '@console/routing/buildHref';
 import stripAnsi from 'strip-ansi';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { notifySuccess } from '@/ui/components/toast/notifications';
 import {

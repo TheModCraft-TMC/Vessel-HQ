@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DefaultBodyType, http, HttpResponse } from 'msw';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { server } from '@/core/test-support/setup/server';
 import { Stack } from '@/domains/stacks/models/types';
@@ -20,8 +20,9 @@ import { suppressConsoleLogs } from '@/core/test-support/setup/suppress-console'
 
 import { StackEditorTab } from './StackEditorTab';
 
-vi.mock('uuid/v4', () => ({
-  default: vi.fn(() => 'test-webhook-id-1234'),
+vi.mock('uuid', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('uuid')>()),
+  v4: vi.fn(() => 'test-webhook-id-1234'),
 }));
 
 vi.mock('@/domains/stacks/components/common/confirm-stack-update', () => ({
