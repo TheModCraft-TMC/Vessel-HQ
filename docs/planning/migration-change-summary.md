@@ -105,6 +105,37 @@ fix: #233 and 225 synchronized SonarCloud findings. It does not change
   Live Edge/Swarm/OAuth-provider workflows, remote Sonar analysis and GitHub-hosted
   PR CI are not claimed by these checks.
 
+### Final combined local verification after review
+
+Both GPT-6.1 Sol and Claude Opus 5.5 reviewed the whole change in two rounds.
+The second round found no new introduced defect. A small pre-existing structured
+log copy/download accumulator defect noted in that review was also corrected:
+plain text now matches the rendered spans, with regressions in both helper owners.
+
+Fresh combined results, superseding the earlier intermediate counts above:
+
+- Architecture guards: 3,277 source files, 166 routes, 103 CSS Module imports.
+- Typecheck and uncached lint pass: zero errors, 194 warnings.
+- Full frontend suite: 356 files; 2,491 passed, five skipped, 11 todo.
+- Full backend suite: 210 packages; affected-package race checks pass, including
+  Compose/Swarm CLI packages and repeated HTTP shutdown/logger checks.
+- Production webpack compilation and standalone packaging pass. The final client
+  ran from `dist/next/web-src/server.js`; the rebuilt ARM64 backend reports 1.3.1.
+- Toolkit builds and real UID/GID 1000 entrypoint/tool checks pass on AMD64/ARM64.
+  Generator regeneration has zero drift; all 16 binary-build/router/entrypoint
+  tests and release-version checks pass. Workflow/issue-form YAML, ledger links,
+  frozen dependency installation and whitespace checks pass.
+- Real Docker browser checks: Used/Unused/both/clear, keyboard navigation,
+  multi-selection, Escape focus return, clear-after-reload, and timestamped
+  structured logs from a disposable container. Copied text matches all ten
+  rendered lines with each timestamp appearing once (clipboard-write spy, no
+  host clipboard mutation). Isolated production-client fixtures also cover
+  short timestamp fractions and 390px layouts.
+- Remote SonarCloud and GitHub PR CI results are reported by the PR checks rather
+  than inferred from these local results. Live external orchestration/provider
+  coverage remains limited as described above. No release/image was published,
+  and no Portler/Workler configuration or runtime files are included.
+
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
 Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates
