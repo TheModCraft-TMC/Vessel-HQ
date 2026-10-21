@@ -26,7 +26,7 @@ interface Props {
 }
 
 const menuListStyles =
-  'z-[1000] mt-1 overflow-hidden rounded-lg ' +
+  'z-[1000] overflow-hidden rounded-lg ' +
   'shadow-[0_6px_12px_rgba(0,0,0,0.18)] ' +
   '!border !border-solid !border-gray-5 th-dark:!border-gray-8 th-highcontrast:!border-gray-7 ' +
   'bg-white th-dark:bg-gray-iron-11 th-highcontrast:bg-black';
@@ -79,7 +79,7 @@ export function DropdownMenu({
           aria-hidden="true"
         />
       </MenuButton>
-      <MenuList className={menuListStyles}>
+      <MenuList className={menuListStyles} sideOffset={10}>
         {typeof options === 'undefined' ? (
           <div className="flex items-center justify-center gap-2 px-3 py-3 text-sm text-gray-6">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />

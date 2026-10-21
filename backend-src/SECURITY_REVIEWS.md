@@ -19,8 +19,8 @@ They do not exempt new call sites or unrelated security rules from review.
 | #147 | godre:S8188 | Defer pod-log test cancellation in addition to simulating client cancellation in the reader. |
 
 Tests exercise TLS 1.2 AEAD success, CBC/static-RSA refusal, TLS 1.3 success,
-shutdown draining, CLI context identity/cancellation and detached bounded deployment
-with preserved values. Integration-tag-independent Swarm tests do not imply live
+shutdown draining, CLI caller values with the historical detached lifetime, and
+bounded detached deployment with preserved values. Integration-tag-independent Swarm tests do not imply live
 Swarm deployment coverage.
 
 ## Intentionally retained behavior, reviewed at the expression

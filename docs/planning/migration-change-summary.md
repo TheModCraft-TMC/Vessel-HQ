@@ -36,14 +36,44 @@ fix: #233 and 225 synchronized SonarCloud findings. It does not change
   hidden/absolutely positioned dropdown behavior, and the usage filter must
   read mutable TanStack state without React Compiler caching. Add a
   compiler-enabled Used/Unused/both/clear regression and handle removal prompt
-  rejections. Local browser checks against a disposable Docker environment
-  distinguish five used images from 32 unused images and verify menu placement.
+  rejections. Production browser checks against a disposable Docker environment
+  distinguish five used images from 36 unused images, verify menu placement,
+  and preserve a cleared filter after reload.
 - Replace upstream/Business Edition bug-report questions and support links with
   Vessel HQ version, deployment, platform, and sanitized reproduction fields.
   Align the package's repository and bug-tracker URLs.
-- Backend, frontend, and build/security issue dispositions and final verification
-  are recorded with the completed combined changes, not inferred from the
-  historical release checks below.
+- Resolve the remaining frontend findings: authorization fallthrough in placement
+  details, clipboard success/failure handling, awaited/caught UI operations,
+  empty-list/default-object behavior, slow regexes, explicit comparators,
+  stable IDs, numeric helpers, semantic table headers, and deterministic stories.
+- Harden backend TLS 1.2 suites, preserve caller context/deadline contracts,
+  bind the agent signing proxy to loopback, handle malformed OAuth responses,
+  and test existing Authentik identity/group sources. Isolate the global HTTP
+  logger test so the new parallel shutdown regression is race-free.
+- Remove unverified toolkit installers/archives in favor of digest-pinned
+  multi-platform Node/Go images, verify the Docker repository key, scope apt
+  trust, pin Actions to commit SHAs, and add non-publishing PR validation.
+  Keep intentional host-socket/data ownership policies narrowly documented.
+- Fix generated SSE cancellation through a pnpm patch to the generator template,
+  regenerate the API client, and test rejected cleanup promises. Generated code
+  remains analyzed; no authored/generated source tree is excluded from Sonar.
+- [Issue-by-issue ledger](github-issue-remediation.md): 200 source-fix dispositions
+  and 26 reviewed intentional compatibility cases. See the
+  [backend security review](../../backend-src/SECURITY_REVIEWS.md) for transport,
+  cookie, OAuth, and historical backup reasoning; these are not blanket security
+  exceptions or a claim that a remote scan already cleared the issues.
+- Fresh combined local checks: architecture guards (3,274 source files; 166
+  routes; 103 CSS Module imports), typecheck, lint (zero errors, 194 warnings),
+  full frontend suite (353 files; 2,351 passed, five skipped, 11 todo), production
+  webpack build/standalone packaging, and full backend suite (210 packages) pass.
+  The affected backend race suite passes, including five repetitions of HTTP
+  shutdown/logger tests. Local lint excluded only nested, ignored review clones;
+  no source guard or committed ignore rule was loosened.
+- Toolkit AMD64/ARM64 builds and tool execution, Dockerfile checks, actionlint,
+  ShellCheck, release-version/entrypoint/build-script tests, frozen dependency
+  installation, issue-form YAML, ledger links, and whitespace checks pass.
+  No live Kubernetes, Swarm, Podman, Azure ACI, external Edge tunnel, or real OAuth
+  provider was available; corresponding fixtures/unit tests are not live coverage.
 
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
