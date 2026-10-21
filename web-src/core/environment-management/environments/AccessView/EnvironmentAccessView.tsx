@@ -61,15 +61,21 @@ export function EnvironmentAccessView() {
               <table className="mb-0 table">
                 <tbody>
                   <tr>
-                    <td>Name</td>
+                    <th scope="row" className="text-left font-normal">
+                      Name
+                    </th>
                     <td>{environment.Name}</td>
                   </tr>
                   <tr>
-                    <td>URL</td>
+                    <th scope="row" className="text-left font-normal">
+                      URL
+                    </th>
                     <td>{stripProtocol(environment.URL)}</td>
                   </tr>
                   <tr>
-                    <td>Group</td>
+                    <th scope="row" className="text-left font-normal">
+                      Group
+                    </th>
                     <td>
                       {group ? (
                         <Link

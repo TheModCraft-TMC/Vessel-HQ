@@ -20,34 +20,36 @@ export function SubRow({ node, cellCount }: SubRowProps) {
   );
 
   if (!authorized) {
-    <>
-      {isDefined(node.unmetTaints) && (
-        <tr
-          className={clsx({
-            'datatable-highlighted': node.highlighted,
-            'datatable-unhighlighted': !node.highlighted,
-          })}
-        >
-          <td colSpan={cellCount}>
-            Placement constraint not respected for that node.
-          </td>
-        </tr>
-      )}
+    return (
+      <>
+        {isDefined(node.unmetTaints) && (
+          <tr
+            className={clsx({
+              'datatable-highlighted': node.highlighted,
+              'datatable-unhighlighted': !node.highlighted,
+            })}
+          >
+            <td colSpan={cellCount}>
+              Placement constraint not respected for that node.
+            </td>
+          </tr>
+        )}
 
-      {(isDefined(node.unmatchedNodeSelectorLabels) ||
-        isDefined(node.unmatchedNodeAffinities)) && (
-        <tr
-          className={clsx({
-            'datatable-highlighted': node.highlighted,
-            'datatable-unhighlighted': !node.highlighted,
-          })}
-        >
-          <td colSpan={cellCount}>
-            Placement label not respected for that node.
-          </td>
-        </tr>
-      )}
-    </>;
+        {(isDefined(node.unmatchedNodeSelectorLabels) ||
+          isDefined(node.unmatchedNodeAffinities)) && (
+          <tr
+            className={clsx({
+              'datatable-highlighted': node.highlighted,
+              'datatable-unhighlighted': !node.highlighted,
+            })}
+          >
+            <td colSpan={cellCount}>
+              Placement label not respected for that node.
+            </td>
+          </tr>
+        )}
+      </>
+    );
   }
 
   return (

@@ -16,7 +16,6 @@
   box-shadow: var(--shadow-boxselector-color);
 
   margin: 0;
-  display: block;
 }
 
 .feature:hover {

@@ -13,5 +13,6 @@ export function exponentialBackoff(
   }: ReconnectPolicy = {}
 ) {
   const delay = Math.min(maxDelayMs, minDelayMs * 2 ** Math.max(0, attempt));
-  return delay + Math.floor(Math.random() * Math.min(jitterMs, delay));
+  // Security review (S2245): jitter only spreads reconnect load; it is not an ID, secret, or authorization decision.
+  return delay + Math.floor(Math.random() * Math.min(jitterMs, delay)); // NOSONAR
 }

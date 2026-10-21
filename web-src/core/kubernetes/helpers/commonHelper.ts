@@ -12,9 +12,14 @@ class KubernetesCommonHelper {
   static ownerToLabel(owner: string) {
     let label = replace(owner, /[^-A-Za-z0-9_.]/g, '.');
     label = truncate(label, { length: 63, omission: '' });
-    label = replace(label, /^[-_.]*/g, '');
-    label = replace(label, /[-_.]*$/g, '');
-    return label;
+    let start = 0;
+    let end = label.length;
+    function isBoundaryPunctuation(char: string) {
+      return '-_.'.includes(char);
+    }
+    while (start < end && isBoundaryPunctuation(label[start])) start += 1;
+    while (end > start && isBoundaryPunctuation(label[end - 1])) end -= 1;
+    return label.slice(start, end);
   }
 
   static assignOrDeleteIfEmptyOrZero(

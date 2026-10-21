@@ -43,14 +43,18 @@ export function ApplicationAutoScalingTable({
           <table className="table">
             <tbody>
               <tr className="text-muted">
-                <td className="w-1/3">Minimum instances</td>
-                <td className="w-1/3">Maximum instances</td>
-                <td className="w-1/3">
+                <th scope="col" className="w-1/3 text-left font-normal">
+                  Minimum instances
+                </th>
+                <th scope="col" className="w-1/3 text-left font-normal">
+                  Maximum instances
+                </th>
+                <th scope="col" className="w-1/3 text-left font-normal">
                   <div className="flex min-w-max items-center gap-1">
                     Target CPU usage
                     <Tooltip message="The autoscaler will ensure enough instances are running to maintain an average CPU usage across all instances." />
                   </div>
-                </td>
+                </th>
               </tr>
               <tr>
                 <td data-cy="k8sAppDetail-minReplicas">

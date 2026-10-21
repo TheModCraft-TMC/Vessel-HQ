@@ -5,7 +5,7 @@ import {
   Ref,
   useContext,
   useMemo,
-  useState,
+  useId,
 } from 'react';
 
 interface WidgetContextValue {
@@ -39,9 +39,7 @@ export function Widget({
   'aria-label'?: string;
   'data-cy'?: string;
 }>) {
-  const [generatedId] = useState(
-    () => `ps-id-${Math.random().toString(36).slice(2)}`
-  );
+  const generatedId = useId();
   const titleId = ariaLabel ? undefined : `widget-title-${generatedId}`;
   const contextValue = useMemo(() => ({ titleId }), [titleId]);
 

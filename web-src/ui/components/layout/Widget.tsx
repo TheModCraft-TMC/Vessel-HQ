@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { createContext, PropsWithChildren, Ref, useContext, useMemo, useState } from 'react';
+import { createContext, PropsWithChildren, Ref, useContext, useMemo, useId } from 'react';
 
 interface WidgetContextValue { titleId?: string }
 const Context = createContext<WidgetContextValue | null>(null);
@@ -13,7 +13,7 @@ function useWidgetContext() {
 function Widget({ children, className, mRef, id, 'aria-label': ariaLabel, 'data-cy': dataCy }: PropsWithChildren<{
   className?: string; mRef?: Ref<HTMLDivElement>; id?: string; 'aria-label'?: string; 'data-cy'?: string;
 }>) {
-  const [generatedId] = useState(() => `ps-id-${Math.random().toString(36).slice(2)}`);
+  const generatedId = useId();
   const titleId = ariaLabel ? undefined : `widget-title-${generatedId}`;
   const contextValue = useMemo(() => ({ titleId }), [titleId]);
   return <Context.Provider value={contextValue}><section id={id} className={clsx('widget', className)} ref={mRef} aria-label={ariaLabel} aria-labelledby={titleId} data-cy={dataCy}>{children}</section></Context.Provider>;

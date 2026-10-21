@@ -52,6 +52,8 @@ function SwitchPrompt({
   );
 }
 
+const defaultSwitchPromptOptions = { 'data-cy': 'switch-prompt' };
+
 export function openSwitchPrompt(
   title: string,
   switchLabel: string,
@@ -60,7 +62,7 @@ export function openSwitchPrompt(
     modalType?: ModalType;
     message?: ReactNode;
     defaultValue?: boolean;
-  } & AutomationTestingProps = { 'data-cy': 'switch-prompt' }
+  } & AutomationTestingProps = defaultSwitchPromptOptions
 ) {
   return openModal(SwitchPrompt, { title, switchLabel, ...options });
 }

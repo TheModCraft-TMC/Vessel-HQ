@@ -155,11 +155,15 @@ function RegistrySummary({
             <table className="mb-0 table">
               <tbody>
                 <tr>
-                  <td>Name</td>
+                  <th scope="row" className="text-left font-normal">
+                    Name
+                  </th>
                   <td>{registry.Name}</td>
                 </tr>
                 <tr>
-                  <td>URL</td>
+                  <th scope="row" className="text-left font-normal">
+                    URL
+                  </th>
                   <td>{registry.URL}</td>
                 </tr>
               </tbody>

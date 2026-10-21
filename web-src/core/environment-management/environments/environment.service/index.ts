@@ -15,10 +15,7 @@ import {
 import { type TagId } from '@/domains/tags';
 import { UserId } from '@/domains/users';
 import { TeamId } from '@/domains/teams';
-import {
-  EdgeStack,
-  StatusType as EdgeStackStatusType,
-} from '@/domains/edge';
+import { EdgeStack, StatusType as EdgeStackStatusType } from '@/domains/edge';
 import { getPublicSettings } from '@/domains/settings';
 
 import { SortType } from '../queries/useEnvironmentList';
@@ -72,14 +69,13 @@ export interface GetEnvironmentsOptions {
   query?: EnvironmentsQueryParams;
 }
 
-export async function getEnvironments(
-  {
+export async function getEnvironments(options?: GetEnvironmentsOptions) {
+  const {
     start,
     limit,
     sort = { by: undefined, order: 'asc' },
     query = {},
-  }: GetEnvironmentsOptions = { query: {} }
-) {
+  } = options ?? {};
   if (
     (query.tagIds && query.tagIds.length === 0) ||
     (query.endpointIds && query.endpointIds.length === 0)

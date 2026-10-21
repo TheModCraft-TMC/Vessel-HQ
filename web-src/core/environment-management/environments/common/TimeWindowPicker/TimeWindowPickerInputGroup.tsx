@@ -7,7 +7,6 @@ import { Select } from '@/ui/components/forms/ReactSelect';
 import { Option } from '@/ui/components/forms/PortainerSelect';
 import { FormError } from '@/ui/components/forms/FormError';
 
-
 import { timeZoneToUtc, utcToTimeZone } from './utils';
 import { TimePickerInput } from './TimePickerInput';
 
@@ -36,7 +35,7 @@ export function TimeWindowPickerInputGroup({
       moment.tz.zonesForCountry(country)
     );
     return [...new Set(zones)]
-      .sort()
+      .sort((a, b) => a.localeCompare(b))
       .concat('UTC')
       .map((zone) => ({
         label: zone,

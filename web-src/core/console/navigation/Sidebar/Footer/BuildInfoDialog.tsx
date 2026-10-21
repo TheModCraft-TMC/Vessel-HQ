@@ -36,37 +36,43 @@ export function BuildInfoDialog({ onClose }: { onClose(): void }) {
       <Modal.Header title={`Vessel HQ ${Edition}`} />
       <Modal.Body>
         <div className={styles.versionInfo}>
-          <table>
-            <tbody>
-              <tr>
-                <td>
-                  <Server size="13" className="space-right" />
-                  Server Version: {ServerVersion}
-                </td>
-                <td>
-                  <Database size="13" className="space-right" />
-                  Database Version: {DatabaseVersion}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <Hash size="13" className="space-right" />
-                  CI Build Number: {Build.BuildNumber}
-                </td>
-                <td>
-                  <Tag size="13" className="space-right" />
-                  Image Tag: {Build.ImageTag}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <GitCommit size="13" className="space-right" />
-                  Git Commit: {Build.GitCommit}
-                </td>
-                <td />
-              </tr>
-            </tbody>
-          </table>
+          <dl className="m-0 grid grid-cols-2">
+            <div className="pb-2.5">
+              <dt className="inline font-normal">
+                <Server size="13" className="space-right" />
+                Server Version:{' '}
+              </dt>
+              <dd className="m-0 inline">{ServerVersion}</dd>
+            </div>
+            <div className="pb-2.5">
+              <dt className="inline font-normal">
+                <Database size="13" className="space-right" />
+                Database Version:{' '}
+              </dt>
+              <dd className="m-0 inline">{DatabaseVersion}</dd>
+            </div>
+            <div className="pb-2.5">
+              <dt className="inline font-normal">
+                <Hash size="13" className="space-right" />
+                CI Build Number:{' '}
+              </dt>
+              <dd className="m-0 inline">{Build.BuildNumber}</dd>
+            </div>
+            <div className="pb-2.5">
+              <dt className="inline font-normal">
+                <Tag size="13" className="space-right" />
+                Image Tag:{' '}
+              </dt>
+              <dd className="m-0 inline">{Build.ImageTag}</dd>
+            </div>
+            <div className="pb-2.5">
+              <dt className="inline font-normal">
+                <GitCommit size="13" className="space-right" />
+                Git Commit:{' '}
+              </dt>
+              <dd className="m-0 inline">{Build.GitCommit}</dd>
+            </div>
+          </dl>
         </div>
         <InfoGroup icon={<Wrench size="13" />} label="Compilation tools">
           <span>Nodejs {Build.NodejsVersion}</span>
@@ -81,7 +87,10 @@ export function BuildInfoDialog({ onClose }: { onClose(): void }) {
           <span>Compose {Dependencies.ComposeVersion}</span>
         </InfoGroup>
         {isAdmin && Runtime.Env && (
-          <InfoGroup icon={<Variable size="13" />} label="Environment Variables">
+          <InfoGroup
+            icon={<Variable size="13" />}
+            label="Environment Variables"
+          >
             {Runtime.Env.map((envVar) => (
               <code key={envVar}>{envVar}</code>
             ))}
@@ -112,7 +121,9 @@ function InfoGroup({
         {icon}
         {label}:
       </span>
-      <div className={clsx(styles.tools, 'flex flex-wrap gap-2')}>{children}</div>
+      <div className={clsx(styles.tools, 'flex flex-wrap gap-2')}>
+        {children}
+      </div>
     </div>
   );
 }

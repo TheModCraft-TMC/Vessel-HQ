@@ -28,8 +28,8 @@ Success.args = {
   text: 'This is a success alert. Very long text, Very long text,Very long text ,Very long text ,Very long text, Very long text',
 };
 
-export const Error: StoryFn<Args> = Template.bind({});
-Error.args = {
+export const ErrorAlert: StoryFn<Args> = Template.bind({});
+ErrorAlert.args = {
   color: 'error',
   title: 'Error',
   text: 'This is an error alert',

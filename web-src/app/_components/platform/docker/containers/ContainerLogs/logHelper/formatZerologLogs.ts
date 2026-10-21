@@ -14,13 +14,15 @@ import {
   TIMESTAMP_LENGTH,
 } from './types';
 
-const dateRegex = /(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}[AP]M) /; // "2022/02/01 04:30AM "
-const levelRegex = /(\w{3}) /; // "INF " or "ERR "
-const callerRegex = /(.+?.go:\d+) /; // "path/to/file.go:line "
+const dateRegex = /^(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}[AP]M) /; // "2022/02/01 04:30AM "
+const levelRegex = /(\w{3})/; // "INF " or "ERR "
+// The leading space delimits the caller token, avoiding retries within a long token.
+const callerRegex = / (\S+\.go:\d+) /; // "path/to/file.go:line "
 const chevRegex = /> /; // "> "
 const messageAndPairsRegex = /(.*)/; // include the rest of the string in a separate group
 
-const keyRegex = /(\S+=)/g; // ""
+// Tokenize once, then find the last equals sign in each token (linear time).
+const pairTokenRegex = /\S+/g;
 
 export const ZerologRegex = concatRegex(
   dateRegex,
@@ -106,7 +108,12 @@ function extractPairs(messageAndPairs: string): [string, Pair[]] {
   message = message.trim();
   rawPairs = rawPairs.trim();
 
-  const matches = [...rawPairs.matchAll(keyRegex)];
+  const matches = [...rawPairs.matchAll(pairTokenRegex)].flatMap((match) => {
+    const equalsIndex = match[0].lastIndexOf('=');
+    return equalsIndex === -1
+      ? []
+      : [{ 0: match[0].slice(0, equalsIndex + 1), index: match.index }];
+  });
 
   matches.forEach((m, idx) => {
     const rawKey = m[0];

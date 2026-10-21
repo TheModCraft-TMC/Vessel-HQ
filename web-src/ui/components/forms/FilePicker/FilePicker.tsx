@@ -155,7 +155,7 @@ export function FilePicker({
     onChange(
       Array.from(next)
         .map((f) => `/${f}`)
-        .sort()
+        .sort((a, b) => a.localeCompare(b))
     );
   }
 

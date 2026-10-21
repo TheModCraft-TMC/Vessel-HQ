@@ -20,30 +20,38 @@ export function useCopy(
     };
   }, [copiedSuccessfully, fadeDelay]);
 
-  function handleCopy() {
+  async function handleCopy() {
     const text = typeof copyText === 'function' ? copyText() : copyText;
 
     if (!text) {
       return;
     }
 
-    // https://developer.mozilla.org/en-US/docs/Web/API/Clipboard
-    // https://caniuse.com/?search=clipboard
+    setCopiedSuccessfully(false);
     // eslint-disable-next-line no-restricted-properties -- this file IS the approved secure-context-safe wrapper; consumers must use useCopy or CopyButton
     if (window.isSecureContext && navigator.clipboard) {
-      // eslint-disable-next-line no-restricted-properties -- see above
-      navigator.clipboard.writeText(text);
-    } else {
-      // https://stackoverflow.com/a/57192718
-      const inputEl = document.createElement('textarea');
-      inputEl.value = text;
+      try {
+        // eslint-disable-next-line no-restricted-properties -- see above
+        await navigator.clipboard.writeText(text);
+        setCopiedSuccessfully(true);
+        return;
+      } catch {
+        // Clipboard permissions may be denied even in a secure context.
+        // Try the same fallback used for HTTP deployments.
+      }
+    }
+
+    const inputEl = document.createElement('textarea');
+    inputEl.value = text;
+    try {
       context.appendChild(inputEl);
       inputEl.select();
-      document.execCommand('copy');
-      inputEl.hidden = true;
-      context.removeChild(inputEl);
+      setCopiedSuccessfully(document.execCommand('copy'));
+    } catch {
+      setCopiedSuccessfully(false);
+    } finally {
+      inputEl.remove();
     }
-    setCopiedSuccessfully(true);
   }
 
   return { handleCopy, copiedSuccessfully };

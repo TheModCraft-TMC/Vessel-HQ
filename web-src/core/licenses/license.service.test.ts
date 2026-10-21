@@ -3,7 +3,12 @@ import { http, HttpResponse } from 'msw';
 import { server } from '@/core/test-support/setup/server';
 import PortainerError from '@/shared/errors';
 
-import { getLicenses } from './license.service';
+import {
+  getLicenses,
+  attachLicense,
+  removeLicense,
+  resetState,
+} from './license.service';
 import type { License } from './types';
 
 describe('getLicenses', () => {
@@ -42,5 +47,39 @@ describe('getLicenses', () => {
       new PortainerError(details, new Error(message))
     );
     expect(thenFn).not.toHaveBeenCalled();
+  });
+});
+
+describe.each([
+  { name: 'attach', action: '', mutate: attachLicense },
+  { name: 'remove', action: '/remove', mutate: removeLicense },
+])('$name license refresh', ({ action, mutate }) => {
+  it('waits for refreshed license info after a successful mutation', async () => {
+    resetState();
+    let refreshed = false;
+    server.use(
+      http.post(`/api/licenses${action}`, () =>
+        HttpResponse.json({ failedKeys: {} })
+      ),
+      http.get('/api/licenses/info', () => {
+        refreshed = true;
+        return HttpResponse.json({});
+      })
+    );
+    await mutate(['test-license']);
+    expect(refreshed).toBe(true);
+  });
+
+  it('propagates refresh failures rather than leaving an unhandled rejection', async () => {
+    resetState();
+    server.use(
+      http.post(`/api/licenses${action}`, () =>
+        HttpResponse.json({ failedKeys: {} })
+      ),
+      http.get('/api/licenses/info', () =>
+        HttpResponse.json({ message: 'Refresh failed' }, { status: 500 })
+      )
+    );
+    await expect(mutate(['test-license'])).rejects.toThrow();
   });
 });

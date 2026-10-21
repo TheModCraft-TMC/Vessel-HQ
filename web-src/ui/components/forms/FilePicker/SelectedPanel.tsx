@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function SelectedPanel({ selected, removeFile }: Props) {
-  const selectedPaths = Array.from(selected).sort();
+  const selectedPaths = Array.from(selected).sort((a, b) => a.localeCompare(b));
 
   return (
     <>
