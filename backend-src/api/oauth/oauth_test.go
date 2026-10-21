@@ -208,7 +208,7 @@ func TestGetIdTokenRejectsMalformedProviderResponses(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestAuthenticateBackchannelIDTokenIsOnlyUsernameFallback(t *testing.T) {
+func TestAuthenticateBackchannelIdentityCompatibility(t *testing.T) {
 	t.Parallel()
 	// This deliberately has no signature: it is decoded only after a direct
 	// code exchange with the configured provider, never accepted from a browser.
@@ -219,17 +219,20 @@ func TestAuthenticateBackchannelIDTokenIsOnlyUsernameFallback(t *testing.T) {
 
 	for _, tc := range []struct {
 		name, resource, wantUsername string
+		providerToken                any
 	}{
-		{"userinfo_has_priority", `{"username":"resource-user","groups":"users"}`, "resource-user"},
-		{"legacy_username_fallback", `{"groups":"users"}`, "id-token-user"},
-		{"null_resource_does_not_panic", `null`, "id-token-user"},
+		{"legacy_id_token_identity_has_priority", `{"username":"resource-user","groups":"users"}`, "id-token-user", idToken},
+		{"legacy_username_only_in_id_token", `{"groups":"users"}`, "id-token-user", idToken},
+		{"resource_identity_without_id_token", `{"username":"resource-user","groups":"users"}`, "resource-user", nil},
+		{"malformed_provider_token_does_not_panic", `{"username":"resource-user","groups":"users"}`, "resource-user", true},
+		{"null_resource_does_not_panic", `null`, "id-token-user", idToken},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
 				if r.URL.Path == "/token" {
 					assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
-						"access_token": "backchannel-token", "token_type": "Bearer", "id_token": idToken,
+						"access_token": "backchannel-token", "token_type": "Bearer", "id_token": tc.providerToken,
 					}))
 					return
 				}
@@ -246,7 +249,7 @@ func TestAuthenticateBackchannelIDTokenIsOnlyUsernameFallback(t *testing.T) {
 			if tc.resource == "null" {
 				require.Empty(t, identity.Claims)
 			} else {
-				require.Equal(t, "users", identity.Claims["groups"], "ID-token groups must never drive authorization")
+				require.Equal(t, "users", identity.Claims["groups"], "preserve the base resource-only group-sync contract")
 			}
 		})
 	}

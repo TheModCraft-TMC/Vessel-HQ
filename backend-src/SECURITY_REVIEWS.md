@@ -49,6 +49,10 @@ secure the already-encrypted outer channel. Preserve existing TLS settings where
 supported; do not disable TLS verification for ordinary external integrations.
 The HTTP proxy and Docker client branches still select HTTPS from endpoint TLS
 configuration. Edge WebSockets remain inner `ws` over the encrypted tunnel.
+Local Docker Unix-socket and Windows named-pipe transports are unchanged: their
+HTTP framing runs over local IPC, not a cleartext external TCP connection, and
+forcing HTTPS would break those workflows. The listed findings are specifically
+Edge tunnel URLs, not grounds for replacing local socket transport.
 
 During this review the local CLI-to-agent signing proxy was found to bind `:0`
 (all interfaces). It now explicitly binds **127.0.0.1:0**. That separate real
@@ -124,14 +128,22 @@ security, and deriving an untrusted discovery URL from token claims would add a
 new trust/SSRF risk. Explicitly configured local HTTP providers retain the same
 administrator-owned transport policy as other HTTP integrations.
 
-The legacy fallback remains for providers whose configured username claim is
-only in this backchannel response. It is now **fallback-only**: authenticated
-UserInfo/resource identity takes priority. Decoded ID-token claims never enter
-`OAuthIdentity.Claims` or team/group authorization. Malformed/non-string token
-responses return errors rather than panic, and a null resource response cannot
-panic during claim merging (merging is removed). Tests cover UserInfo precedence,
-legacy username fallback, null resources, malformed ID tokens, and exclusion of
-ID-token groups. This helper is expressly documented as a decoder, not a verifier;
+The existing identity precedence is preserved: backchannel ID-token claims
+overlay resource claims for username extraction, including providers whose
+configured username claim exists only in the ID token. The **base commit already
+clones resource claims before that merge**, so decoded ID-token claims do not
+enter `OAuthIdentity.Claims`; this patch does not remove an existing group source.
+`validateOAuth` passes `identity.Claims` to `syncOAuthTeamMemberships` when
+`OAuthAutoMapTeamMemberships` is enabled, and the resolver reads the configured
+`TeamMemberships.OAuthClaimName` (with regex mappings and optional default team).
+That Authentik/resource group-sync contract is retained unchanged and tested
+through the real OAuth service and team-sync function. Expanding authorization
+claims to ID-token-only groups is a separate policy decision, not a Sonar fix.
+Malformed/non-string token responses return errors rather than panic, and a null
+resource response cannot panic during the identity-only merge. Tests cover
+ID-token identity precedence, resource-only identity, null resources, malformed
+ID tokens, resource groups reaching team sync, and the base exclusion of ID-token
+groups. This helper is expressly documented as a decoder, not a verifier;
 it must not be reused for caller-supplied tokens or authorization. A future full
 OIDC verifier needs explicit issuer/audience/JWKS configuration and migration of
 generic OAuth-only providers, not a silent incompatible rewrite of this parser.

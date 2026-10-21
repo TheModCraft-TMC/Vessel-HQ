@@ -53,14 +53,15 @@ func (Service) Authenticate(ctx context.Context, code string, configuration *por
 		return nil, err
 	}
 
-	// Prefer authenticated UserInfo for identity as well as authorization. The
-	// backchannel ID token is a legacy username fallback only: its decoded
-	// claims must neither replace UserInfo nor reach team synchronization.
+	// Preserve the existing contracts: authorization claims come only from
+	// UserInfo/resource, while backchannel ID-token claims take precedence for
+	// username extraction. Do not change identity or group sources implicitly.
 	trustedClaims := maps.Clone(resource)
-	username, err := GetUsername(resource, configuration.UserIdentifier)
-	if err != nil {
-		username, err = GetUsername(idToken, configuration.UserIdentifier)
+	if resource == nil {
+		resource = make(map[string]any)
 	}
+	maps.Copy(resource, idToken)
+	username, err := GetUsername(resource, configuration.UserIdentifier)
 	if err != nil {
 		log.Error().Err(err).Msg("failed retrieving username")
 
@@ -76,7 +77,7 @@ func GetOAuthToken(ctx context.Context, code string, configuration *portainer.OA
 	return config.Exchange(ctx, code)
 }
 
-// GetIdToken decodes legacy username claims from a direct OAuth code-exchange
+// GetIdToken decodes legacy identity claims from a direct OAuth code-exchange
 // response. It is NOT a JWT verifier and must never accept browser-supplied tokens
 // or supply authorization claims. The configured token endpoint's backchannel
 // transport is the trust boundary (see SECURITY_REVIEWS.md #211).
