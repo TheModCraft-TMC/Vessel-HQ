@@ -25,6 +25,26 @@ the stable release and image at the maintainer's explicit request.
 
 Reconcile this draft with the final diff and add exact validation results before committing. Plugin support is documentation only. Maintaining this file does not create a commit or release.
 
+## GitHub issue remediation — October 21, 2026
+
+Separate from the historical migration/release scope below. This work starts at
+`5b175344b` on `develop` and covers the 226 issues reported at the start of the
+fix: #233 and 225 synchronized SonarCloud findings. It does not change
+`RELEASE_VERSION`, the upstream API compatibility baseline, or publish a release.
+
+- Restore image usage filtering: Radix portals must not inherit Bootstrap's
+  hidden/absolutely positioned dropdown behavior, and the usage filter must
+  read mutable TanStack state without React Compiler caching. Add a
+  compiler-enabled Used/Unused/both/clear regression and handle removal prompt
+  rejections. Local browser checks against a disposable Docker environment
+  distinguish five used images from 32 unused images and verify menu placement.
+- Replace upstream/Business Edition bug-report questions and support links with
+  Vessel HQ version, deployment, platform, and sanitized reproduction fields.
+  Align the package's repository and bug-tracker URLs.
+- Backend, frontend, and build/security issue dispositions and final verification
+  are recorded with the completed combined changes, not inferred from the
+  historical release checks below.
+
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
 Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates
