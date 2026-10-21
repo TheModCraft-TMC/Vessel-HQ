@@ -113,7 +113,7 @@ export async function loadStacks(
   ]);
 
   const managed = [...composeStacks, ...swarmStacks]
-    .filter(uniqueStack)
+    .filter((stack, index, stacks) => uniqueStack(stack, index, stacks))
     .map(
       (stack) => new StackViewModel(stack, stack.EndpointId !== environmentId)
     );

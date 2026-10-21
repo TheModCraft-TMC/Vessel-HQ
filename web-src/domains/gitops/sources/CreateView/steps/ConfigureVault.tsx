@@ -6,6 +6,7 @@ import { Select } from '@/ui/components/forms/ReactSelect';
 import { SwitchField } from '@/ui/components/forms/SwitchField';
 
 import { VaultTokenCreateLink } from '../../VaultTokenCreateLink';
+import { VAULT_INTERNAL_ADDRESS_PLACEHOLDER } from '../../vault-address';
 import { FormValues } from '../type';
 
 import { ConnectionTest } from './ConnectionTest';
@@ -58,7 +59,7 @@ export function ConfigureVault() {
           id="vault-internal-address-input"
           value={values.vault.internalAddress}
           data-cy="vault-internal-address-input"
-          placeholder="http://vault:8200"
+          placeholder={VAULT_INTERNAL_ADDRESS_PLACEHOLDER}
           onChange={({ target: { value } }) =>
             setFieldValue('vault.internalAddress', value)
           }

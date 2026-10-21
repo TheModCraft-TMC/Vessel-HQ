@@ -17,11 +17,18 @@ const STATUS_PRIORITY: Record<WorkflowStatus, number> = {
 export function worstPhaseStatus(
   phases: WorkflowPhaseStatus[]
 ): WorkflowPhaseStatus {
-  return phases.reduce((worst, phase) =>
-    STATUS_PRIORITY[phase.status || 'unknown'] >
-    STATUS_PRIORITY[worst.status || 'unknown']
-      ? phase
-      : worst
+  const [first, ...rest] = phases;
+  if (!first) {
+    return { status: 'unknown' };
+  }
+
+  return rest.reduce(
+    (worst, phase) =>
+      STATUS_PRIORITY[phase.status || 'unknown'] >
+      STATUS_PRIORITY[worst.status || 'unknown']
+        ? phase
+        : worst,
+    first
   );
 }
 

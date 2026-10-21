@@ -29,7 +29,7 @@ export function SecretDetailsTable({
 }: Props) {
   const parsedRegistryId =
     registryId !== undefined && registryId !== ''
-      ? parseInt(String(registryId), 10) || undefined
+      ? Number.parseInt(String(registryId), 10) || undefined
       : undefined;
   const supportsImagePullSecrets = isImagePullSecretSecretType(secretTypeLabel);
 

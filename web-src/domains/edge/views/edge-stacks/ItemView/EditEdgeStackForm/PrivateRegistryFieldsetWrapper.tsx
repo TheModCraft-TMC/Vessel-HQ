@@ -47,8 +47,9 @@ export function PrivateRegistryFieldsetWrapper({
       onChange={(value) => {
         onChange(value);
         if (value === REGISTRY_CREDENTIALS_ENABLED) {
-          // Enabled, need to match registry
-          matchRegistry(values);
+          // Enabled, need to match registry. matchRegistry reports its own
+          // failures and never rejects.
+          void matchRegistry(values);
         }
       }}
       method={isGit ? 'repository' : 'file'}

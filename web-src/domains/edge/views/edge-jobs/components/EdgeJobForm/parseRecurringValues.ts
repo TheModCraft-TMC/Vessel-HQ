@@ -49,12 +49,15 @@ export function toRecurringRequest(
   }
 }
 
-export function toRecurringViewModel(
-  { cronExpression, recurring }: RecurringRequestModel = {
-    cronExpression: defaultCronExpression,
-    recurring: true,
-  }
-): RecurringViewModel {
+const defaultRecurringRequest: RecurringRequestModel = {
+  cronExpression: defaultCronExpression,
+  recurring: true,
+};
+
+export function toRecurringViewModel({
+  cronExpression,
+  recurring,
+}: RecurringRequestModel = defaultRecurringRequest): RecurringViewModel {
   const defaultTime = addHours(new Date(), 1);
   const scheduled = timeOptions.find((v) => v.value === cronExpression);
 

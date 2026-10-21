@@ -21,6 +21,14 @@ export function VaultTokenCreateLink({ address }: Props) {
   );
 }
 
+function trimTrailingSlashes(path: string) {
+  let end = path.length;
+  while (end > 0 && path[end - 1] === '/') {
+    end -= 1;
+  }
+  return path.slice(0, end);
+}
+
 export function buildVaultTokenCreateUrl(address: string) {
   try {
     const url = new URL(address.trim());
@@ -28,7 +36,7 @@ export function buildVaultTokenCreateUrl(address: string) {
       return undefined;
     }
 
-    const basePath = url.pathname.replace(/\/+$/, '');
+    const basePath = trimTrailingSlashes(url.pathname);
     url.pathname = `${basePath}/ui/vault/access/tokens/create`;
     url.search = '';
     url.hash = '';

@@ -102,7 +102,7 @@ function useSecretRowData(
       secrets?.map((secret) => {
         const registryIdStr = secret.Annotations?.['portainer.io/registry.id'];
         const registryId = registryIdStr
-          ? parseInt(registryIdStr, 10) || undefined
+          ? Number.parseInt(registryIdStr, 10) || undefined
           : undefined;
         return {
           ...secret,

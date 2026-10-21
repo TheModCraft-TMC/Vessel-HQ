@@ -29,24 +29,21 @@ export function useRepositoryTags({
   });
 }
 
-export async function getRepositoryTags(
-  {
-    environmentId,
-    registryId,
-    repository,
-    n,
-    last,
-    provider = ociRemoteProvider,
-  }: {
-    registryId: Registry['Id'];
-    repository: string;
-    environmentId?: Environment['Id'];
-    n?: number;
-    last?: string;
-    provider?: OciRemoteProvider;
-  },
-  acc: { name: string; tags: string[] } = { name: '', tags: [] }
-): Promise<{ name: string; tags: string[] }> {
+export async function getRepositoryTags({
+  environmentId,
+  registryId,
+  repository,
+  n,
+  last,
+  provider = ociRemoteProvider,
+}: {
+  registryId: Registry['Id'];
+  repository: string;
+  environmentId?: Environment['Id'];
+  n?: number;
+  last?: string;
+  provider?: OciRemoteProvider;
+}): Promise<{ name: string; tags: string[] }> {
   const data = await provider.listTags({
     id: registryId,
     endpointId: environmentId,
@@ -54,8 +51,5 @@ export async function getRepositoryTags(
     n,
     last,
   });
-  acc.name = data.name;
-  acc.tags = [...acc.tags, ...(data.tags || [])];
-
-  return acc;
+  return { name: data.name, tags: data.tags || [] };
 }

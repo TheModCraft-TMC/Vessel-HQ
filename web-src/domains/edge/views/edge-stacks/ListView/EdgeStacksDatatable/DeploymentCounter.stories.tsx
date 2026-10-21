@@ -20,7 +20,8 @@ export const Running: Story = {
   },
 };
 
-export const Error: Story = {
+export const ErrorStatus: Story = {
+  name: 'Error',
   args: {
     count: 3,
     total: 10,

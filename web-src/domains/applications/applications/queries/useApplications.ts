@@ -13,7 +13,7 @@ type GetAppsParams = {
   nodeName?: string;
 };
 
-type GetAppsQueryOptions = {} & GetAppsParams;
+type GetAppsQueryOptions = GetAppsParams;
 
 /**
  * @returns a UseQueryResult that can be used to fetch a list of applications from an array of namespaces.

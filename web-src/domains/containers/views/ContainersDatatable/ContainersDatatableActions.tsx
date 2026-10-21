@@ -177,7 +177,7 @@ export function ContainersDatatableActions({
   function onStartClick(selectedItems: ContainerListViewModel[]) {
     const successMessage = 'Container successfully started';
     const errorMessage = 'Unable to start container';
-    executeActionOnContainerList(
+    void executeActionOnContainerList(
       selectedItems,
       startContainer,
       successMessage,
@@ -188,7 +188,7 @@ export function ContainersDatatableActions({
   function onStopClick(selectedItems: ContainerListViewModel[]) {
     const successMessage = 'Container successfully stopped';
     const errorMessage = 'Unable to stop container';
-    executeActionOnContainerList(
+    void executeActionOnContainerList(
       selectedItems,
       stopContainer,
       successMessage,
@@ -199,7 +199,7 @@ export function ContainersDatatableActions({
   function onRestartClick(selectedItems: ContainerListViewModel[]) {
     const successMessage = 'Container successfully restarted';
     const errorMessage = 'Unable to restart container';
-    executeActionOnContainerList(
+    void executeActionOnContainerList(
       selectedItems,
       restartContainer,
       successMessage,
@@ -210,7 +210,7 @@ export function ContainersDatatableActions({
   function onKillClick(selectedItems: ContainerListViewModel[]) {
     const successMessage = 'Container successfully killed';
     const errorMessage = 'Unable to kill container';
-    executeActionOnContainerList(
+    void executeActionOnContainerList(
       selectedItems,
       killContainer,
       successMessage,
@@ -221,7 +221,7 @@ export function ContainersDatatableActions({
   function onPauseClick(selectedItems: ContainerListViewModel[]) {
     const successMessage = 'Container successfully paused';
     const errorMessage = 'Unable to pause container';
-    executeActionOnContainerList(
+    void executeActionOnContainerList(
       selectedItems,
       pauseContainer,
       successMessage,
@@ -232,7 +232,7 @@ export function ContainersDatatableActions({
   function onResumeClick(selectedItems: ContainerListViewModel[]) {
     const successMessage = 'Container successfully resumed';
     const errorMessage = 'Unable to resume container';
-    executeActionOnContainerList(
+    void executeActionOnContainerList(
       selectedItems,
       resumeContainer,
       successMessage,
@@ -254,9 +254,11 @@ export function ContainersDatatableActions({
     }
     const { removeVolumes } = result;
 
-    removeSelectedContainers(selectedItems, removeVolumes);
+    await removeSelectedContainers(selectedItems, removeVolumes);
   }
 
+  // Catches and reports each container failure, and router.refresh is
+  // synchronous, so this never rejects and click handlers can fire and forget.
   async function executeActionOnContainerList(
     containers: ContainerListViewModel[],
     action: ContainerServiceAction,

@@ -50,7 +50,7 @@ export function toViewModel(portBindings: PortMap): Values {
         return [];
       }
 
-      const containerPortNumber = parseInt(containerPort, 10);
+      const containerPortNumber = Number.parseInt(containerPort, 10);
 
       if (Number.isNaN(containerPortNumber)) {
         throw new Error(`Invalid container port: ${containerPort}`);
@@ -104,9 +104,9 @@ export function toViewModel(portBindings: PortMap): Values {
         if (port.hostPort.includes(':')) {
           const [ipStr, portStr] = port.hostPort.split(':');
           hostIp = ipStr;
-          hostPort = parseInt(portStr || '0', 10);
+          hostPort = Number.parseInt(portStr || '0', 10);
         } else {
-          hostPort = parseInt(port.hostPort || '0', 10);
+          hostPort = Number.parseInt(port.hostPort || '0', 10);
         }
 
         const lastPort = acc[acc.length - 1];

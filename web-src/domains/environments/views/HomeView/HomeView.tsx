@@ -11,6 +11,7 @@ import { confirm } from '@/ui/components/dialog/confirm';
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { ModalType } from '@/ui/components/dialog';
 import { buildConfirmButton } from '@/ui/components/dialog/utils';
+import { notifyError } from '@/ui/components/toast/notifications';
 
 import { EnvironmentHomeView } from '../EnvironmentHomeView';
 
@@ -57,7 +58,9 @@ export function HomeView() {
     }
 
     if (params.redirect) {
-      redirect();
+      redirect().catch((err) =>
+        notifyError('Failure', err, 'Unable to retry the edge connection')
+      );
     }
   }, [params, setConnectingToEdgeEndpoint, router, clearStore]);
 

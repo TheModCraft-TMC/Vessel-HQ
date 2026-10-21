@@ -31,11 +31,12 @@ function Example({ userRole }: Args) {
   const [users] = useState(createMockUsers(20, Role.Standard));
 
   const [memberships] = useState<Omit<TeamMembership, 'Id' | 'TeamID'>[]>(
+    // Deterministic mix of members and leaders keeps the story reproducible.
     users
-      .filter(() => Math.random() > 0.5)
-      .map((u) => ({
+      .filter((_, index) => index % 2 === 0)
+      .map((u, index) => ({
         UserID: u.Id,
-        Role: Math.random() > 0.5 ? TeamRole.Leader : TeamRole.Member,
+        Role: index % 3 === 0 ? TeamRole.Leader : TeamRole.Member,
       }))
   );
 

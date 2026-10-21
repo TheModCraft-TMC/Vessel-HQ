@@ -57,7 +57,7 @@ async function confirmMarkUnmarkAsSystem(isSystemNamespace: boolean) {
     ? 'Unmarking this namespace as system will allow non administrator users to manage it and the resources in contains depending on the access control settings. Are you sure?'
     : 'Marking this namespace as a system namespace will prevent non administrator users from managing it and the resources it contains. Are you sure?';
 
-  return new Promise((resolve) => {
-    confirmUpdate(message, resolve);
+  return new Promise((resolve, reject) => {
+    confirmUpdate(message, resolve).catch(reject);
   });
 }

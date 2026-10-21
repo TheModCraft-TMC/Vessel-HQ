@@ -89,7 +89,7 @@ export function getEnvironmentOptions(
   }, {});
 
   return Object.entries(groupedEnvironments).map(([groupId, envOptions]) => {
-    const parsedGroupId = parseInt(groupId, 10);
+    const parsedGroupId = Number.parseInt(groupId, 10);
     const group = groups.find((g) => g.Id === parsedGroupId);
 
     return {

@@ -37,7 +37,7 @@ export function useVersion<TSelect = DockerSystemVersion>(
 
 export function useApiVersion(environmentId?: EnvironmentId) {
   const query = useVersion(environmentId, (info) => info.ApiVersion);
-  return query.data ? parseFloat(query.data) : 0;
+  return query.data ? Number.parseFloat(query.data) : 0;
 }
 
 export function useIsWindows(environmentId: EnvironmentId) {

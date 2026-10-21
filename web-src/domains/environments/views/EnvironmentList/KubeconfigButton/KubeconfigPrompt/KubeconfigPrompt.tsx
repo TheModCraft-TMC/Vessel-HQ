@@ -145,7 +145,8 @@ export function KubeconfigPrompt({
   }
 
   function handleDownload() {
-    confirmKubeconfigSelection();
+    // confirmKubeconfigSelection reports download failures and never rejects.
+    void confirmKubeconfigSelection();
   }
 
   async function confirmKubeconfigSelection() {

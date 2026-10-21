@@ -65,7 +65,7 @@ const portPattern =
 
 function parsePort(port: string) {
   if (portPattern.test(port)) {
-    return parseInt(port, 10);
+    return Number.parseInt(port, 10);
   }
 
   return 0;

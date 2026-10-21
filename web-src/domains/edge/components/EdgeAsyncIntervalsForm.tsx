@@ -140,7 +140,10 @@ export function EdgeAsyncIntervalsForm({
   );
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    onChange({ ...values, [e.target.name]: parseInt(e.target.value, 10) });
+    onChange({
+      ...values,
+      [e.target.name]: Number.parseInt(e.target.value, 10),
+    });
   }
 }
 

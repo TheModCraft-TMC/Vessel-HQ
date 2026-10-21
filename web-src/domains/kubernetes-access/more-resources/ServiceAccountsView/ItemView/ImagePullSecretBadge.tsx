@@ -24,7 +24,7 @@ export function ImagePullSecretBadge({
   const registryIdStr =
     secret?.metadata?.annotations?.['portainer.io/registry.id'];
   const registryId = registryIdStr
-    ? parseInt(registryIdStr, 10) || undefined
+    ? Number.parseInt(registryIdStr, 10) || undefined
     : undefined;
 
   const registryTooltip = registry && (

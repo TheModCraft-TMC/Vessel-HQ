@@ -38,7 +38,8 @@ export function useValidation({
       setValidState((state) => ({ ...state, migrate: !migrateErrors }));
     }
 
-    validateSchemas();
+    // validateForm converts schema failures into errors, so this never rejects.
+    void validateSchemas();
   }, [
     values.environmentId,
     values.newName,
@@ -56,7 +57,8 @@ export function useValidation({
 
       setValidState((state) => ({ ...state, duplicate: !duplicateErrors }));
     }
-    validateSchema();
+    // validateForm converts schema failures into errors, so this never rejects.
+    void validateSchema();
   }, [values.environmentId, values.newName]);
 
   return validState;

@@ -55,15 +55,16 @@ export function ConfigureForm() {
       onSubmit={(
         values: ConfigureFormValues,
         formikHelpers: FormikHelpers<ConfigureFormValues>
-      ) => {
+      ) =>
+        // Return the promise so Formik clears isSubmitting once the save settles.
         handleSubmitConfigureCluster(
           values,
           initialValues,
           configureClusterMutation,
           formikHelpers,
           environment
-        );
-      }}
+        )
+      }
       validationSchema={configureValidationSchema}
       validateOnMount
       enableReinitialize // enableReinitialize is needed to update the form values when the ingress classes data is fetched

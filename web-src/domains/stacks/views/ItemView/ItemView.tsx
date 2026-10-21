@@ -132,9 +132,11 @@ why stack.EndpointID and not params.envId?
   const isOrphaned = params.orphaned === 'true';
   const isOrphanedRunning = params.orphanedRunning === 'true';
   const stackName = params.name || ('' as string);
-  const id = params.id ? (parseInt(params.id, 10) as Stack['Id']) : undefined;
+  const id = params.id
+    ? (Number.parseInt(params.id, 10) as Stack['Id'])
+    : undefined;
   const type = ['1', '2', '3'].includes(params.type)
-    ? (parseInt(params.type, 10) as StackType)
+    ? (Number.parseInt(params.type, 10) as StackType)
     : undefined;
 
   return {

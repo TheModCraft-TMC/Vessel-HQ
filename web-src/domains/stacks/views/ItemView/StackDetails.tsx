@@ -12,7 +12,11 @@ import { useContainers } from '@/domains/containers';
 import { validateYAML } from '@/domains/stacks/components/common/stackYamlValidation';
 import { extractContainerNames } from '@/domains/stacks/components/common/container-names';
 import { WidgetBody, Widget } from '@/ui/components/Widget';
-import { Tab, useCurrentTabIndex, WidgetTabs } from '@/ui/components/Widget/WidgetTabs';
+import {
+  Tab,
+  useCurrentTabIndex,
+  WidgetTabs,
+} from '@/ui/components/Widget/WidgetTabs';
 
 import { StackEditorTab } from './StackEditorTab/StackEditorTab';
 import { StackInfoTab } from './StackInfoTab/StackInfoTab';
@@ -23,7 +27,6 @@ function showEditorTab(
   fileQueryLoading: boolean
 ) {
   return (
-    !isExternal &&
     !isExternal &&
     !!stack &&
     !fileQueryLoading &&

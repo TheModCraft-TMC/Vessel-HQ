@@ -41,6 +41,6 @@ function isApplicationWorkflowManaged(
   app: Application,
   stackById: Map<number, Stack>
 ) {
-  const stackId = app.StackId ? parseInt(app.StackId, 10) : undefined;
+  const stackId = app.StackId ? Number.parseInt(app.StackId, 10) : undefined;
   return !!stackId && isWorkflowManagedStack(stackById.get(stackId));
 }

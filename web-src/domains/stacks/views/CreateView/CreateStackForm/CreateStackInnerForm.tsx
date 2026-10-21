@@ -36,7 +36,7 @@ export function CreateStackInnerForm({
 
   const dockerComposeSchema = schemaQuery.data;
   const composeSyntaxMaxVersion = environment?.ComposeSyntaxMaxVersion
-    ? parseInt(environment.ComposeSyntaxMaxVersion, 10)
+    ? Number.parseInt(environment.ComposeSyntaxMaxVersion, 10)
     : undefined;
 
   return (

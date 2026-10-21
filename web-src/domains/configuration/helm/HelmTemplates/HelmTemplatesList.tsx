@@ -115,7 +115,9 @@ function getCategories(charts: Chart[]) {
     .map((chart) => chart.annotations?.category) // get category
     .filter((c): c is string => !!c); // filter out nulls/undefined
 
-  const availableCategories = [...new Set(annotationCategories)].sort(); // unique and sort
+  const availableCategories = [...new Set(annotationCategories)].sort((a, b) =>
+    a.localeCompare(b)
+  ); // unique and sort
 
   // Create options array in the format expected by PortainerSelect
   return availableCategories.map((cat) => ({

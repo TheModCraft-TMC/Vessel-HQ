@@ -76,9 +76,9 @@ export function useSortAndFilterTemplates(
   return useMemo(
     () =>
       templates
-        ?.filter(filterByTemplateType)
-        .filter(filterByCategory)
-        .filter(filterBySearch)
+        ?.filter((item) => filterByTemplateType(item))
+        .filter((item) => filterByCategory(item))
+        .filter((item) => filterBySearch(item))
         .sort(sort) || [],
     [templates, filterByTemplateType, filterByCategory, filterBySearch, sort]
   );

@@ -28,7 +28,7 @@ export function EnvironmentsDatatable() {
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useParamState<StatusType>(
     'status',
-    (value) => (value ? parseInt(value, 10) : undefined)
+    (value) => (value ? Number.parseInt(value, 10) : undefined)
   );
   const tableState = useTableState(settingsStore, tableKey);
   const environmentsQuery = useEnvironmentList({
@@ -75,14 +75,14 @@ export function EnvironmentsDatatable() {
     { value: StatusType.ImagesPulled, label: 'Images pre-pulled' },
     { value: StatusType.Running, label: 'Deployed' },
     { value: StatusType.Error, label: 'Failed' },
+    ...(isBE
+      ? [
+          { value: StatusType.PausedDeploying, label: 'Paused' },
+          { value: StatusType.RollingBack, label: 'Rolling back' },
+          { value: StatusType.RolledBack, label: 'Rolled back' },
+        ]
+      : []),
   ];
-  if (isBE) {
-    envStatusSelectOptions.concat([
-      { value: StatusType.PausedDeploying, label: 'Paused' },
-      { value: StatusType.RollingBack, label: 'Rolling back' },
-      { value: StatusType.RolledBack, label: 'Rolled back' },
-    ]);
-  }
 
   return (
     <Datatable

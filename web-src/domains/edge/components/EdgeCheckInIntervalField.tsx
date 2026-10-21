@@ -58,7 +58,7 @@ export function EdgeCheckinIntervalField({
         value={value}
         data-cy="edge-checkin-interval-select"
         onChange={(e) => {
-          onChange(parseInt(e.currentTarget.value, 10));
+          onChange(Number.parseInt(e.currentTarget.value, 10));
         }}
         options={options}
         disabled={readonly}

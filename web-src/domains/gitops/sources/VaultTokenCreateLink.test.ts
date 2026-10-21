@@ -13,6 +13,12 @@ describe('buildVaultTokenCreateUrl', () => {
     );
   });
 
+  it('collapses repeated trailing slashes in the base path', () => {
+    expect(buildVaultTokenCreateUrl('https://example.com/vault///')).toBe(
+      'https://example.com/vault/ui/vault/access/tokens/create'
+    );
+  });
+
   it('removes query parameters and fragments', () => {
     expect(
       buildVaultTokenCreateUrl('http://192.168.4.141:8200/?from=portainer#x')

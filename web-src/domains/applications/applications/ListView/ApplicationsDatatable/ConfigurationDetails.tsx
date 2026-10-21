@@ -25,24 +25,18 @@ export function ConfigurationDetails({
   return (
     <>
       <div className="col-xs-12 !px-0 !py-1 text-[13px]"> Secrets </div>
-      <table className="w-1/2">
-        <tbody>
-          <tr>
-            <td>
-              {secrets.map((secret) =>
-                Object.entries(secret.Data || {}).map(([key, value]) => (
-                  <SensitiveDetails
-                    key={key}
-                    name={key}
-                    value={value}
-                    canSeeValue={canSeeValue(secret)}
-                  />
-                ))
-              )}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="w-1/2">
+        {secrets.map((secret) =>
+          Object.entries(secret.Data || {}).map(([key, value]) => (
+            <SensitiveDetails
+              key={key}
+              name={key}
+              value={value}
+              canSeeValue={canSeeValue(secret)}
+            />
+          ))
+        )}
+      </div>
     </>
   );
 

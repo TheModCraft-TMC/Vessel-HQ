@@ -90,6 +90,10 @@ describe('effectiveWorkflowStatus', () => {
 });
 
 describe('worstPhaseStatus', () => {
+  it('returns unknown for an empty list instead of throwing', () => {
+    expect(worstPhaseStatus([])).toEqual({ status: 'unknown' });
+  });
+
   it('returns the sole phase for a single-element list', () => {
     expect(worstPhaseStatus([makePhase('syncing')]).status).toBe('syncing');
   });
