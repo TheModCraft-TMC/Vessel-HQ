@@ -1,4 +1,7 @@
-import { notifySuccess } from '@/ui/components/toast/notifications';
+import {
+  notifyError,
+  notifySuccess,
+} from '@/ui/components/toast/notifications';
 import { EnvironmentId } from '@/domains/environments';
 import { LoadingButton } from '@/ui/components/buttons';
 import { confirmUpdate } from '@/ui/components/dialog/confirm';
@@ -41,13 +44,17 @@ export function ToggleSystemNamespaceButton({
   );
 
   async function markUnmarkAsSystem() {
-    const confirmed = await confirmMarkUnmarkAsSystem(isSystemNamespace);
-    if (confirmed) {
-      toggleSystemNamespaceMutation.mutate(!isSystemNamespace, {
-        onSuccess: () => {
-          notifySuccess('Success', 'Namespace updated');
-        },
-      });
+    try {
+      const confirmed = await confirmMarkUnmarkAsSystem(isSystemNamespace);
+      if (confirmed) {
+        toggleSystemNamespaceMutation.mutate(!isSystemNamespace, {
+          onSuccess: () => {
+            notifySuccess('Success', 'Namespace updated');
+          },
+        });
+      }
+    } catch (error) {
+      notifyError('Unable to confirm namespace update', error);
     }
   }
 }
