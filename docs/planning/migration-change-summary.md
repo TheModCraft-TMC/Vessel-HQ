@@ -189,6 +189,21 @@ expired or short values. All 28 Python tests pass, including date-format and
 real request-layer retry cases. Writes still never retry. This small protocol
 fix does not change the backend or frontend source tested by both reviewers.
 
+The single Copilot review found a remaining quadratic cron-validation path:
+the unanchored regex could restart after each comma in a malformed numeric
+list. Extend the bounded lookbehind to reject a preceding digit-comma pair,
+not just a preceding digit. Both Edge job create/update forms share the fixed
+schema. Sixteen focused cases pass, including 50,000-element malformed and
+valid lists; 100,000 deterministic differential samples preserve acceptance.
+The bot's 16,000-element reproduction drops from roughly 550 ms to below 1 ms
+on the local Node 24 check. No input-length cutoff or scanner exclusion is used.
+After this fix, the full frontend suite passes 355 files / 2,428 tests (five
+skipped, 11 todo); guards, typecheck, uncached lint (zero errors, 192 warnings)
+and production packaging pass again. The rebuilt production client rejects a
+100,002-character malformed list in 46 ms on create and 33 ms on update, then
+accepts a valid rule again. Isolated API fixtures record no attempted mutations
+and no page errors. Both forms were exercised, not just the regex in isolation.
+
 **Not done yet: the intentional Docker root findings require an authorized
 SonarCloud review.** Automatic Analysis ignores the attempted multicriteria
 configuration, and Dockerfiles do not support `NOSONAR`. Remove the ineffective
