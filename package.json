@@ -24,7 +24,7 @@
     "analyze": "next experimental-analyze web-src --output",
     "format": "prettier --log-level warn --write  \"**/*.{js,css,html,jsx,tsx,ts}\"",
     "lint": "eslint --cache --fix \"./**/*.{js,jsx,ts,tsx}\"",
-    "lint:ci": "./scripts/check-frontend-modernization.sh && node ./scripts/check-frontend-boundaries.mjs && node ./scripts/check-app-router-compliance.mjs && node ./scripts/check-css-module-classes.mjs && eslint --cache \"./**/*.{js,jsx,ts,tsx}\"",
+    "lint:ci": "./scripts/check-frontend-modernization.sh && node ./scripts/check-frontend-boundaries.mjs && node ./scripts/check-app-router-compliance.mjs && node ./scripts/check-css-module-classes.mjs && node --test ./scripts/check-css-module-classes.test.mjs && eslint --cache \"./**/*.{js,jsx,ts,tsx}\"",
     "test": "vitest run",
     "sb": "pnpm run storybook",
     "storybook": "storybook dev -p 6006",

@@ -2,7 +2,9 @@
 
 ## Registry transition policy
 
-The current Vessel HQ release is `1.3.0`; its [release notes](../releases/1.3.0.md) describe the component-scoped environment migration, refreshed control surfaces, and unified local development workflow. The [1.2.5 release notes](../releases/1.2.5.md) describe complete stale-session invalidation and corrected environment icons, the [1.2.4 release notes](../releases/1.2.4.md) describe the public login routing fix, the [1.2.3 release notes](../releases/1.2.3.md) describe the persistent navigation shell and stable table loading states, the [1.2.2 release notes](../releases/1.2.2.md) describe the Cloudflare streamed-HTML compatibility hotfix, the [1.2.1 release notes](../releases/1.2.1.md) describe the CSP and SSO hotfix, and the [1.2.0 release notes](../releases/1.2.0.md) describe the initial migration and verification scope. Keep the existing `themodcrafttmc/portainer` repository and its historical tags intact.
+<!-- REVIEW: Keep the current release and copy/paste publication tags aligned
+with RELEASE_VERSION; 1.3.0 remains historical, not the next publish target. -->
+The current Vessel HQ release source is `1.3.1`; its [release notes](../releases/1.3.1.md) describe the dependency compatibility repairs and restored CSS Module styles. The [1.3.0 release notes](../releases/1.3.0.md) describe the component-scoped environment migration, refreshed control surfaces, and unified local development workflow. The [1.2.5 release notes](../releases/1.2.5.md) describe complete stale-session invalidation and corrected environment icons, the [1.2.4 release notes](../releases/1.2.4.md) describe the public login routing fix, the [1.2.3 release notes](../releases/1.2.3.md) describe the persistent navigation shell and stable table loading states, the [1.2.2 release notes](../releases/1.2.2.md) describe the Cloudflare streamed-HTML compatibility hotfix, the [1.2.1 release notes](../releases/1.2.1.md) describe the CSP and SSO hotfix, and the [1.2.0 release notes](../releases/1.2.0.md) describe the initial migration and verification scope. Keep the existing `themodcrafttmc/portainer` repository and its historical tags intact.
 
 A dedicated Vessel HQ Docker Hub repository is planned but has not been created or selected yet. Future publishing must not switch registries, retag historical images, or change update discovery until that repository name and its migration plan are explicitly approved. Once approved, update the build script, release workflow, update checker, UI links, and this document together.
 
@@ -42,10 +44,10 @@ The generated `BUILD-IMAGE.txt` contains the exact commands for the release:
 ./scripts/build-release-context.sh
 cd dist/release-context
 docker buildx build --platform linux/amd64,linux/arm64 \
-  -t themodcrafttmc/portainer:1.3.0 --push .
+  -t themodcrafttmc/portainer:1.3.1 --push .
 docker buildx imagetools create \
   -t themodcrafttmc/portainer:latest \
-  themodcrafttmc/portainer:1.3.0
+  themodcrafttmc/portainer:1.3.1
 ```
 
 The immutable version is published and verified before the channel alias is moved. Both registry references must resolve to the same OCI index digest and contain `linux/amd64` and `linux/arm64` manifests.
