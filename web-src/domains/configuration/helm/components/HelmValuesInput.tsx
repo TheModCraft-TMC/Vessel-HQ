@@ -21,7 +21,7 @@ export function HelmValuesInput({
         label="User-defined values"
         inputId="user-values-editor"
         size="vertical"
-        className="!mx-0 [&>label]:!mb-1"
+        className="mx-0! [&>label]:mb-1!"
         tooltip={
           <>
             User-defined values will override the default chart values.
@@ -62,7 +62,7 @@ export function HelmValuesInput({
         size="vertical"
         isLoading={isValuesRefLoading}
         loadingText="Loading values..."
-        className="!mx-0 [&>label]:!mb-1 [&>label]:w-full"
+        className="mx-0! [&>label]:mb-1! [&>label]:w-full"
       >
         <CodeEditor
           id="values-reference"

@@ -16,7 +16,7 @@ export function FormError({ children, className }: PropsWithChildren<Props>) {
   return (
     <div
       className={clsx(
-        `text-muted help-block !inline-flex gap-1 !align-top text-xs`,
+        `text-muted help-block inline-flex! gap-1 align-top! text-xs`,
         className
       )}
       role="alert"

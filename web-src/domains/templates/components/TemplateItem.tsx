@@ -66,7 +66,7 @@ export function TemplateItem({
                   !template.Platform) && (
                   <Icon
                     icon={MicrosoftIcon}
-                    className="[&>*]:flex [&>*]:items-center"
+                    className="*:flex *:items-center"
                     size="lg"
                   />
                 )}
@@ -76,7 +76,7 @@ export function TemplateItem({
                   <Icon
                     icon={KubernetesIcon}
                     size="lg"
-                    className="align-bottom [&>*]:flex [&>*]:items-center"
+                    className="align-bottom *:flex *:items-center"
                   />
                 </div>
               )}

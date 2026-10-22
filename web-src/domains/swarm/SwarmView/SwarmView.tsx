@@ -38,7 +38,7 @@ export function SwarmView() {
           <Widget>
             <WidgetTitle title="Cluster status" icon="trello" />
             <WidgetBody className="no-padding">
-              <DetailsTable dataCy="swarm-cluster-status" className="!mb-0">
+              <DetailsTable dataCy="swarm-cluster-status" className="mb-0!">
                 <tr>
                   <td>Nodes</td>
                   <td>{infoQuery.data?.Swarm?.Nodes ?? nodes?.length}</td>

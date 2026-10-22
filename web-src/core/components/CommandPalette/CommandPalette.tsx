@@ -79,7 +79,7 @@ export const CommandPalette = forwardRef<HTMLInputElement, Props>(
             }
           }}
           placeholder="Filter or add expression, e.g. *.yml, src/**/*.ts"
-          className="flex-1 border-0 bg-transparent text-sm text-gray-11 outline-none placeholder:text-gray-6 th-highcontrast:text-white th-dark:text-white"
+          className="flex-1 border-0 bg-transparent text-sm text-gray-11 outline-hidden placeholder:text-gray-6 th-highcontrast:text-white th-dark:text-white"
           data-cy="command-palette-search-input"
         />
         {filterActive && (

@@ -30,7 +30,7 @@ export function ApplicationAutoScalingTable({
   return (
     <>
       <div className="text-muted mb-4 flex items-center">
-        <Icon icon={Move} className="!mr-2" />
+        <Icon icon={Move} className="mr-2!" />
         Auto-scaling
       </div>
       {!appAutoScalar && (

@@ -35,7 +35,7 @@ function goToParent(onClick: () => void): FileData {
         onClick={onClick}
         color="link"
         icon={CornerLeftUp}
-        className="!m-0 !p-0"
+        className="m-0! p-0!"
         data-cy="component-goToParentButton"
       >
         Go to parent

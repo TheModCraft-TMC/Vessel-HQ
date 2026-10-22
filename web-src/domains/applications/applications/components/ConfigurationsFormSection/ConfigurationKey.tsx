@@ -51,7 +51,7 @@ export function ConfigurationData({
           <Button
             color="light"
             size="medium"
-            className={clsx('!ml-0', { active: value.type === 'ENVIRONMENT' })}
+            className={clsx('ml-0!', { active: value.type === 'ENVIRONMENT' })}
             onClick={() =>
               onChange({
                 ...value,
@@ -67,7 +67,7 @@ export function ConfigurationData({
           <Button
             color="light"
             size="medium"
-            className={clsx('!ml-0 mr-1', {
+            className={clsx('ml-0! mr-1', {
               active: value.type === 'FILESYSTEM',
             })}
             onClick={() => onChange({ ...value, path: '', type: 'FILESYSTEM' })}

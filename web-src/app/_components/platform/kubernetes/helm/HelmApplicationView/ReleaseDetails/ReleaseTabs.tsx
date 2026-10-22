@@ -170,7 +170,7 @@ function helmTabs(
           Events
           {eventWarningCount >= 1 && (
             <Badge type="warnSecondary">
-              <Icon icon={AlertTriangle} className="!mr-1" />
+              <Icon icon={AlertTriangle} className="mr-1!" />
               {eventWarningCount}
             </Badge>
           )}

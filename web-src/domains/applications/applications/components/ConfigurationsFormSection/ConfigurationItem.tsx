@@ -72,7 +72,7 @@ export function ConfigurationItem({
             <Button
               color="light"
               size="medium"
-              className={clsx('!ml-0', { active: !item.overriden })}
+              className={clsx('ml-0!', { active: !item.overriden })}
               onClick={() => onToggleOverride(false)}
               icon={RotateCw}
               data-cy={`k8sAppCreate-add${configurationType}AutoButton_${index}`}
@@ -82,7 +82,7 @@ export function ConfigurationItem({
             <Button
               color="light"
               size="medium"
-              className={clsx('!ml-0 mr-1', { active: item.overriden })}
+              className={clsx('ml-0! mr-1', { active: item.overriden })}
               onClick={() => onToggleOverride(true)}
               icon={List}
               data-cy={`k8sAppCreate-add${configurationType}OverrideButton_${index}`}
@@ -95,7 +95,7 @@ export function ConfigurationItem({
           color="dangerlight"
           size="medium"
           onClick={onRemoveItem}
-          className="vertical-center btn-only-icon !ml-0"
+          className="vertical-center btn-only-icon ml-0!"
           icon={Trash2}
           data-cy={`k8sAppCreate-remove${configurationType}Button_${index}`}
         />

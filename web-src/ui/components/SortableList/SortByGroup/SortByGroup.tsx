@@ -88,8 +88,8 @@ const activeBtn = clsx(
 const inactiveBtn = clsx(
   'text-muted rounded-md border-none',
   'bg-gray-4 hover:bg-gray-2',
-  'th-dark:bg-gray-iron-11 th-dark:text-white th-dark:hover:bg-gray-iron-9',
-  'th-highcontrast:bg-black th-highcontrast:text-white th-highcontrast:hover:bg-white th-highcontrast:hover:text-black'
+  'th-dark:bg-gray-iron-11 th-dark:text-white hover:th-dark:bg-gray-iron-9',
+  'th-highcontrast:bg-black th-highcontrast:text-white hover:th-highcontrast:bg-white hover:th-highcontrast:text-black'
 );
 
 interface SortOptionItemProps<TSortKey extends string> {

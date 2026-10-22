@@ -27,7 +27,7 @@ export function Code({ children, showCopyButton }: Props) {
         >
           <Icon
             icon={copiedSuccessfully ? Check : Copy}
-            className="!ml-1"
+            className="ml-1!"
             mode={copiedSuccessfully ? 'success' : undefined}
           />
         </Button>

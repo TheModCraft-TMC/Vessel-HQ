@@ -276,8 +276,8 @@ export function IngressForm({
               </div>
             </div>
 
-            <div className="col-sm-12 text-muted !mb-0 px-0">
-              <div className="control-label !mb-3 text-left font-medium">
+            <div className="col-sm-12 text-muted mb-0! px-0">
+              <div className="control-label mb-3! text-left font-medium">
                 Annotations
                 <Tooltip
                   message={
@@ -319,7 +319,7 @@ export function IngressForm({
               <TooltipWithChildren message="Use annotations to configure options for an ingress. Review Nginx or Traefik documentation to find the annotations supported by your choice of ingress type.">
                 <span>
                   <Button
-                    className="btn btn-sm btn-light !ml-0 mb-2"
+                    className="btn btn-sm btn-light ml-0! mb-2"
                     data-cy="add-annotation-button"
                     onClick={() => addNewAnnotation()}
                     icon={Plus}
@@ -401,7 +401,7 @@ export function IngressForm({
                   </div>
                   {!host.NoHost && (
                     <div className="row">
-                      <div className="form-group col-sm-6 col-lg-4 !pl-0 !pr-2">
+                      <div className="form-group col-sm-6 col-lg-4 pl-0! pr-2!">
                         <InputGroup size="small">
                           <InputGroup.Addon
                             required
@@ -425,13 +425,13 @@ export function IngressForm({
                         </InputGroup>
 
                         {errors[`hosts[${hostIndex}].host`] && (
-                          <FormError className="!mb-0 mt-1">
+                          <FormError className="mb-0! mt-1">
                             {errors[`hosts[${hostIndex}].host`]}
                           </FormError>
                         )}
                       </div>
 
-                      <div className="form-group col-sm-6 col-lg-4 !pl-2 !pr-0">
+                      <div className="form-group col-sm-6 col-lg-4 pl-2! pr-0!">
                         <InputGroup size="small">
                           <InputGroup.Addon
                             as="label"
@@ -468,7 +468,7 @@ export function IngressForm({
                           {!host.NoHost && (
                             <div className="input-group-btn">
                               <Button
-                                className="btn btn-light btn-sm !ml-0 !rounded-l-none"
+                                className="btn btn-light btn-sm ml-0! rounded-l-none!"
                                 onClick={() => reloadTLSCerts()}
                                 icon={RefreshCw}
                                 data-cy={`k8sAppCreate-tlsRefreshButton_${hostIndex}`}
@@ -504,7 +504,7 @@ export function IngressForm({
                   )}
 
                   <div className="row">
-                    <div className="col-sm-12 text-muted !mb-0 mt-2 px-0">
+                    <div className="col-sm-12 text-muted mb-0! mt-2 px-0">
                       Paths
                     </div>
                   </div>
@@ -519,10 +519,10 @@ export function IngressForm({
 
                   {host.Paths.map((path, pathIndex) => (
                     <div
-                      className="row path !mb-5 mt-5"
+                      className="row path mb-5! mt-5"
                       key={`path_${path.Key}}`}
                     >
-                      <div className="form-group col-sm-3 col-xl-2 !m-0 !pl-0">
+                      <div className="form-group col-sm-3 col-xl-2 m-0! pl-0!">
                         <InputGroup size="small">
                           <InputGroup.Addon
                             required
@@ -568,7 +568,7 @@ export function IngressForm({
                         {errors[
                           `hosts[${hostIndex}].paths[${pathIndex}].servicename`
                         ] && (
-                          <FormError className="error-inline !mb-0 mt-1">
+                          <FormError className="error-inline mb-0! mt-1">
                             {
                               errors[
                                 `hosts[${hostIndex}].paths[${pathIndex}].servicename`
@@ -578,7 +578,7 @@ export function IngressForm({
                         )}
                       </div>
 
-                      <div className="form-group col-sm-2 col-xl-2 !m-0 min-w-[170px] !pl-0">
+                      <div className="form-group col-sm-2 col-xl-2 m-0! min-w-[170px] pl-0!">
                         {servicePorts && (
                           <>
                             <InputGroup size="small">
@@ -630,7 +630,7 @@ export function IngressForm({
                             {errors[
                               `hosts[${hostIndex}].paths[${pathIndex}].serviceport`
                             ] && (
-                              <FormError className="!mb-0 mt-1">
+                              <FormError className="mb-0! mt-1">
                                 {
                                   errors[
                                     `hosts[${hostIndex}].paths[${pathIndex}].serviceport`
@@ -642,7 +642,7 @@ export function IngressForm({
                         )}
                       </div>
 
-                      <div className="form-group col-sm-3 col-xl-2 !m-0 !pl-0">
+                      <div className="form-group col-sm-3 col-xl-2 m-0! pl-0!">
                         <InputGroup size="small">
                           <InputGroup.Addon
                             as="label"
@@ -689,7 +689,7 @@ export function IngressForm({
                         {errors[
                           `hosts[${hostIndex}].paths[${pathIndex}].pathType`
                         ] && (
-                          <FormError className="!mb-0 mt-1">
+                          <FormError className="mb-0! mt-1">
                             {
                               errors[
                                 `hosts[${hostIndex}].paths[${pathIndex}].pathType`
@@ -699,7 +699,7 @@ export function IngressForm({
                         )}
                       </div>
 
-                      <div className="form-group col-sm-3 col-xl-3 !m-0 !pl-0">
+                      <div className="form-group col-sm-3 col-xl-3 m-0! pl-0!">
                         <InputGroup size="small">
                           <InputGroup.Addon
                             required
@@ -729,7 +729,7 @@ export function IngressForm({
                         {errors[
                           `hosts[${hostIndex}].paths[${pathIndex}].path`
                         ] && (
-                          <FormError className="!mb-0 mt-1">
+                          <FormError className="mb-0! mt-1">
                             {
                               errors[
                                 `hosts[${hostIndex}].paths[${pathIndex}].path`
@@ -739,9 +739,9 @@ export function IngressForm({
                         )}
                       </div>
 
-                      <div className="form-group col-sm-1 !m-0 !pl-0">
+                      <div className="form-group col-sm-1 m-0! pl-0!">
                         <Button
-                          className="!ml-0 h-[30px]"
+                          className="ml-0! h-[30px]"
                           color="dangerlight"
                           type="button"
                           data-cy={`k8sAppCreate-rmPortButton_${hostIndex}-${pathIndex}`}
@@ -758,7 +758,7 @@ export function IngressForm({
 
                   <div className="row mt-5">
                     <Button
-                      className="!ml-0"
+                      className="ml-0!"
                       type="button"
                       onClick={() => addNewIngressRoute(hostIndex)}
                       icon={Plus}
@@ -776,7 +776,7 @@ export function IngressForm({
           <div className="row rules-action p-0">
             <div className="col-sm-12 vertical-center p-0">
               <Button
-                className="!ml-0"
+                className="ml-0!"
                 type="button"
                 onClick={() => addNewIngressHost()}
                 icon={Plus}

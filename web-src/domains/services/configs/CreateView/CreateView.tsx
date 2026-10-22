@@ -139,7 +139,7 @@ export function CreateConfigForm({
                 loadingText="Creating config..."
                 isLoading={createMutation.isLoading}
                 disabled={!name || !content}
-                className="!ml-0"
+                className="ml-0!"
                 data-cy="createConfig-submitButton"
               >
                 Create config

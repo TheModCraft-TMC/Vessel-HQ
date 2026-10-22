@@ -75,7 +75,7 @@ export function EnvironmentsDatatable({
             disabled={selectedRows.length === 0}
             onClick={() => onRemove(selectedRows)}
             icon={Trash2}
-            className="!m-0"
+            className="m-0!"
             data-cy="remove-environments-button"
           >
             Remove

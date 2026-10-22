@@ -58,14 +58,14 @@ export function AutocompleteSelect({
   return (
     <Combobox
       className={clsx(styles.root, 'form-control', {
-        'bg-[var(--bg-form-control-disabled-color)]': disabled,
+        'bg-(--bg-form-control-disabled-color)': disabled,
       })}
       onSelect={handleSelect}
       data-cy="component-gitComposeInput"
     >
       <ComboboxInput
         value={searchTerm}
-        className="w-full border-none bg-transparent outline-none"
+        className="w-full border-none bg-transparent outline-hidden"
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder={placeholder}
@@ -83,8 +83,8 @@ export function AutocompleteSelect({
                 key={option.value}
                 value={option.value}
                 className={clsx(
-                  `[&[aria-selected="true"]]:th-highcontrast:!bg-black [&[aria-selected="true"]]:th-dark:!bg-black`,
-                  `hover:th-highcontrast:!bg-black hover:th-dark:!bg-black`,
+                  `th-highcontrast:aria-selected:bg-black! th-dark:aria-selected:bg-black!`,
+                  `th-highcontrast:hover:bg-black! th-dark:hover:bg-black!`,
                   'th-highcontrast:bg-gray-10 th-dark:bg-gray-10'
                 )}
               />

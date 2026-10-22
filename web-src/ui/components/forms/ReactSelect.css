@@ -1,3 +1,5 @@
+@reference '../../../shared/assets/css/tailwind.css';
+
 .portainer-selector-root {
   --multi-value-tag-bg: var(--grey-51);
   --single-value-option-text-color: currentColor;

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react-webpack5';
+import { Meta, StoryObj } from '@storybook/react';
 import {
   LayoutGrid,
   Shield,
@@ -67,7 +67,7 @@ export const ActionBar: Story = {
   args: {
     title: 'Production Cluster',
     icon: (
-      <LayoutGrid className="!text-group-accent-8 th-dark:!text-group-accent-2" />
+      <LayoutGrid className="text-group-accent-8! th-dark:text-group-accent-2!" />
     ),
     subtitleLabel: 'Environment Group',
     description: 'Resource detail header with the action bar slot in use',
@@ -117,7 +117,7 @@ export const StatBlocks: Story = {
   args: {
     title: 'orders-api',
     icon: (
-      <LayoutGrid className="!text-group-accent-8 th-dark:!text-group-accent-2" />
+      <LayoutGrid className="text-group-accent-8! th-dark:text-group-accent-2!" />
     ),
     subtitleLabel: 'GitOps Source',
     description: 'Synced from origin/main · 14 services',
@@ -151,7 +151,7 @@ export const WithStatBlocksAndActionBar: Story = {
   args: {
     title: 'Production Cluster',
     icon: (
-      <LayoutGrid className="!text-group-accent-8 th-dark:!text-group-accent-2" />
+      <LayoutGrid className="text-group-accent-8! th-dark:text-group-accent-2!" />
     ),
     subtitleLabel: 'Environment Group',
     description: 'Main production environment group',
@@ -319,7 +319,7 @@ export const PolicyExample: Story = {
     subtitleLabel: 'Policy',
     subtitleClassName: 'text-blue-10 th-dark:text-blue-8',
     badge: (
-      <span className="inline-block rounded bg-blue-2 px-2 py-1 text-xs font-medium text-blue-9 th-dark:bg-blue-11 th-dark:text-blue-2">
+      <span className="inline-block rounded-sm bg-blue-2 px-2 py-1 text-xs font-medium text-blue-9 th-dark:bg-blue-11 th-dark:text-blue-2">
         Docker
       </span>
     ),
@@ -347,7 +347,7 @@ export const EnvironmentGroup: Story = {
   args: {
     title: 'Production Cluster',
     icon: (
-      <LayoutGrid className="!text-group-accent-8 th-dark:!text-group-accent-2" />
+      <LayoutGrid className="text-group-accent-8! th-dark:text-group-accent-2!" />
     ),
     subtitleLabel: 'Environment Group',
     description: 'Main production environment group',

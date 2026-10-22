@@ -185,7 +185,7 @@ function ExternalOrphanedWarning({
       <div className="form-group">
         <span className="small">
           <p className="text-muted flex items-start gap-1">
-            <Icon icon={AlertTriangle} mode="warning" className="!mr-0" />
+            <Icon icon={AlertTriangle} mode="warning" className="mr-0!" />
             {isExternal && (
               <span>
                 This stack was created outside of Vessel HQ. Control over this

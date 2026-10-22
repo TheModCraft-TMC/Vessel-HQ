@@ -34,7 +34,7 @@ export function AnnotationsForm({
     <>
       {annotations.map((annotation, i) => (
         <div className="row" key={annotation.id}>
-          <div className="form-group col-sm-4 !m-0 !pl-0">
+          <div className="form-group col-sm-4 m-0! pl-0!">
             <div className="input-group input-group-sm">
               <span className="input-group-addon required">Key</span>
               <input
@@ -50,12 +50,12 @@ export function AnnotationsForm({
               />
             </div>
             {annotationErrors?.[i]?.key && (
-              <FormError className="!mb-0 mt-1">
+              <FormError className="mb-0! mt-1">
                 {annotationErrors[i]?.key}
               </FormError>
             )}
           </div>
-          <div className="form-group col-sm-4 !m-0 !pl-0">
+          <div className="form-group col-sm-4 m-0! pl-0!">
             <div className="input-group input-group-sm">
               <span className="input-group-addon required">Value</span>
               <input
@@ -71,17 +71,17 @@ export function AnnotationsForm({
               />
             </div>
             {annotationErrors?.[i]?.value && (
-              <FormError className="!mb-0 mt-1">
+              <FormError className="mb-0! mt-1">
                 {annotationErrors[i]?.value}
               </FormError>
             )}
           </div>
-          <div className="col-sm-3 !m-0 !pl-0">
+          <div className="col-sm-3 m-0! pl-0!">
             <Button
               size="small"
               data-cy={`remove-annotation-${i}`}
               color="dangerlight"
-              className="btn-only-icon !ml-0"
+              className="btn-only-icon ml-0!"
               type="button"
               onClick={() => removeAnnotation(i)}
               icon={Trash2}

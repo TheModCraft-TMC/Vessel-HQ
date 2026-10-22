@@ -42,7 +42,7 @@ export function DeploymentOptionsSection() {
               onChange={(value) =>
                 setFieldValue('globalDeploymentOptions.hideWebEditor', !value)
               }
-              labelClass="col-sm-2 !pl-4"
+              labelClass="col-sm-2 pl-4!"
             />
           </div>
           <div className="col-sm-12">
@@ -54,7 +54,7 @@ export function DeploymentOptionsSection() {
               onChange={(value) =>
                 setFieldValue('globalDeploymentOptions.hideFileUpload', !value)
               }
-              labelClass="col-sm-2 !pl-4"
+              labelClass="col-sm-2 pl-4!"
             />
           </div>
         </div>

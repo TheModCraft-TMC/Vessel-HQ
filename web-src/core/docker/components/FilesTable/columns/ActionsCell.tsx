@@ -24,7 +24,7 @@ export function ActionsCell({
             size="xsmall"
             onClick={() => meta.onDownload(item.Name)}
             icon={Download}
-            className="!m-0"
+            className="m-0!"
             data-cy={`docker-files-download-${item.Name}`}
           >
             Download
@@ -37,7 +37,7 @@ export function ActionsCell({
           size="xsmall"
           icon={Edit}
           onClick={() => meta.setIsEdit(item.Name, true)}
-          className="!m-0"
+          className="m-0!"
           data-cy={`docker-files-rename-${item.Name}`}
         >
           Rename
@@ -49,7 +49,7 @@ export function ActionsCell({
           size="xsmall"
           icon={Trash2}
           onClick={() => meta.onDelete(item.Name)}
-          className="!m-0"
+          className="m-0!"
           data-cy={`docker-files-delete-${item.Name}`}
         >
           Delete

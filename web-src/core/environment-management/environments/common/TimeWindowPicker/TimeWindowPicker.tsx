@@ -48,7 +48,7 @@ export function TimeWindowPicker({
           errors={errors}
         />
       )}
-      <Alert color="info" className="[&>div]:!text-xs">
+      <Alert color="info" className="[&>div]:text-xs!">
         <span>
           GitOps updates to stacks or applications outside{' '}
           <span className="font-bold">{`${formatUTCTime(
@@ -73,7 +73,7 @@ export function TimeWindowPicker({
             <Button
               color="default"
               data-cy="edit-change-window-button"
-              className="!ml-0"
+              className="ml-0!"
               onClick={() => setIsEditMode(true)}
             >
               Edit Change Window
@@ -83,7 +83,7 @@ export function TimeWindowPicker({
             <Button
               color="default"
               data-cy="cancel-change-window-button"
-              className="!ml-0"
+              className="ml-0!"
               onClick={() => {
                 setIsEditMode(false);
                 onChangeChangeWindow(initialValues);

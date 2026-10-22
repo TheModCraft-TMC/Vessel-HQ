@@ -176,7 +176,7 @@ export function AppIngressPathForm({
           icon={Trash2}
           color="dangerlight"
           size="medium"
-          className="!ml-0"
+          className="ml-0!"
           onClick={() => onRemoveIngressPath()}
           data-cy="k8sAppCreate-removeIngressPathButton"
         />

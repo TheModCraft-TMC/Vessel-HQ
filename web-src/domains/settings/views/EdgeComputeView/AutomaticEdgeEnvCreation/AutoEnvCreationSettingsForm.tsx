@@ -65,7 +65,7 @@ export function AutoEnvCreationSettingsForm({ settings }: Props) {
                 data-cy="save-auto-env-settings-button"
                 isLoading={mutation.isLoading}
                 disabled={!isValid || !dirty}
-                className="!ml-0"
+                className="ml-0!"
               >
                 Save settings
               </LoadingButton>

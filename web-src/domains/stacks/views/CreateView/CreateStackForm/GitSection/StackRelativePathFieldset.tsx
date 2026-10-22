@@ -37,7 +37,7 @@ export function StackRelativePathFieldset({ isDockerStandalone }: Props) {
           {!isDockerStandalone && (
             <div className="col-sm-12">
               <p className="small text-muted flex items-center gap-1">
-                <Icon icon={Info} className="!mr-1 text-blue-8" />
+                <Icon icon={Info} className="mr-1! text-blue-8" />
                 For relative path volumes use with Docker Swarm, you must have a
                 network filesystem which all of your nodes can access.
               </p>

@@ -31,7 +31,7 @@ export function SimpleMode({
         size="small"
         color="link"
         icon={Edit}
-        className="!ml-0 p-0 hover:no-underline"
+        className="ml-0! p-0 hover:no-underline"
         onClick={onAdvancedModeClick}
         data-cy="environment-variables-advanced-mode-button"
       >
@@ -58,7 +58,7 @@ export function SimpleMode({
           onClick={() =>
             onChange([...value, { name: '', value: '', needsDeletion: false }])
           }
-          className="!ml-0"
+          className="ml-0!"
           color="default"
           icon={Plus}
           data-cy="add-environment-variable-button"

@@ -42,7 +42,7 @@ export function HelmEventsDatatable({
       <EventsDatatable
         dataset={eventsQuery.data || []}
         title={
-          <TextTip inline color="blue" className="!text-xs">
+          <TextTip inline color="blue" className="text-xs!">
             Only events for resources currently in the cluster will be
             displayed.
           </TextTip>

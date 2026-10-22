@@ -51,7 +51,7 @@ function FileRow({ path, onRemove }: FileRowProps) {
       <button
         type="button"
         onClick={onRemove}
-        className="flex shrink-0 items-center justify-center rounded border-0 bg-transparent p-0.5 text-gray-6 hover:text-gray-9 th-highcontrast:text-white th-dark:text-gray-6"
+        className="flex shrink-0 items-center justify-center rounded-sm border-0 bg-transparent p-0.5 text-gray-6 hover:text-gray-9 th-highcontrast:text-white th-dark:text-gray-6"
         aria-label={`Remove file /${path}`}
       >
         <X size={12} />

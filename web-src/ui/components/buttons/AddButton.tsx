@@ -26,7 +26,7 @@ export function AddButton({
       as={Link}
       props={{ to, params }}
       icon={Plus}
-      className="!m-0"
+      className="m-0!"
       data-cy={dataCy}
       color={color}
       disabled={disabled}

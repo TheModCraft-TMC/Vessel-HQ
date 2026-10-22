@@ -162,7 +162,7 @@ function SSLSettingsPanel() {
                     data-cy="save-ssl-settings-button"
                     disabled={!dirty || !isValid}
                     loadingText={reloadingPage ? 'Reloading' : 'Saving'}
-                    className="!ml-0"
+                    className="ml-0!"
                   >
                     Save SSL settings
                   </LoadingButton>

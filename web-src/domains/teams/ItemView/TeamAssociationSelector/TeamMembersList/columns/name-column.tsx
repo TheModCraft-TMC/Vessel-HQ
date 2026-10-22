@@ -37,7 +37,7 @@ export function NameCell({
       <Button
         color="link"
         data-cy={`remove-member-${user.Username}`}
-        className="space-left !p-0"
+        className="space-left p-0!"
         onClick={() => handleRemoveMember(user.Id)}
         disabled={membershipChangesDisabled}
         icon={MinusCircle}

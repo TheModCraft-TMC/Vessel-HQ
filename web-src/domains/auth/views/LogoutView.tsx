@@ -64,7 +64,7 @@ export function LogoutView() {
               <>
                 <img
                   src={fullLogo}
-                  className="simple-box-logo hidden th-highcontrast:!block th-dark:!block"
+                  className="simple-box-logo hidden th-highcontrast:block! th-dark:block!"
                   alt="Vessel HQ"
                 />
                 <img

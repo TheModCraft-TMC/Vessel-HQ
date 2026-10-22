@@ -48,7 +48,7 @@ export function Sidebar() {
         <div
           className={clsx(
             styles.navListContainer,
-            'mt-6 min-h-0 flex-1 [color-scheme:light] be:[color-scheme:dark] th-highcontrast:[color-scheme:dark] th-dark:[color-scheme:dark]',
+            'mt-6 min-h-0 flex-1 scheme-light be:scheme-dark th-highcontrast:scheme-dark th-dark:scheme-dark',
             {
               '-mr-5 overflow-y-auto pr-5': isOpen,
               'overflow-visible': !isOpen,

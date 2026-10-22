@@ -43,7 +43,7 @@ export function ApplicationSettingsForm() {
             checked={values.useCache}
             onChange={(value) => setFieldValue('useCache', value)}
             labelClass="col-lg-2 col-sm-3" // match the label width of the other fields in the page
-            fieldClass="!mb-4"
+            fieldClass="mb-4!"
           />
           <div className="form-group">
             <div className="col-sm-12">
@@ -51,7 +51,7 @@ export function ApplicationSettingsForm() {
                 loadingText="Saving..."
                 isLoading={updateSettingsMutation.isLoading}
                 disabled={!isValid || !dirty}
-                className="!ml-0"
+                className="ml-0!"
                 data-cy="account-applicationSettingsSaveButton"
               >
                 Save

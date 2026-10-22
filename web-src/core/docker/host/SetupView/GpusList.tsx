@@ -16,8 +16,8 @@ interface Props {
 
 function Item({ item, onChange, index }: ItemProps<Gpu>) {
   return (
-    <div className="flex flex-grow gap-2">
-      <InputGroup size="small" className="flex-grow">
+    <div className="flex grow gap-2">
+      <InputGroup size="small" className="grow">
         <InputGroup.Addon>GPU Name</InputGroup.Addon>
         <InputGroup.Input
           placeholder="my-gpu"
@@ -29,7 +29,7 @@ function Item({ item, onChange, index }: ItemProps<Gpu>) {
         />
       </InputGroup>
 
-      <InputGroup size="small" className="flex-grow">
+      <InputGroup size="small" className="grow">
         <InputGroup.Addon>Index or UUID</InputGroup.Addon>
         <InputGroup.Input
           placeholder="0 or GPU-6e2c7185-c3d3-ae22-da43-bc5267b89061"

@@ -106,7 +106,7 @@ export function PersistedFolderItem({
                 Requested size
               </InputGroup.Addon>
               <Input
-                className="-mr-[1px] !w-20 !rounded-none"
+                className="-mr-px w-20! rounded-none!"
                 type="number"
                 placeholder="e.g. 20"
                 min="0"

@@ -29,7 +29,7 @@ export function WorkflowSubRow({
   const artifactSources = getArtifactSources(artifact, sources);
 
   return (
-    <div className="overflow-hidden rounded border border-solid border-gray-3 text-xs th-dark:border-gray-9">
+    <div className="overflow-hidden rounded-sm border border-solid border-gray-3 text-xs th-dark:border-gray-9">
       {showHeader && (
         <div className="flex items-center gap-2 border-0 border-b border-solid border-gray-3 bg-gray-2 px-4 py-2 th-dark:border-gray-9 th-dark:bg-gray-iron-11">
           <span className="font-semibold text-gray-9 th-highcontrast:text-white th-dark:text-white">

@@ -460,7 +460,7 @@ function LayersTable({ layers }: { layers: ImageLayerViewModel[] }) {
     return (
       <Button
         color="link"
-        className="!p-0"
+        className="p-0!"
         onClick={() => {
           setDescending(sort === field ? !descending : false);
           setSort(field);

@@ -104,7 +104,7 @@ export function EdgeComputeSettings({ settings, onSubmit }: Props) {
                           icon={Network}
                           onClick={() => setIsConnectivityModalOpen(true)}
                           data-cy="edge-compute-test-connectivity-button"
-                          className="!ml-0"
+                          className="ml-0!"
                         >
                           Test connectivity
                         </Button>

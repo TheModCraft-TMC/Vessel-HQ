@@ -39,7 +39,7 @@ export function NameCell({
       {item.Dir ? (
         <Button
           color="link"
-          className="!ml-0 p-0"
+          className="ml-0! p-0"
           onClick={() => meta.onBrowse(name)}
           icon={Folder}
           data-cy={`file-browse-${name}`}

@@ -123,7 +123,7 @@ export function WizardDocker({ onCreate, isDockerStandalone }: Props) {
         options={primaryOptions}
         value={creationType}
         radioName="creation-type"
-        className="!-mb-2"
+        className="-mb-2!"
       />
 
       <FormSection

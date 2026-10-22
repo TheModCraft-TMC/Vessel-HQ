@@ -38,7 +38,7 @@ export function KubeconfigButton({ environments, envQueryParams }: Props) {
       onClick={handleClick}
       data-cy="download-kubeconfig-button"
       size="medium"
-      className="!m-0"
+      className="m-0!"
       icon={Download}
       disabled={isDisabled}
       color="light"
@@ -51,7 +51,7 @@ export function KubeconfigButton({ environments, envQueryParams }: Props) {
     <div className={styles.root}>
       {isDisabled ? (
         <TooltipWithChildren message={tooltipMessage}>
-          <span className="!m-0">{button}</span>
+          <span className="m-0!">{button}</span>
         </TooltipWithChildren>
       ) : (
         button

@@ -15,7 +15,7 @@ export function EnvironmentFormActions({ isLoading, isValid, isDirty }: Props) {
     <div className="form-group">
       <div className="col-sm-12">
         <LoadingButton
-          className="wizard-connect-button !ml-0"
+          className="wizard-connect-button ml-0!"
           loadingText="Updating environment..."
           isLoading={isLoading}
           disabled={!isDirty || !isValid}
@@ -32,7 +32,7 @@ export function EnvironmentFormActions({ isLoading, isValid, isDirty }: Props) {
           props={{ to: '/environments' }}
           disabled={isLoading}
           data-cy="environment-cancel-button"
-          className="!ml-2"
+          className="ml-2!"
         >
           Cancel
         </Button>

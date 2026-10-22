@@ -37,7 +37,7 @@ export function HelmTemplatesList({
 
   return (
     <section className="datatable" aria-label="Helm charts">
-      <div className="toolBar vertical-center relative w-full !gap-x-5 !gap-y-1 overflow-auto !px-0">
+      <div className="toolBar vertical-center relative w-full gap-x-5! gap-y-1! overflow-auto px-0!">
         <div className="toolBarTitle vertical-center whitespace-nowrap">
           Select a helm chart from {selectedRegistry?.name}
         </div>
@@ -47,7 +47,7 @@ export function HelmTemplatesList({
           onChange={(value) => setTextFilter(value)}
           placeholder="Search..."
           data-cy="helm-templates-search"
-          className="!mr-0 h-9"
+          className="mr-0! h-9"
         />
 
         <div className="w-full flex-none sm:w-1/4">
@@ -63,7 +63,7 @@ export function HelmTemplatesList({
         </div>
       </div>
 
-      <div className="blocklist !px-0" role="list">
+      <div className="blocklist px-0!" role="list">
         {filteredCharts.map((chart) => (
           <HelmTemplatesListItem
             key={chart.name}

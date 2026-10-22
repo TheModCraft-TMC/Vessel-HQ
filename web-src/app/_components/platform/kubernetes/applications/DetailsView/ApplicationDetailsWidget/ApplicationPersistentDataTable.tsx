@@ -40,7 +40,7 @@ export function ApplicationPersistentDataTable({
   return (
     <>
       <div className="text-muted mb-4 mt-6 flex items-center">
-        <Icon icon={Database} className="!mr-2 !shrink-0" />
+        <Icon icon={Database} className="mr-2! shrink-0!" />
         Data persistence
       </div>
       {!persistedFolders.length && (
@@ -84,7 +84,7 @@ export function ApplicationPersistentDataTable({
                       {persistedFolder.volumeMount.container.name}
                       {persistedFolder.isContainerInit && (
                         <span>
-                          <Icon icon={Asterisk} className="!mr-1" />(
+                          <Icon icon={Asterisk} className="mr-1!" />(
                           <a
                             href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/"
                             target="_blank"
@@ -109,7 +109,7 @@ export function ApplicationPersistentDataTable({
                           }}
                           data-cy={`k8sAppDetail-volMountPath-${index}`}
                         >
-                          <Icon icon={Database} className="!mr-1 shrink-0" />
+                          <Icon icon={Database} className="mr-1! shrink-0" />
                           {`${persistedFolder.volume.persistentVolumeClaim.claimName}-${persistedFolder.volumeMount?.pod?.metadata?.name}`}
                         </Link>
                       )}
@@ -147,7 +147,7 @@ export function ApplicationPersistentDataTable({
                           }}
                           data-cy={`k8sAppDetail-volMountPath-${index}`}
                         >
-                          <Icon icon={Database} className="!mr-1 shrink-0" />
+                          <Icon icon={Database} className="mr-1! shrink-0" />
                           {
                             persistedFolder.volume.persistentVolumeClaim
                               .claimName

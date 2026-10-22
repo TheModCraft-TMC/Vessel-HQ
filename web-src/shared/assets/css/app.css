@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import './tailwind.css';
 
 @font-face {
   font-family: 'Inter';
@@ -717,7 +715,7 @@ input[style*='background-image: url("data:image/png'] {
 }
 
 input:-webkit-autofill {
-  @apply caret-[--grey-25] th-highcontrast:caret-white th-dark:caret-white;
+  @apply caret-(--grey-25) th-highcontrast:caret-white th-dark:caret-white;
 }
 
 /*

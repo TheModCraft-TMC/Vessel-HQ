@@ -52,7 +52,7 @@ export function EdgeAgentFieldset({
         <div className="col-sm-12">
           <Button
             color="default"
-            className="!ml-0"
+            className="ml-0!"
             icon={Network}
             onClick={() => setIsModalOpen(true)}
             data-cy="edge-agent-test-connectivity-button"

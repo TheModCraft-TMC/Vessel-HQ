@@ -55,7 +55,7 @@ export function ResourcesTable() {
         settingsManager={tableState}
         emptyContentLabel="No resources found"
         title={
-          <TextTip inline color="blue" className="!text-xs">
+          <TextTip inline color="blue" className="text-xs!">
             Only resources currently in the cluster will be displayed.
           </TextTip>
         }

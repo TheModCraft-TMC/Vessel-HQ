@@ -41,7 +41,7 @@ export function SortableListBody<T>({
 
     return (
       <div className={clsx(styles.root, 'relative')}>
-        <div className="pointer-events-none blur-sm">
+        <div className="pointer-events-none blur-xs">
           <Groups
             groups={groups}
             showGroupHeaders={showGroupHeaders}

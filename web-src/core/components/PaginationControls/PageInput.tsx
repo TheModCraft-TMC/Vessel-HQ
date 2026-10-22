@@ -30,7 +30,7 @@ export function PageInput({ onChange, totalPages }: Props) {
       </label>
       <Input
         id="go-to-page-input"
-        className="!w-32"
+        className="w-32!"
         type="number"
         value={values.page}
         max={totalPages}

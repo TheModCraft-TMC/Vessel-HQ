@@ -1,3 +1,5 @@
+@reference '../../../shared/assets/css/tailwind.css';
+
 .datatable .toolBar {
   background-color: var(--bg-card-color);
   overflow: auto;

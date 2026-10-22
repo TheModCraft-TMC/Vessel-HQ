@@ -18,7 +18,7 @@ export function ApplicationEnvVarsTable({ namespace, app }: Props) {
   return (
     <>
       <div className="text-muted mb-4 mt-6 flex items-center">
-        <Icon icon={File} className="!mr-2" />
+        <Icon icon={File} className="mr-2!" />
         Environment variables, ConfigMaps or Secrets
       </div>
       {appEnvVars.length === 0 && (
@@ -42,7 +42,7 @@ export function ApplicationEnvVarsTable({ namespace, app }: Props) {
                   {envVar.containerName}
                   {envVar.isInitContainer && (
                     <span>
-                      <Icon icon={Asterisk} className="!ml-1" />
+                      <Icon icon={Asterisk} className="ml-1!" />
                       {envVar.fieldPath} (
                       <a
                         href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/"
@@ -60,7 +60,7 @@ export function ApplicationEnvVarsTable({ namespace, app }: Props) {
                   {envVar.value && <span>{envVar.value}</span>}
                   {envVar.fieldPath && (
                     <span>
-                      <Icon icon={Asterisk} className="!ml-1" />
+                      <Icon icon={Asterisk} className="ml-1!" />
                       {envVar.fieldPath} (
                       <a
                         href="https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/"
@@ -75,7 +75,7 @@ export function ApplicationEnvVarsTable({ namespace, app }: Props) {
                   {envVar.type !== 'env' &&
                     (envVar.key ? (
                       <span className="flex items-center">
-                        <Icon icon={Key} className="!mr-1" />
+                        <Icon icon={Key} className="mr-1!" />
                         {envVar.key}
                       </span>
                     ) : (
@@ -101,7 +101,7 @@ export function ApplicationEnvVarsTable({ namespace, app }: Props) {
                       >
                         <Icon
                           icon={envVar.type === 'configMap' ? FileCode : Lock}
-                          className="!mr-1"
+                          className="mr-1!"
                         />
                         {envVar.resourceName}
                       </Link>

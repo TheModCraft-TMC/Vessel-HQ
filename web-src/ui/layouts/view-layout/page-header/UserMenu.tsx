@@ -33,7 +33,7 @@ export function UserMenu() {
         <div
           className={clsx(
             styles.menuIcon,
-            'icon-badge mr-1 !p-2 text-lg',
+            'icon-badge mr-1 p-2! text-lg',
             'text-gray-8',
             'th-dark:text-gray-warm-7'
           )}

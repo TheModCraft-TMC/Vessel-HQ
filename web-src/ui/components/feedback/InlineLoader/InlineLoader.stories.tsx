@@ -1,4 +1,4 @@
-import { StoryFn, Meta } from '@storybook/react-webpack5';
+import { StoryFn, Meta } from '@storybook/react';
 import { PropsWithChildren } from 'react';
 
 import { InlineLoader, Props } from './InlineLoader';

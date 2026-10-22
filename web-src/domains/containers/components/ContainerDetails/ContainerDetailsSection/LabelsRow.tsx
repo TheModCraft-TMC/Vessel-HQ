@@ -11,7 +11,7 @@ export function LabelsRow({ labels }: LabelsRowProps) {
 
   return (
     <DetailsTable.Row label="Labels">
-      <table className="table-bordered table-condensed !m-0 table">
+      <table className="table-bordered table-condensed m-0! table">
         <tbody>
           {Object.entries(labels).map(([key, value]) => (
             <tr key={key}>

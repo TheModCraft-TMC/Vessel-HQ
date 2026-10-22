@@ -31,7 +31,7 @@ export function TestConnectionButton({
       <LoadingButton
         size="small"
         color="default"
-        className="!ml-0"
+        className="ml-0!"
         isLoading={mutation.isLoading}
         icon={ArrowLeftRight}
         loadingText="Testing connection..."

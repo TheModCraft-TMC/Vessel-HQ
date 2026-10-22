@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { Boxes as Docker, Briefcase } from 'lucide-react';
 
 import { init as initFeatureService } from '@/shared/feature-flags/feature-flags.service';

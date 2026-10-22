@@ -66,7 +66,7 @@ export const Checkbox = forwardRef<HTMLInputElement, Props>(
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
         />
-        <label htmlFor={id} className={clsx('m-0', { '!font-normal': !bold })}>
+        <label htmlFor={id} className={clsx('m-0', { 'font-normal!': !bold })}>
           {label}
         </label>
       </div>

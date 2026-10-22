@@ -47,7 +47,7 @@ export function HostDetailsPanel({
         <Widget>
           <WidgetTitle title="Host Details" icon="code" />
           <WidgetBody className="no-padding">
-            <DetailsTable dataCy="host-details" className="!mb-0">
+            <DetailsTable dataCy="host-details" className="mb-0!">
               <tr>
                 <td>Hostname</td>
                 <td>{host.name}</td>

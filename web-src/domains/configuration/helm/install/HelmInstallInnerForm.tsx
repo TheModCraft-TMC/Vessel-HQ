@@ -87,7 +87,7 @@ export function HelmInstallInnerForm({
 
   return (
     <Form className="form-horizontal">
-      <div className="form-group !m-0">
+      <div className="form-group m-0!">
         <FormSection title="Configuration" className="mt-4">
           <FormControl
             label="Version"
@@ -125,7 +125,7 @@ export function HelmInstallInnerForm({
       </div>
 
       <LoadingButton
-        className="!ml-0 mt-5"
+        className="ml-0! mt-5"
         loadingText="Installing Helm chart"
         isLoading={isSubmitting}
         disabled={!namespace || !name || !isRepoAvailable}

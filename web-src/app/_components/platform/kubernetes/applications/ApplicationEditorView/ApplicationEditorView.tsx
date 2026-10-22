@@ -290,7 +290,7 @@ function ApplicationEditorForm({
                         : 'Update in progress...'
                     }
                     disabled={!namespace || !value.trim()}
-                    className="!ml-0"
+                    className="ml-0!"
                     data-cy="k8sAppCreate-deployButton"
                   >
                     {isCreate ? 'Deploy application' : 'Update application'}

@@ -81,7 +81,7 @@ function Item({
   label: ReactNode;
 } & AutomationTestingProps) {
   return (
-    <label className="radio-inline !m-0 w-1/2">
+    <label className="radio-inline m-0! w-1/2">
       <input
         type="radio"
         data-cy={dataCy}

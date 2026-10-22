@@ -32,7 +32,7 @@ export function TimePickerInput({
           color="link"
           data-cy="env-time-picker-hours-up-button"
           size="medium"
-          className="!ml-0 w-full"
+          className="ml-0! w-full"
           icon={ChevronUp}
           onClick={() => {
             const newTime = moment(localTime24h, valueFormat)
@@ -45,14 +45,14 @@ export function TimePickerInput({
           type="text"
           data-cy="time-picker-hours-input"
           value={hours}
-          className="w-12 !cursor-default text-center"
+          className="w-12 cursor-default! text-center"
           disabled
         />
         <Button
           color="link"
           data-cy="env-time-picker-hours-down-button"
           size="medium"
-          className="!ml-0 w-full"
+          className="ml-0! w-full"
           icon={ChevronDown}
           onClick={() => {
             const newTime = moment(localTime24h, valueFormat)
@@ -68,7 +68,7 @@ export function TimePickerInput({
           color="link"
           data-cy="env-time-picker-minutes-up-button"
           size="medium"
-          className="!ml-0 w-full"
+          className="ml-0! w-full"
           icon={ChevronUp}
           onClick={() => {
             const newTime = moment(localTime24h, valueFormat)
@@ -81,14 +81,14 @@ export function TimePickerInput({
           type="text"
           data-cy="time-picker-minutes-input"
           value={minutes}
-          className="w-12 !cursor-default text-center"
+          className="w-12 cursor-default! text-center"
           disabled
         />
         <Button
           color="link"
           data-cy="env-time-picker-minutes-down-button"
           size="medium"
-          className="!ml-0 w-full"
+          className="ml-0! w-full"
           icon={ChevronDown}
           onClick={() => {
             const newTime = moment(localTime24h, valueFormat)

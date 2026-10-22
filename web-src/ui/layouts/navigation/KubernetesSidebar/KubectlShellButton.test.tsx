@@ -54,7 +54,7 @@ describe('KubectlShellButton', () => {
     const button = screen.getByTestId('k8sSidebar-shellButton');
     expect(button).toBeVisible();
     expect(button).not.toHaveTextContent('kubectl shell');
-    expect(button).toHaveClass('!p-1');
+    expect(button).toHaveClass('p-1!');
   });
 
   test('should wrap button in tooltip when sidebar is closed', () => {
@@ -65,8 +65,8 @@ describe('KubectlShellButton', () => {
     const wrapperSpan = button.parentElement;
     expect(wrapperSpan).toHaveClass('flex', 'w-full', 'justify-center');
 
-    // The button should have the !p-1 class when sidebar is closed
-    expect(button).toHaveClass('!p-1');
+    // The button should have the p-1! class when sidebar is closed
+    expect(button).toHaveClass('p-1!');
   });
 
   test('should open new window with correct URL when button is clicked', () => {

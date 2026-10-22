@@ -22,7 +22,7 @@ export function HelmRevisionList({
   }
 
   return (
-    <div className="h-0 min-h-full overflow-y-auto [scrollbar-gutter:stable]">
+    <div className="h-0 min-h-full overflow-y-auto scrollbar-gutter-stable">
       <div className="p-5 pb-2.5">
         <span className="vertical-center mb-5">
           <WidgetIcon icon={History} />

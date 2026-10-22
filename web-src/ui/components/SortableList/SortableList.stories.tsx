@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 
 import { DropdownOption } from '@/ui/components/menu';
 

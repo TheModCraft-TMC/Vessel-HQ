@@ -25,7 +25,7 @@ export function WorkflowCard({ item }: { item: Workflow }) {
   return (
     <SortableListItem>
       <div className="flex gap-4">
-        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded bg-gray-2 th-dark:bg-gray-8">
+        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-gray-2 th-dark:bg-gray-8">
           <Icon icon={GitCommit} size="md" className="text-gray-6" />
         </div>
         <div className="min-w-0 flex-1">

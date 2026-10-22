@@ -72,7 +72,7 @@ export function ClusterIpServicesForm({
           <div className="flex">
             <Button
               color="secondary"
-              className="!ml-0"
+              className="ml-0!"
               icon={Plus}
               size="small"
               onClick={() => {

@@ -40,7 +40,7 @@ export function ConnectNetworkForm({
         <Form className="form-horizontal w-full">
           <FormControl
             label="Join a network"
-            className="!mb-0"
+            className="mb-0!"
             errors={errors.networkId}
           >
             <div className="flex items-center gap-4">

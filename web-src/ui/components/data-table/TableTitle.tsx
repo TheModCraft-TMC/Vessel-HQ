@@ -42,7 +42,7 @@ export function TableTitle({
           )}
         </div>
       </div>
-      {!!description && <div className="toolBar !pt-0">{description}</div>}
+      {!!description && <div className="toolBar pt-0!">{description}</div>}
     </>
   );
 }

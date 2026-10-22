@@ -44,11 +44,11 @@ export function FilterBarButton({
         'px-8 py-3',
         'cursor-pointer border-0',
         'text-sm font-medium',
-        'text-[var(--text-muted-color)]',
-        'hover:bg-[var(--bg-blocklist-item-selected-color)]',
+        'text-(--text-muted-color)',
+        'hover:bg-(--bg-blocklist-item-selected-color)',
         'transition-colors duration-150',
-        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-5 has-[:focus-visible]:ring-inset',
-        isSelected && 'bg-[var(--bg-blocklist-item-selected-color)]'
+        'has-focus-visible:ring-2 has-focus-visible:ring-blue-5 has-focus-visible:ring-inset',
+        isSelected && 'bg-(--bg-blocklist-item-selected-color)'
       )}
       data-cy={dataCy}
     >
@@ -74,7 +74,7 @@ export function FilterBarButton({
           <span className={clsx('text-2xl font-bold', colors.text)}>
             {count}
           </span>
-          <span className="text-xs uppercase tracking-wide text-[var(--text-muted-color)]">
+          <span className="text-xs uppercase tracking-wide text-(--text-muted-color)">
             {label}
           </span>
         </span>
@@ -82,11 +82,11 @@ export function FilterBarButton({
       {!colors && (
         <span className="flex items-baseline gap-2">
           {isLoading ? (
-            <span className="h-8 w-8 animate-pulse rounded bg-gray-3 th-dark:bg-gray-8" />
+            <span className="h-8 w-8 animate-pulse rounded-sm bg-gray-3 th-dark:bg-gray-8" />
           ) : (
             <span className="text-2xl font-bold">{count}</span>
           )}
-          <span className="text-base uppercase tracking-wide text-[var(--text-muted-color)]">
+          <span className="text-base uppercase tracking-wide text-(--text-muted-color)">
             {label}
           </span>
         </span>

@@ -149,7 +149,7 @@ function CardHeader({ title, subtitle, icon, actions }: CardHeaderProps) {
           </span>
         </div>
         {subtitle && (
-          <span className="text-xs leading-tight text-[var(--text-muted-color)]">
+          <span className="text-xs leading-tight text-(--text-muted-color)">
             {subtitle}
           </span>
         )}

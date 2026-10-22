@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useMemo, useState } from 'react';
 
 import { createMockUsers } from '@/core/test-support/test-mocks';

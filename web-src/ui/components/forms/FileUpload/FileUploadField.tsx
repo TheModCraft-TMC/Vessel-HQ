@@ -50,7 +50,7 @@ export function FileUploadField({
         accept={accept}
         required={required}
         disabled={disabled}
-        className="!hidden"
+        className="hidden!"
         onChange={changeHandler}
         name={name}
         data-cy={`${dataCy}-input`}
@@ -59,7 +59,7 @@ export function FileUploadField({
         size="small"
         color={color}
         onClick={handleButtonClick}
-        className={clsx('!ml-0', className)}
+        className={clsx('ml-0!', className)}
         data-cy={dataCy}
         icon={UploadIcon}
         disabled={disabled}

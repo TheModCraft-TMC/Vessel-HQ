@@ -75,7 +75,7 @@ export function EditNameForm({
           <Button
             size="xsmall"
             color="none"
-            className="!p-0 hover:no-underline"
+            className="p-0! hover:no-underline"
             onClick={() => onCancel()}
             type="button"
             data-cy="container-cancel-rename-button"
@@ -87,7 +87,7 @@ export function EditNameForm({
           <Button
             size="xsmall"
             color="none"
-            className="!p-0 hover:no-underline"
+            className="p-0! hover:no-underline"
             type="submit"
             data-cy="container-confirm-rename-button"
             disabled={isSubmitting}

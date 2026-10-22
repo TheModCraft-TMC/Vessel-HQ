@@ -37,7 +37,7 @@ export function EnvironmentInfo() {
   return (
     <Widget>
       <Widget.Title icon={GaugeIcon} title="Environment info" />
-      <Widget.Body className="!px-5 !py-0">
+      <Widget.Body className="px-5! py-0!">
         <DetailsTable dataCy="environment-info">
           <DetailsTable.Row label="Environment">
             <div className="flex items-center gap-2">

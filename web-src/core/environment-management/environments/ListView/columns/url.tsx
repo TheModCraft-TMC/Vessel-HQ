@@ -50,7 +50,7 @@ function Cell({
                         <Button
                           color="link"
                           data-cy={`dismiss-error-${environment.Id}`}
-                          className="small !ml-0 p-0"
+                          className="small ml-0! p-0"
                           onClick={handleDismissButton}
                         >
                           <span className="text-muted-light">
@@ -80,7 +80,7 @@ function Cell({
   if (environment.Status === EnvironmentStatus.Provisioning) {
     return (
       <div className="inline-flex items-center text-base">
-        <Icon icon={Loader2} className="!mr-1 animate-spin-slow" />
+        <Icon icon={Loader2} className="mr-1! animate-spin-slow" />
         {environment.StatusMessage?.summary}
         {environment.StatusMessage?.detail && (
           <Tooltip message={environment.StatusMessage?.detail} />

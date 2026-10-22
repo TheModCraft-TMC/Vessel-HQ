@@ -87,7 +87,7 @@ export function AppTemplatesList({
         data-cy="app-templates-list-header"
       />
 
-      <div className="blocklist gap-y-2 !px-[20px] !pb-[20px]" role="list">
+      <div className="blocklist gap-y-2 px-[20px]! pb-[20px]!" role="list">
         {pagedTemplates.map((template) => (
           <AppTemplatesListItem
             key={template.Id}

@@ -1,4 +1,4 @@
-import { StoryObj, Meta } from '@storybook/react-webpack5';
+import { StoryObj, Meta } from '@storybook/react';
 
 import { StatusType } from '@/domains/edge/models/edge-stack';
 

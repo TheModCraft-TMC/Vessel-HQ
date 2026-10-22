@@ -7,7 +7,7 @@ export function LoginLogo({ logo }: { logo?: string }) {
     <>
       <img
         src="/images/vessel-hq-logo.svg"
-        className="simple-box-logo hidden th-highcontrast:!block th-dark:!block"
+        className="simple-box-logo hidden th-highcontrast:block! th-dark:block!"
         alt="Vessel HQ"
       />
       <img

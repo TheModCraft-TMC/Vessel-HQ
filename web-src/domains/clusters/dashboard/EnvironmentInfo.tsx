@@ -22,21 +22,21 @@ export function EnvironmentInfo() {
           <table className="table">
             <tbody>
               <tr>
-                <th scope="row" className="!border-none font-normal">
+                <th scope="row" className="border-none! font-normal">
                   Environment
                 </th>
                 <td
-                  className="!border-none"
+                  className="border-none!"
                   data-cy="dashboard-environmentName"
                 >
                   {environmentData.Name}
                 </td>
               </tr>
               <tr>
-                <th scope="row" className="!border-t font-normal">
+                <th scope="row" className="border-t! font-normal">
                   URL
                 </th>
-                <td className="!border-t" data-cy="dashboard-environmenturl">
+                <td className="border-t!" data-cy="dashboard-environmenturl">
                   {stripProtocol(environmentData.URL) || '-'}
                 </td>
               </tr>

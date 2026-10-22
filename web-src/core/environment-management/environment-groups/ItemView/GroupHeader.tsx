@@ -63,7 +63,7 @@ export function GroupHeader({
         !isLoading && !group ? 'Failed to load group details' : undefined
       }
       icon={
-        <LayoutGrid className="!text-group-accent-8 th-dark:!text-group-accent-2" />
+        <LayoutGrid className="text-group-accent-8! th-dark:text-group-accent-2!" />
       }
       subtitleLabel="Environment Group"
       title={group?.Name || ''}

@@ -49,7 +49,7 @@ export function ColorPicker({
       <label
         aria-label="Choose color"
         htmlFor={pickerId}
-        className="form-control relative !mb-0 h-[34px] w-[34px] shrink-0 cursor-pointer overflow-hidden rounded"
+        className="form-control relative mb-0! h-[34px] w-[34px] shrink-0 cursor-pointer overflow-hidden rounded-sm"
         style={{ backgroundColor: swatchColor }}
       >
         <input

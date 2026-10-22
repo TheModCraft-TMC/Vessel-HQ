@@ -20,10 +20,10 @@ export function EditButtons({ environment }: { environment: Environment }) {
   const configRoute = getConfigRoute(environment);
 
   const buttonsClasses = clsx(
-    '!ml-0 h-full w-full !rounded-none',
+    'ml-0! h-full w-full rounded-none!',
     'hover:bg-gray-3',
-    'th-dark:hover:bg-gray-9',
-    'th-highcontrast:hover:bg-white th-highcontrast:hover:text-black'
+    'hover:th-dark:bg-gray-9',
+    'hover:th-highcontrast:bg-white hover:th-highcontrast:text-black'
   );
 
   return (

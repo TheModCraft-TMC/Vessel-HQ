@@ -94,15 +94,15 @@ export function DockerStorageInfo({
             steps={[
               {
                 value: dockerBytes,
-                className: 'progress-bar !bg-blue-7',
+                className: 'progress-bar bg-blue-7!',
               },
               {
                 value: otherBytes,
-                className: 'progress-bar !bg-warning-8',
+                className: 'progress-bar bg-warning-8!',
               },
             ]}
             total={dockerStorageUsage.totalBytes}
-            className="!w-full"
+            className="w-full!"
           />
         </div>
         <span className="small text-muted shrink-0" aria-label="Total capacity">
@@ -118,7 +118,7 @@ export function DockerStorageInfo({
           <span className="flex items-center gap-1" role="listitem">
             <span
               aria-hidden="true"
-              className="inline-block h-2 w-2 rounded-sm bg-blue-7"
+              className="inline-block h-2 w-2 rounded-xs bg-blue-7"
             />
             <span>
               {platformName} ({humanize(dockerBytes)})
@@ -149,14 +149,14 @@ export function DockerStorageInfo({
           <span className="flex items-center gap-1" role="listitem">
             <span
               aria-hidden="true"
-              className="inline-block h-2 w-2 rounded-sm bg-warning-8"
+              className="inline-block h-2 w-2 rounded-xs bg-warning-8"
             />
             <span>Other ({humanize(otherBytes)})</span>
           </span>
           <span className="flex items-center gap-1" role="listitem">
             <span
               aria-hidden="true"
-              className="inline-block h-2 w-2 rounded-sm bg-gray-5"
+              className="inline-block h-2 w-2 rounded-xs bg-gray-5"
             />
             <span>Free ({humanize(dockerStorageUsage.availableBytes)})</span>
           </span>

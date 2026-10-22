@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react-webpack5';
+import { Meta, StoryObj } from '@storybook/react';
 import { filesize } from 'filesize';
 
 import { StatsLineChart } from './StatsLineChart';

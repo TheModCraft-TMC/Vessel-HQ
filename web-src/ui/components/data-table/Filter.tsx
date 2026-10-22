@@ -65,11 +65,11 @@ export function MultipleSelectionFilter({
                   onCheckedChange={() => handleChange(option)}
                   onSelect={(event) => event.preventDefault()}
                   data-cy={`filter_${filterKey}_${index}`}
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 outline-none focus:bg-graphite-100 th-highcontrast:focus:bg-graphite-700 th-dark:focus:bg-graphite-700"
+                  className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1 outline-hidden focus:bg-graphite-100 focus:th-highcontrast:bg-graphite-700 focus:th-dark:bg-graphite-700"
                 >
                   <span
                     aria-hidden
-                    className="flex h-4 w-4 items-center justify-center rounded border border-solid border-current"
+                    className="flex h-4 w-4 items-center justify-center rounded-sm border border-solid border-current"
                   >
                     {value.includes(option) && <Icon icon={Check} size="sm" />}
                   </span>

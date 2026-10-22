@@ -53,7 +53,7 @@ export function SecretMappingsFieldset({ values, onChange, errors }: Props) {
       <div className="col-sm-12">
         <div className="mb-3 flex items-center justify-between gap-3">
           <div>
-            <div className="control-label !p-0 text-left">Vault secrets</div>
+            <div className="control-label p-0! text-left">Vault secrets</div>
             <p className="mb-0 text-sm text-gray-7 th-highcontrast:text-white th-dark:text-gray-6">
               Choose Vault paths and optional keys. Include the KV mount, for
               example kv/tmc-proxy.
@@ -146,7 +146,7 @@ function SecretMappingRow({
   );
 
   return (
-    <div className="rounded border border-solid border-gray-5 bg-gray-1 p-4 th-dark:border-gray-7 th-dark:bg-gray-10">
+    <div className="rounded-sm border border-solid border-gray-5 bg-gray-1 p-4 th-dark:border-gray-7 th-dark:bg-gray-10">
       <div className="flex w-full flex-col gap-4">
         <FormControl
           inputId={`secret-provider-${index}`}

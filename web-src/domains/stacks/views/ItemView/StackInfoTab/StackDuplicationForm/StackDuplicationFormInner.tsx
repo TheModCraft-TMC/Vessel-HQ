@@ -91,7 +91,7 @@ export function StackDuplicationFormInner({
           onClick={() => handleAction('migrate')}
           icon={ArrowRight}
           data-cy="stack-migrate-button"
-          className="!ml-0"
+          className="ml-0!"
         >
           {values.environmentId === currentEnvironmentId ? 'Rename' : 'Migrate'}
         </LoadingButton>

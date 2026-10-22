@@ -32,7 +32,7 @@ export function EnvironmentBrowseButtons({
   const dashboardRoute = getDashboardRoute(environment);
   return (
     <div
-      className={`${styles.root} flex h-24 w-full flex-col justify-center gap-2 [&>*]:h-1/3`}
+      className={`${styles.root} flex h-24 w-full flex-col justify-center gap-2 *:h-1/3`}
     >
       {isBE &&
         (browseStatus !== 'snapshot' ? (
@@ -45,7 +45,7 @@ export function EnvironmentBrowseButtons({
             }}
             size="medium"
             color="light"
-            className="!m-0 w-full !py-0"
+            className="m-0! w-full py-0!"
             title={
               !isEdgeAsync
                 ? 'Browse snapshot is only available for async environments'
@@ -60,7 +60,7 @@ export function EnvironmentBrowseButtons({
             icon={X}
             data-cy={`close-snapshot-link-${environment.Name}`}
             onClick={onClickDisconnect}
-            className="!m-0 w-full !py-0 opacity-60"
+            className="m-0! w-full py-0! opacity-60"
             size="medium"
             color="light"
           >
@@ -82,7 +82,7 @@ export function EnvironmentBrowseButtons({
           size="medium"
           onClick={onClickBrowse}
           color="primary"
-          className="!m-0 w-full !py-0"
+          className="m-0! w-full py-0!"
           data-cy={`live-connect-link-${environment.Name}`}
         >
           Live connect
@@ -92,7 +92,7 @@ export function EnvironmentBrowseButtons({
           data-cy={`disconnect-link-${environment.Name}`}
           icon={WifiOff}
           onClick={onClickDisconnect}
-          className="!m-0 w-full !py-0 opacity-60"
+          className="m-0! w-full py-0! opacity-60"
           size="medium"
           color="primary"
         >

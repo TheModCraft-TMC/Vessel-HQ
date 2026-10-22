@@ -104,7 +104,7 @@ export function GitReferenceCard({
   return (
     <Card.Container variant="filled">
       <Card.Body>
-        <div className="form-section-title !mt-0 flex items-center gap-2">
+        <div className="form-section-title mt-0! flex items-center gap-2">
           <Icon icon={GitMerge} /> Managed by Git
         </div>
         {hasError && (
@@ -339,7 +339,7 @@ function LineItem({
       <StateIcon isLoading={isLoading} isValid={isValid} isError={isError} />
       <span className="text-muted">{label}:</span>
       <span
-        className="inline-flex max-w-[40rem] flex-wrap items-center gap-1 truncate align-middle"
+        className="inline-flex max-w-160 flex-wrap items-center gap-1 truncate align-middle"
         title={title}
         data-cy={dataCy}
       >

@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react-webpack5';
+import type { Meta } from '@storybook/react';
 import { User } from 'lucide-react';
 
 import type { IconSource } from '@/ui/components/icons/Icon';

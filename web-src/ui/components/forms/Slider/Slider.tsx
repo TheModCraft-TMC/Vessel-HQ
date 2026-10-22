@@ -1,6 +1,5 @@
-import { ReactElement } from 'react';
+import { ComponentProps } from 'react';
 import RcSlider from 'rc-slider';
-import { HandleProps } from 'rc-slider/lib/Handles/Handle';
 
 import { SliderTooltip } from '@/ui/components/feedback/Tip/SliderTooltip';
 
@@ -58,9 +57,11 @@ function translateMinValue(value: number) {
   return value.toString();
 }
 
+type HandleRender = NonNullable<ComponentProps<typeof RcSlider>['handleRender']>;
+
 function sliderTooltip(
-  node: ReactElement<HandleProps>,
-  handleProps: { value: number }
+  node: Parameters<HandleRender>[0],
+  handleProps: Parameters<HandleRender>[1]
 ) {
   return (
     <SliderTooltip

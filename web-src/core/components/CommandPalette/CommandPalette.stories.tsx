@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -92,7 +92,7 @@ export function WithPortal() {
                   {paths.map((path) => (
                     <div
                       key={path}
-                      className="flex h-8 items-center px-3 hover:bg-gray-3 th-highcontrast:hover:bg-gray-iron-10 th-dark:hover:bg-gray-iron-10"
+                      className="flex h-8 items-center px-3 hover:bg-gray-3 hover:th-highcontrast:bg-gray-iron-10 hover:th-dark:bg-gray-iron-10"
                     >
                       <span className="truncate font-mono text-[13px] text-gray-11 th-highcontrast:text-white th-dark:text-white">
                         /{path}

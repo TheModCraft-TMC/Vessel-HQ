@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react-webpack5';
+import { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/ui/components/buttons/Button';

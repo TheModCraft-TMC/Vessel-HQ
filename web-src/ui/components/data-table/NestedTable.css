@@ -1,3 +1,5 @@
+@reference '../../../shared/assets/css/tailwind.css';
+
 .inner-datatable .widget {
   border: 0 !important;
 }

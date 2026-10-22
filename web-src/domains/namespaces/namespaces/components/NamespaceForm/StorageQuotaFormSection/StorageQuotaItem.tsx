@@ -16,7 +16,7 @@ export function StorageQuotaItem({ storageClass }: Props) {
     <div key={storageClass.Name}>
       <FormSectionTitle>
         <div className="vertical-center text-muted inline-flex gap-1 align-top">
-          <Icon icon={Database} className="!mt-0.5 flex-none" />
+          <Icon icon={Database} className="mt-0.5! flex-none" />
           <span>{storageClass.Name}</span>
         </div>
       </FormSectionTitle>

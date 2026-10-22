@@ -26,12 +26,12 @@ export function SidebarBrand({ logo: customLogo }: Props) {
       <Link
         to="/"
         data-cy="portainerSidebar-homeImage"
-        className="text-2xl text-white no-underline hover:text-white hover:no-underline focus:text-white focus:no-underline focus:outline-none"
+        className="text-2xl text-white no-underline hover:text-white hover:no-underline focus:text-white focus:no-underline focus:outline-hidden"
       >
         <img
           src={logo}
           className={clsx('img-responsive', styles.logo, {
-            '!max-h-[27px]': !isOpen,
+            'max-h-[27px]!': !isOpen,
           })}
           alt="Logo"
         />

@@ -27,7 +27,7 @@ function Cell({ row }: CellContext<ResourceRow, string>) {
         color="link"
         data-cy="helm-resource-describe"
         onClick={() => setModalOpen(true)}
-        className="!ml-0 pl-0"
+        className="ml-0! pl-0"
       >
         <Icon icon={FileText} />
         Describe

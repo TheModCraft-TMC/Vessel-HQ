@@ -37,7 +37,7 @@ export function IngressClassDatatable({
   const tableState = useTableState(settingsStore, storageKey);
 
   return (
-    <div className="-mx-[15px]">
+    <div className="mx-[-15px]">
       <Datatable
         settingsManager={tableState}
         dataset={values || []}
@@ -96,7 +96,7 @@ export function IngressClassDatatable({
         {!isLoading && values && values.length === 0 && (
           <TextTip>{noIngressControllerLabel}</TextTip>
         )}
-        <div className="text-muted flex w-full flex-col !text-xs">
+        <div className="text-muted flex w-full flex-col text-xs!">
           <div className="mt-1">{description}</div>
           {initialValues &&
             values &&

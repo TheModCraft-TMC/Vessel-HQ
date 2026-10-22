@@ -346,7 +346,7 @@ function InnerForm({
         <div className="form-group">
           <div className="col-sm-12">
             <LoadingButton
-              className="!ml-0"
+              className="ml-0!"
               data-cy="update-stack-button"
               size="small"
               disabled={!isValid || staggerUpdating}

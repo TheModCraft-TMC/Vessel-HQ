@@ -1,3 +1,5 @@
+@reference '../../shared/assets/css/tailwind.css';
+
 .form-control.limited-be {
   border-color: var(--BE-only);
 }

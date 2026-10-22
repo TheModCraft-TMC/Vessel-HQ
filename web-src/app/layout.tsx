@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { LegacyClientSetup } from '@console/LegacyClientSetup';
 
 import './next-globals.css';
-import 'bootstrap/dist/css/bootstrap.css';
+import '../shared/assets/vendor/bootstrap-3/bootstrap.css';
 import 'toastr/build/toastr.css';
 import 'spinkit/spinkit.min.css';
 import '../shared/assets/css/rdash.css';

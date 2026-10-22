@@ -33,7 +33,7 @@ export function TextTip({
       )}
       role="status"
     >
-      <Icon icon={icon} mode={getMode(color)} className="!mt-0.5 flex-none" />
+      <Icon icon={icon} mode={getMode(color)} className="mt-0.5! flex-none" />
       <span className={childrenWrapperClassName}>{children}</span>
     </div>
   );

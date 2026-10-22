@@ -48,7 +48,7 @@ export function SortbySelector({
       />
 
       <button
-        className={clsx(styles.sortButton, '!m-0 h-[34px]')}
+        className={clsx(styles.sortButton, 'm-0! h-[34px]')}
         type="button"
         disabled={!sorted}
         onClick={(e) => {

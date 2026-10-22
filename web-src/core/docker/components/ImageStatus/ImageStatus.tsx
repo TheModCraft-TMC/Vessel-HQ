@@ -48,12 +48,12 @@ export function ImageStatus({
       <Icon
         icon={Loader}
         size="sm"
-        className="!mr-1 animate-spin-slow align-middle"
+        className="mr-1! animate-spin-slow align-middle"
       />
     );
   }
 
   return (
-    <Icon icon={statusIcon(data)} size="sm" className="!mr-1 align-middle" />
+    <Icon icon={statusIcon(data)} size="sm" className="mr-1! align-middle" />
   );
 }

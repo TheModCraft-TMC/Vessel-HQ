@@ -23,7 +23,7 @@ export function ServiceTabLabel({
           type={serviceTypeHasErrors ? 'warn' : 'info'}
         >
           {serviceTypeHasErrors && (
-            <Icon icon={AlertTriangle} className="!mr-1" />
+            <Icon icon={AlertTriangle} className="mr-1!" />
           )}
           {serviceTypeCount}
         </Badge>

@@ -26,7 +26,7 @@ export function UpdateNotification() {
     <div
       className={clsx(
         styles.root,
-        'rounded border bg-blue-11 py-2 th-dark:border-gray-warm-9 th-dark:bg-gray-warm-11',
+        'rounded-sm border bg-blue-11 py-2 th-dark:border-gray-warm-9 th-dark:bg-gray-warm-11',
         'border-blue-9'
       )}
     >

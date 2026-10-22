@@ -85,7 +85,7 @@ export function StatusSummaryBar<TValue extends string = string>({
         </div>
       ) : (
         activeLabel && (
-          <div className="ml-auto hidden xl:!flex">
+          <div className="ml-auto hidden xl:flex!">
             <Separator />
             <FilterBarActiveIndicator
               label={activeLabel}
@@ -101,7 +101,7 @@ export function StatusSummaryBar<TValue extends string = string>({
 function Separator() {
   return (
     <div
-      className="w-px shrink-0 self-stretch bg-[var(--border-widget)]"
+      className="w-px shrink-0 self-stretch bg-(--border-widget)"
       aria-hidden="true"
     />
   );

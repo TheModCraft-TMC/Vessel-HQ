@@ -55,7 +55,7 @@ export function EnvironmentAccessView() {
           <WidgetTitle icon={HardDrive} title="Environment" />
           <WidgetBody
             loading={environmentQuery.isLoading || groupQuery.isLoading}
-            className="!p-0"
+            className="p-0!"
           >
             {environment && (
               <table className="mb-0 table">

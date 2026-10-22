@@ -262,7 +262,7 @@ export function ApplicationSummaryWidget() {
                               <LoadingButton
                                 color="primary"
                                 size="small"
-                                className="!ml-0"
+                                className="ml-0!"
                                 type="button"
                                 onClick={() => patchApplicationNote()}
                                 disabled={

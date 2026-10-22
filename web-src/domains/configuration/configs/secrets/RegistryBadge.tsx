@@ -37,7 +37,7 @@ export function RegistryBadge({ registryId, children, dataCy }: Props) {
         <Link
           to="/registries/:id"
           params={{ id: registryId }}
-          className="!text-inherit"
+          className="text-inherit!"
           data-cy={dataCy ? `${dataCy}-link` : 'registry-badge-link'}
         >
           {Name}

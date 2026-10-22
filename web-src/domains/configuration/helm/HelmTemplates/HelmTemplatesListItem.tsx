@@ -22,7 +22,7 @@ export function HelmTemplatesListItem(props: HelmTemplatesListItemProps) {
   return (
     <button
       type="button"
-      className="blocklist-item !mx-0 bg-inherit text-start"
+      className="blocklist-item mx-0! bg-inherit text-start"
       onClick={handleSelect}
       tabIndex={0}
     >

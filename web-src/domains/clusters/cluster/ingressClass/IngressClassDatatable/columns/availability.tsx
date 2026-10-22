@@ -21,7 +21,7 @@ function Cell({ getValue }: CellContext<IngressControllerClassMap, boolean>) {
 
   return (
     <Badge type={availability ? 'success' : 'danger'}>
-      <Icon icon={availability ? Check : X} className="!mr-1" />
+      <Icon icon={availability ? Check : X} className="mr-1!" />
       {availability ? 'Allowed' : 'Disallowed'}
     </Badge>
   );

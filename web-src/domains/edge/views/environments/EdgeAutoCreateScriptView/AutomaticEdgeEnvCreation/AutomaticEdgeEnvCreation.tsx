@@ -152,7 +152,7 @@ function EdgeKeyInfo({
       <hr />
 
       <FormSection title="Edge key">
-        <div className="break-words">
+        <div className="wrap-break-word">
           <code>{edgeKey}</code>
         </div>
 
@@ -198,7 +198,7 @@ function EdgeKeyInfo({
 
         <Button
           color="default"
-          className="!ml-0 mb-8"
+          className="ml-0! mb-8"
           icon={Network}
           onClick={() => setIsConnectivityModalOpen(true)}
           data-cy="edge-auto-create-test-connectivity-button"

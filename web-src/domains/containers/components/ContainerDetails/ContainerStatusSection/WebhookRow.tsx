@@ -109,7 +109,7 @@ export function WebhookRow({
           tooltip="Webhook (or callback URI) used to automate the recreation of this container. Sending a POST request to this callback URI (without requiring any authentication) will pull the most up-to-date version of the associated image and recreate this container."
           data-cy="container-webhook-switch"
           fieldClass="flex items-center gap-2"
-          labelClass="!m-0"
+          labelClass="m-0!"
           featureId={FeatureId.CONTAINER_WEBHOOK}
         />
       </td>

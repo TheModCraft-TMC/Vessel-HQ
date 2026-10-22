@@ -87,7 +87,7 @@ export function createPersistentVolumesColumns(
           <TooltipWithChildren message="Edit reclaim policy" position="top">
             <Button
               color="light"
-              className="!ml-0"
+              className="ml-0!"
               data-cy={`kubernetes-pv-reclaim-edit-${slugify(original.name)}`}
               onClick={() => onEditReclaimPolicy(original)}
             >

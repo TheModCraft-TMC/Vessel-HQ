@@ -31,7 +31,7 @@ export function Block({
   return (
     <div
       className={clsx(
-        'rounded px-3 py-2',
+        'rounded-sm px-3 py-2',
         STATUS_BLOCK_CLASSES[status],
         className
       )}

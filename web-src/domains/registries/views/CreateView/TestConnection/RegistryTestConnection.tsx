@@ -44,7 +44,7 @@ export function RegistryTestConnection({
       <LoadingButton
         size="small"
         color="default"
-        className="!ml-0 w-min"
+        className="ml-0! w-min"
         isLoading={pingMutation.isLoading}
         icon={ArrowLeftRight}
         loadingText="Testing connection..."
@@ -58,7 +58,7 @@ export function RegistryTestConnection({
 
       {testResult && (
         <TextTip
-          className="!items-start [&>svg]:mt-0.5"
+          className="items-start! [&>svg]:mt-0.5"
           icon={testResult.success ? CheckCircle : AlertCircle}
           color={testResult.success ? 'green' : 'red'}
         >

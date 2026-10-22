@@ -30,7 +30,7 @@ export function ToggleSystemNamespaceButton({
   return (
     <LoadingButton
       onClick={markUnmarkAsSystem}
-      className="!ml-0"
+      className="ml-0!"
       data-cy="mark-as-system-button"
       color="default"
       type="button"

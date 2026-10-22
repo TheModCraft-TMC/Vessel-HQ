@@ -121,7 +121,7 @@ export function AddEnvironmentsDrawer({
         }
       }}
     >
-      <SheetContent className="flex flex-col !p-0">
+      <SheetContent className="flex flex-col p-0!">
         <div className="flex-1 overflow-auto p-4">
           <SheetHeader title="Add environments" />
           <SheetDescription className="sr-only">
@@ -158,7 +158,7 @@ export function AddEnvironmentsDrawer({
           className={clsx(
             'sticky bottom-0 left-0 right-0 z-50 h-16 w-full justify-end gap-4',
             'flex items-center px-6',
-            'border-t border-[var(--border-widget-color)] bg-[var(--bg-widget-color)]',
+            'border-t border-(--border-widget-color) bg-(--bg-widget-color)',
             'shadow-[0_-2px_5px_rgba(0,0,0,0.1)]'
           )}
         >

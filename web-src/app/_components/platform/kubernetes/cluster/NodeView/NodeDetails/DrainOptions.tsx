@@ -34,7 +34,7 @@ export function DrainOptions({ values, onChange, hasNodeWriteAccess }: Props) {
         <Input
           type="number"
           min="0"
-          className="max-w-[8rem]"
+          className="max-w-32"
           value={values.timeoutSeconds}
           disabled={!hasNodeWriteAccess}
           onChange={(e) =>
@@ -47,7 +47,7 @@ export function DrainOptions({ values, onChange, hasNodeWriteAccess }: Props) {
         <Input
           type="number"
           min="-1"
-          className="max-w-[8rem]"
+          className="max-w-32"
           value={values.gracePeriodSeconds}
           disabled={!hasNodeWriteAccess}
           onChange={(e) =>

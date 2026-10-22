@@ -59,7 +59,7 @@ export function BasicTable<D extends DefaultType>({
   return (
     <div className="w-full" data-cy={dataCy}>
       {title && (
-        <div className="flex items-center gap-2 px-4 pb-2 text-sm font-medium text-[color:var(--text-main-color)]">
+        <div className="flex items-center gap-2 px-4 pb-2 text-sm font-medium text-(--text-main-color)">
           {titleIcon && <Icon icon={titleIcon} size="md" />}
           <span>{title}</span>
         </div>
@@ -74,12 +74,12 @@ export function BasicTable<D extends DefaultType>({
           {headerGroups.map((hg) => (
             <tr
               key={hg.id}
-              className="border-b border-solid border-[color:var(--border-widget)]"
+              className="border-b border-solid border-(--border-widget)"
             >
               {hg.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="px-4 py-2 text-left text-xs font-semibold uppercase text-[color:var(--text-summary-color,var(--text-main-color))]"
+                  className="px-4 py-2 text-left text-xs font-semibold uppercase text-(--text-summary-color,var(--text-main-color))"
                 >
                   {header.isPlaceholder
                     ? null
@@ -97,7 +97,7 @@ export function BasicTable<D extends DefaultType>({
             <tr>
               <td
                 colSpan={Number.MAX_SAFE_INTEGER}
-                className="py-4 text-center text-sm text-[color:var(--text-summary-color,var(--text-main-color))]"
+                className="py-4 text-center text-sm text-(--text-summary-color,var(--text-main-color))"
               >
                 {emptyContentLabel}
               </td>
@@ -106,12 +106,12 @@ export function BasicTable<D extends DefaultType>({
             rows.map((row) => (
               <tr
                 key={row.id}
-                className="border-b border-solid border-[color:var(--border-widget)] last:border-b-0"
+                className="border-b border-solid border-(--border-widget) last:border-b-0"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td
                     key={cell.id}
-                    className="px-4 py-2 align-middle text-sm text-[color:var(--text-main-color)]"
+                    className="px-4 py-2 align-middle text-sm text-(--text-main-color)"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>

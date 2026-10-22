@@ -170,7 +170,7 @@ function EnvironmentAccessSummary({
   return (
     <Widget>
       <WidgetTitle icon={HardDrive} title="Environment" />
-      <WidgetBody loading={isLoading} className="!p-0">
+      <WidgetBody loading={isLoading} className="p-0!">
         {environment && (
           <table className="mb-0 table">
             <tbody>

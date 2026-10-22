@@ -132,7 +132,7 @@ export function ImportImageForm() {
               loadingText="Images uploading in progress..."
               isLoading={uploadMutation.isLoading}
               disabled={!file}
-              className="!ml-0"
+              className="ml-0!"
               data-cy="image-import-upload"
             >
               Upload

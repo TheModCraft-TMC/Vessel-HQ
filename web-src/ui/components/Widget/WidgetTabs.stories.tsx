@@ -1,4 +1,4 @@
-import type { Meta, StoryFn } from '@storybook/react-webpack5';
+import type { Meta, StoryFn } from '@storybook/react';
 import { Box, Settings, Users } from 'lucide-react';
 import { RouteParamsProvider } from '@console/routing/useRouteParams';
 

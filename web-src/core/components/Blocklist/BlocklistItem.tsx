@@ -23,7 +23,7 @@ export function BlocklistItem<T extends ElementType>({
       type="button"
       className={clsx(
         className,
-        'blocklist-item no-link !ml-0 flex w-full items-stretch overflow-hidden bg-transparent text-left',
+        'blocklist-item no-link ml-0! flex w-full items-stretch overflow-hidden bg-transparent text-left',
         {
           'blocklist-item--selected': isSelected,
         }

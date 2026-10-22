@@ -116,7 +116,7 @@ export function getPodColumns({
           <TooltipWithChildren message={deleteTooltip} position="top">
             <LoadingButton
               color="dangerlight"
-              className="!ml-0"
+              className="ml-0!"
               aria-label={`Delete pod ${podRow.podName}`}
               isLoading={isLoading || isDeleting}
               loadingText="Loading"

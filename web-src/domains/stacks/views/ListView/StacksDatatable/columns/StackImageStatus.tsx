@@ -28,12 +28,12 @@ export function StackImageStatus({ stackId, environmentId }: Props) {
       <Icon
         icon={Loader2}
         size="sm"
-        className="!mr-1 animate-spin-slow align-middle"
+        className="mr-1! animate-spin-slow align-middle"
       />
     );
   }
 
-  return <Icon icon={statusIcon(data)} className="!mr-1 align-middle" />;
+  return <Icon icon={statusIcon(data)} className="mr-1! align-middle" />;
 }
 
 export function useStackImageNotification(

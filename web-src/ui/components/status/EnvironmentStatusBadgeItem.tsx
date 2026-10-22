@@ -20,7 +20,7 @@ export function EnvironmentStatusBadgeItem({
     <span
       className={clsx(
         'flex items-center gap-1',
-        'rounded border-2 border-solid',
+        'rounded-sm border-2 border-solid',
         'w-fit px-1 py-px',
         'text-xs font-semibold text-gray-7',
         {
@@ -36,8 +36,8 @@ export function EnvironmentStatusBadgeItem({
         <Icon
           icon={icon}
           className={clsx({
-            '!text-green-7': color === 'success',
-            '!text-error-7': color === 'danger',
+            'text-green-7!': color === 'success',
+            'text-error-7!': color === 'danger',
           })}
         />
       )}

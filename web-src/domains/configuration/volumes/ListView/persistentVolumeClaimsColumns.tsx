@@ -110,7 +110,7 @@ export function createPersistentVolumeClaimsColumns(
           >
             <Button
               color="light"
-              className="!ml-0"
+              className="ml-0!"
               disabled={!isExpandable}
               aria-label={
                 isExpandable

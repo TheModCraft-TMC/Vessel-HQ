@@ -96,7 +96,7 @@ export function EnvironmentIcon({ type, containerEngine }: Props) {
       return (
         <Icon
           icon={getEnvironmentTypeIcon(type, containerEngine)}
-          className={`${styles.root} blue-icon !h-16 !w-16`}
+          className={`${styles.root} blue-icon h-16! w-16!`}
         />
       );
   }

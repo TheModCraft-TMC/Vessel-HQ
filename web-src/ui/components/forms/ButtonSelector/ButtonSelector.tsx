@@ -84,7 +84,7 @@ function OptionItem({
         {
           active: selected,
         },
-        '!static !z-auto'
+        'static! z-auto!'
       )}
       data-cy={dataCy}
       icon={icon}

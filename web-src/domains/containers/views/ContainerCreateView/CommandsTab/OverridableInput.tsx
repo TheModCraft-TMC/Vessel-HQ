@@ -23,7 +23,7 @@ export function OverridableInput({
           color="light"
           data-cy={`docker-container-default-${id}`}
           size="medium"
-          className={clsx('!ml-0', { active: !override })}
+          className={clsx('ml-0!', { active: !override })}
           onClick={() => onChange(null)}
         >
           Default

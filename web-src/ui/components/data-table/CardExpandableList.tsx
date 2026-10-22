@@ -207,19 +207,19 @@ export function CardExpandableList<D extends DefaultType>({
 
   return (
     <Widget aria-label={ariaLabelValue} id={id}>
-      <WidgetBody className="!p-0">
+      <WidgetBody className="p-0!">
         {(title ||
           includeSearchBar ||
           renderTableActions ||
           renderTableSettings) && (
           <div
-            className="flex flex-wrap items-center gap-2 rounded-t-xl bg-[color:var(--bg-card-color)] px-5 py-4 text-base"
+            className="flex flex-wrap items-center gap-2 rounded-t-xl bg-(--bg-card-color) px-5 py-4 text-base"
             data-cy={dataCy ? `${dataCy}-header` : undefined}
           >
             {title && (
               <h2
                 id={titleId}
-                className="m-0 flex flex-auto items-center gap-1 text-base font-medium text-[color:var(--text-widget-header-color)]"
+                className="m-0 flex flex-auto items-center gap-1 text-base font-medium text-(--text-widget-header-color)"
               >
                 {titleIcon && <Icon icon={titleIcon} className="space-right" />}
                 {title}
@@ -245,23 +245,23 @@ export function CardExpandableList<D extends DefaultType>({
           </div>
         )}
         {description && (
-          <div className="bg-[color:var(--bg-card-color)] px-5 pb-3 text-sm">
+          <div className="bg-(--bg-card-color) px-5 pb-3 text-sm">
             {description}
           </div>
         )}
         <div
           className={clsx(
-            'flex flex-col gap-2 bg-[color:var(--bg-card-color)] px-4 py-2'
+            'flex flex-col gap-2 bg-(--bg-card-color) px-4 py-2'
           )}
           aria-label={ariaLabelValue}
           data-cy={dataCy}
         >
           {isLoading ? (
-            <div className="py-8 text-center text-sm text-[color:var(--text-summary-color,var(--text-main-color))]">
+            <div className="py-8 text-center text-sm text-(--text-summary-color,var(--text-main-color))">
               Loading...
             </div>
           ) : visibleRows.length === 0 ? (
-            <div className="py-8 text-center text-sm text-[color:var(--text-summary-color,var(--text-main-color))]">
+            <div className="py-8 text-center text-sm text-(--text-summary-color,var(--text-main-color))">
               {emptyContentLabel}
             </div>
           ) : (
@@ -275,7 +275,7 @@ export function CardExpandableList<D extends DefaultType>({
             ))
           )}
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-b-xl border-t border-solid border-[color:var(--border-datatable-top-color,var(--border-widget))] bg-[color:var(--bg-card-color)] px-4 py-2 pb-3 text-[color:var(--text-main-color)]">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-b-xl border-t border-solid border-(--border-datatable-top-color,var(--border-widget)) bg-(--bg-card-color) px-4 py-2 pb-3 text-(--text-main-color)">
           <SelectedRowsCount
             value={selectedItems.length}
             hidden={hiddenSelectedItems.length}

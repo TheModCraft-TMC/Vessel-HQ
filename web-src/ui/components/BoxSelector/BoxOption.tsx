@@ -59,7 +59,7 @@ export function BoxOption<T extends Value>({
               },
               {
                 'rounded-full': type === 'radio',
-                'rounded-sm': type === 'checkbox',
+                'rounded-xs': type === 'checkbox',
               }
             )}
           >
