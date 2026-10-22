@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -18,6 +19,7 @@ import (
 
 	"github.com/moby/moby/api/types/image"
 	"github.com/moby/moby/client"
+	"github.com/moby/moby/client/pkg/versions"
 	"github.com/segmentio/encoding/json"
 )
 
@@ -25,7 +27,8 @@ var errUnsupportedEnvironmentType = errors.New("environment not supported")
 
 const (
 	defaultDockerRequestTimeout = 60 * time.Second
-	dockerClientVersion         = "1.37"
+	legacyNegotiationVersion    = "1.24"
+	negotiationProbeTimeout     = 5 * time.Second
 )
 
 type NodeNamesCtxKey struct{}
@@ -73,7 +76,7 @@ func (factory *ClientFactory) CreateClient(endpoint *portainer.Endpoint, nodeNam
 }
 
 func createLocalClient(endpoint *portainer.Endpoint) (*client.Client, error) {
-	return client.NewClientWithOpts(
+	return newCompatibleClient(nil, nil,
 		client.WithHost(endpoint.URL),
 		client.WithAPIVersionNegotiation(),
 	)
@@ -88,14 +91,13 @@ func createTCPClient(endpoint *portainer.Endpoint, timeout *time.Duration) (*cli
 	opts := []client.Opt{
 		client.WithHost(endpoint.URL),
 		client.WithAPIVersionNegotiation(),
-		client.WithHTTPClient(httpCli),
 	}
 
 	if endpoint.TLSConfig.TLS {
 		opts = append(opts, client.WithScheme("https"))
 	}
 
-	return client.NewClientWithOpts(opts...)
+	return newCompatibleClient(timeout, httpCli, opts...)
 }
 
 // agentClientHeaders builds the headers every request to an agent is decorated with.
@@ -135,7 +137,6 @@ func createAgentClient(endpoint *portainer.Endpoint, endpointURL string, signatu
 	opts := []client.Opt{
 		client.WithHost(endpointURL),
 		client.WithAPIVersionNegotiation(),
-		client.WithHTTPClient(httpCli),
 		client.WithHTTPHeaders(headers),
 	}
 
@@ -143,7 +144,58 @@ func createAgentClient(endpoint *portainer.Endpoint, endpointURL string, signatu
 		opts = append(opts, client.WithScheme("https"))
 	}
 
-	return client.NewClientWithOpts(opts...)
+	return newCompatibleClient(timeout, httpCli, opts...)
+}
+
+// newCompatibleClient probes before exposing the client to concurrent callers.
+// The split SDK's automatic negotiation rejects API <1.40, although its public
+// fixed-version option still supports those wire versions. Preserve the former
+// factory's negotiated range with that option rather than spoofing headers,
+// rewriting requests or mutating private SDK state.
+func newCompatibleClient(timeout *time.Duration, httpClient *http.Client, opts ...client.Opt) (*client.Client, error) {
+	create := func(extra ...client.Opt) (*client.Client, error) {
+		options := append(append([]client.Opt(nil), opts...), extra...)
+		if httpClient != nil {
+			// SDK construction wraps Transport for tracing. Give each instance
+			// its own client value rather than stacking wrappers on the same one.
+			copy := *httpClient
+			options = append(options, client.WithHTTPClient(&copy))
+		}
+		return client.New(options...)
+	}
+	cli, err := create()
+	if err != nil {
+		return nil, err
+	}
+
+	probeTimeout := negotiationProbeTimeout
+	if timeout != nil && *timeout > 0 && *timeout < probeTimeout {
+		probeTimeout = *timeout
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), probeTimeout)
+	defer cancel()
+	ping, pingErr := cli.Ping(ctx, client.PingOptions{NegotiateAPIVersion: true})
+	version := ping.APIVersion
+	if version == "" {
+		if pingErr != nil {
+			// Keep the old constructor contract on connectivity/auth failures:
+			// the operation reports the error using its own caller context.
+			return cli, nil
+		}
+		// This is the old SDK's fallback for pre-negotiation engines.
+		version = legacyNegotiationVersion
+	}
+	if !versions.LessThan(version, client.MinAPIVersion) {
+		return cli, nil
+	}
+
+	legacy, err := create(client.WithAPIVersion(version))
+	if err != nil {
+		_ = cli.Close()
+		return nil, err
+	}
+	_ = cli.Close()
+	return legacy, nil
 }
 
 type NodeNameTransport struct {

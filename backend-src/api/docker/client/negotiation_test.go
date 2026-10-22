@@ -1,24 +1,27 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	portainer "github.com/portainer/portainer/api"
+	"github.com/portainer/portainer/pkg/testhelpers"
 
 	"github.com/moby/moby/client"
 	"github.com/stretchr/testify/require"
 )
 
-// Pin the protocol floor, not the latest daemon's API. In particular Podman's
-// Docker-compatible service advertises API 1.41, even on recent Podman releases.
+// Preserve the former factory's negotiated range rather than inheriting the
+// split SDK's automatic 1.40 floor. Podman advertises API 1.41 even on recent releases.
 func TestFactoryNegotiatesOlderEngineProtocols(t *testing.T) {
 	t.Parallel()
-	for _, version := range []string{"1.40", "1.41", "1.54"} {
+	for _, version := range []string{"1.24", "1.39", "1.40", "1.41", "1.54"} {
 		t.Run(version, func(t *testing.T) {
 			t.Parallel()
 			var mu sync.Mutex
@@ -55,4 +58,112 @@ func TestFactoryNegotiatesOlderEngineProtocols(t *testing.T) {
 			require.Equal(t, []string{"/_ping", "/v" + version + "/containers/json"}, paths)
 		})
 	}
+}
+
+func TestFactoryPreservesPreNegotiationFallback(t *testing.T) {
+	t.Parallel()
+	var mu sync.Mutex
+	var paths []string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mu.Lock()
+		paths = append(paths, r.URL.Path)
+		mu.Unlock()
+		if r.URL.Path != "/_ping" {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(`[]`))
+		}
+	}))
+	defer srv.Close()
+	cli, err := NewClientFactory(nil, nil).CreateClient(&portainer.Endpoint{URL: "tcp://" + strings.TrimPrefix(srv.URL, "http://")}, "", nil)
+	require.NoError(t, err)
+	defer cli.Close()
+	_, err = cli.ContainerList(t.Context(), client.ContainerListOptions{})
+	require.NoError(t, err)
+	require.Equal(t, "1.24", cli.ClientVersion())
+	mu.Lock()
+	defer mu.Unlock()
+	require.Equal(t, []string{"/_ping", "/v1.24/containers/json"}, paths)
+}
+
+func TestFactoryPreservesLegacyAgentHeaders(t *testing.T) {
+	t.Parallel()
+	var mu sync.Mutex
+	var headers []http.Header
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mu.Lock()
+		headers = append(headers, r.Header.Clone())
+		mu.Unlock()
+		if r.URL.Path == "/_ping" {
+			w.Header().Set("API-Version", "1.39")
+			return
+		}
+		if r.URL.Path != "/v1.39/containers/legacy/json" {
+			http.Error(w, "unexpected legacy inspect path", http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"Id":"legacy","Config":{},"State":{"Status":"running"},"NetworkSettings":{}}`))
+	}))
+	defer srv.Close()
+	cli, err := NewClientFactory(testhelpers.NewStubSignatureService(), nil).CreateClient(&portainer.Endpoint{
+		Type: portainer.AgentOnDockerEnvironment,
+		URL:  "tcp://" + strings.TrimPrefix(srv.URL, "http://"),
+	}, "node-a", nil)
+	require.NoError(t, err)
+	defer cli.Close()
+	result, err := cli.ContainerInspect(t.Context(), "legacy", client.ContainerInspectOptions{})
+	require.NoError(t, err)
+	require.Equal(t, "legacy", result.Container.ID)
+	mu.Lock()
+	defer mu.Unlock()
+	require.Len(t, headers, 2)
+	for _, header := range headers {
+		require.Equal(t, "node-a", header.Get(portainer.PortainerAgentTargetHeader))
+		require.Equal(t, testhelpers.StubPublicKey, header.Get(portainer.PortainerAgentPublicKeyHeader))
+		require.Equal(t, testhelpers.StubSignature, header.Get(portainer.PortainerAgentSignatureHeader))
+	}
+}
+
+func TestFactoryProbeHonorsShortTimeoutWithoutChangingConstructorErrors(t *testing.T) {
+	t.Parallel()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		<-r.Context().Done()
+	}))
+	defer srv.Close()
+	timeout := 30 * time.Millisecond
+	start := time.Now()
+	cli, err := NewClientFactory(nil, nil).CreateClient(&portainer.Endpoint{URL: "tcp://" + strings.TrimPrefix(srv.URL, "http://")}, "", &timeout)
+	require.NoError(t, err, "network errors must still be reported by the operation")
+	defer cli.Close()
+	require.Less(t, time.Since(start), time.Second)
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	_, err = cli.ContainerList(ctx, client.ContainerListOptions{})
+	require.ErrorIs(t, err, context.Canceled)
+}
+
+func TestFactoryNegotiatesLegacyTLSProtocol(t *testing.T) {
+	t.Parallel()
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/_ping" {
+			w.Header().Set("API-Version", "1.39")
+			return
+		}
+		if r.URL.Path != "/v1.39/containers/json" {
+			http.Error(w, "unexpected legacy TLS path", http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`[]`))
+	}))
+	defer srv.Close()
+	cli, err := NewClientFactory(nil, nil).CreateClient(&portainer.Endpoint{
+		URL:       "tcp://" + strings.TrimPrefix(srv.URL, "https://"),
+		TLSConfig: portainer.TLSConfiguration{TLS: true, TLSSkipVerify: true},
+	}, "", nil)
+	require.NoError(t, err)
+	defer cli.Close()
+	_, err = cli.ContainerList(t.Context(), client.ContainerListOptions{})
+	require.NoError(t, err)
+	require.Equal(t, "1.39", cli.ClientVersion())
 }
