@@ -271,10 +271,41 @@ class Smoke:
         if swarm_id:
             wait_for(lambda: any(task["Status"]["State"] == "running" and "sleep 301" in json.dumps(task["Spec"])
                 for task in self.request("GET", route + "/tasks")))
+        if swarm_id:
+            self.results["swarm_force_update_service"] = self.force_update_service(endpoint)
         self.request("DELETE", f"/stacks/{sid}?endpointId={endpoint}")
         self.request("GET", f"/stacks/{sid}", expected=404)
         wait_for(lambda: not self.request("GET", route + ("/services" if swarm_id else "/containers/json")))
         return "passed"
+
+    def force_update_service(self, endpoint):
+        route = f"/endpoints/{endpoint}/docker"
+        service = self.request("GET", route + "/services")[0]
+        service_id = service["ID"]
+        def settled_service():
+            actual = self.request("GET", route + "/services/" + service_id)
+            return actual if actual.get("UpdateStatus", {}).get("State") in (None, "completed") else None
+        # A running replacement task can precede Swarm's update-monitor
+        # completion. Do not race the fixture's own preceding stack update.
+        service = wait_for(settled_service)
+        before = service["Spec"]["TaskTemplate"].get("ForceUpdate", 0)
+        old_tasks = {task["ID"] for task in self.request("GET", route + "/tasks")
+            if task["ServiceID"] == service_id and task["Status"]["State"] == "running"}
+        assert old_tasks, "Swarm service has no running task before forced update"
+        response = self.request("PUT", f"/endpoints/{endpoint}/forceupdateservice", {"ServiceID": service_id, "PullImage": False})
+        assert isinstance(response, dict) and "Warnings" in response, "Missing force-update warning response"
+        warnings = response["Warnings"]
+        assert warnings is None or (isinstance(warnings, list) and all(isinstance(warning, str) for warning in warnings)), "Invalid force-update Warnings shape"
+        def updated_service():
+            actual = self.request("GET", route + "/services/" + service_id)
+            return actual if actual["Spec"]["TaskTemplate"].get("ForceUpdate", 0) > before else None
+        after = wait_for(updated_service)["Spec"]["TaskTemplate"]["ForceUpdate"]
+        assert after == before + 1, "ForceUpdate did not increment by exactly one"
+        replacement = wait_for(lambda: next((task["ID"] for task in self.request("GET", route + "/tasks")
+            if task["ServiceID"] == service_id and task["ID"] not in old_tasks and task["Status"]["State"] == "running"
+            and task["Spec"].get("ForceUpdate", 0) == after), None))
+        return {"status": "passed", "force_update_before": before, "force_update_after": after,
+            "replacement_task_running": bool(replacement), "warnings_shape": "null" if warnings is None else "string-array"}
 
     def suite_engine(self, name):
         podman = name == "podman"
@@ -429,8 +460,13 @@ class Smoke:
                 "response_type": "code", "scope": "openid email profile", "state": state})
             browser_config = {"playwrightModule": str(Path(self.args.playwright_module).resolve()), "chrome": self.args.chrome,
                 "authorizeURL": authorize, "callback": callback, "email": email, "password": password,
-                "screenshot": self.args.oauth_screenshot, "frontend": frontend}
-            command("node", str(Path(__file__).with_name("oauth_browser.cjs")), input=json.dumps(browser_config), timeout=120)
+                "screenshot": self.args.oauth_screenshot, "frontend": frontend, "report": str(self.root / "oauth-browser-checks.json")}
+            try:
+                command("node", str(Path(__file__).with_name("oauth_browser.cjs")), input=json.dumps(browser_config), timeout=120)
+            finally:
+                browser_report = self.root / "oauth-browser-checks.json"
+                if browser_report.is_file():
+                    self.results["oauth_browser_checks"] = json.loads(browser_report.read_text())
             if frontend:
                 user = next(user for user in self.request("GET", "/users") if user["Username"] == email)
                 assert user["Role"] == 2

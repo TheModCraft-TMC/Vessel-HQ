@@ -142,7 +142,12 @@ relative escapes before any rewrite, while preserving the original target bytes.
 This is not a sandbox for arbitrary executable JavaScript: supply trusted builds. That mode tests actual frontend invalid-state rejection without
 a token exchange, OAuth login-link layout, provider login, callback exchange,
 identity/ACL, post-login navigation, cookie-session restoration after reload, and
-1100px/390px desktop/mobile layout without horizontal document overflow. Only the final application page and the
+1100px/390px desktop/mobile layout. The mobile check waits for the drawer's CSS
+transition to finish, exercises search/sort controls with viewport and hit-testing
+checks, and actually reopens/closes the drawer. A pointer-access failure remains
+a failure even when keyboard activation permits the remaining checks to finish.
+Partial OAuth/browser check results are preserved in the report on failure rather
+than losing already completed provider/session checks. Only the final application page and the
 pre-login application page (no entered credentials) may be screenshotted.
 
 ### Combined run and account gates
@@ -220,14 +225,17 @@ It reports Vessel **1.3.1**, datastore/API compatibility **2.45.0**.
 | Podman 5.8.1 | Actual privileged Linux Podman service using vfs; environment CRUD, running container CRUD/logs, and Compose stack create/update/delete through Vessel's Podman path (not Docker relabeled as Podman); container-local iptables fixture adapter as explained above |
 | Kubernetes 1.35.0, kind 0.31.0 | Real in-cluster Vessel Pod and service-account auth; namespace CRUD; ready Deployment CRUD; Kubernetes stack/ConfigMap create/delete; environment create/delete |
 | Edge agent 2.45.0 | Official agent on owned nested engine; polling, reverse tunnel, actual environment Docker info and container CRUD/logs |
-| Dex 2.45.1 / Chrome / Playwright 1.58.2 | Real provider browser login; actual production Vessel frontend callback and companion callback separately passed; actual token exchange/UserInfo; invalid-state rejection before token exchange; provisioned standard user and admin-setting denial; reload restores cookie session; 1100px/390px login and authenticated page layouts passed |
+| Dex 2.45.1 / Chrome / Playwright 1.58.2 | Real provider browser login; actual production Vessel frontend callback and companion callback separately passed; actual token exchange/UserInfo; invalid-state rejection before token exchange; provisioned standard user and admin-setting denial; reload restores cookie session. Original mobile check covered document width only, not drawer/button hit testing; see the stronger candidate finding below. |
 | ACI | **Blocked**, no Azure CLI/account authorization; no mock substituted |
 
 Production dependency-upgrade frontend artifact tested with the baseline backend:
 build ID `owEQDO4vt6hhNfr29wLKA`, generated standalone server SHA256
 `fac6973c3f5c6becd513248b8620b332ee460fe1e23b473ea04d52db5997b9cd`.
-Safe desktop/mobile screenshots are in `/tmp/vessel-rest-platform-frontend-oauth*.png`.
-The source artifact was read-only; only its disposable copy was customized.
+Original desktop/mobile screenshots are in `/tmp/vessel-rest-platform-frontend-oauth*.png`.
+The original mobile capture was taken during/with an expanded drawer and is not
+useful evidence of closed-drawer usability. It is superseded by the stronger
+candidate mobile evidence below. The source artifact was read-only; only its
+disposable copy was customized.
 
 The final bounded/owned-resource baseline combined run is recorded in
 `/tmp/vessel-rest-platform-base-combined.json` (six runnable suites passed, ACI
@@ -235,9 +243,49 @@ blocked, zero cleanup failures). Production frontend results are in
 `/tmp/vessel-rest-platform-base-frontend-oauth.json`. The additional Podman Compose
 CRUD extension passed in `/tmp/vessel-rest-platform-base-podman-compose.json`.
 
-Updated Go-artifact results must be recorded separately with their actual artifact
-fingerprint after rerunning; the baseline rows above do not certify an upgraded
-Go dependency artifact.
+### Dependency-upgrade candidate (not final)
+
+Supplied candidate: `/tmp/vessel-dep-go-candidate-linux-arm64`, independently
+verified static Linux ARM64 ELF, SHA256
+`c5543423d87ada7d86dd0596f57448ee215ef697b300b588448fdce08c1f83f2`.
+Its runtime reports Go **1.26.6**, Git commit **46882c1d4**, Compose **5.3.1**,
+Moby client **0.5.1**, Vessel **1.3.1**, and datastore **2.45.0**.
+This is explicitly **candidate-only** evidence, not certification of the planned
+Go 1.26.10 final artifact or unresolved advisory reconciliation.
+
+- Combined candidate run: Docker/Compose, isolated Swarm, actual Podman/Compose,
+  in-cluster Kubernetes, and official Edge passed; ACI remained blocked. All suites
+  were attempted despite the OAuth/mobile failure. Results:
+  `/tmp/vessel-rest-platform-candidate-combined.json`.
+- Additional real Swarm SDK path passed:
+  `PUT /api/endpoints/{id}/forceupdateservice` with the actual service ID and
+  `PullImage:false`; `ForceUpdate` changed **0 → 1**, a replacement task reached
+  running, and the real wire response's **Warnings was null**. The harness accepts
+  null, empty arrays, or string arrays and rejects other shapes. It waits for the
+  preceding stack rolling-update monitor to complete before this independent
+  update; an earlier attempt raced that update and returned Docker's legitimate
+  `update out of sequence`. Results:
+  `/tmp/vessel-rest-platform-candidate-swarm-force-update.json`.
+- Real Dex/production frontend OAuth callback, invalid-state rejection, identity,
+  ACL, cookie-session reload, closed-drawer search/sort interactions, and actual
+  keyboard drawer reopen/close passed. The strengthened **pointer** drawer-open
+  check failed: at 390px the GlobalSearch trigger covers the center of the sidebar
+  expand button. DOM hit testing puts `GlobalSearch_trigger` above
+  `MainLayout_sidebarToggle` (button 34×34 at y=13). The failure is retained, not
+  converted into a pass by keyboard fallback. Results:
+  `/tmp/vessel-rest-platform-candidate-oauth.json`, including
+  `oauth_browser_checks` with partial successes and the exact failed stage.
+- The mobile screenshot now waits until Main navigation's bounding rectangle is
+  fully offscreen after closing, then captures loaded, usable main content:
+  `/tmp/vessel-rest-platform-candidate-oauth-mobile.png`. Other safe screenshots
+  share the `/tmp/vessel-rest-platform-candidate-oauth` prefix.
+- The header overlap was reported to the parent for baseline frontend comparison.
+  **No dependency regression is asserted without before/after evidence, and no
+  product/UI code was changed by this verification task.**
+
+Final Go-artifact results must be recorded separately with their actual artifact
+fingerprint after rerunning; neither baseline nor candidate results certify a
+later final artifact.
 
 Harness-only checks (no live resources required):
 
@@ -248,7 +296,7 @@ node --check scripts/integration/oauth_browser.cjs
 git diff --check
 ```
 
-Twenty-seven safety/transport unit tests passed during implementation. These verify
+Twenty-nine safety/transport unit tests passed during implementation. These verify
 resource ownership/bounds/cleanup, artifact identity, transport behavior, transient
 startup retries, and explicit Azure access gates; they are not counted as live
 platform coverage.

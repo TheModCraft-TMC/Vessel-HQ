@@ -176,6 +176,31 @@ class PlatformSmokeTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "HTTP 200"):
                 self.runner.request("GET", "/missing", expected=404)
 
+    def test_swarm_force_update_accepts_wire_warning_shapes_and_waits_for_new_task(self):
+        for warnings in (None, [], ["test warning"]):
+            with self.subTest(warnings=warnings):
+                old_task = {"ID": "old-task", "ServiceID": "actual-service", "Status": {"State": "running"}, "Spec": {"ForceUpdate": 7}}
+                new_task = {"ID": "replacement-task", "ServiceID": "actual-service", "Status": {"State": "running"}, "Spec": {"ForceUpdate": 8}}
+                responses = [[{"ID": "actual-service", "Spec": {"TaskTemplate": {"ForceUpdate": 7}}}],
+                    {"Spec": {"TaskTemplate": {"ForceUpdate": 7}}, "UpdateStatus": {"State": "completed"}}, [old_task], {"Warnings": warnings},
+                    {"Spec": {"TaskTemplate": {"ForceUpdate": 8}}}, [old_task, new_task]]
+                with patch.object(self.runner, "request", side_effect=responses) as request:
+                    result = self.runner.force_update_service(9)
+                self.assertEqual(result["force_update_before"], 7)
+                self.assertEqual(result["force_update_after"], 8)
+                self.assertTrue(result["replacement_task_running"])
+                self.assertEqual(result["warnings_shape"], "null" if warnings is None else "string-array")
+                self.assertEqual(request.call_args_list[3].args, ("PUT", "/endpoints/9/forceupdateservice", {"ServiceID": "actual-service", "PullImage": False}))
+
+    def test_swarm_force_update_rejects_invalid_warning_shapes(self):
+        for warnings in ("not-an-array", ["valid", 7]):
+            with self.subTest(warnings=warnings):
+                responses = [[{"ID": "service", "Spec": {"TaskTemplate": {}}}], {"Spec": {"TaskTemplate": {}}},
+                    [{"ID": "old-task", "ServiceID": "service", "Status": {"State": "running"}}], {"Warnings": warnings}]
+                with patch.object(self.runner, "request", side_effect=responses):
+                    with self.assertRaisesRegex(AssertionError, "Invalid force-update Warnings shape"):
+                        self.runner.force_update_service(9)
+
     def test_missing_azure_access_is_an_explicit_gate_not_a_mock_pass(self):
         with patch.object(smoke.shutil, "which", return_value=None), patch.dict(smoke.os.environ, {}, clear=True), patch.object(smoke, "command") as command:
             with self.assertRaises(smoke.ExternalGate):
