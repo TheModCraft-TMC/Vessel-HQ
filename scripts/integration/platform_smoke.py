@@ -55,6 +55,26 @@ def wait_for(fn, timeout=120):
     raise RuntimeError(f"Timed out waiting for readiness: {last}")
 
 
+def reject_symlink_escapes(root):
+    """Allow relative artifact links only when their resolved target stays inside root.
+
+    This is used on the private standalone copy before any write through its
+    paths, and on asset inputs before dereferencing them. The private directory
+    is not shared with the artifact's builder or a running frontend process.
+    """
+    root = Path(root).resolve()
+    for directory, directories, files in os.walk(root, followlinks=False):
+        for name in directories + files:
+            path = Path(directory) / name
+            if not path.is_symlink():
+                continue
+            try:
+                target = path.resolve()
+                target.relative_to(root)
+            except (OSError, RuntimeError, ValueError) as error:
+                raise RuntimeError("Frontend artifact contains an escaping or cyclic symlink: " + str(path.relative_to(root))) from error
+
+
 class Smoke:
     def __init__(self, args):
         self.args = args
@@ -66,9 +86,20 @@ class Smoke:
         self.processes = []
         self.tmp = tempfile.TemporaryDirectory(prefix=self.prefix + "-")
         self.root = Path(self.tmp.name)
+        # Open the supplied executable once: a builder can atomically replace its
+        # source path later without changing the bytes hashed or mounted here.
+        # Do not use hard links or preserve a source executable symlink.
+        self.binary = self.root / "portainer"
+        try:
+            with Path(args.binary).open("rb") as source, self.binary.open("xb") as destination:
+                shutil.copyfileobj(source, destination)
+            self.binary.chmod(0o555)
+        except BaseException:
+            self.tmp.cleanup()
+            raise
         self.token = None
         self.base = None
-        self.results = {"resource_prefix": self.prefix, "binary_sha256": hashlib.sha256(Path(args.binary).read_bytes()).hexdigest(),
+        self.results = {"resource_prefix": self.prefix, "binary_sha256": hashlib.sha256(self.binary.read_bytes()).hexdigest(),
                         "runtime_image": args.runtime_image, "images": {}, "suites": {}}
 
     def docker(self, *args, **kwargs):
@@ -137,7 +168,7 @@ class Smoke:
     def start_vessel(self, namespace=None, network=None, extra=(), flags=()):
         data = self.root / ("data-" + uuid.uuid4().hex[:6])
         data.mkdir()
-        opts = ["--mount", f"type=bind,source={Path(self.args.binary).resolve()},target=/vessel/portainer,readonly",
+        opts = ["--mount", f"type=bind,source={self.binary},target=/vessel/portainer,readonly",
                 "--mount", f"type=bind,source={data},target=/data", "--entrypoint", "/vessel/portainer"]
         if namespace:
             opts += ["--network", "container:" + namespace]
@@ -273,9 +304,17 @@ class Smoke:
     def start_frontend(self, port):
         source = Path(self.args.frontend_standalone).resolve()
         destination = self.root / "frontend"
-        # Read-only source artifact: customize only a disposable copy of the
-        # generated server's baked-in rewrite, never the npm agent's build.
+        # Preserve internal package links, but reject escapes before any writes
+        # through copied paths (including directory symlinks and asset targets).
         shutil.copytree(source, destination, symlinks=True)
+        reject_symlink_escapes(destination)
+        static = source.parent / "static"
+        public = source.parent.parent / "public"
+        reject_symlink_escapes(static)
+        reject_symlink_escapes(public)
+        shutil.copytree(static, destination / "web-src" / ".next" / "static", dirs_exist_ok=True)
+        shutil.copytree(public, destination / "web-src" / "public", dirs_exist_ok=True)
+        reject_symlink_escapes(destination)
         server = destination / "web-src" / "server.js"
         original = server.read_text()
         if "http://localhost:9000" not in original:
@@ -284,10 +323,6 @@ class Smoke:
         for name in ("routes-manifest.json", "required-server-files.json"):
             manifest = destination / "web-src" / ".next" / name
             manifest.write_text(manifest.read_text().replace("http://localhost:9000", self.base))
-        static = source.parent / "static"
-        public = source.parent.parent / "public"
-        shutil.copytree(static, destination / "web-src" / ".next" / "static", dirs_exist_ok=True)
-        shutil.copytree(public, destination / "web-src" / "public", dirs_exist_ok=True)
         env = {**os.environ, "PORT": str(port), "HOSTNAME": "127.0.0.1", "NODE_ENV": "production", "PORTAINER_API_ORIGIN": self.base}
         with (self.root / "frontend.log").open("w") as log:
             process = subprocess.Popen(["node", str(server)], env=env, stdout=log, stderr=log)
@@ -295,7 +330,7 @@ class Smoke:
         frontend = "http://127.0.0.1:" + str(port)
         wait_for(lambda: urllib.request.urlopen(frontend + "/login", timeout=5).status == 200)
         self.results["frontend"] = {"standalone_server_sha256": hashlib.sha256(original.encode()).hexdigest(),
-            "build_id": (source / "web-src" / ".next" / "BUILD_ID").read_text().strip(),
+            "build_id": (destination / "web-src" / ".next" / "BUILD_ID").read_text().strip(),
             "topology": "disposable standalone copy with rewrite to isolated Vessel API"}
         return frontend
 
@@ -445,7 +480,7 @@ class Smoke:
         config = self.root / "kind.json"
         config.write_text(json.dumps({"kind": "Cluster", "apiVersion": "kind.x-k8s.io/v1alpha4",
             "networking": {"apiServerAddress": "127.0.0.1"}, "nodes": [{"role": "control-plane", "extraMounts": [
-                {"hostPath": str(Path(self.args.binary).resolve()), "containerPath": "/vessel-smoke-binary", "readOnly": True}]}]}))
+                {"hostPath": str(self.binary), "containerPath": "/vessel-smoke-binary", "readOnly": True}]}]}))
         self.clusters.append(cluster)  # Also remove partially created clusters on failure.
         command("env", "KIND_EXPERIMENTAL_DOCKER_NETWORK=" + network, "KUBECONFIG=" + str(kubeconfig),
             self.args.kind, "create", "cluster", "--name", cluster, "--image", self.args.kind_image,

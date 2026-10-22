@@ -34,7 +34,12 @@ python3 scripts/integration/platform_smoke.py \
   --output /tmp/vessel-rest-platform-engines.json
 ```
 
-`--artifact` is an alias for `--binary`. Results contain the binary SHA256,
+`--artifact` is an alias for `--binary`. At construction, the harness opens the
+supplied executable once and copies its bytes into its private temporary directory
+(no symlink or hard link). It hashes and mounts that same snapshot for both Docker
+and kind. A later atomic replacement, in-place rewrite, or removal of the builder's
+source path therefore cannot change the mounted bytes or invalidate the recorded
+hash. Results contain that snapshot's binary SHA256,
 resolved fixture image digests, maintained release/datastore identities,
 individual checks, durations, and cleanup failures. Startup also asserts the
 maintained release from `RELEASE_VERSION` and datastore compatibility `2.45.0`
@@ -125,7 +130,16 @@ stable (not concurrently being rebuilt), with its sibling `.next/static` and
 storage, changes only the copied generated server/routing manifests' baked-in
 API rewrite from `http://localhost:9000` to its own Vessel instance, and starts its **own** loopback
 server. It does not edit the source artifact or use another agent's server or
-browser profile. That mode tests actual frontend invalid-state rejection without
+browser profile. Before writing any copied metadata or merging assets, it rejects
+escaping/cyclic symlinks in the private standalone tree; this includes linked
+`server.js`, both routing manifests, ancestor directories, and preexisting asset
+destinations. Asset inputs are also checked before dereferencing their links.
+Safe relative package links that remain inside the private tree are preserved.
+A harmless temp-only regression fixture demonstrates why this matters: unguarded
+`copytree(..., symlinks=True)` followed by a write to a copied absolute symlink
+**does change the source target**. Regression tests now reject both absolute and
+relative escapes before any rewrite, while preserving the original target bytes.
+This is not a sandbox for arbitrary executable JavaScript: supply trusted builds. That mode tests actual frontend invalid-state rejection without
 a token exchange, OAuth login-link layout, provider login, callback exchange,
 identity/ACL, post-login navigation, cookie-session restoration after reload, and
 1100px/390px desktop/mobile layout without horizontal document overflow. Only the final application page and the
@@ -234,7 +248,7 @@ node --check scripts/integration/oauth_browser.cjs
 git diff --check
 ```
 
-Eighteen safety/transport unit tests passed during implementation. These verify
+Twenty-seven safety/transport unit tests passed during implementation. These verify
 resource ownership/bounds/cleanup, artifact identity, transport behavior, transient
 startup retries, and explicit Azure access gates; they are not counted as live
 platform coverage.

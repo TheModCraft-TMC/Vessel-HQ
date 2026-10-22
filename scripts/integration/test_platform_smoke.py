@@ -1,9 +1,12 @@
 """Safety/transport unit tests. No Docker daemon, browser, or cloud calls."""
 import argparse
 import contextlib
+import hashlib
 import io
 import json
+import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -34,6 +37,36 @@ class PlatformSmokeTests(unittest.TestCase):
             self.assertNotEqual(self.runner.prefix, other.prefix)
         finally:
             other.tmp.cleanup()
+
+    def test_backend_snapshot_survives_atomic_source_replacement_and_is_the_mount(self):
+        expected = self.binary.read_bytes()
+        replacement = Path(self.tmp.name) / "replacement"
+        replacement.write_bytes(b"different-build")
+        replacement.replace(self.binary)
+        self.assertEqual(self.runner.binary.read_bytes(), expected)
+        self.assertEqual(self.runner.results["binary_sha256"], hashlib.sha256(expected).hexdigest())
+        self.assertNotEqual(self.binary.read_bytes(), expected)
+        with patch.object(self.runner, "run", return_value="owned-vessel") as run, patch.object(self.runner, "docker", return_value="127.0.0.1:14567"), patch.object(self.runner, "initialize_session"):
+            self.runner.start_vessel(namespace=self.runner.prefix + "-namespace")
+        options = run.call_args.args[3]
+        self.assertIn(f"type=bind,source={self.runner.binary},target=/vessel/portainer,readonly", options)
+        self.assertNotIn(f"type=bind,source={self.binary},target=/vessel/portainer,readonly", options)
+        self.assertFalse(self.runner.binary.is_symlink())
+
+    def test_backend_snapshot_is_not_a_hard_link_and_survives_source_removal(self):
+        expected = self.runner.binary.read_bytes()
+        self.binary.write_bytes(b"in-place-builder-change")
+        self.binary.unlink()
+        self.assertEqual(self.runner.binary.read_bytes(), expected)
+        self.assertEqual(self.runner.results["binary_sha256"], hashlib.sha256(expected).hexdigest())
+
+    def test_kind_configuration_mounts_the_same_hashed_backend_snapshot(self):
+        self.args.kind_image = "test-node:image"
+        with patch.object(self.runner, "docker", return_value=""), patch.object(smoke, "command", side_effect=RuntimeError("stop after config creation")):
+            with self.assertRaisesRegex(RuntimeError, "stop after config creation"):
+                self.runner.suite_kubernetes()
+        config = json.loads((self.runner.root / "kind.json").read_text())
+        self.assertEqual(config["nodes"][0]["extraMounts"][0]["hostPath"], str(self.runner.binary))
 
     def test_subprocess_errors_never_include_argv_credentials(self):
         failed = subprocess.CompletedProcess([], 1, "", "provider unavailable")
@@ -150,8 +183,8 @@ class PlatformSmokeTests(unittest.TestCase):
         command.assert_not_called()
         self.assertEqual(self.runner.results["aci_gate"], {"azure_cli_installed": False, "azure_environment_names_present": []})
 
-    def test_frontend_artifact_is_copied_and_only_disposable_metadata_is_rewritten(self):
-        source = Path(self.tmp.name) / "source" / "web-src" / ".next" / "standalone"
+    def frontend_fixture(self, label="source"):
+        source = Path(self.tmp.name) / label / "web-src" / ".next" / "standalone"
         metadata = source / "web-src" / ".next"
         metadata.mkdir(parents=True)
         server = source / "web-src" / "server.js"
@@ -163,6 +196,11 @@ class PlatformSmokeTests(unittest.TestCase):
         (source.parent.parent / "public").mkdir()
         self.args.frontend_standalone = str(source)
         self.runner.base = "http://127.0.0.1:14567"
+        return source
+
+    def test_frontend_artifact_is_copied_and_only_disposable_metadata_is_rewritten(self):
+        source = self.frontend_fixture()
+        server = source / "web-src" / "server.js"
         with patch.object(smoke.subprocess, "Popen") as popen, patch.object(smoke, "wait_for"):
             self.assertEqual(self.runner.start_frontend(14568), "http://127.0.0.1:14568")
         self.assertIn("http://localhost:9000", server.read_text())
@@ -172,6 +210,97 @@ class PlatformSmokeTests(unittest.TestCase):
         self.assertEqual(popen.call_args.kwargs["env"]["PORTAINER_API_ORIGIN"], self.runner.base)
         self.assertEqual(popen.call_args.kwargs["env"]["HOSTNAME"], "127.0.0.1")
         self.assertEqual(self.runner.results["frontend"]["build_id"], "test-build-id")
+
+    def test_unguarded_copytree_symlinks_can_rewrite_a_harmless_source_target(self):
+        # Reproduction of the original flaw, entirely in this test's temp tree.
+        source = Path(self.tmp.name) / "unguarded"
+        source.mkdir()
+        target = source / "original-server.js"
+        target.write_text("harmless original")
+        (source / "server.js").symlink_to(target)
+        copied = Path(self.tmp.name) / "unguarded-copy"
+        shutil.copytree(source, copied, symlinks=True)
+        (copied / "server.js").write_text("harmless rewrite")
+        self.assertEqual(target.read_text(), "harmless rewrite")
+
+    def test_frontend_rejects_all_escaping_rewrite_file_links_before_any_write(self):
+        files = ("web-src/server.js", "web-src/.next/routes-manifest.json", "web-src/.next/required-server-files.json")
+        for index, relative in enumerate(files):
+            for link_kind in ("absolute", "relative"):
+                with self.subTest(file=relative, kind=link_kind):
+                    source = self.frontend_fixture(f"escape-{index}-{link_kind}")
+                    original = source / relative
+                    expected = original.read_bytes()
+                    target = source.parent / f"external-target-{index}"
+                    original.rename(target)
+                    original.symlink_to(target if link_kind == "absolute" else os.path.relpath(target, original.parent))
+                    untouched = {path: (source / path).read_bytes() for path in files}
+                    runner = smoke.Smoke(self.args)
+                    runner.base = "http://127.0.0.1:14567"
+                    try:
+                        with patch.object(smoke.subprocess, "Popen") as popen:
+                            with self.assertRaisesRegex(RuntimeError, "escaping or cyclic symlink"):
+                                runner.start_frontend(14568)
+                        popen.assert_not_called()
+                        self.assertEqual(target.read_bytes(), expected)
+                        for path, contents in untouched.items():
+                            self.assertEqual((source / path).read_bytes(), contents)
+                    finally:
+                        runner.tmp.cleanup()
+
+    def test_frontend_rejects_escaping_directory_links_without_modifying_target(self):
+        source = self.frontend_fixture()
+        directory = source / "web-src" / ".next"
+        external = source.parent / "external-next"
+        directory.rename(external)
+        directory.symlink_to(external, target_is_directory=True)
+        target = external / "routes-manifest.json"
+        expected = target.read_bytes()
+        with patch.object(smoke.subprocess, "Popen") as popen:
+            with self.assertRaisesRegex(RuntimeError, "escaping or cyclic symlink"):
+                self.runner.start_frontend(14568)
+        popen.assert_not_called()
+        self.assertEqual(target.read_bytes(), expected)
+
+    def test_frontend_rejects_escaping_preexisting_asset_destination(self):
+        source = self.frontend_fixture()
+        static = source.parent / "static"
+        target = static / "sentinel.css"
+        target.write_text("harmless stylesheet")
+        (source / "web-src" / ".next" / "static").symlink_to(static, target_is_directory=True)
+        with patch.object(smoke.subprocess, "Popen") as popen:
+            with self.assertRaisesRegex(RuntimeError, "escaping or cyclic symlink"):
+                self.runner.start_frontend(14568)
+        popen.assert_not_called()
+        self.assertEqual(target.read_text(), "harmless stylesheet")
+
+    def test_frontend_preserves_internal_relative_links_without_source_writes(self):
+        source = self.frontend_fixture()
+        server = source / "web-src" / "server.js"
+        target = server.parent / ".next" / "real-server.js"
+        server.rename(target)
+        server.symlink_to(".next/real-server.js")
+        expected = target.read_bytes()
+        with patch.object(smoke.subprocess, "Popen"), patch.object(smoke, "wait_for"):
+            self.runner.start_frontend(14568)
+        self.assertEqual(target.read_bytes(), expected)
+        private_server = self.runner.root / "frontend" / "web-src" / "server.js"
+        self.assertTrue(private_server.is_symlink())
+        self.assertIn(self.runner.base, private_server.read_text())
+        self.assertNotIn(self.runner.base, target.read_text())
+
+    def test_symlink_guard_rejects_cycles_and_dangling_escapes(self):
+        root = Path(self.tmp.name) / "links"
+        root.mkdir()
+        link = root / "link"
+        for target in ("link", "../absent-outside-target"):
+            with self.subTest(target=target):
+                link.symlink_to(target)
+                try:
+                    with self.assertRaisesRegex(RuntimeError, "escaping or cyclic symlink"):
+                        smoke.reject_symlink_escapes(root)
+                finally:
+                    link.unlink()
 
     def test_interruption_still_cleans_resources_and_writes_an_interrupted_result(self):
         self.args.suites = "docker"
