@@ -29,8 +29,8 @@ GO_VERSION=${GO_VERSION:-$(go version | awk '{print $3}')}
 GIT_COMMIT_HASH=${GIT_COMMIT_HASH:-$(git rev-parse --short HEAD)}
 
 # populate dependencies versions
-DOCKER_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/docker/docker)
-COMPOSE_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/docker/compose/v2)
+DOCKER_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/moby/moby/client)
+COMPOSE_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/docker/compose/v5)
 # Kubernetes SDK uses v0.x.y versioning, but official kubectl releases use v1.x.y
 # We need to transform the version (e.g., v0.33.2 -> v1.33.2)
 KUBECTL_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' k8s.io/kubectl | sed 's/^v0\./v1./' | sed 's/^0\./1./')
