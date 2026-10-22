@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// REVIEW: The product ClientFactory compatibility tests do not cover the CLI
+// The product ClientFactory compatibility tests do not cover the CLI
 // client used by Compose and Swarm. Keep those real HTTP requests at the daemon's
 // advertised version, including the previous SDK's missing-header fallback.
 func TestWithCliNegotiatesLegacyEngines(t *testing.T) {

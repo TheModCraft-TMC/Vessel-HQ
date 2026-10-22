@@ -14,6 +14,7 @@ import (
 	"github.com/docker/cli/cli/flags"
 
 	"github.com/docker/go-connections/tlsconfig"
+	"github.com/moby/moby/client"
 	"github.com/rs/zerolog/log"
 )
 
@@ -50,7 +51,7 @@ func WithCli(
 	// The base behavior (context.Background) also ignored cancellation.
 	ctx = context.WithoutCancel(ctx)
 
-	cli, err := command.NewDockerCli(command.WithCombinedStreams(log.Logger))
+	cli, err := command.NewDockerCli(command.WithCombinedStreams(log.Logger), command.WithBaseContext(ctx))
 	if err != nil {
 		return fmt.Errorf("unable to create a Docker client: %w", err)
 	}
@@ -68,8 +69,7 @@ func WithCli(
 	}
 	mu.Unlock()
 
-	// Inject custom headers before the first Client() call, which is where the
-	// Docker client is lazily created and reads ConfigFile().HTTPHeaders.
+	// Inject custom headers before constructing/probing the API client.
 	if len(options.Headers) > 0 {
 		cfg := cli.ConfigFile()
 		if cfg.HTTPHeaders == nil {
@@ -78,6 +78,13 @@ func WithCli(
 		maps.Copy(cfg.HTTPHeaders, options.Headers)
 	}
 
+	// Inject through the public CLI factory option before any lazy CLI client
+	// initialization. No SDK constructor option is applied to a live client.
+	if err := command.WithInitializeClient(func(cli *command.DockerCli) (client.APIClient, error) {
+		return newDockerCLIClient(ctx, cli)
+	})(cli); err != nil {
+		return fmt.Errorf("unable to initialize the Docker API client: %w", err)
+	}
 	defer logs.CloseAndLogErr(cli.Client())
 
 	for _, r := range options.Registries {

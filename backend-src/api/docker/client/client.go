@@ -12,6 +12,7 @@ import (
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/crypto"
+	"github.com/portainer/portainer/pkg/dockercompat"
 	"github.com/portainer/portainer/pkg/fips"
 	"github.com/portainer/portainer/pkg/libhttp/ssrf"
 
@@ -19,16 +20,12 @@ import (
 
 	"github.com/moby/moby/api/types/image"
 	"github.com/moby/moby/client"
-	"github.com/moby/moby/client/pkg/versions"
 	"github.com/segmentio/encoding/json"
 )
 
 var errUnsupportedEnvironmentType = errors.New("environment not supported")
 
-const (
-	defaultDockerRequestTimeout = 60 * time.Second
-	legacyNegotiationVersion    = "1.24"
-)
+const defaultDockerRequestTimeout = 60 * time.Second
 
 type NodeNamesCtxKey struct{}
 
@@ -176,40 +173,12 @@ func newCompatibleClient(ctx context.Context, timeout *time.Duration, httpClient
 		}
 		return client.New(options...)
 	}
-	cli, err := create()
-	if err != nil {
-		return nil, err
-	}
-	defer cli.Close()
-
 	if probeTimeout := dockerRequestTimeout(timeout); probeTimeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, probeTimeout)
 		defer cancel()
 	}
-	ping, err := cli.Ping(ctx, client.PingOptions{})
-	if err != nil && ctx.Err() == nil {
-		ping, err = cli.Ping(ctx, client.PingOptions{})
-	}
-	if err != nil {
-		return nil, fmt.Errorf("negotiate Docker API version: %w", err)
-	}
-	version := ping.APIVersion
-	if version == "" {
-		// Preserve the previous SDK's pre-negotiation-engine fallback.
-		version = legacyNegotiationVersion
-	}
-	// WithAPIVersion validates and normalizes the server value. Do that before
-	// comparing, so malformed versions cannot silently select the maximum.
-	negotiated, err := create(client.WithAPIVersion(version))
-	if err != nil {
-		return nil, err
-	}
-	if versions.GreaterThan(negotiated.ClientVersion(), client.MaxAPIVersion) {
-		_ = negotiated.Close()
-		return create(client.WithAPIVersion(client.MaxAPIVersion))
-	}
-	return negotiated, nil
+	return dockercompat.NewClient(ctx, create)
 }
 
 type NodeNameTransport struct {

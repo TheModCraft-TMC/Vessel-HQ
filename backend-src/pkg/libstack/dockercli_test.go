@@ -9,12 +9,13 @@ import (
 )
 
 func TestWithCli_InjectsHeaders(t *testing.T) {
+	isolateCLIConfig(t)
 	const headerName = "X-PortainerAgent-ManagerOperation"
 
 	err := WithCli(
 		t.Context(),
 		DockerCliOptions{
-			Host:    "tcp://127.0.0.1:1",
+			Host:    cliEngine(t, "1.39"),
 			Headers: map[string]string{headerName: "1"},
 		},
 		func(_ context.Context, cli *command.DockerCli) error {
@@ -26,9 +27,10 @@ func TestWithCli_InjectsHeaders(t *testing.T) {
 }
 
 func TestWithCli_NoHeaders(t *testing.T) {
+	isolateCLIConfig(t)
 	err := WithCli(
 		context.Background(),
-		DockerCliOptions{Host: "tcp://127.0.0.1:1"},
+		DockerCliOptions{Host: cliEngine(t, "1.39")},
 		func(_ context.Context, cli *command.DockerCli) error {
 			require.Empty(t, cli.ConfigFile().HTTPHeaders)
 			return nil
@@ -38,15 +40,19 @@ func TestWithCli_NoHeaders(t *testing.T) {
 }
 
 func TestWithCli_PreservesCallerValuesButNotCancellation(t *testing.T) {
+	isolateCLIConfig(t)
 	type contextKey struct{}
 	ctx, cancel := context.WithCancel(context.WithValue(t.Context(), contextKey{}, "deployment"))
 	defer cancel()
 	cancel()
 
-	err := WithCli(ctx, DockerCliOptions{Host: "tcp://127.0.0.1:1"},
+	err := WithCli(ctx, DockerCliOptions{Host: cliEngine(t, "1.39")},
 		func(cliCtx context.Context, _ *command.DockerCli) error {
 			require.Equal(t, "deployment", cliCtx.Value(contextKey{}))
 			// Client disconnects must not abort in-flight compose operations.
+			require.Nil(t, cliCtx.Done())
+			_, hasDeadline := cliCtx.Deadline()
+			require.False(t, hasDeadline)
 			return cliCtx.Err()
 		})
 	require.NoError(t, err)
