@@ -35,6 +35,25 @@ test('invalid advisory ranges fail closed instead of silently reporting clean', 
   );
 });
 
+test('affected prereleases are not silently exempted from advisory ranges', () => {
+  const alert = { package: '@fixture/package', vulnerableRange: '< 2.0.0' };
+  const lockfile = { packages: { '@fixture/package@1.9.0-beta.1': {}, '@fixture/package@2.0.0': {} } };
+  assert.deepEqual(findVulnerableVersions(lockfile, [alert]).map(({ version }) => version), ['1.9.0-beta.1']);
+});
+
+test('invalid versions of a covered package fail closed', () => {
+  assert.throws(
+    () => findVulnerableVersions({ packages: { 'fixture@not-a-version': {} } }, [{ package: 'fixture', vulnerableRange: '*' }]),
+    /Invalid locked version/
+  );
+});
+
+test('missing or malformed package inventories fail closed', () => {
+  for (const lockfile of [null, {}, { packages: null }, { packages: [] }, { packages: 'invalid' }]) {
+    assert.throws(() => findVulnerableVersions(lockfile, alerts), /Invalid lockfile package inventory/);
+  }
+});
+
 test('the maintained lockfile has no affected version for any supplied alert', () => {
   assert.deepEqual(findVulnerableVersions(YAML.parse(fs.readFileSync('pnpm-lock.yaml', 'utf8')), alerts), []);
 });

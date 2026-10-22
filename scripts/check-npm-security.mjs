@@ -4,7 +4,10 @@ import semver from 'semver';
 import YAML from 'yaml';
 
 export function findVulnerableVersions(lockfile, alerts) {
-  const packages = Object.keys(lockfile.packages || {}).map((key) => {
+  if (!lockfile?.packages || typeof lockfile.packages !== 'object' || Array.isArray(lockfile.packages)) {
+    throw new Error('Invalid lockfile package inventory');
+  }
+  const packages = Object.keys(lockfile.packages).map((key) => {
     const separator = key.lastIndexOf('@');
     return { name: key.slice(0, separator), version: key.slice(separator + 1) };
   });
@@ -13,8 +16,13 @@ export function findVulnerableVersions(lockfile, alerts) {
     const range = alert.vulnerableRange.replaceAll(',', ' ');
     if (!semver.validRange(range)) throw new Error(`Invalid advisory range: ${alert.vulnerableRange}`);
     return packages
-      .filter(({ name, version }) => name === alert.package && semver.satisfies(version, range))
-      .map(({ version }) => ({ number: alert.number, ghsa: alert.ghsa, package: alert.package, version }));
+      .filter(({ name }) => name === alert.package)
+      .flatMap(({ version }) => {
+        if (!semver.valid(version)) throw new Error(`Invalid locked version for ${alert.package}: ${version}`);
+        return semver.satisfies(version, range, { includePrerelease: true })
+          ? [{ number: alert.number, ghsa: alert.ghsa, package: alert.package, version }]
+          : [];
+      });
   });
 }
 

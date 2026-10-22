@@ -50,67 +50,67 @@ The accompanying [machine-readable inventory](dependency-npm-alerts.json) preser
 
 | Alert | Advisory | Package / original version | Vulnerable range | First published patch | Final graph |
 | --- | --- | --- | --- | --- | --- |
-| #29 | [GHSA-968p-4wvh-cqc8](https://github.com/advisories/GHSA-968p-4wvh-cqc8) | @babel/runtime 7.26.0 | `< 7.26.10` | 7.26.10 | 7.29.10 |
-| #30 | [GHSA-v6h2-p8h4-qcjw](https://github.com/advisories/GHSA-v6h2-p8h4-qcjw) | brace-expansion 1.1.11 | `>= 1.0.0, <= 1.1.11` | 1.1.12 | 1.1.21, 5.0.12 |
-| #31 | [GHSA-q58r-hwc8-rm9j](https://github.com/advisories/GHSA-q58r-hwc8-rm9j) | bootstrap 3.4.1 | `= 3.4.1` | NO_PATCH | Removed |
-| #32 | [GHSA-vxmc-5x29-h64v](https://github.com/advisories/GHSA-vxmc-5x29-h64v) | bootstrap 3.4.1 | `>= 1.4.0, <= 3.4.1` | NO_PATCH | Removed |
-| #33 | [GHSA-9965-vmph-33xx](https://github.com/advisories/GHSA-9965-vmph-33xx) | validator 13.7.0 | `< 13.15.20` | 13.15.20 | Removed |
-| #34 | [GHSA-4fh9-h7wg-q85m](https://github.com/advisories/GHSA-4fh9-h7wg-q85m) | mdast-util-to-hast 13.2.0 | `>= 13.0.0, < 13.2.1` | 13.2.1 | 13.2.1 |
-| #35 | [GHSA-vghf-hv5q-vc2g](https://github.com/advisories/GHSA-vghf-hv5q-vc2g) | validator 13.7.0 | `< 13.15.22` | 13.15.22 | Removed |
-| #39 | [GHSA-mw96-cpmx-2vgc](https://github.com/advisories/GHSA-mw96-cpmx-2vgc) | rollup 4.54.0 | `>= 4.0.0, < 4.59.0` | 4.59.0 | Removed |
-| #40 | [GHSA-xpqw-6gx7-v673](https://github.com/advisories/GHSA-xpqw-6gx7-v673) | svgo 3.0.2 | `>= 3.0.0, < 3.3.3` | 3.3.3 | 3.3.5, 4.1.0 |
-| #45 | [GHSA-f886-m6hf-6m8v](https://github.com/advisories/GHSA-f886-m6hf-6m8v) | brace-expansion 1.1.11 | `< 1.1.13` | 1.1.13 | 1.1.21, 5.0.12 |
-| #49 | [GHSA-fv7c-fp4j-7gwp](https://github.com/advisories/GHSA-fv7c-fp4j-7gwp) | @babel/plugin-transform-modules-systemjs 7.23.3 | `>= 7.12.0, <= 7.29.3` | 7.29.4 | 7.29.8 |
-| #51 | [GHSA-58qx-3vcg-4xpx](https://github.com/advisories/GHSA-58qx-3vcg-4xpx) | ws 8.19.0 | `>= 8.0.0, < 8.20.1` | 8.20.1 | 8.22.0 |
-| #54 | [GHSA-g7r4-m6w7-qqqr](https://github.com/advisories/GHSA-g7r4-m6w7-qqqr) | esbuild 0.27.3 | `>= 0.27.3, < 0.28.1` | 0.28.1 | 0.28.2 |
-| #55 | [GHSA-96hv-2xvq-fx4p](https://github.com/advisories/GHSA-96hv-2xvq-fx4p) | ws 8.19.0 | `>= 8.0.0, < 8.21.0` | 8.21.0 | 8.22.0 |
-| #57 | [GHSA-hmw2-7cc7-3qxx](https://github.com/advisories/GHSA-hmw2-7cc7-3qxx) | form-data 4.0.5 | `>= 4.0.0, < 4.0.6` | 4.0.6 | 4.0.6 |
-| #58 | [GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq) | markdown-it 12.3.2 | `<= 14.1.1` | 14.2.0 | 14.3.3 |
-| #59 | [GHSA-22p9-wv53-3rq4](https://github.com/advisories/GHSA-22p9-wv53-3rq4) | linkify-it 3.0.3 | `<= 5.0.0` | 5.0.1 | 5.0.2 |
-| #60 | [GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68) | js-yaml 4.1.1 | `>= 4.0.0, <= 4.1.1` | 4.2.0 | 4.3.2, 5.5.0 |
-| #61 | [GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68) | js-yaml 3.14.2 | `< 3.15.0` | 3.15.0 | 4.3.2, 5.5.0 |
-| #62 | [GHSA-3jxr-9vmj-r5cp](https://github.com/advisories/GHSA-3jxr-9vmj-r5cp) | brace-expansion 5.0.5 | `>= 3.0.0, < 5.0.7` | 5.0.7 | 1.1.21, 5.0.12 |
-| #63 | [GHSA-3jxr-9vmj-r5cp](https://github.com/advisories/GHSA-3jxr-9vmj-r5cp) | brace-expansion 1.1.11 | `< 1.1.16` | 1.1.16 | 1.1.21, 5.0.12 |
-| #64 | [GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m) | js-yaml 3.14.2 | `>= 3.0.0, < 3.15.0` | 3.15.0 | 4.3.2, 5.5.0 |
-| #65 | [GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m) | js-yaml 4.1.1 | `>= 4.0.0, < 4.3.0` | 4.3.0 | 4.3.2, 5.5.0 |
-| #67 | [GHSA-4c8g-83qw-93j6](https://github.com/advisories/GHSA-4c8g-83qw-93j6) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.3` | 3.1.3 | 3.1.9 |
-| #68 | [GHSA-v245-v573-v5vm](https://github.com/advisories/GHSA-v245-v573-v5vm) | linkify-it 3.0.3 | `<= 5.0.1` | 5.0.2 | 5.0.2 |
-| #69 | [GHSA-2p49-hgcm-8545](https://github.com/advisories/GHSA-2p49-hgcm-8545) | svgo 3.0.2 | `>= 3.0.0, < 3.3.4` | 3.3.4 | 3.3.5, 4.1.0 |
-| #70 | [GHSA-2p49-hgcm-8545](https://github.com/advisories/GHSA-2p49-hgcm-8545) | svgo 4.0.1 | `>= 4.0.0, < 4.0.2` | 4.0.2 | 3.3.5, 4.1.0 |
-| #71 | [GHSA-v2hh-gcrm-f6hx](https://github.com/advisories/GHSA-v2hh-gcrm-f6hx) | fast-uri 3.1.0 | `>= 3.0.0, <= 3.1.3` | 3.1.4 | 3.1.9 |
-| #74 | [GHSA-mh99-v99m-4gvg](https://github.com/advisories/GHSA-mh99-v99m-4gvg) | brace-expansion 1.1.11 | `< 1.1.17` | 1.1.17 | 1.1.21, 5.0.12 |
-| #76 | [GHSA-rgw5-rvv9-x895](https://github.com/advisories/GHSA-rgw5-rvv9-x895) | brace-expansion 1.1.11 | `< 1.1.18` | 1.1.18 | 1.1.21, 5.0.12 |
-| #79 | [GHSA-7p8r-x3mc-p8w7](https://github.com/advisories/GHSA-7p8r-x3mc-p8w7) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.5` | 3.1.5 | 3.1.9 |
-| #80 | [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj) | js-yaml 4.1.1 | `>= 4.0.0, < 4.3.1` | 4.3.1 | 4.3.2, 5.5.0 |
-| #81 | [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj) | js-yaml 3.14.2 | `>= 3.0.0, < 3.15.1` | 3.15.1 | 4.3.2, 5.5.0 |
-| #83 | [GHSA-v39h-62p7-jpjc](https://github.com/advisories/GHSA-v39h-62p7-jpjc) | fast-uri 3.1.0 | `>= 3.0.0, <= 3.1.1` | 3.1.2 | 3.1.9 |
-| #84 | [GHSA-q3j6-qgpj-74h6](https://github.com/advisories/GHSA-q3j6-qgpj-74h6) | fast-uri 3.1.0 | `>= 3.0.0, <= 3.1.0` | 3.1.1 | 3.1.9 |
-| #86 | [GHSA-w9m9-85wc-3x92](https://github.com/advisories/GHSA-w9m9-85wc-3x92) | postcss-selector-parser 7.1.1 | `>= 7.1.0, < 7.1.3` | 7.1.3 | 7.1.7 |
-| #87 | [GHSA-73wf-gq98-2v4g](https://github.com/advisories/GHSA-73wf-gq98-2v4g) | browserslist 4.28.2 | `<= 4.28.6` | 4.28.7 | 4.29.4 |
-| #90 | [GHSA-p498-v437-472g](https://github.com/advisories/GHSA-p498-v437-472g) | @humanfs/node 0.16.7 | `< 0.16.8` | 0.16.8 | 0.16.8 |
-| #92 | [GHSA-jqff-g426-hqxp](https://github.com/advisories/GHSA-jqff-g426-hqxp) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.6` | 3.1.6 | 3.1.9 |
-| #93 | [GHSA-f65p-4m7j-42xc](https://github.com/advisories/GHSA-f65p-4m7j-42xc) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.6` | 3.1.6 | 3.1.9 |
-| #95 | [GHSA-w5vr-8v7q-w6rv](https://github.com/advisories/GHSA-w5vr-8v7q-w6rv) | baseline-browser-mapping 2.10.33 | `>= 2.0.0, < 2.11.0` | 2.11.0 | 2.11.30 |
-| #98 | [GHSA-4vpr-x523-8j87](https://github.com/advisories/GHSA-4vpr-x523-8j87) | svgo 3.0.2 | `>= 3.0.0, < 3.3.5` | 3.3.5 | 3.3.5, 4.1.0 |
-| #99 | [GHSA-4vpr-x523-8j87](https://github.com/advisories/GHSA-4vpr-x523-8j87) | svgo 4.0.1 | `>= 4.0.0, < 4.1.0` | 4.1.0 | 3.3.5, 4.1.0 |
-| #100 | [GHSA-w27v-7q3p-w38r](https://github.com/advisories/GHSA-w27v-7q3p-w38r) | svgo 3.0.2 | `>= 3.0.0, < 3.3.5` | 3.3.5 | 3.3.5, 4.1.0 |
-| #101 | [GHSA-w27v-7q3p-w38r](https://github.com/advisories/GHSA-w27v-7q3p-w38r) | svgo 4.0.1 | `>= 4.0.0, < 4.1.0` | 4.1.0 | 3.3.5, 4.1.0 |
-| #102 | [GHSA-2883-xcg3-v3hh](https://github.com/advisories/GHSA-2883-xcg3-v3hh) | js-yaml 4.1.1 | `>= 4.0.0, < 4.3.2` | 4.3.2 | 4.3.2, 5.5.0 |
-| #103 | [GHSA-2883-xcg3-v3hh](https://github.com/advisories/GHSA-2883-xcg3-v3hh) | js-yaml 3.14.2 | `>= 3.0.0, < 3.15.2` | 3.15.2 | 4.3.2, 5.5.0 |
-| #104 | [GHSA-qw65-cvwx-89v3](https://github.com/advisories/GHSA-qw65-cvwx-89v3) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.7` | 3.1.7 | 3.1.9 |
-| #105 | [GHSA-g84c-rxfj-3j2c](https://github.com/advisories/GHSA-g84c-rxfj-3j2c) | webpack-dev-middleware 6.1.3 | `< 7.4.5` | 7.4.6 | Removed |
-| #106 | [GHSA-253c-mchw-3w2r](https://github.com/advisories/GHSA-253c-mchw-3w2r) | markdown-it 12.3.2 | `< 14.3.1` | 14.3.1 | 14.3.3 |
-| #108 | [GHSA-6j4f-fj2g-mc7p](https://github.com/advisories/GHSA-6j4f-fj2g-mc7p) | brace-expansion 1.1.11 | `< 1.1.19` | 1.1.19 | 1.1.21, 5.0.12 |
-| #110 | [GHSA-qhr7-859c-m2p7](https://github.com/advisories/GHSA-qhr7-859c-m2p7) | brace-expansion 1.1.11 | `< 1.1.20` | 1.1.20 | 1.1.21, 5.0.12 |
-| #111 | [GHSA-q2hr-2g5m-vwhr](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr) | brace-expansion 5.0.5 | `>= 4.0.0, < 5.0.12` | 5.0.12 | 1.1.21, 5.0.12 |
-| #112 | [GHSA-q2hr-2g5m-vwhr](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr) | brace-expansion 1.1.11 | `< 1.1.21` | 1.1.21 | 1.1.21, 5.0.12 |
-| #127 | [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) | braces 3.0.3 | `<= 3.0.3` | NO_PATCH | Removed |
-| #128 | [GHSA-jggr-w7fw-pc2j](https://github.com/advisories/GHSA-jggr-w7fw-pc2j) | fast-copy 3.0.2 | `>= 3.0.0, < 3.1.0` | 3.1.0 | 3.1.0 |
-| #129 | [GHSA-rj75-hqrm-r3gf](https://github.com/advisories/GHSA-rj75-hqrm-r3gf) | postcss-selector-parser 6.0.13 | `< 7.1.6` | 7.1.6 | 7.1.7 |
-| #130 | [GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q) | source-map-js 1.2.1 | `>= 1.0.0, < 1.2.2` | 1.2.2 | 1.2.2 |
-| #131 | [GHSA-hp3w-g68c-fv3c](https://github.com/advisories/GHSA-hp3w-g68c-fv3c) | sprintf-js 1.0.3 | `<= 1.1.3` | NO_PATCH | Removed |
-| #134 | [GHSA-r7fv-28h4-cvq7](https://github.com/advisories/GHSA-r7fv-28h4-cvq7) | markdown-it 12.3.2 | `< 14.3.2` | 14.3.2 | 14.3.3 |
-| #141 | [GHSA-vfgh-jcmw-g37q](https://github.com/advisories/GHSA-vfgh-jcmw-g37q) | markdown-it 12.3.2 | `< 14.3.3` | 14.3.3 | 14.3.3 |
+| [#29](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/29) | [GHSA-968p-4wvh-cqc8](https://github.com/advisories/GHSA-968p-4wvh-cqc8) | @babel/runtime 7.26.0 | `< 7.26.10` | 7.26.10 | 7.29.10 |
+| [#30](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/30) | [GHSA-v6h2-p8h4-qcjw](https://github.com/advisories/GHSA-v6h2-p8h4-qcjw) | brace-expansion 1.1.11 | `>= 1.0.0, <= 1.1.11` | 1.1.12 | 1.1.21, 5.0.12 |
+| [#31](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/31) | [GHSA-q58r-hwc8-rm9j](https://github.com/advisories/GHSA-q58r-hwc8-rm9j) | bootstrap 3.4.1 | `= 3.4.1` | NO_PATCH | Removed |
+| [#32](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/32) | [GHSA-vxmc-5x29-h64v](https://github.com/advisories/GHSA-vxmc-5x29-h64v) | bootstrap 3.4.1 | `>= 1.4.0, <= 3.4.1` | NO_PATCH | Removed |
+| [#33](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/33) | [GHSA-9965-vmph-33xx](https://github.com/advisories/GHSA-9965-vmph-33xx) | validator 13.7.0 | `< 13.15.20` | 13.15.20 | Removed |
+| [#34](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/34) | [GHSA-4fh9-h7wg-q85m](https://github.com/advisories/GHSA-4fh9-h7wg-q85m) | mdast-util-to-hast 13.2.0 | `>= 13.0.0, < 13.2.1` | 13.2.1 | 13.2.1 |
+| [#35](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/35) | [GHSA-vghf-hv5q-vc2g](https://github.com/advisories/GHSA-vghf-hv5q-vc2g) | validator 13.7.0 | `< 13.15.22` | 13.15.22 | Removed |
+| [#39](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/39) | [GHSA-mw96-cpmx-2vgc](https://github.com/advisories/GHSA-mw96-cpmx-2vgc) | rollup 4.54.0 | `>= 4.0.0, < 4.59.0` | 4.59.0 | Removed |
+| [#40](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/40) | [GHSA-xpqw-6gx7-v673](https://github.com/advisories/GHSA-xpqw-6gx7-v673) | svgo 3.0.2 | `>= 3.0.0, < 3.3.3` | 3.3.3 | 3.3.5, 4.1.0 |
+| [#45](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/45) | [GHSA-f886-m6hf-6m8v](https://github.com/advisories/GHSA-f886-m6hf-6m8v) | brace-expansion 1.1.11 | `< 1.1.13` | 1.1.13 | 1.1.21, 5.0.12 |
+| [#49](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/49) | [GHSA-fv7c-fp4j-7gwp](https://github.com/advisories/GHSA-fv7c-fp4j-7gwp) | @babel/plugin-transform-modules-systemjs 7.23.3 | `>= 7.12.0, <= 7.29.3` | 7.29.4 | 7.29.8 |
+| [#51](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/51) | [GHSA-58qx-3vcg-4xpx](https://github.com/advisories/GHSA-58qx-3vcg-4xpx) | ws 8.19.0 | `>= 8.0.0, < 8.20.1` | 8.20.1 | 8.22.0 |
+| [#54](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/54) | [GHSA-g7r4-m6w7-qqqr](https://github.com/advisories/GHSA-g7r4-m6w7-qqqr) | esbuild 0.27.3 | `>= 0.27.3, < 0.28.1` | 0.28.1 | 0.28.2 |
+| [#55](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/55) | [GHSA-96hv-2xvq-fx4p](https://github.com/advisories/GHSA-96hv-2xvq-fx4p) | ws 8.19.0 | `>= 8.0.0, < 8.21.0` | 8.21.0 | 8.22.0 |
+| [#57](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/57) | [GHSA-hmw2-7cc7-3qxx](https://github.com/advisories/GHSA-hmw2-7cc7-3qxx) | form-data 4.0.5 | `>= 4.0.0, < 4.0.6` | 4.0.6 | 4.0.6 |
+| [#58](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/58) | [GHSA-6v5v-wf23-fmfq](https://github.com/advisories/GHSA-6v5v-wf23-fmfq) | markdown-it 12.3.2 | `<= 14.1.1` | 14.2.0 | 14.3.3 |
+| [#59](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/59) | [GHSA-22p9-wv53-3rq4](https://github.com/advisories/GHSA-22p9-wv53-3rq4) | linkify-it 3.0.3 | `<= 5.0.0` | 5.0.1 | 5.0.2 |
+| [#60](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/60) | [GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68) | js-yaml 4.1.1 | `>= 4.0.0, <= 4.1.1` | 4.2.0 | 4.3.2, 5.5.0 |
+| [#61](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/61) | [GHSA-h67p-54hq-rp68](https://github.com/advisories/GHSA-h67p-54hq-rp68) | js-yaml 3.14.2 | `< 3.15.0` | 3.15.0 | 4.3.2, 5.5.0 |
+| [#62](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/62) | [GHSA-3jxr-9vmj-r5cp](https://github.com/advisories/GHSA-3jxr-9vmj-r5cp) | brace-expansion 5.0.5 | `>= 3.0.0, < 5.0.7` | 5.0.7 | 1.1.21, 5.0.12 |
+| [#63](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/63) | [GHSA-3jxr-9vmj-r5cp](https://github.com/advisories/GHSA-3jxr-9vmj-r5cp) | brace-expansion 1.1.11 | `< 1.1.16` | 1.1.16 | 1.1.21, 5.0.12 |
+| [#64](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/64) | [GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m) | js-yaml 3.14.2 | `>= 3.0.0, < 3.15.0` | 3.15.0 | 4.3.2, 5.5.0 |
+| [#65](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/65) | [GHSA-52cp-r559-cp3m](https://github.com/advisories/GHSA-52cp-r559-cp3m) | js-yaml 4.1.1 | `>= 4.0.0, < 4.3.0` | 4.3.0 | 4.3.2, 5.5.0 |
+| [#67](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/67) | [GHSA-4c8g-83qw-93j6](https://github.com/advisories/GHSA-4c8g-83qw-93j6) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.3` | 3.1.3 | 3.1.9 |
+| [#68](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/68) | [GHSA-v245-v573-v5vm](https://github.com/advisories/GHSA-v245-v573-v5vm) | linkify-it 3.0.3 | `<= 5.0.1` | 5.0.2 | 5.0.2 |
+| [#69](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/69) | [GHSA-2p49-hgcm-8545](https://github.com/advisories/GHSA-2p49-hgcm-8545) | svgo 3.0.2 | `>= 3.0.0, < 3.3.4` | 3.3.4 | 3.3.5, 4.1.0 |
+| [#70](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/70) | [GHSA-2p49-hgcm-8545](https://github.com/advisories/GHSA-2p49-hgcm-8545) | svgo 4.0.1 | `>= 4.0.0, < 4.0.2` | 4.0.2 | 3.3.5, 4.1.0 |
+| [#71](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/71) | [GHSA-v2hh-gcrm-f6hx](https://github.com/advisories/GHSA-v2hh-gcrm-f6hx) | fast-uri 3.1.0 | `>= 3.0.0, <= 3.1.3` | 3.1.4 | 3.1.9 |
+| [#74](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/74) | [GHSA-mh99-v99m-4gvg](https://github.com/advisories/GHSA-mh99-v99m-4gvg) | brace-expansion 1.1.11 | `< 1.1.17` | 1.1.17 | 1.1.21, 5.0.12 |
+| [#76](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/76) | [GHSA-rgw5-rvv9-x895](https://github.com/advisories/GHSA-rgw5-rvv9-x895) | brace-expansion 1.1.11 | `< 1.1.18` | 1.1.18 | 1.1.21, 5.0.12 |
+| [#79](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/79) | [GHSA-7p8r-x3mc-p8w7](https://github.com/advisories/GHSA-7p8r-x3mc-p8w7) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.5` | 3.1.5 | 3.1.9 |
+| [#80](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/80) | [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj) | js-yaml 4.1.1 | `>= 4.0.0, < 4.3.1` | 4.3.1 | 4.3.2, 5.5.0 |
+| [#81](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/81) | [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj) | js-yaml 3.14.2 | `>= 3.0.0, < 3.15.1` | 3.15.1 | 4.3.2, 5.5.0 |
+| [#83](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/83) | [GHSA-v39h-62p7-jpjc](https://github.com/advisories/GHSA-v39h-62p7-jpjc) | fast-uri 3.1.0 | `>= 3.0.0, <= 3.1.1` | 3.1.2 | 3.1.9 |
+| [#84](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/84) | [GHSA-q3j6-qgpj-74h6](https://github.com/advisories/GHSA-q3j6-qgpj-74h6) | fast-uri 3.1.0 | `>= 3.0.0, <= 3.1.0` | 3.1.1 | 3.1.9 |
+| [#86](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/86) | [GHSA-w9m9-85wc-3x92](https://github.com/advisories/GHSA-w9m9-85wc-3x92) | postcss-selector-parser 7.1.1 | `>= 7.1.0, < 7.1.3` | 7.1.3 | 7.1.7 |
+| [#87](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/87) | [GHSA-73wf-gq98-2v4g](https://github.com/advisories/GHSA-73wf-gq98-2v4g) | browserslist 4.28.2 | `<= 4.28.6` | 4.28.7 | 4.29.4 |
+| [#90](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/90) | [GHSA-p498-v437-472g](https://github.com/advisories/GHSA-p498-v437-472g) | @humanfs/node 0.16.7 | `< 0.16.8` | 0.16.8 | 0.16.8 |
+| [#92](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/92) | [GHSA-jqff-g426-hqxp](https://github.com/advisories/GHSA-jqff-g426-hqxp) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.6` | 3.1.6 | 3.1.9 |
+| [#93](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/93) | [GHSA-f65p-4m7j-42xc](https://github.com/advisories/GHSA-f65p-4m7j-42xc) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.6` | 3.1.6 | 3.1.9 |
+| [#95](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/95) | [GHSA-w5vr-8v7q-w6rv](https://github.com/advisories/GHSA-w5vr-8v7q-w6rv) | baseline-browser-mapping 2.10.33 | `>= 2.0.0, < 2.11.0` | 2.11.0 | 2.11.30 |
+| [#98](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/98) | [GHSA-4vpr-x523-8j87](https://github.com/advisories/GHSA-4vpr-x523-8j87) | svgo 3.0.2 | `>= 3.0.0, < 3.3.5` | 3.3.5 | 3.3.5, 4.1.0 |
+| [#99](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/99) | [GHSA-4vpr-x523-8j87](https://github.com/advisories/GHSA-4vpr-x523-8j87) | svgo 4.0.1 | `>= 4.0.0, < 4.1.0` | 4.1.0 | 3.3.5, 4.1.0 |
+| [#100](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/100) | [GHSA-w27v-7q3p-w38r](https://github.com/advisories/GHSA-w27v-7q3p-w38r) | svgo 3.0.2 | `>= 3.0.0, < 3.3.5` | 3.3.5 | 3.3.5, 4.1.0 |
+| [#101](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/101) | [GHSA-w27v-7q3p-w38r](https://github.com/advisories/GHSA-w27v-7q3p-w38r) | svgo 4.0.1 | `>= 4.0.0, < 4.1.0` | 4.1.0 | 3.3.5, 4.1.0 |
+| [#102](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/102) | [GHSA-2883-xcg3-v3hh](https://github.com/advisories/GHSA-2883-xcg3-v3hh) | js-yaml 4.1.1 | `>= 4.0.0, < 4.3.2` | 4.3.2 | 4.3.2, 5.5.0 |
+| [#103](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/103) | [GHSA-2883-xcg3-v3hh](https://github.com/advisories/GHSA-2883-xcg3-v3hh) | js-yaml 3.14.2 | `>= 3.0.0, < 3.15.2` | 3.15.2 | 4.3.2, 5.5.0 |
+| [#104](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/104) | [GHSA-qw65-cvwx-89v3](https://github.com/advisories/GHSA-qw65-cvwx-89v3) | fast-uri 3.1.0 | `>= 3.0.0, < 3.1.7` | 3.1.7 | 3.1.9 |
+| [#105](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/105) | [GHSA-g84c-rxfj-3j2c](https://github.com/advisories/GHSA-g84c-rxfj-3j2c) | webpack-dev-middleware 6.1.3 | `< 7.4.5` | 7.4.6 | Removed |
+| [#106](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/106) | [GHSA-253c-mchw-3w2r](https://github.com/advisories/GHSA-253c-mchw-3w2r) | markdown-it 12.3.2 | `< 14.3.1` | 14.3.1 | 14.3.3 |
+| [#108](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/108) | [GHSA-6j4f-fj2g-mc7p](https://github.com/advisories/GHSA-6j4f-fj2g-mc7p) | brace-expansion 1.1.11 | `< 1.1.19` | 1.1.19 | 1.1.21, 5.0.12 |
+| [#110](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/110) | [GHSA-qhr7-859c-m2p7](https://github.com/advisories/GHSA-qhr7-859c-m2p7) | brace-expansion 1.1.11 | `< 1.1.20` | 1.1.20 | 1.1.21, 5.0.12 |
+| [#111](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/111) | [GHSA-q2hr-2g5m-vwhr](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr) | brace-expansion 5.0.5 | `>= 4.0.0, < 5.0.12` | 5.0.12 | 1.1.21, 5.0.12 |
+| [#112](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/112) | [GHSA-q2hr-2g5m-vwhr](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr) | brace-expansion 1.1.11 | `< 1.1.21` | 1.1.21 | 1.1.21, 5.0.12 |
+| [#127](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/127) | [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) | braces 3.0.3 | `<= 3.0.3` | NO_PATCH | Removed |
+| [#128](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/128) | [GHSA-jggr-w7fw-pc2j](https://github.com/advisories/GHSA-jggr-w7fw-pc2j) | fast-copy 3.0.2 | `>= 3.0.0, < 3.1.0` | 3.1.0 | 3.1.0 |
+| [#129](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/129) | [GHSA-rj75-hqrm-r3gf](https://github.com/advisories/GHSA-rj75-hqrm-r3gf) | postcss-selector-parser 6.0.13 | `< 7.1.6` | 7.1.6 | 7.1.7 |
+| [#130](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/130) | [GHSA-68fv-2mgg-jv7q](https://github.com/advisories/GHSA-68fv-2mgg-jv7q) | source-map-js 1.2.1 | `>= 1.0.0, < 1.2.2` | 1.2.2 | 1.2.2 |
+| [#131](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/131) | [GHSA-hp3w-g68c-fv3c](https://github.com/advisories/GHSA-hp3w-g68c-fv3c) | sprintf-js 1.0.3 | `<= 1.1.3` | NO_PATCH | Removed |
+| [#134](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/134) | [GHSA-r7fv-28h4-cvq7](https://github.com/advisories/GHSA-r7fv-28h4-cvq7) | markdown-it 12.3.2 | `< 14.3.2` | 14.3.2 | 14.3.3 |
+| [#141](https://github.com/TheModCraft-TMC/Vessel-HQ/security/dependabot/141) | [GHSA-vfgh-jcmw-g37q](https://github.com/advisories/GHSA-vfgh-jcmw-g37q) | markdown-it 12.3.2 | `< 14.3.3` | 14.3.3 | 14.3.3 |
 
 ## Verification
 
