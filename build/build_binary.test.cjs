@@ -43,7 +43,7 @@ esac
     NODE_VERSION: 'v24.22.1',
     PNPM_VERSION: '10.26.2',
     WEBPACK_VERSION: '5',
-    GO_VERSION: 'go1.26.6',
+    GO_VERSION: 'go1.26.10',
     GIT_COMMIT_HASH: 'test-commit',
     SKIP_GO_GET: 'true',
     FAIL_MODULE: '',

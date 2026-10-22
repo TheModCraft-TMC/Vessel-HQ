@@ -29,7 +29,7 @@ Domains consume other domains and providers through public APIs. Providers must 
 ## Development and generated files
 
 - Frontend: pnpm 10.26.2 and Node.js 24.21.0 or newer in the 24.x line, as declared in `package.json`.
-- Backend: Go version declared in `backend-src/go.mod` (currently 1.26.6).
+- Backend: Go version declared in `backend-src/go.mod` (currently 1.26.10).
 - Local development: `make deps`, then `./launch-dev.sh`; see [development setup](docs/development-setup.md).
 - `pnpm dev:frontend` starts the frontend separately. It uses Turbopack; `pnpm build` currently uses webpack and packages Next.js standalone output. Do not describe this as a Turborepo migration.
 - Regenerate API contracts with `make generate-api` after changing Go Swagger annotations. Configuration is in `openapi-ts.config.ts`; generated output is `web-src/core/generated-api/portainer/`. Do not hand-edit generated code.

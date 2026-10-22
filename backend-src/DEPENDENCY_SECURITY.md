@@ -76,7 +76,7 @@ Upstream alternatives were actually inspected, not assumed:
 4. Latest Docker CLI29.9.2 and master `6d274590f2f63276a54da8adf475a455d21c1fdd` still contain Distribution v2 registry-client imports; latest Distribution v2 is2.8.3. The maintained `github.com/distribution/distribution/v3 v3.1.2` no longer provides the old `registry/client` package. Aliasing the v2 module path to v3 is not an API migration or a valid fix. All live imports and upstream requirements must be migrated or removed instead.
 5. Prometheus0.315.1 no longer requires the monolith, but also raises Kubernetes modules (to0.37 in the trial). Kompose's same removed-HPA-API incompatibility must be resolved first. The trial was reverted.
 
-## Fresh verification
+## SDK migration verification (Go1.26.6 checkpoint)
 
 All commands ran locally; no GitHub/Sonar state, image publication, remote branches, or host Swarm state was modified.
 
@@ -98,4 +98,6 @@ All commands ran locally; no GitHub/Sonar state, image publication, remote branc
 
 The scan also found and this change patches `x/net` to0.60.0, `x/crypto` to0.57.0 and `x/mod` to0.41.0 (including SSH DoS and sumdb integrity fixes), beyond the supplied26 alerts.
 
-The remaining standard-library fixes require a real Go security patch update: most are fixed in1.26.9; **GO-2026-6809 (`crypto/x509`, compromised intermediate distrust) requires1.26.10**. Approval/coordination was requested from the parent before changing the Go baseline or build scope. This backend change retains the requested1.26.6 declaration pending that decision, so the scan must not be presented as passing.
+The standard-library fixes require a real Go security patch update: most are fixed in1.26.9; **GO-2026-6809 (`crypto/x509`, compromised intermediate distrust) requires1.26.10**. The maintainer approved Go1.26.10. The current `go.mod`, workspace, developer-toolkit image, build fixture and setup documentation now use that security baseline. The Go1.26.6 results above remain historical checkpoint evidence, not claims about the patched-toolchain verification.
+
+The official Go1.26.10 darwin-arm64 archive was downloaded outside the repository and verified against SHA256 `0b5183492292ada170f9b561a834863808dd02edba599e4ad0e89899330020b3`; the shared system Go installation was not modified. The toolkit uses the freshly inspected multi-platform `golang:1.26.10-bookworm` index digest `sha256:632dff7351799a5a9954a48dc06670ade72ee44e8c351cdc0e5a57af2fea21af`. Parent-owned CI/Sonar pins and historical release notes are not rewritten.
