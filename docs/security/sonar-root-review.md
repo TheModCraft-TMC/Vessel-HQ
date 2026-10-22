@@ -24,8 +24,11 @@ Project: `TheModCraft-TMC_Vessel-HQ`. Rule: `docker:S6471`.
 
 The [manifest](../../scripts/sonar-root-review.json) pins Dockerfile source hashes
 from `git show 5b175344be4a37e01a3adb2d859cf05a1d54c4e8:<path>` for
-`develop`, and `git show 2d88f8851b47b86f2afb4c1ec6937dd714f97bd8:<path>`
-for the PR counterpart. Both toolkit cases also pin `run.sh`, which performs
+`develop`, and `git show e1461d732828099065677a1813965ed7ef09bb7b:<path>`
+for the PR counterpart. The PR pin includes the Go 1.26.10 security patch; both
+AMD64/ARM64 toolkit builds and real UID/GID 1000 entrypoint/tool execution were
+retested after that change. This repins reviewed source, not additional findings
+or a remote acceptance. Both toolkit cases also pin `run.sh`, which performs
 privileged host UID/GID and socket-group setup before dropping to `PUSER` via
 `su`. Production root startup preserves existing data-directory/socket access;
 these images are not claimed to drop privileges automatically. This is a

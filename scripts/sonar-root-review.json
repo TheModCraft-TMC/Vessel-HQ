@@ -87,11 +87,11 @@
       "scope": {
         "pullRequest": "234"
       },
-      "reviewed_revision": "2d88f8851b47b86f2afb4c1ec6937dd714f97bd8",
+      "reviewed_revision": "e1461d732828099065677a1813965ed7ef09bb7b",
       "sources": [
         {
           "path": "build/linux/dev-toolkit/toolkit.Dockerfile",
-          "sha256": "962126791f3fec5a444bb3c64307c84ffcdebebc848160edfe73065be02a4256"
+          "sha256": "d421ddf26eed9da14cec1577d20de94e538975f38194f024341072f70dca63f6"
         },
         {
           "path": "build/linux/dev-toolkit/run.sh",

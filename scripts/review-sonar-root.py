@@ -14,7 +14,7 @@ PROJECT = "TheModCraft-TMC_Vessel-HQ"
 RULE = "docker:S6471"
 MANIFEST = Path(__file__).with_name("sonar-root-review.json")
 # Refresh only after a human reviews changed sources and the six-case manifest.
-MANIFEST_SHA256 = "6df667d4fb9de0cd68ed91d4c228895222d9db235431e87897fc8ba29de1752b"
+MANIFEST_SHA256 = "8a8fd5a5f64316dfa035e794af3b580e88b20ecd14f1412ed78d5840477ddd05"
 LEDGER = "https://github.com/TheModCraft-TMC/Vessel-HQ/blob/2d88f8851b47b86f2afb4c1ec6937dd714f97bd8/docs/planning/github-issue-remediation.md#sonarcloud-review-access"
 PR = "https://github.com/TheModCraft-TMC/Vessel-HQ/pull/234"
 
