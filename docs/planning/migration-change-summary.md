@@ -212,6 +212,63 @@ lists the five default-branch cases and the PR counterpart for an authorized
 reviewer. No SonarCloud review credential is available to this task; the PR
 must not be described as passing that gate until the service records the review.
 
+## Extended remediation checkpoint — October 22, 2026
+
+The maintainer authorized the remaining dependency and live-platform work in the
+same PR, with at most ten review rounds. This checkpoint is separate from the
+226-issue verification above and is **not final combined verification**. No merge,
+image publication, additional PR, or remote finding dismissal has occurred.
+
+- Eliminate all **61 supplied npm vulnerable ranges**, including unpatched
+  Bootstrap JavaScript, braces, and sprintf-js chains. Retain only licensed,
+  provenance-pinned Bootstrap presentation assets; migrate actual parent chains
+  to Tailwind 4, Storybook's Next.js/Vite builder, and maintained OpenAPI validation.
+  Preserve the existing Node/pnpm baseline, generator version/patches, Zustand
+  persistence contract, release identity, and API/datastore compatibility.
+  [Inventory and rationale](../security/dependency-npm-remediation.md).
+- Independent integrated npm checks pass: frozen install, fresh audit with **zero
+  vulnerabilities at every severity**, all 61 original advisory IDs/ranges checked,
+  15 dependency-security regressions, all **40 Node tooling tests**, architecture
+  guards (3,278 source files, 166 routes, 103 CSS Module imports), typecheck,
+  uncached lint (zero errors, 192 warnings), **355 files / 2,428 frontend tests**
+  (five skipped, 11 todo), production webpack/standalone build, and Storybook build.
+  These results certify that frontend dependency checkpoint, not later API/UI edits.
+- Migrate direct Docker imports to the real split Moby API/client modules and
+  Compose 5; remove containerd v1 and patch affected Go dependencies. This fixes
+  **21 of the 26 original Go ranges** at the current checkpoint. Five selected
+  no-patch transitive findings remain explicitly recorded, not renamed or hidden.
+  A fresh vulnerability scan also finds standard-library issues requiring the
+  approved Go **1.26.10** security patch. Further migration/toolchain work is not
+  represented as complete. See [backend dependency evidence](../../backend-src/DEPENDENCY_SECURITY.md).
+- Correct build metadata queries for the actual SDK/Compose modules and extend
+  the existing packaging fixture rather than keeping a second test harness.
+  Regenerate frontend contracts from the updated backend schemas; typecheck and
+  repeated generation pass with identical bytes across all 16 generated files.
+  A new regression exposes an existing null-warning mismatch in the generated
+  service-update validator; its backend schema fix is not done yet at this checkpoint.
+- Add a manual-only, six-case Sonar review path with authenticated identity,
+  exact finding/scope checks, reviewed-source hashes, authorization preflight,
+  deduplicated audit comments, and non-retried writes. All **47 Sonar helper/sync
+  unit tests** pass. No remote review is claimed; an authorized Sonar user token
+  is still required. [Operator runbook](../security/sonar-root-review.md).
+- Add a reusable isolated platform harness with private executable snapshots,
+  frontend symlink-escape rejection, bounded/owned resources, credential-safe
+  failure reports, private kubeconfigs, and **30 safety/transport unit tests**.
+  Candidate Go-artifact checks pass on real disposable Docker, Swarm, Linux Podman,
+  kind Kubernetes, and an official Edge agent. Real Dex authorization, production
+  frontend callback, identity/ACL, and session reload also pass, but stronger
+  mobile hit testing exposes a search/sidebar-button overlap. That failure stays
+  explicit while a scoped UI fix is implemented. Actual Swarm force update passes
+  and confirms the wire response `Warnings: null`.
+  [Scoped artifacts and coverage](../themodcraft/isolated-platform-verification.md).
+- Expand non-publishing CI to run dependency/tooling regressions, Storybook, and
+  platform-harness safety tests. Publication conditions, permissions, and triggers
+  remain unchanged. Hosted CI and whole-scope review must be rerun for the final
+  extended head; earlier green runs do not certify these new changes. Final exact
+  Go/frontend artifact checks are not done yet. Azure ACI still requires authorized
+  external account access; Dex coverage does not establish Authentik-specific
+  group synchronization coverage.
+
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
 Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates

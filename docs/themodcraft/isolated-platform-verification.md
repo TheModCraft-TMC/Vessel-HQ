@@ -21,9 +21,10 @@ Docker Desktop kernel. This fixture adaptation does not change host/global
 settings or skip actual container/Compose networking. The installed RPM version
 is recorded (`iptables-nft-1.8.11-12.fc43.aarch64` in the baseline run).
 
-```sh
-export PATH=/Users/josh/.nvm/versions/node/v24.22.1/bin:$PATH
+Use the project's supported Node 24.x and pnpm 10.26.2 environment for the
+optional browser/frontend tooling.
 
+```sh
 # Use the updated dependency artifact here, not a historical build.
 VESSEL_BINARY=/absolute/path/to/linux-arm64/portainer
 RUNTIME_IMAGE=vessel-issues-toolkit:arm64
