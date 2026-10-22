@@ -2451,7 +2451,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/swarm.ServiceUpdateResponse"
+                $ref: "#/components/schemas/client.ServiceUpdateResult"
         "400":
           description: Invalid request
         "403":
@@ -10652,7 +10652,7 @@ paths:
       deprecated: true
       description: |-
         Deprecated: use the `/system/status` endpoint instead.
-        Retrieve Portainer status
+        Retrieve Vessel HQ status
         **Access policy**: public
       operationId: StatusInspect
       responses:
@@ -10662,7 +10662,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/system.status"
-      summary: Check Portainer status
+      summary: Check Vessel HQ status
       tags:
         - status
   /system/info:
@@ -10706,7 +10706,7 @@ paths:
   /system/status:
     get:
       description: |-
-        Retrieve Portainer status
+        Retrieve Vessel HQ status
         **Access policy**: public
       operationId: systemStatus
       responses:
@@ -10716,7 +10716,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/system.status"
-      summary: Check Portainer status
+      summary: Check Vessel HQ status
       tags:
         - system
   /system/upgrade:
@@ -12228,8 +12228,8 @@ paths:
   /websocket/logs:
     get:
       description: >-
-        Streams container, service, or task logs through the existing
-        access-controlled Docker proxy.
+        Streams Docker container, service, or task logs, or Kubernetes pod logs,
+        through the existing access-controlled environment proxy.
 
         **Access policy**: authenticated
       parameters:
@@ -12239,7 +12239,7 @@ paths:
           required: true
           schema:
             type: integer
-        - description: Docker resource type
+        - description: Runtime resource type
           in: query
           name: resource
           required: true
@@ -12249,10 +12249,21 @@ paths:
               - containers
               - services
               - tasks
-        - description: Docker resource identifier
+              - pods
+        - description: Runtime resource identifier
           in: query
           name: id
           required: true
+          schema:
+            type: string
+        - description: Kubernetes namespace (required for pods)
+          in: query
+          name: namespace
+          schema:
+            type: string
+        - description: Kubernetes container name (required for pods)
+          in: query
+          name: container
           schema:
             type: string
         - description: Swarm node name
@@ -12289,7 +12300,7 @@ paths:
       security:
         - ApiKeyAuth: []
         - jwt: []
-      summary: Stream Docker logs over a websocket
+      summary: Stream runtime logs over a websocket
       tags:
         - websocket
   /websocket/pod:
@@ -12648,6 +12659,14 @@ components:
     build.RuntimeInfo:
       properties:
         Env:
+          items:
+            type: string
+          type: array
+      type: object
+    client.ServiceUpdateResult:
+      properties:
+        Warnings:
+          description: Warnings contains any warnings that occurred during the update.
           items:
             type: string
           type: array
@@ -20096,14 +20115,6 @@ components:
           type: integer
         unhealthy:
           type: integer
-      type: object
-    swarm.ServiceUpdateResponse:
-      properties:
-        Warnings:
-          description: Optional warning messages
-          items:
-            type: string
-          type: array
       type: object
     system.nodesCountResponse:
       properties:
