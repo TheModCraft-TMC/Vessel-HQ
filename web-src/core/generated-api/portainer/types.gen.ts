@@ -60,13 +60,6 @@ export type BuildRuntimeInfo = {
   Env?: Array<string>;
 };
 
-export type ClientServiceUpdateResult = {
-  /**
-   * Warnings contains any warnings that occurred during the update.
-   */
-  Warnings?: Array<string>;
-};
-
 export type ContainersContainerGpusResponse = {
   gpus?: string;
 };
@@ -720,6 +713,10 @@ export type EndpointsForceUpdateServicePayload = {
    * ServiceId to update
    */
   ServiceID?: string;
+};
+
+export type EndpointsForceUpdateServiceResponse = {
+  Warnings?: Array<string> | null;
 };
 
 export type EndpointsGroupCount = {
@@ -15926,7 +15923,7 @@ export type EndpointForceUpdateServiceResponses = {
   /**
    * Success
    */
-  200: ClientServiceUpdateResult;
+  200: EndpointsForceUpdateServiceResponse;
 };
 
 export type EndpointForceUpdateServiceResponse =

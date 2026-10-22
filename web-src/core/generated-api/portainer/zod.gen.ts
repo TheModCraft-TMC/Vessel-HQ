@@ -57,10 +57,6 @@ export const zBuildRuntimeInfo = z.object({
   Env: z.array(z.string()).optional(),
 });
 
-export const zClientServiceUpdateResult = z.object({
-  Warnings: z.array(z.string()).optional(),
-});
-
 export const zContainersContainerGpusResponse = z.object({
   gpus: z.string().optional(),
 });
@@ -202,6 +198,10 @@ export const zEndpointsEndpointUpdateRelationsPayload = z.object({
 export const zEndpointsForceUpdateServicePayload = z.object({
   PullImage: z.boolean().optional(),
   ServiceID: z.string().optional(),
+});
+
+export const zEndpointsForceUpdateServiceResponse = z.object({
+  Warnings: z.array(z.string()).nullish(),
 });
 
 export const zEndpointsGroupCount = z.object({
@@ -5377,7 +5377,8 @@ export const zEndpointForceUpdateServicePath = z.object({
 /**
  * Success
  */
-export const zEndpointForceUpdateServiceResponse = zClientServiceUpdateResult;
+export const zEndpointForceUpdateServiceResponse =
+  zEndpointsForceUpdateServiceResponse;
 
 export const zHelmListPath = z.object({
   id: z.int(),
