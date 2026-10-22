@@ -26,6 +26,7 @@ import urllib.parse
 import uuid
 
 PREFIX = "vessel-rest-platform-"
+ELF_MAGIC = b"\x7fELF"
 SUITES = ("docker", "swarm", "podman", "kubernetes", "edge", "oauth", "aci")
 
 
@@ -53,6 +54,22 @@ def wait_for(fn, timeout=120):
             last = error
         time.sleep(2)
     raise RuntimeError(f"Timed out waiting for readiness: {last}")
+
+
+def retain_output(data, path=None):
+    """Create a private retained output, never truncate/follow an existing file.
+
+    O_EXCL protects explicit paths against symlinks (including dangling links),
+    hardlinks and creation races; no check-then-open. Caller-chosen parent
+    directories remain caller-trusted, not a directory-confinement boundary.
+    """
+    if path is None:
+        descriptor, path = tempfile.mkstemp(prefix=PREFIX + "results-", suffix=".json")
+    else:
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(descriptor, "wb") as output:
+        output.write(data)
+    return str(path)
 
 
 def reject_symlink_escapes(root):
@@ -89,9 +106,19 @@ class Smoke:
         # Open the supplied executable once: a builder can atomically replace its
         # source path later without changing the bytes hashed or mounted here.
         # Do not use hard links or preserve a source executable symlink.
+        # This is a trusted operator CLI read, not an HTTP path or a confined
+        # repository read. External build paths and source symlinks are valid;
+        # only this private copy is written/mounted. See the verification guide.
         self.binary = self.root / "portainer"
         try:
             with Path(args.binary).open("rb") as source, self.binary.open("xb") as destination:
+                # Catch accidental .env/key/data selections on the same open
+                # stream, before copying any payload. Magic is not authenticity
+                # validation: the executable must still be explicitly trusted.
+                header = source.read(len(ELF_MAGIC))
+                if header != ELF_MAGIC:
+                    raise ValueError("--binary is not an ELF executable: " + str(args.binary))
+                destination.write(header)
                 shutil.copyfileobj(source, destination)
             self.binary.chmod(0o555)
         except BaseException:
@@ -154,7 +181,8 @@ class Smoke:
             with urllib.request.urlopen(request, timeout=90) as response:
                 status, raw = response.status, response.read()
         except urllib.error.HTTPError as error:
-            status, raw = error.code, error.read()
+            with error:
+                status, raw = error.code, error.read()
         if (expected is not None and status != expected) or (expected is None and status >= 400):
             # An unexpected success (for example an ACL failure on /settings)
             # can contain credentials, as can a provider's error response. Keep
@@ -422,23 +450,26 @@ class Smoke:
                     try:
                         owner.token = auth["jwt"]
                         user = owner.request("GET", "/users/me")
-                        assert user["Username"] == email and user["Role"] == 2
+                        if user["Username"] != email or user["Role"] != 2:
+                            raise RuntimeError("OAuth identity or privilege verification failed")
                         owner.request("GET", "/settings", expected=403)
                         completed["identity"] = "provisioned-standard-user"
                     finally:
                         owner.token = original
                     title = "Real OAuth provider login passed"
+                    detail = "Standard-user administration access correctly denied."
                     self.send_response(200)
                 except Exception:
                     completed["error"] = "Vessel OAuth code exchange or identity/ACL check failed"
                     title = "OAuth verification failed"
+                    detail = "Code exchange or identity/ACL verification failed."
                     self.send_response(500)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Cache-Control", "no-store")
                 self.end_headers()
                 self.wfile.write(("<!doctype html><title>Vessel isolated OAuth verification</title><h1>" + title +
                     "</h1><p>Real Dex provider, browser authorization code callback, Vessel API code exchange and user provisioning.</p>"
-                    "<p>Standard-user administration access correctly denied. All accounts and resources are disposable.</p>").encode())
+                    "<p>" + detail + " All accounts and resources are disposable.</p>").encode())
 
         server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Callback)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -461,15 +492,25 @@ class Smoke:
                 "UserIdentifier": "email", "Scopes": "openid email profile", "OAuthAutoCreateUsers": True, "AuthStyle": 2}})
             authorize = issuer + "/auth?" + urllib.parse.urlencode({"client_id": "vessel-smoke", "redirect_uri": callback,
                 "response_type": "code", "scope": "openid email profile", "state": state})
+            # Playwright may overwrite a capture (e.g. after the drawer check).
+            # Keep every such write private, then publish with exclusive creation.
+            screenshots = self.root / "oauth-screenshots"
+            screenshots.mkdir(exist_ok=True)
             browser_config = {"playwrightModule": str(Path(self.args.playwright_module).resolve()), "chrome": self.args.chrome,
                 "authorizeURL": authorize, "callback": callback, "email": email, "password": password,
-                "screenshot": self.args.oauth_screenshot, "frontend": frontend, "report": str(self.root / "oauth-browser-checks.json")}
+                "screenshot": str(screenshots / "oauth.png") if self.args.oauth_screenshot else None,
+                "frontend": frontend, "report": str(self.root / "oauth-browser-checks.json")}
             try:
                 command("node", str(Path(__file__).with_name("oauth_browser.cjs")), input=json.dumps(browser_config), timeout=120)
             finally:
                 browser_report = self.root / "oauth-browser-checks.json"
                 if browser_report.is_file():
                     self.results["oauth_browser_checks"] = json.loads(browser_report.read_text())
+                if self.args.oauth_screenshot:
+                    target = Path(self.args.oauth_screenshot)
+                    for capture in sorted(screenshots.glob("oauth*.png")):
+                        label = capture.stem[len("oauth"):]
+                        retain_output(capture.read_bytes(), target.with_name(target.stem + label + target.suffix))
             if frontend:
                 user = next(user for user in self.request("GET", "/users") if user["Username"] == email)
                 assert user["Role"] == 2
@@ -494,7 +535,9 @@ class Smoke:
         vessel = self.start_vessel(namespace=engine)
         # The agent lives inside the nested engine, never on the shared host.
         gateway = self.docker("exec", engine, "docker", "network", "inspect", "bridge", "--format", "{{(index .IPAM.Config 0).Gateway}}")
-        endpoint = self.endpoint("edge", "http://" + gateway + ":9000", creation_type=4)
+        # Disposable nested-DinD bridge only, fixture credentials; no host
+        # networking or real deployment transport policy. See verification guide.
+        endpoint = self.endpoint("edge", "http://" + gateway + ":9000", creation_type=4)  # NOSONAR -- python:S5332: owned isolated HTTP fixture
         state = self.request("GET", f"/endpoints/{endpoint}")
         envfile = self.root / "edge.env"
         envfile.write_text("EDGE=1\nEDGE_ID=" + (state.get("EdgeID") or str(uuid.uuid4())) + "\nEDGE_KEY=" + state["EdgeKey"] + "\nEDGE_INSECURE_POLL=1\n")
@@ -663,7 +706,7 @@ class Smoke:
                 self.results["suites"][suite]["seconds"] = round(time.monotonic() - start, 1)
         finally:
             self.cleanup()
-            Path(self.args.output).write_text(json.dumps(self.results, indent=2) + "\n")
+            self.args.output = retain_output((json.dumps(self.results, indent=2) + "\n").encode(), self.args.output)
         print("Results: " + self.args.output, flush=True)
         if any(s["status"] == "failed" for s in self.results["suites"].values()) or self.results["cleanup_failures"]:
             return 1
@@ -672,7 +715,11 @@ class Smoke:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--binary", "--artifact", required=True, help="Linux Vessel binary matching the Docker server architecture")
+    if not __debug__:
+        # Other suites intentionally still use assertions. Never certify a run
+        # with those checks silently removed by -O or PYTHONOPTIMIZE.
+        parser.error("Platform verification requires assertions enabled; do not use -O or PYTHONOPTIMIZE")
+    parser.add_argument("--binary", "--artifact", required=True, help="Trusted Linux Vessel binary from any directory, matching the Docker server architecture")
     parser.add_argument("--expected-release", default=(Path(__file__).resolve().parents[2] / "RELEASE_VERSION").read_text().strip())
     parser.add_argument("--expected-datastore", default="2.45.0")
     parser.add_argument("--runtime-image", default="vessel-issues-toolkit:arm64", help="Local image containing the binary's runtime/tool dependencies; never built or published here")
@@ -684,11 +731,11 @@ def main():
     parser.add_argument("--chrome", help="Chrome executable; otherwise use Playwright's managed Chromium")
     parser.add_argument("--frontend-standalone", help="Optional Next .next/standalone artifact root; a disposable copy exercises the real frontend OAuth callback")
     parser.add_argument("--htpasswd", default=shutil.which("htpasswd") or "htpasswd")
-    parser.add_argument("--oauth-screenshot", help="Optional final success-page screenshot path (never captures password/token forms)")
+    parser.add_argument("--oauth-screenshot", help="Optional new PNG screenshot path (and suffixed captures); existing paths are never overwritten")
     parser.add_argument("--kind", default=shutil.which("kind") or "kind")
     parser.add_argument("--kind-image", default="kindest/node:v1.35.0")
     parser.add_argument("--suites", default="docker,swarm,podman")
-    parser.add_argument("--output", default="/tmp/vessel-rest-platform-results.json")
+    parser.add_argument("--output", help="New report path; existing paths are never overwritten. Default: securely created unique retained tempfile")
     args = parser.parse_args()
     if any(suite not in SUITES for suite in args.suites.split(",")):
         parser.error("--suites must be a comma-separated subset of " + ",".join(SUITES))

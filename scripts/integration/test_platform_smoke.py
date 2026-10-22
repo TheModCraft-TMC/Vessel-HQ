@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
@@ -20,7 +21,7 @@ class PlatformSmokeTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.binary = Path(self.tmp.name) / "binary"
-        self.binary.write_bytes(b"test-artifact")
+        self.binary.write_bytes(smoke.ELF_MAGIC + b"test-artifact")
         self.args = argparse.Namespace(binary=str(self.binary), runtime_image="test-runtime:local", kind="kind", expected_release="1.3.1", expected_datastore="2.45.0")
         self.runner = smoke.Smoke(self.args)
 
@@ -38,10 +39,45 @@ class PlatformSmokeTests(unittest.TestCase):
         finally:
             other.tmp.cleanup()
 
+    def test_binary_cli_read_accepts_external_relative_and_symlink_artifacts_without_source_writes(self):
+        # Trusted build artifacts need not live under the repository. A link or
+        # '..' is valid input, not a write traversal into an artifact directory.
+        alias = Path(self.tmp.name) / "artifact-link"
+        alias.symlink_to(self.binary)
+        child = Path(self.tmp.name) / "build"
+        child.mkdir()
+        expected = self.binary.read_bytes()
+        for path in (self.binary, alias, child / ".." / "binary"):
+            with self.subTest(path=path):
+                self.args.binary = str(path)
+                runner = smoke.Smoke(self.args)
+                try:
+                    self.assertEqual(runner.binary.read_bytes(), expected)
+                    self.assertFalse(runner.binary.is_symlink())
+                    self.assertNotEqual(runner.binary.stat().st_ino, self.binary.stat().st_ino)
+                    self.assertEqual(self.binary.read_bytes(), expected)
+                finally:
+                    runner.tmp.cleanup()
+
+    def test_non_elf_binary_is_rejected_before_copy_and_removes_only_its_private_tempdir(self):
+        secret = Path(self.tmp.name) / "not-a-binary.env"
+        secret.write_bytes(b"TOKEN=synthetic-secret\n")
+        args = argparse.Namespace(**{**vars(self.args), "binary": str(secret)})
+        owned = tempfile.TemporaryDirectory(prefix="rejected-snapshot-", dir=self.tmp.name)
+        owned_root = Path(owned.name)
+        with patch.object(smoke.tempfile, "TemporaryDirectory", return_value=owned), patch.object(smoke.shutil, "copyfileobj") as copy:
+            with self.assertRaisesRegex(ValueError, "not an ELF executable") as error:
+                smoke.Smoke(args)
+        copy.assert_not_called()
+        self.assertFalse(owned_root.exists())
+        self.assertTrue(self.runner.root.exists())
+        self.assertEqual(secret.read_bytes(), b"TOKEN=synthetic-secret\n")
+        self.assertNotIn("synthetic-secret", str(error.exception))
+
     def test_backend_snapshot_survives_atomic_source_replacement_and_is_the_mount(self):
         expected = self.binary.read_bytes()
         replacement = Path(self.tmp.name) / "replacement"
-        replacement.write_bytes(b"different-build")
+        replacement.write_bytes(smoke.ELF_MAGIC + b"different-build")
         replacement.replace(self.binary)
         self.assertEqual(self.runner.binary.read_bytes(), expected)
         self.assertEqual(self.runner.results["binary_sha256"], hashlib.sha256(expected).hexdigest())
@@ -55,7 +91,7 @@ class PlatformSmokeTests(unittest.TestCase):
 
     def test_backend_snapshot_is_not_a_hard_link_and_survives_source_removal(self):
         expected = self.runner.binary.read_bytes()
-        self.binary.write_bytes(b"in-place-builder-change")
+        self.binary.write_bytes(smoke.ELF_MAGIC + b"in-place-builder-change")
         self.binary.unlink()
         self.assertEqual(self.runner.binary.read_bytes(), expected)
         self.assertEqual(self.runner.results["binary_sha256"], hashlib.sha256(expected).hexdigest())
@@ -216,6 +252,18 @@ class PlatformSmokeTests(unittest.TestCase):
                     with self.assertRaisesRegex(AssertionError, "Invalid force-update Warnings shape"):
                         self.runner.force_update_service(9)
 
+    def test_edge_http_url_uses_only_the_owned_nested_engine_bridge(self):
+        self.args.agent_image = "test-agent:image"
+        engine = self.runner.prefix + "-dind"
+        with patch.object(self.runner, "engine", return_value=engine), patch.object(self.runner, "start_vessel", return_value="owned-vessel"), patch.object(self.runner, "docker", return_value="172.17.0.1") as docker, patch.object(self.runner, "endpoint", return_value=7) as endpoint, patch.object(self.runner, "request", return_value={"EdgeID": "fixture-id", "EdgeKey": "fixture-key"}), patch.object(self.runner, "container_crud", return_value={}), patch.object(self.runner, "remove"), patch.object(smoke, "wait_for", side_effect=[True, {"ServerVersion": "29.8.2"}]):
+            self.runner.suite_edge()
+        self.assertEqual(docker.call_args_list[0].args[:6], ("exec", engine, "docker", "network", "inspect", "bridge"))
+        endpoint.assert_called_once_with("edge", "http://172.17.0.1:9000", creation_type=4)
+        nested_run = docker.call_args_list[-1].args
+        self.assertEqual(nested_run[:4], ("exec", engine, "docker", "run"))
+        self.assertNotIn("--network=host", nested_run)
+        self.assertNotIn("-p", nested_run)
+
     def test_missing_azure_access_is_an_explicit_gate_not_a_mock_pass(self):
         with patch.object(smoke.shutil, "which", return_value=None), patch.dict(smoke.os.environ, {}, clear=True), patch.object(smoke, "command") as command:
             with self.assertRaises(smoke.ExternalGate):
@@ -341,6 +389,171 @@ class PlatformSmokeTests(unittest.TestCase):
                         smoke.reject_symlink_escapes(root)
                 finally:
                     link.unlink()
+
+    def test_symlink_guard_preserves_internal_dangling_package_links(self):
+        root = Path(self.tmp.name) / "standalone"
+        bins = root / "node_modules" / ".bin"
+        bins.mkdir(parents=True)
+        (bins / "optional-tool").symlink_to("../optional-package/bin/tool")
+        smoke.reject_symlink_escapes(root)
+
+    def execute_without_resources(self):
+        self.args.suites = "aci"
+        with patch.object(self.runner, "suite_aci", side_effect=smoke.ExternalGate("account unavailable")), patch.object(self.runner, "release_resources", return_value=[]), contextlib.redirect_stdout(io.StringIO()):
+            return self.runner.execute()
+
+    def test_default_reports_are_unique_private_and_retained_after_cleanup(self):
+        paths = []
+        # Force defaults into this test's temp tree, never a shared /tmp target.
+        with patch.object(smoke.tempfile, "tempdir", self.tmp.name):
+            for _ in range(2):
+                self.args.output = None
+                self.assertEqual(self.execute_without_resources(), 2)
+                path = Path(self.args.output)
+                paths.append(path)
+                self.assertEqual(path.parent, Path(self.tmp.name))
+                self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+                self.assertEqual(json.loads(path.read_text())["cleanup_failures"], [])
+                self.assertFalse(self.runner.root.exists())
+        self.assertNotEqual(paths[0], paths[1])
+        self.assertTrue(all(path.is_file() for path in paths))
+
+    def test_explicit_reports_refuse_symlinks_hardlinks_and_existing_files_without_clobber(self):
+        target = Path(self.tmp.name) / "untouched.json"
+        target.write_bytes(b"harmless original")
+        link = Path(self.tmp.name) / "report-link.json"
+        link.symlink_to(target)
+        hardlink = Path(self.tmp.name) / "report-hardlink.json"
+        os.link(target, hardlink)
+        dangling = Path(self.tmp.name) / "dangling-report.json"
+        absent = Path(self.tmp.name) / "must-not-create.json"
+        dangling.symlink_to(absent)
+        for path in (link, hardlink, target, dangling):
+            with self.subTest(path=path):
+                self.args.output = str(path)
+                with self.assertRaises(FileExistsError):
+                    self.execute_without_resources()
+                self.assertEqual(target.read_bytes(), b"harmless original")
+                self.assertFalse(self.runner.root.exists())
+        self.assertTrue(link.is_symlink())
+        self.assertFalse(absent.exists())
+
+    def test_explicit_report_is_private_even_with_permissive_umask(self):
+        self.args.output = str(Path(self.tmp.name) / "new-report.json")
+        original = os.umask(0)
+        try:
+            self.assertEqual(self.execute_without_resources(), 2)
+        finally:
+            os.umask(original)
+        self.assertEqual(Path(self.args.output).stat().st_mode & 0o777, 0o600)
+
+    def oauth_companion(self, user, settings_denied=True, screenshot=None, capture_labels=("",)):
+        self.args.playwright_module = "/trusted/test-playwright"
+        self.args.frontend_standalone = None
+        self.args.chrome = None
+        self.args.htpasswd = "test-htpasswd"
+        self.args.dex_image = "test-dex:image"
+        self.args.oauth_screenshot = str(screenshot) if screenshot else None
+        self.runner.base = "http://127.0.0.1:14567"
+        self.runner.token = "original-admin-token"
+        observed = {}
+
+        def request(method, path, *args, **kwargs):
+            if path == "/auth/oauth/validate":
+                return {"jwt": "test-user-token"}
+            if path == "/users/me":
+                self.assertEqual(self.runner.token, "test-user-token")
+                return user
+            if method == "GET" and path == "/settings" and not settings_denied:
+                raise RuntimeError("HTTP 200 (response body omitted)")
+            return None
+
+        def command(*args, **kwargs):
+            if args[0] == "test-htpasswd":
+                return "smoke:test-hash"
+            config = json.loads(kwargs["input"])
+            observed["browser_screenshot"] = config["screenshot"]
+            state = smoke.urllib.parse.parse_qs(smoke.urllib.parse.urlsplit(config["authorizeURL"]).query)["state"][0]
+            url = config["callback"] + "?" + smoke.urllib.parse.urlencode({"state": state, "code": "never-export-test-code"})
+            try:
+                with smoke.urllib.request.urlopen(url, timeout=5) as response:
+                    observed["status"] = response.status
+                    observed["body"] = response.read().decode()
+            except smoke.urllib.error.HTTPError as error:
+                with error:
+                    observed["status"] = error.code
+                    observed["body"] = error.read().decode()
+            if config["screenshot"]:
+                path = Path(config["screenshot"])
+                for label in capture_labels:
+                    path.with_name(path.stem + label + path.suffix).write_bytes(b"harmless screenshot")
+            if observed["status"] != 200:
+                # The real browser rejects the failed callback heading/status.
+                raise RuntimeError("Browser rejected failed OAuth callback")
+            return ""
+
+        with patch.object(self.runner, "new_network", return_value="owned-network"), patch.object(self.runner, "run", return_value="owned-container"), patch.object(self.runner, "docker", return_value="127.0.0.1:14568"), patch.object(self.runner, "start_vessel", return_value="owned-vessel"), patch.object(self.runner, "remove"), patch.object(self.runner, "request", side_effect=request), patch.object(smoke, "command", side_effect=command), patch.object(smoke, "wait_for"):
+            try:
+                self.runner.suite_oauth()
+            except (RuntimeError, AssertionError, OSError) as error:
+                observed["error"] = str(error)
+        self.assertEqual(self.runner.token, "original-admin-token")
+        return observed
+
+    def test_oauth_companion_rejects_wrong_identity_role_or_acl_and_restores_token(self):
+        cases = [({"Username": "other@example.invalid", "Role": 2}, True),
+                 ({"Username": "smoke@example.invalid", "Role": 1}, True),
+                 ({"Username": "smoke@example.invalid", "Role": 2}, False)]
+        for user, denied in cases:
+            with self.subTest(user=user, denied=denied):
+                result = self.oauth_companion(user, settings_denied=denied)
+                self.assertEqual(result["status"], 500)
+                self.assertIn("OAuth verification failed", result["body"])
+                self.assertNotIn("never-export", result["body"] + result["error"])
+                self.assertNotIn("test-user-token", result["body"] + result["error"])
+                self.assertNotIn("correctly denied", result["body"])
+
+    def test_oauth_companion_accepts_actual_identity_and_acl(self):
+        result = self.oauth_companion({"Username": "smoke@example.invalid", "Role": 2})
+        self.assertEqual(result["status"], 200)
+        self.assertNotIn("error", result)
+
+    def test_screenshot_is_staged_privately_and_retained_without_following_output_links(self):
+        target = Path(self.tmp.name) / "original.png"
+        target.write_bytes(b"harmless original")
+        output = Path(self.tmp.name) / "screenshot.png"
+        output.symlink_to(target)
+        result = self.oauth_companion({"Username": "smoke@example.invalid", "Role": 2}, screenshot=output)
+        self.assertEqual(target.read_bytes(), b"harmless original")
+        self.assertNotEqual(result["browser_screenshot"], str(output))
+        self.assertIn("error", result)
+        output.unlink()
+        result = self.oauth_companion({"Username": "smoke@example.invalid", "Role": 2}, screenshot=output)
+        self.assertNotIn("error", result)
+        self.assertEqual(output.read_bytes(), b"harmless screenshot")
+        self.assertEqual(output.stat().st_mode & 0o777, 0o600)
+
+    def test_derived_screenshots_also_refuse_output_symlinks(self):
+        target = Path(self.tmp.name) / "original.png"
+        target.write_bytes(b"harmless original")
+        output = Path(self.tmp.name) / "screenshot.png"
+        derived = output.with_name("screenshot-mobile.png")
+        derived.symlink_to(target)
+        result = self.oauth_companion({"Username": "smoke@example.invalid", "Role": 2}, screenshot=output, capture_labels=("", "-mobile", "-login"))
+        self.assertEqual(target.read_bytes(), b"harmless original")
+        self.assertTrue(derived.is_symlink())
+        self.assertIn("error", result)
+
+    def test_companion_identity_and_acl_checks_survive_optimized_python(self):
+        result = subprocess.run([sys.executable, "-O", "-m", "unittest",
+            "test_platform_smoke.PlatformSmokeTests.test_oauth_companion_rejects_wrong_identity_role_or_acl_and_restores_token"],
+            cwd=Path(smoke.__file__).parent, capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_optimized_python_is_refused_before_any_verification(self):
+        result = subprocess.run([sys.executable, "-O", str(Path(smoke.__file__))], capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("requires assertions enabled", result.stderr)
 
     def test_interruption_still_cleans_resources_and_writes_an_interrupted_result(self):
         self.args.suites = "docker"
