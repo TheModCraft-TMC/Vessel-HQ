@@ -381,7 +381,8 @@ class PlatformSmokeTests(unittest.TestCase):
         root = Path(self.tmp.name) / "links"
         root.mkdir()
         link = root / "link"
-        for target in ("link", "../absent-outside-target"):
+        (root / "other").symlink_to("link")
+        for target in ("link", "other", "../absent-outside-target"):
             with self.subTest(target=target):
                 link.symlink_to(target)
                 try:
@@ -554,6 +555,17 @@ class PlatformSmokeTests(unittest.TestCase):
         result = subprocess.run([sys.executable, "-O", str(Path(smoke.__file__))], capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 2)
         self.assertIn("requires assertions enabled", result.stderr)
+
+    def test_interrupted_default_report_path_is_printed_and_retained(self):
+        self.args.suites = "docker"
+        self.args.output = None
+        output = io.StringIO()
+        with patch.object(smoke.tempfile, "tempdir", self.tmp.name), patch.object(self.runner, "suite_engine", side_effect=KeyboardInterrupt), patch.object(self.runner, "release_resources", return_value=[]), contextlib.redirect_stdout(output):
+            with self.assertRaises(KeyboardInterrupt):
+                self.runner.execute()
+        self.assertIn("Results: " + self.args.output, output.getvalue())
+        self.assertEqual(json.loads(Path(self.args.output).read_text())["suites"]["docker"]["status"], "interrupted")
+        self.assertFalse(self.runner.root.exists())
 
     def test_interruption_still_cleans_resources_and_writes_an_interrupted_result(self):
         self.args.suites = "docker"

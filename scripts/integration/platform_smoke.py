@@ -86,7 +86,15 @@ def reject_symlink_escapes(root):
             if not path.is_symlink():
                 continue
             try:
-                target = path.resolve()
+                try:
+                    # Python 3.13+ nonstrict resolve can leave cycles unresolved
+                    # instead of raising. Strict resolution must detect ELOOP.
+                    target = path.resolve(strict=True)
+                except FileNotFoundError:
+                    # Standalone package trees can have optional/dangling bin
+                    # links. Allow only missing targets, still confined below;
+                    # never fall back for cycles or other resolution errors.
+                    target = path.resolve(strict=False)
                 target.relative_to(root)
             except (OSError, RuntimeError, ValueError) as error:
                 raise RuntimeError("Frontend artifact contains an escaping or cyclic symlink: " + str(path.relative_to(root))) from error
@@ -707,7 +715,8 @@ class Smoke:
         finally:
             self.cleanup()
             self.args.output = retain_output((json.dumps(self.results, indent=2) + "\n").encode(), self.args.output)
-        print("Results: " + self.args.output, flush=True)
+            # A unique default must remain discoverable even on interruption.
+            print("Results: " + self.args.output, flush=True)
         if any(s["status"] == "failed" for s in self.results["suites"].values()) or self.results["cleanup_failures"]:
             return 1
         return 2 if any(s["status"] == "blocked" for s in self.results["suites"].values()) else 0
