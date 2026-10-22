@@ -140,7 +140,7 @@ func (handler *Handler) stackMigrate(w http.ResponseWriter, r *http.Request) *ht
 		stack.Name = payload.Name
 	}
 
-	isUnique, err := handler.checkUniqueStackNameInDocker(r.Context(), targetEndpoint, stack.Name, stack.ID, stack.SwarmID != "")
+	isUnique, err := handler.checkUniqueStackNameInDocker(targetEndpoint, stack.Name, stack.ID, stack.SwarmID != "")
 	if err != nil {
 		return httperror.InternalServerError("Unable to check for name collision", err)
 	}

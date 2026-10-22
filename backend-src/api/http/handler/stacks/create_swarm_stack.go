@@ -82,7 +82,7 @@ func (handler *Handler) createSwarmStackFromFileContent(w http.ResponseWriter, r
 
 	payload.Name = handler.SwarmStackManager.NormalizeStackName(payload.Name)
 
-	isUnique, err := handler.checkUniqueStackNameInDocker(r.Context(), endpoint, payload.Name, 0, true)
+	isUnique, err := handler.checkUniqueStackNameInDocker(endpoint, payload.Name, 0, true)
 	if err != nil {
 		return httperror.InternalServerError("Unable to check for name collision", err)
 	}
@@ -221,7 +221,7 @@ func (handler *Handler) createSwarmStackFromGitRepository(w http.ResponseWriter,
 
 	payload.Name = handler.SwarmStackManager.NormalizeStackName(payload.Name)
 
-	if isUnique, err := handler.checkUniqueStackNameInDocker(r.Context(), endpoint, payload.Name, 0, true); err != nil {
+	if isUnique, err := handler.checkUniqueStackNameInDocker(endpoint, payload.Name, 0, true); err != nil {
 		return httperror.InternalServerError("Unable to check for name collision", err)
 	} else if !isUnique {
 		return stackExistsError(payload.Name)
@@ -352,7 +352,7 @@ func (handler *Handler) createSwarmStackFromFileUpload(w http.ResponseWriter, r 
 
 	payload.Name = handler.SwarmStackManager.NormalizeStackName(payload.Name)
 
-	isUnique, err := handler.checkUniqueStackNameInDocker(r.Context(), endpoint, payload.Name, 0, true)
+	isUnique, err := handler.checkUniqueStackNameInDocker(endpoint, payload.Name, 0, true)
 
 	if err != nil {
 		return httperror.InternalServerError("Unable to check for name collision", err)

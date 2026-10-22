@@ -59,7 +59,7 @@ func (transport *Transport) volumeListOperation(response *http.Response, executo
 	for _, volumeObject := range volumeData {
 		volume := volumeObject.(map[string]any)
 
-		if err := transport.decorateVolumeResponseWithResourceID(executor.requestContext, volume); err != nil {
+		if err := transport.decorateVolumeResponseWithResourceID(volume); err != nil {
 			return fmt.Errorf("failed decorating volume response: %w", err)
 		}
 	}
@@ -91,7 +91,7 @@ func (transport *Transport) volumeInspectOperation(response *http.Response, exec
 		return err
 	}
 
-	if err := transport.decorateVolumeResponseWithResourceID(executor.requestContext, responseObject); err != nil {
+	if err := transport.decorateVolumeResponseWithResourceID(responseObject); err != nil {
 		return fmt.Errorf("failed decorating volume response: %w", err)
 	}
 
@@ -104,12 +104,12 @@ func (transport *Transport) volumeInspectOperation(response *http.Response, exec
 	return transport.applyAccessControlOnResource(resourceOperationParameters, responseObject, response, executor)
 }
 
-func (transport *Transport) decorateVolumeResponseWithResourceID(ctx context.Context, responseObject map[string]any) error {
+func (transport *Transport) decorateVolumeResponseWithResourceID(responseObject map[string]any) error {
 	if responseObject["Name"] == nil {
 		return errors.New("missing identifier in Docker resource detail response")
 	}
 
-	resourceID, err := transport.getVolumeResourceID(ctx, responseObject["Name"].(string))
+	resourceID, err := transport.getVolumeResourceID(responseObject["Name"].(string))
 	if err != nil {
 		return fmt.Errorf("failed fetching resource id: %w", err)
 	}
@@ -204,13 +204,13 @@ func (transport *Transport) decorateVolumeResourceCreationOperation(request *htt
 	}
 
 	if response.StatusCode == http.StatusCreated {
-		err = transport.decorateVolumeCreationResponse(request.Context(), response, resourceType, tokenData.ID)
+		err = transport.decorateVolumeCreationResponse(response, resourceType, tokenData.ID)
 	}
 
 	return response, err
 }
 
-func (transport *Transport) decorateVolumeCreationResponse(ctx context.Context, response *http.Response, resourceType portainer.ResourceControlType, userID portainer.UserID) error {
+func (transport *Transport) decorateVolumeCreationResponse(response *http.Response, resourceType portainer.ResourceControlType, userID portainer.UserID) error {
 	responseObject, err := utils.GetResponseAsJSONObject(response)
 	if err != nil {
 		return err
@@ -220,7 +220,7 @@ func (transport *Transport) decorateVolumeCreationResponse(ctx context.Context, 
 		return errors.New("missing identifier in Docker resource creation response")
 	}
 
-	resourceID, err := transport.getVolumeResourceID(ctx, responseObject["Name"].(string))
+	resourceID, err := transport.getVolumeResourceID(responseObject["Name"].(string))
 	if err != nil {
 		return fmt.Errorf("failed fetching resource id: %w", err)
 	}
@@ -244,7 +244,7 @@ func (transport *Transport) restrictedVolumeOperation(requestPath string, reques
 
 	volumeName := path.Base(requestPath)
 
-	resourceID, err := transport.getVolumeResourceID(request.Context(), volumeName)
+	resourceID, err := transport.getVolumeResourceID(volumeName)
 	if err != nil {
 		return nil, err
 	}
@@ -256,8 +256,8 @@ func (transport *Transport) restrictedVolumeOperation(requestPath string, reques
 	return transport.restrictedResourceOperation(request, resourceID, volumeName, portainer.VolumeResourceControl, false)
 }
 
-func (transport *Transport) getVolumeResourceID(ctx context.Context, volumeName string) (string, error) {
-	dockerID, err := transport.getDockerID(ctx)
+func (transport *Transport) getVolumeResourceID(volumeName string) (string, error) {
+	dockerID, err := transport.getDockerID()
 	if err != nil {
 		return "", fmt.Errorf("failed fetching docker id: %w", err)
 	}
@@ -265,7 +265,7 @@ func (transport *Transport) getVolumeResourceID(ctx context.Context, volumeName 
 	return fmt.Sprintf("%s_%s", volumeName, dockerID), nil
 }
 
-func (transport *Transport) getDockerID(ctx context.Context) (string, error) {
+func (transport *Transport) getDockerID() (string, error) {
 	transport.mu.Lock()
 	defer transport.mu.Unlock()
 
@@ -287,13 +287,13 @@ func (transport *Transport) getDockerID(ctx context.Context) (string, error) {
 	}
 
 	// Remote value
-	client, err := transport.dockerClientFactory.CreateClientWithContext(ctx, transport.endpoint, "", nil)
+	client, err := transport.dockerClientFactory.CreateClient(transport.endpoint, "", nil)
 	if err != nil {
 		return "", err
 	}
 	defer logs.CloseAndLogErr(client)
 
-	infoResult, err := client.Info(ctx, dockerclient.InfoOptions{})
+	infoResult, err := client.Info(context.Background(), dockerclient.InfoOptions{})
 	info := infoResult.Info
 	if err != nil {
 		return "", err

@@ -101,7 +101,7 @@ func (handler *Handler) checkAndCleanStackDupFromSwarm(_ http.ResponseWriter, _ 
 }
 
 func (handler *Handler) ensureUniqueComposeStackName(w http.ResponseWriter, r *http.Request, endpoint *portainer.Endpoint, userID portainer.UserID, name string) *httperror.HandlerError {
-	isUnique, err := handler.checkUniqueStackNameInDocker(r.Context(), endpoint, name, 0, false)
+	isUnique, err := handler.checkUniqueStackNameInDocker(endpoint, name, 0, false)
 	if err != nil {
 		return httperror.InternalServerError("Unable to check for name collision", err)
 	} else if isUnique {

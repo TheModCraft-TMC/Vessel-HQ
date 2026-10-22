@@ -55,27 +55,26 @@ func (handler *Handler) webhookExecute(w http.ResponseWriter, r *http.Request) *
 
 	switch webhookType {
 	case portainer.ServiceWebhook:
-		return handler.executeServiceWebhook(r.Context(), w, endpoint, resourceID, registryID, imageTag)
+		return handler.executeServiceWebhook(w, endpoint, resourceID, registryID, imageTag)
 	default:
 		return httperror.InternalServerError("Unsupported webhook type", errors.New("Webhooks for this resource are not currently supported"))
 	}
 }
 
 func (handler *Handler) executeServiceWebhook(
-	ctx context.Context,
 	w http.ResponseWriter,
 	endpoint *portainer.Endpoint,
 	resourceID string,
 	registryID portainer.RegistryID,
 	imageTag string,
 ) *httperror.HandlerError {
-	dockerClient, err := handler.DockerClientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
+	dockerClient, err := handler.DockerClientFactory.CreateClient(endpoint, "", nil)
 	if err != nil {
 		return httperror.InternalServerError("Error creating docker client", err)
 	}
 	defer logs.CloseAndLogErr(dockerClient)
 
-	serviceResult, err := dockerClient.ServiceInspect(ctx, resourceID, client.ServiceInspectOptions{InsertDefaults: true})
+	serviceResult, err := dockerClient.ServiceInspect(context.Background(), resourceID, client.ServiceInspectOptions{InsertDefaults: true})
 	service := serviceResult.Service
 	if err != nil {
 		return httperror.InternalServerError("Error looking up service", err)
@@ -118,7 +117,7 @@ func (handler *Handler) executeServiceWebhook(
 	}
 
 	if imageTag != "" {
-		rc, err := dockerClient.ImagePull(ctx, service.Spec.TaskTemplate.ContainerSpec.Image, client.ImagePullOptions{RegistryAuth: serviceUpdateOptions.EncodedRegistryAuth})
+		rc, err := dockerClient.ImagePull(context.Background(), service.Spec.TaskTemplate.ContainerSpec.Image, client.ImagePullOptions{RegistryAuth: serviceUpdateOptions.EncodedRegistryAuth})
 		if err != nil {
 			return httperror.NotFound("Error pulling image with the specified tag", err)
 		}
@@ -127,7 +126,7 @@ func (handler *Handler) executeServiceWebhook(
 
 	serviceUpdateOptions.Version = service.Version
 	serviceUpdateOptions.Spec = service.Spec
-	if _, err := dockerClient.ServiceUpdate(ctx, resourceID, serviceUpdateOptions); err != nil {
+	if _, err := dockerClient.ServiceUpdate(context.Background(), resourceID, serviceUpdateOptions); err != nil {
 		return httperror.InternalServerError("Error updating service", err)
 	}
 
