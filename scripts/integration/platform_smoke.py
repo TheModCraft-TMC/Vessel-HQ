@@ -507,7 +507,7 @@ class Smoke:
         forward.terminate()
         forward.wait(timeout=10)
         self.processes.remove(forward)
-        command(self.args.kind, "delete", "cluster", "--name", cluster)
+        command(self.args.kind, "delete", "cluster", "--name", cluster, "--kubeconfig", str(kubeconfig))
         self.clusters.remove(cluster)
         self.docker("network", "rm", network)
         self.networks.remove(network)
@@ -530,7 +530,7 @@ class Smoke:
                 failures.append(name)
         for cluster in self.clusters[:]:
             try:
-                command(self.args.kind, "delete", "cluster", "--name", cluster)
+                command(self.args.kind, "delete", "cluster", "--name", cluster, "--kubeconfig", str(self.root / "kubeconfig"))
                 self.clusters.remove(cluster)
             except Exception:
                 failures.append(cluster)

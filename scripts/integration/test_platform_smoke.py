@@ -81,6 +81,15 @@ class PlatformSmokeTests(unittest.TestCase):
             ("rm", "-fv", owned), ("network", "rm", network), ("volume", "rm", volume)])
         self.assertEqual(self.runner.containers + self.runner.networks + self.runner.volumes, [])
 
+    def test_cluster_cleanup_also_uses_only_private_kubeconfig(self):
+        cluster = self.runner.prefix + "-kind"
+        self.runner.clusters = [cluster]
+        with patch.object(smoke, "command", return_value="") as command:
+            self.assertEqual(self.runner.release_resources(), [])
+        self.assertEqual(command.call_args.args, ("kind", "delete", "cluster", "--name", cluster,
+            "--kubeconfig", str(self.runner.root / "kubeconfig")))
+        self.assertEqual(self.runner.clusters, [])
+
     def test_cleanup_records_failure_without_removing_other_resources(self):
         name = self.runner.prefix + "-container"
         self.runner.containers = [name]

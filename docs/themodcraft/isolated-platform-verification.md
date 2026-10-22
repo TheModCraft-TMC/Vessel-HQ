@@ -167,7 +167,7 @@ workflow and is not manufactured or modified here.
   each suite releases its resources before the next one starts.
 - Cleanup uses only recorded exact owned names. There is no `prune`, shared-host
   `swarm init/leave`, kubeconfig/context switch, or global Docker/Podman setting
-  change. Anonymous engine volumes are overridden with owned named volumes.
+  change. Both kind creation **and deletion** explicitly use the private kubeconfig. Anonymous engine volumes are overridden with owned named volumes.
 - A failed test still attempts cleanup. Inspect `cleanup_failures` and the
   reported exact prefix after interruption. SIGKILL/host failure cannot guarantee
   cleanup: remove only those exact recorded resources, never a global prune.
@@ -223,7 +223,7 @@ node --check scripts/integration/oauth_browser.cjs
 git diff --check
 ```
 
-Fourteen safety/transport unit tests passed during implementation. These verify
+Fifteen safety/transport unit tests passed during implementation. These verify
 resource ownership/bounds/cleanup, artifact identity, transport behavior, transient
 startup retries, and explicit Azure access gates; they are not counted as live
 platform coverage.
