@@ -172,7 +172,7 @@ func (c *DigestClient) ContainerImageStatus(ctx context.Context, containerID str
 func (c *DigestClient) ServiceImageStatus(ctx context.Context, serviceID string, endpoint *portainer.Endpoint) (Status, error) {
 	cli, err := c.clientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
 	if err != nil {
-		return Error, nil
+		return Error, err
 	}
 
 	containersResult, err := cli.ContainerList(ctx, client.ContainerListOptions{
