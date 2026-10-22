@@ -285,7 +285,6 @@ func (transport *Transport) getDockerID() (string, error) {
 	}
 
 	// Remote value
-	// REVIEW: name the local client cli so the moby client package is imported once.
 	cli, err := transport.dockerClientFactory.CreateClient(transport.endpoint, "", nil)
 	if err != nil {
 		return "", err

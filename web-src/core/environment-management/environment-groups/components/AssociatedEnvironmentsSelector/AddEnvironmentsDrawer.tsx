@@ -158,7 +158,7 @@ export function AddEnvironmentsDrawer({
           className={clsx(
             'sticky bottom-0 left-0 right-0 z-50 h-16 w-full justify-end gap-4',
             'flex items-center px-6',
-            'border-t border-(--border-widget-color) bg-(--bg-widget-color)',
+            '[border-top-width:1px] border-(--border-widget-color) bg-(--bg-widget-color)',
             'shadow-[0_-2px_5px_rgba(0,0,0,0.1)]'
           )}
         >

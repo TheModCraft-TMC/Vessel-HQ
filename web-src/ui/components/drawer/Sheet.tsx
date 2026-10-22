@@ -75,7 +75,7 @@ const SheetOverlay = forwardRef<
 ));
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
-// REVIEW: Without preflight, Tailwind 3 border-{side} set only a width, so the
+// Without preflight, Tailwind 3 border-{side} set only a width, so the
 // sheet edge never rendered; Tailwind 4 adds a solid currentColor style.
 const sheetVariants = cva(
   'fixed z-50 bg-widget-color p-5 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500',

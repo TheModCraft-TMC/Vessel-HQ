@@ -80,17 +80,21 @@ test('previously width-only borders do not acquire a new solid border style', as
   }
   const file = path.resolve('web-src/shared/assets/css/tailwind.css');
   const result = await postcss([tailwind()]).process(fs.readFileSync(file, 'utf8'), { from: file });
-  let declarations;
-  result.root.walkRules('.\\[border-width\\:1px\\]', (rule) => {
-    declarations = rule.nodes.filter((node) => node.type === 'decl').map(({ prop, value }) => [prop, value]);
-  });
-  assert.deepEqual(declarations, [['border-width', '1px']]);
-  // REVIEW: Sheet sides were also width-only under Tailwind 3 without preflight.
   const sheet = fs.readFileSync('web-src/ui/components/drawer/Sheet.tsx', 'utf8');
   for (const side of ['top', 'right', 'bottom', 'left']) {
-    assert.match(sheet, new RegExp(`\\[border-${side}-width:1px\\]`), side);
+    assert.match(sheet, new RegExp('\\[border-' + side + '-width:1px\\]'), side);
   }
   assert.doesNotMatch(sheet, /\sborder-[trbl]\s/);
+  const drawer = fs.readFileSync('web-src/core/environment-management/environment-groups/components/AssociatedEnvironmentsSelector/AddEnvironmentsDrawer.tsx', 'utf8');
+  assert.match(drawer, /\[border-top-width:1px\]/);
+  assert.doesNotMatch(drawer, /\bborder-t\b/);
+  for (const property of ['border-width', ...['top', 'right', 'bottom', 'left'].map((side) => 'border-' + side + '-width')]) {
+    let declarations;
+    result.root.walkRules('.\\[' + property + '\\:1px\\]', (rule) => {
+      declarations = rule.nodes.filter((node) => node.type === 'decl').map(({ prop, value }) => [prop, value]);
+    });
+    assert.deepEqual(declarations, [[property, '1px']], property);
+  }
 });
 
 test('every stylesheet using @apply still compiles with its own explicit v4 reference', async () => {
