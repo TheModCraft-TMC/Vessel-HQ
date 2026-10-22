@@ -9,8 +9,6 @@ import (
 	"net/http"
 	"path"
 
-	dockerclient "github.com/moby/moby/client"
-
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/docker"
 	"github.com/portainer/portainer/api/http/proxy/factory/utils"
@@ -287,13 +285,14 @@ func (transport *Transport) getDockerID() (string, error) {
 	}
 
 	// Remote value
-	client, err := transport.dockerClientFactory.CreateClient(transport.endpoint, "", nil)
+	// REVIEW: name the local client cli so the moby client package is imported once.
+	cli, err := transport.dockerClientFactory.CreateClient(transport.endpoint, "", nil)
 	if err != nil {
 		return "", err
 	}
-	defer logs.CloseAndLogErr(client)
+	defer logs.CloseAndLogErr(cli)
 
-	infoResult, err := client.Info(context.Background(), dockerclient.InfoOptions{})
+	infoResult, err := cli.Info(context.Background(), client.InfoOptions{})
 	info := infoResult.Info
 	if err != nil {
 		return "", err
