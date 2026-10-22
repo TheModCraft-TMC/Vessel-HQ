@@ -85,6 +85,12 @@ test('previously width-only borders do not acquire a new solid border style', as
     declarations = rule.nodes.filter((node) => node.type === 'decl').map(({ prop, value }) => [prop, value]);
   });
   assert.deepEqual(declarations, [['border-width', '1px']]);
+  // REVIEW: Sheet sides were also width-only under Tailwind 3 without preflight.
+  const sheet = fs.readFileSync('web-src/ui/components/drawer/Sheet.tsx', 'utf8');
+  for (const side of ['top', 'right', 'bottom', 'left']) {
+    assert.match(sheet, new RegExp(`\\[border-${side}-width:1px\\]`), side);
+  }
+  assert.doesNotMatch(sheet, /\sborder-[trbl]\s/);
 });
 
 test('every stylesheet using @apply still compiles with its own explicit v4 reference', async () => {
