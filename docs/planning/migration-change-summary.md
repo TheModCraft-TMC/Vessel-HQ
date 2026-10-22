@@ -1,6 +1,22 @@
 # Migration change summary and release commit message
 
-Status: release candidate validation, October 12, 2026. The maintainer confirmed both migration agents have finished. This records the integrated changes and fresh release checks; publication results are reported separately.
+Status: post-migration maintenance and experimental native extension beta, updated October 17, 2026. `RELEASE_VERSION` is `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`.
+
+The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
+
+## Documentation refresh — October 17, 2026
+
+- Reconciled current roadmap decisions, feature catalog and documentation entry points with the October 16 implementation/publication records.
+- Distinguished the published beta.1 SDK from future releases under the independent workspace's identity; preserved immutable release descriptions and historical verification.
+- Updated verification commands for the Vessel image repository, backend working directory and frontend-only CI dispatch.
+- Gemini reviewed an explicitly approved reduced brief; its draft was checked against local source and corrected before applying. No application code, release assets or deployments changed.
+- Documentation verification: local Markdown link/path checks and `git diff --check` passed for the changed documents. Application tests, builds and remote state checks were not rerun for this documentation-only scope.
+
+Draft commit message for this refresh:
+
+```text
+docs: refresh beta status, SDK ownership and verification guidance
+```
 
 ## Native extension implementation follow-up — October 15, 2026
 

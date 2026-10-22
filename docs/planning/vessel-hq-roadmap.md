@@ -1,8 +1,8 @@
 # Vessel HQ product and architecture roadmap
 
-Status: refactor foundation in progress; future product and design items in this document are not implementation commitments.
+Status: canonical frontend foundation established; experimental native extensions are in the `1.3.1-beta.1` preview. Future product and design items remain proposals, not implementation commitments.
 
-Last updated: October 12, 2026.
+Last updated: October 17, 2026.
 
 This document records why the fork exists, what has already changed, and the direction agreed for future work. It is deliberately explicit about status so that roadmap context is not mistaken for shipped behavior.
 
@@ -33,12 +33,12 @@ The React migration WIP was published from commit `0298e99dd56c08fdd4004fb995697
 - OCI index digest `sha256:1f3401136ffc26dcac53660473a1f1590d7727e27776ba2d4b1123ab6cef9345`
 - platforms `linux/amd64` and `linux/arm64`
 
-### Planned, not started
+### Current release policy
 
-- Create a new Docker Hub repository dedicated to Vessel HQ.
-- Publish future Vessel HQ images to that repository.
-- Update release automation, documentation, update discovery, and UI links only after its final name is known.
-- Keep the existing `themodcrafttmc/portainer` repository and its published tags intact. Do not repurpose or delete them.
+- Vessel images use `themodcrafttmc/vessel-hq`, mirrored to `ghcr.io/themodcraft-tmc/vessel-hq`; release automation, update discovery and UI links use the Vessel repository.
+- Stable release `1.3.0` is recorded in the [release notes](../releases/1.3.0.md). The current source version is `1.3.1-beta.1`.
+- The October 16 [publication record](migration-change-summary.md#2026-10-16-beta-publication-and-verified-docker-hub-mirror) verifies the Docker Hub beta image and its `beta` alias. Previews do not promote `latest`; stable releases use that channel.
+- Keep the existing `themodcrafttmc/portainer` repository and its published tags intact. The transitional references above are historical.
 
 ## Completed frontend foundation
 
@@ -183,9 +183,13 @@ and persistent extension-owned note read/write calls. Independent machine grants
 approval revision checks, transactional metadata audits and optimistic concurrency
 protect service notes. A private shared Unix gateway and a no-network container
 example avoid per-stack published ports. The stack drawer additionally reads
-sanitized Traefik routing labels and bounded live Docker network byte counters.
+sanitized Traefik routing labels and bounded live Docker network byte counters. The
+October 16 isolated Docker host smoke covered topology, traffic, notes persistence,
+permission revocation and non-admin denial; its [dated record](migration-change-summary.md#2026-10-16-node4-production-host-beta-smoke)
+does not establish equivalent Swarm, Podman, Kubernetes or ACI coverage.
 Future traffic work includes explicitly scoped Traefik request/latency metrics
-and Swarm task-level counter sampling. Future SDK work includes a published version/tag, production
+and Swarm task-level counter sampling. The immutable SDK `v0.1.0-beta.1` is already published under the original module
+identity. Future SDK work includes selecting the independent workspace's next module/release identity, production
 identity provisioning and rotation, compatibility policy, and additional RPCs
 only after their capabilities and grants are designed. Host-only delegated stack
 leases remain private, and administrator HTTP storage grants do not imply machine
@@ -196,12 +200,11 @@ See the [plugin system proposal](plugin-system.md) for architecture, trust limit
 
 ## Decisions still open
 
-- Final Docker Hub repository name and tag policy for the first non-transitional Vessel HQ image.
 - Exact `@themodcraft` packages and versions to adopt.
 - Final visual language after reviewing the Portainer 3 reference instance.
 - Supported minimum viewport and browser matrix.
 - Long-term maintenance and optimization of the current Next.js App Router and build pipeline.
-- The first stable Vessel HQ release number after the WIP line.
+- The next stable release scope and promotion criteria after the native extension preview.
 
 No implementation should be inferred from these open items. Record the decision and migration impact before changing production behavior.
 

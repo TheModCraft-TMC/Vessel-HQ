@@ -5,7 +5,8 @@ This directory is the maintenance handoff for behavior added by this fork. It ex
 ## Contents
 
 - [Experimental native extensions](../native-extensions.md): whole-package upload, administrator grants, native preview, protected candidate tooling, and scoped gRPC metadata reads; production activation and managed execution remain future work. See the [design](../planning/plugin-system.md).
-- [Migration changes and draft commit message](../planning/migration-change-summary.md): living finalization handoff and verification record.
+- [Extension SDK workspace](../extension-sdk-workspace.md): independent SDK ownership, published beta.1 dependency and joint development.
+- [Migration changes and draft commit message](../planning/migration-change-summary.md): dated migration, beta publication and verification record.
 
 - [Feature planning backlog](../planning/README.md): one-month discovery backlog, scoring rubric, and planning-ready gate for possible future fork features.
 - [Vessel HQ product and architecture roadmap](../planning/vessel-hq-roadmap.md): completed migration baseline, repository and image policy, React domain architecture, deeper rebranding, component adoption, and homelab-first responsive plans.
@@ -17,7 +18,7 @@ This directory is the maintenance handoff for behavior added by this fork. It ex
 - [Azure vertical-slice migration](../planning/azure-vertical-slice.md): consolidated Azure ownership, GoLand-assisted route refactor, and cleanup ratchet.
 - [Realtime state architecture](../planning/realtime-state-architecture.md): accepted future cache invalidation, WebSocket, telemetry, security, and backpressure design.
 - [React and realtime frontend modernization](../planning/frontend-modernization.md): implemented React-only baseline and remaining realtime hardening requirements.
-- [Recent features](../recent-features/README.md): table of work added, restored, or consolidated during the last four weeks.
+- [Recent features](../recent-features/README.md): feature catalog through October 16, including the experimental native extension beta.
 - [Overview response cache](overview-cache.md): stale-while-revalidate caching for Docker, Podman, and Kubernetes overview views.
 - [Custom versioning](custom-versioning.md): footer version, Docker Hub update checks, and the boundary between the fork release and the upstream API/database version.
 - [Release and deployment](release-and-deployment.md): AMD64/ARM64 image production, Node 4 deployment, and rollback.

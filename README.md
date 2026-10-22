@@ -99,7 +99,7 @@ The pipeline produces `backend-src/api/docs/swagger.yaml`, then `backend-src/api
 
 - [Product and architecture roadmap](./docs/planning/vessel-hq-roadmap.md).
 - [Experimental native extensions](./docs/native-extensions.md): whole-package upload, admin grants, protected multi-package builds, inline stack drawers, label-based Traefik routing, live Docker byte counters, and persistent notes. The [Go SDK workspace](./docs/extension-sdk-workspace.md) supports typed reads and extension-owned note writes through a shared mTLS TCP/Unix gateway, without per-stack published ports. Managed execution and production activation remain planned; see the [design](./docs/planning/plugin-system.md). The [prerelease guide](./docs/releases/native-extensions-prerelease.md) includes distribution instructions and the [upstream security review](./docs/security/upstream-2026-10-16.md).
-- [Migration changes and draft commit message](./docs/planning/migration-change-summary.md): living handoff while migration work is finalized.
+- [Migration changes and draft commit message](./docs/planning/migration-change-summary.md): dated migration, beta publication and verification record.
 - [Planning backlog](./docs/planning/README.md).
 - [Maintainer patch guide](./docs/maintainer-patches/README.md).
 - [Vault integration](./docs/vault-integration/README.md).
