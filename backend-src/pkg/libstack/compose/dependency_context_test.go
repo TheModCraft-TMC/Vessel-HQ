@@ -45,6 +45,7 @@ func (s *contextCheckingCompose) Down(ctx context.Context, _ string, _ api.DownO
 }
 
 func TestComposeOperationsRetainDetachedContext(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	ctx, cancel := context.WithCancel(context.WithValue(t.Context(), dependencyContextKey{}, "request metadata"))
 	cancel()
 	service := &contextCheckingCompose{t: t}
@@ -58,6 +59,7 @@ func TestComposeOperationsRetainDetachedContext(t *testing.T) {
 }
 
 func TestComposeServiceInitializationError(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	want := errors.New("invalid compose service configuration")
 	d := &ComposeDeployer{createComposeServiceFn: func(command.Cli, ...compose.Option) (api.Compose, error) { return nil, want }}
 	err := d.Remove(t.Context(), "vessel-dep-go-error", nil, libstack.RemoveOptions{})

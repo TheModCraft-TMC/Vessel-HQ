@@ -41,6 +41,13 @@ func cliEngine(t *testing.T, version string) string {
 			w.Header().Set("Swarm", "active/manager")
 			return
 		}
+		expected := strings.TrimPrefix(version, "v")
+		if expected == "" {
+			expected = "1.24"
+		} else if expected == "1.999" {
+			expected = client.MaxAPIVersion
+		}
+		require.Equal(t, "/v"+expected+"/info", r.URL.Path)
 		w.Header().Set("Content-Type", "application/json")
 		fmt.Fprint(w, `{"ServerVersion":"fixture"}`)
 	}))
@@ -79,9 +86,13 @@ func TestWithCliVersionsAndMetadata(t *testing.T) {
 
 func TestWithCliExplicitAPIVersion(t *testing.T) {
 	isolateCLIConfig(t)
-	for _, version := range []string{"1.24", "1.39", "1.54", "1.999", "invalid"} {
+	for _, version := range []string{"1.24", "1.39", "1.54", "1.999", " v1.39 ", "", " ", "v", "invalid"} {
 		t.Run(version, func(t *testing.T) {
 			t.Setenv("DOCKER_API_VERSION", version)
+			expected := strings.TrimPrefix(strings.TrimSpace(version), "v")
+			if expected == "" {
+				expected = "1.41"
+			}
 			var infoPath string
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if r.URL.Path == "/_ping" {
@@ -96,7 +107,7 @@ func TestWithCliExplicitAPIVersion(t *testing.T) {
 			called := false
 			err := WithCli(t.Context(), DockerCliOptions{Host: "tcp" + strings.TrimPrefix(server.URL, "http")}, func(ctx context.Context, cli *command.DockerCli) error {
 				called = true
-				require.Equal(t, version, cli.Client().ClientVersion())
+				require.Equal(t, expected, cli.Client().ClientVersion())
 				_, err := cli.Client().Info(ctx, client.InfoOptions{})
 				return err
 			})
@@ -105,7 +116,7 @@ func TestWithCliExplicitAPIVersion(t *testing.T) {
 				require.False(t, called)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, "/v"+version+"/info", infoPath)
+				require.Equal(t, "/v"+expected+"/info", infoPath)
 			}
 		})
 	}
@@ -219,24 +230,28 @@ func TestWithCliSlowFirstProbe(t *testing.T) {
 	isolateCLIConfig(t)
 	// Past both the CLI's former 2s metadata deadline and the factory's removed
 	// 5s compatibility cutoff. The first valid response must be used, not lost.
-	var pings atomic.Int32
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/_ping" {
-			if pings.Add(1) == 1 {
-				time.Sleep(5200 * time.Millisecond)
-			}
-			w.Header().Set("API-Version", "1.39")
-			return
-		}
-		require.Equal(t, "/v1.39/info", r.URL.Path)
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, `{}`)
-	}))
-	defer server.Close()
-	require.NoError(t, WithCli(t.Context(), DockerCliOptions{Host: "tcp" + strings.TrimPrefix(server.URL, "http")}, func(ctx context.Context, cli *command.DockerCli) error {
-		_, err := cli.Client().Info(ctx, client.InfoOptions{})
-		return err
-	}))
+	for _, version := range []string{"1.24", "1.39", "1.54"} {
+		t.Run(version, func(t *testing.T) {
+			var pings atomic.Int32
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/_ping" {
+					if pings.Add(1) == 1 {
+						time.Sleep(5200 * time.Millisecond)
+					}
+					w.Header().Set("API-Version", version)
+					return
+				}
+				require.Equal(t, "/v"+version+"/info", r.URL.Path)
+				w.Header().Set("Content-Type", "application/json")
+				fmt.Fprint(w, `{}`)
+			}))
+			defer server.Close()
+			require.NoError(t, WithCli(t.Context(), DockerCliOptions{Host: "tcp" + strings.TrimPrefix(server.URL, "http")}, func(ctx context.Context, cli *command.DockerCli) error {
+				_, err := cli.Client().Info(ctx, client.InfoOptions{})
+				return err
+			}))
+		})
+	}
 }
 
 func TestWithCliConcurrentOperationsAndPings(t *testing.T) {
@@ -265,6 +280,42 @@ func TestWithCliConcurrentOperationsAndPings(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
+}
+
+func TestWithCliConcurrentConstruction(t *testing.T) {
+	isolateCLIConfig(t)
+	host := cliEngine(t, "1.39")
+	var wg sync.WaitGroup
+	for range 12 {
+		wg.Go(func() {
+			require.NoError(t, WithCli(t.Context(), DockerCliOptions{Host: host}, func(ctx context.Context, cli *command.DockerCli) error {
+				require.Equal(t, "1.39", cli.Client().ClientVersion())
+				_, err := cli.Client().Info(ctx, client.InfoOptions{})
+				return err
+			}))
+		})
+	}
+	wg.Wait()
+}
+
+func TestDockerCLIProbeHonorsInternalContextBudget(t *testing.T) {
+	isolateCLIConfig(t)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		<-r.Context().Done()
+	}))
+	defer server.Close()
+	cli, err := command.NewDockerCli()
+	require.NoError(t, err)
+	flags := flags.NewClientOptions()
+	flags.Hosts = []string{"tcp" + strings.TrimPrefix(server.URL, "http")}
+	require.NoError(t, cli.Initialize(flags))
+	// WithCli deliberately removes caller cancellation. Its negotiation helper
+	// must nevertheless obey its own bounded context, not retain it in the SDK.
+	ctx, cancel := context.WithTimeout(t.Context(), 40*time.Millisecond)
+	defer cancel()
+	api, err := newDockerCLIClient(ctx, cli)
+	require.Nil(t, api)
+	require.ErrorIs(t, err, context.DeadlineExceeded)
 }
 
 func TestWithCliRegistryCredentials(t *testing.T) {

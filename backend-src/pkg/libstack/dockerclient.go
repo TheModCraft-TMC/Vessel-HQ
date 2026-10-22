@@ -62,7 +62,7 @@ func newDockerCLIClient(ctx context.Context, cli *command.DockerCli) (client.API
 	}
 
 	var sdk *client.Client
-	if strings.TrimSpace(os.Getenv(client.EnvOverrideAPIVersion)) != "" {
+	if strings.TrimPrefix(strings.TrimSpace(os.Getenv(client.EnvOverrideAPIVersion)), "v") != "" {
 		// Endpoint.ClientOpts includes WithAPIVersionFromEnv. An operator's
 		// fixed version disables negotiation, including capping/fallback.
 		sdk, err = create()

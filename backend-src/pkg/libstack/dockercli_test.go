@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/docker/cli/cli/command"
+	"github.com/moby/moby/client"
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,13 +48,14 @@ func TestWithCli_PreservesCallerValuesButNotCancellation(t *testing.T) {
 	cancel()
 
 	err := WithCli(ctx, DockerCliOptions{Host: cliEngine(t, "1.39")},
-		func(cliCtx context.Context, _ *command.DockerCli) error {
+		func(cliCtx context.Context, cli *command.DockerCli) error {
 			require.Equal(t, "deployment", cliCtx.Value(contextKey{}))
 			// Client disconnects must not abort in-flight compose operations.
 			require.Nil(t, cliCtx.Done())
 			_, hasDeadline := cliCtx.Deadline()
 			require.False(t, hasDeadline)
-			return cliCtx.Err()
+			_, err := cli.Client().Info(cliCtx, client.InfoOptions{})
+			return err
 		})
 	require.NoError(t, err)
 }

@@ -31,6 +31,7 @@ func pollingDeployer(ps func(context.Context, string, api.PsOptions) ([]api.Cont
 }
 
 func TestWaitForStatusCancelsInFlightPs(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	ctx, cancel := context.WithCancel(context.WithValue(t.Context(), pollingContextKey{}, "poll metadata"))
 	defer cancel()
 	started := make(chan context.Context, 1)
@@ -74,6 +75,7 @@ func TestWaitForStatusCancelsInFlightPs(t *testing.T) {
 }
 
 func TestWaitForStatusRetainsCallerDeadline(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Second)
 	defer cancel()
 	started := make(chan context.Context, 1)
@@ -111,6 +113,7 @@ func TestWaitForStatusRetainsCallerDeadline(t *testing.T) {
 }
 
 func TestWaitForStatusCancelsDuringPollingDelay(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	ctx, cancel := context.WithCancel(t.Context())
 	deployer := pollingDeployer(func(context.Context, string, api.PsOptions) ([]api.ContainerSummary, error) {
 		t.Error("Compose.Ps must not start after cancellation during the polling delay")
@@ -138,6 +141,7 @@ func TestWaitForStatusCancelsDuringPollingDelay(t *testing.T) {
 }
 
 func TestWaitForStatusPreservesSuccessfulStatus(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	for _, status := range []libstack.Status{libstack.StatusRemoved, libstack.StatusCompleted, libstack.StatusRunning} {
 		t.Run(string(status), func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)

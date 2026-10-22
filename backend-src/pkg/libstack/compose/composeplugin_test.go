@@ -641,6 +641,7 @@ func Test_DeployWithIgnoreOrphans(t *testing.T) {
 }
 
 func Test_MaxConcurrency(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	const projectName = "compose_max_concurrency_test"
 
 	const composeFileContent = `services:
@@ -681,6 +682,7 @@ func Test_MaxConcurrency(t *testing.T) {
 }
 
 func Test_WithComposeServiceCanDisableBuildKit(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	const composeFileContent = `services:
   service-1:
     image: alpine:latest`
@@ -1415,6 +1417,7 @@ func Test_createProject(t *testing.T) {
 }
 
 func Test_CredentialsStore_Behavior(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	// Create a temporary Docker config with a credsStore set (simulating Docker Desktop)
 	tmpDir := t.TempDir()
 
