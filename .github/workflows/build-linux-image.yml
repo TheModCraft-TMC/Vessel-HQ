@@ -93,11 +93,16 @@ jobs:
       - name: Validate release and frontend
         run: |
           bash scripts/check-release-version.test.sh
-          node --test build/next-entrypoint.test.cjs build/build_binary.test.cjs \
-            scripts/app-router-page-tree.test.mjs scripts/check-app-router-compliance.test.mjs
+          node --test build/*.test.cjs scripts/*.test.mjs
+          pnpm check:npm-security
+          pnpm check:frontend-modernization
+          pnpm check:frontend-boundaries
+          pnpm check:app-router-compliance
+          pnpm check:css-module-classes
           pnpm typecheck
           pnpm lint:ci
           pnpm test
+          pnpm storybook:build --disable-telemetry
 
       - name: Test backend
         working-directory: backend-src
