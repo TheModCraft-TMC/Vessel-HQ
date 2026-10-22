@@ -413,7 +413,7 @@ stale selection; both passed after the fix.
 | Area | Current working-tree change | Evidence / handoff |
 | --- | --- | --- |
 | Source ownership | Canonical core/domain/provider/shared/UI roots replace `web-src/legacy` | [Architecture](frontend-domain-provider-architecture.md); review deletions and new destinations together as moves |
-| App Router | Console layouts and Docker, Kubernetes, Azure, administration, and delivery routes reference migrated owners | `web-src/app/`; [route index](../../reports/app-router-page-index.md) |
+| App Router | Console layouts and Docker, Kubernetes, Azure, administration, and delivery routes reference migrated owners | `web-src/app/`; [route-index generator](../../scripts/index-app-router-pages.mjs), run with `pnpm index:app-router-pages` |
 | Console composition | Query, application bindings, sidebar state, session, and layout bindings assembled in core | `web-src/core/console/ConsoleProviders.tsx` |
 | Boundaries | Architecture checks and inventories align with canonical ownership; compatibility budgets removed as callers migrate | `scripts/check-frontend-boundaries.mjs`; [provider inventory](provider-migration-inventory.md) |
 | Generated API | Client output and runtime HTTP configuration point into core/shared roots | `openapi-ts.config.ts` |
