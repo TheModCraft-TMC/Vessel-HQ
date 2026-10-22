@@ -359,7 +359,7 @@ Neither baseline nor candidate results certify a later final artifact. The
 separate final-artifact run below supersedes their runtime coverage without
 rewriting the historical failures.
 
-### Final exact Go 1.26.10 artifact and integrated frontend
+### Earlier exact Go 1.26.10 artifact, before round-four fixes
 
 Fresh combined run on 2026-10-22:
 
@@ -472,10 +472,63 @@ GOTOOLCHAIN=go1.26.10 GOSUMDB=sum.golang.org \
   go test -race -p 3 -count 1 -timeout 180s ./pkg/libstack/compose ./pkg/libstack
 ```
 
-These harness/unit checks do **not** certify a new backend binary or production
-frontend run. The earlier `030beb74f` integration record remains historical;
-parent verification must rebuild the exact final source and repeat relevant/full
-platform checks, including this guard with an actual stable frontend artifact.
+These harness/unit checks alone did **not** certify a new backend binary or
+production frontend run. The separate exact-artifact repeat below supplies that
+later evidence; the earlier `030beb74f` integration record remains historical.
 Use fresh report/screenshot paths because explicit outputs are now create-only.
-Authorized Sonar recording and live current-head gate verification remain
-operator-owned, not an implied outcome of local source remediation.
+Authorized Sonar recording remains operator-owned, not an implied outcome of
+local source remediation.
+
+### Post-review exact-artifact repeat (2026-10-22)
+
+Clean parent implementation source `61c04c69338b3bcea37c74579c2d506e646197d1`
+includes legacy version-field capture, missing-only predefined-role initialization,
+caller-cancelled Compose polling and the other round-four fixes. It was built with
+Go 1.26.10 using the actual packaging script, no dependency mutation, and clean
+VCS metadata. The subsequent JWT timing correction changes tests only, not this
+artifact's product implementation.
+
+| Artifact | SHA256 |
+| --- | --- |
+| Linux ARM64 | `d2d2a8e13a102c4cc24fd26e3649d4bca8115001704cbf4c638183467f0081ca` |
+| Linux AMD64 | `48abed33301ea32dc2574acb1c522862a87bc97937da462bee55833f15418d54` |
+
+Frontend build **`22JZOmL_MM9jkH2reT29j`** includes the hover-alpha and width-only
+border compatibility corrections. The standalone server file has SHA256
+`ca9e62a794f3268b9846ed2bf785e86f4e293c2493350aca2f9a388d8035c103`;
+this generated server file alone is not a fingerprint of every frontend asset,
+so retain the build ID and source checkpoint as well.
+
+- `/tmp/vessel-rest-r4-platforms.json`: **all six runnable suites pass again**:
+  Docker/Compose, nested Swarm/actual force update, Linux Podman/Compose, real
+  in-cluster kind Kubernetes, official Edge, and Dex/production-frontend callback,
+  identity/ACL/session/mobile pointer behavior. Requested ACI remains **blocked**;
+  raw exit **2**, zero cleanup failures. This run uses the patched toolkit runtime
+  and the corrected Python verifier, including its real standalone symlink guard.
+- `/tmp/vessel-rest-r4-amd64-docker.json`: final **AMD64 backend actually executes**
+  Docker/container/log and Compose CRUD; raw exit **0**, zero cleanup failures.
+  This is explicit Docker Desktop emulation, not native AMD64 hardware or a
+  second all-platform-suite claim.
+- `/tmp/vessel-rest-r4-role-ui.json`: actual fresh startup exposes five predefined
+  roles and **130** editor permissions. Playwright creates a custom role at
+  reserved-safe **ID 6**, checks both width-only components in light/dark/high-
+  contrast cases, and reports no page errors or cleanup failures. The sidebar
+  update flag is supplied as an explicitly synthetic browser response to exercise
+  that conditional presentation; this does not test a real external update feed.
+  Safe final capture: `/tmp/vessel-rest-r4-role-editor.png`.
+
+The current parent also passes all **210 Go packages**, race checks across all
+**41 changed Go package directories**, all **47 Sonar + 44 platform** Python tests
+on host 3.9.6 and actual Python 3.14, full frontend/tooling/build checks, and
+byte-identical regeneration of all **18** backend/frontend schema/client files.
+The fresh-database role fix has separate persistence/access-policy regressions;
+this live run does not substitute for those tests.
+
+Sonar's completed `cde139e4f` analysis retains only the intentional toolkit-root
+case and S8707's false HTTP-taint attribution to an explicit trusted CLI read.
+Both whole-scope reviewers independently checked that input boundary. Same-stream
+ELF validation prevents accidental nonbinary selection but is not described as a
+path-confinement fix. Authorized review is still needed; no remote finding was
+accepted or dismissed. Five selected Go ranges and ACI/native Windows access
+limits remain explicit. Local Authentik provider verification is separate and is
+not claimed passing by this record.

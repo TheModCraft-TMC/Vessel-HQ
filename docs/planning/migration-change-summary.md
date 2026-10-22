@@ -368,6 +368,66 @@ These are scoped Docker/UI checks, not new live Swarm/Podman/Kubernetes/Edge/OAu
 ACI, external Authentik group-sync or Windows/npipe coverage. Other reviewers'
 follow-ups and hosted CI remain separate; no remote finding was mutated.
 
+### Fourth-round findings applied and reverified — October 22, 2026
+
+Both required models completed the whole-scope review. Clear findings are fixed,
+not deferred as design choices: retain translucent collapse controls and the two
+previously width-only borders, remove the duplicate SDK import, and preserve all
+four legacy snapshot diagnostic fields through a public SDK response hook. The
+hook only observes requested responses, uses bounded per-call capture, preserves
+SDK transports/headers/status/error handling, and issues no additional request.
+Top-level diagnostic values also survive incomplete/conflicting Engine details.
+Real old/new SDK and TCP/TLS/agent/Unix/concurrency regressions pass.
+
+The independently reproduced existing fresh-install roles defect is also fixed
+in its own commit. Share canonical role definitions with the existing migration;
+transactionally seed only missing reserved roles during actual datastore Init,
+including current-version stores that will not rerun migrations. Preserve every
+occupied role, custom authorization/priority and user/environment/group/registry
+access policy. Real production-browser verification shows **130 permission
+checkboxes**, creates custom role **ID 6**, and confirms width-only borders in
+light/dark/high-contrast cases, without page errors or cleanup failures.
+
+The new verifier findings are corrected: exclusive private retained outputs and
+privately staged captures prevent report/screenshot symlink/hardlink clobber;
+explicit OAuth identity checks cannot disappear under optimization or report a
+false ACL success; optimized CLI execution is rejected. Strict symlink resolution
+rejects cycles on actual Python 3.14 while retaining legitimate internally
+missing package links. Compose status polling now obeys its original caller's
+cancellation/deadline, including the polling delay; detached teardown is unchanged.
+A separately observed one-second JWT test race is fixed without changing product
+JWT behavior: test revocation with a valid lifetime and cache expiry independently,
+with past/future/non-expiring entries and 30 repeated race runs.
+
+Fresh parent checks pass after applying these changes:
+- **357 frontend files / 2,434 passed**, five skipped, 11 todo; all guards (3,280
+  source files, 166 routes, 103 imports), post-build typecheck, uncached lint
+  (zero errors / 192 existing warnings), production and Storybook builds.
+- **42 Node tests**, **47 Sonar + 44 platform Python tests** on host Python 3.9.6
+  and actual pinned Python 3.14; unchanged frozen dependency inventory/audit.
+- **210 Go packages** and race checks for **all 41 changed Go package directories**;
+  module tidy unchanged. All **18 schema/client files** remain byte-identical
+  after complete backend and repeated frontend regeneration.
+- Clean parent implementation `61c04c693` ARM64 binary SHA256
+  `d2d2a8e13a102c4cc24fd26e3649d4bca8115001704cbf4c638183467f0081ca`,
+  paired with frontend build `22JZOmL_MM9jkH2reT29j`, passes the full six runnable
+  real-platform suites again using the corrected verifier; zero cleanup failures.
+  Raw exit **2** still records ACI's access gate, not an all-suites pass.
+  The same clean implementation's AMD64 executable also passes real Docker/
+  container/log and Compose CRUD under explicit emulation (not native hardware),
+  with raw exit zero and zero cleanup failures.
+
+The completed Sonar analysis for pushed head `cde139e4f` now has **two findings**:
+intentional toolkit root bootstrap and the independently reviewed S8707 CLI-read
+false positive. Reliability/maintainability are A, duplication **1.1%** and reviewed
+hotspots **100%**; its security gate is **not green**. The separate six-root-case
+manual manifest remains unchanged. No remote acceptance or blanket source
+exclusion was used.
+Fifth whole-scope review and refreshed hosted CI are the next same-PR steps; an
+additional real local Authentik group-sync fixture is being exercised, not yet
+claimed passing. Five selected Go ranges still require an approved maintained
+upstream/fork publication path; ACI/Sonar/native Windows access limits remain.
+
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
 Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates
