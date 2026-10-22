@@ -12,6 +12,47 @@ describe('zerolog parser', () => {
     expect(result[0].line).toContain('next=two words');
   });
 
+  it.each([
+    ['Starting server', 'Starting server', []],
+    [
+      'Starting server port=9000 next=two words',
+      'Starting server',
+      ['port=9000', 'next=two words'],
+    ],
+    ['port=9000 next=two words', '', ['port=9000', 'next=two words']],
+  ])(
+    'preserves messages and fields without a pipe: %s',
+    (body, message, fields) => {
+      const result = format(`${prefix}${body}`)[0];
+      if (message) {
+        expect(result.line).toContain(`> ${message}`);
+        expect(result.spans.map(({ text }) => text).join('')).toContain(
+          message
+        );
+      }
+      for (const field of fields) {
+        expect(result.line).toContain(field);
+      }
+    }
+  );
+
+  it('retains a single Docker timestamp with an unseparated message', () => {
+    const timestamp = '2026-10-22T12:00:00.123456789Z ';
+    const result = format(
+      `${timestamp}${prefix}Starting server port=9000`,
+      true
+    )[0];
+    expect(result.line).toContain('> Starting server');
+    expect(result.line).toContain('port=9000');
+    expect(result.line.split(timestamp)).toHaveLength(2);
+    expect(
+      result.spans
+        .map(({ text }) => text)
+        .join('')
+        .split(timestamp)
+    ).toHaveLength(2);
+  });
+
   it('retains the last-equals delimiter behavior within a token', () => {
     const result = format(`${prefix}hello | token=a=b tail=end`);
     expect(result[0].line).toContain('token=a=b');

@@ -97,9 +97,10 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
 
 function extractPairs(messageAndPairs: string): [string, Pair[]] {
   const pairs: Pair[] = [];
+  const hasPipe = messageAndPairs.includes('|');
   let [message, rawPairs] = messageAndPairs.split('|');
 
-  if (!messageAndPairs.includes('|') && !rawPairs) {
+  if (!hasPipe) {
     rawPairs = message;
     message = '';
   }
@@ -112,6 +113,12 @@ function extractPairs(messageAndPairs: string): [string, Pair[]] {
       ? []
       : [{ 0: match[0].slice(0, equalsIndex + 1), index: match.index }];
   });
+
+  if (!hasPipe) {
+    // Unseparated zerolog output can contain a message before its first field,
+    // or a message alone. Preserve that prefix instead of silently dropping it.
+    message = rawPairs.slice(0, matches[0]?.index ?? rawPairs.length).trim();
+  }
 
   matches.forEach((m, idx) => {
     const rawKey = m[0];
