@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -25,6 +26,9 @@ type forceUpdateServicePayload struct {
 }
 
 func (payload *forceUpdateServicePayload) Validate(r *http.Request) error {
+	if strings.TrimSpace(payload.ServiceID) == "" {
+		return errors.New("ServiceID is required")
+	}
 	return nil
 }
 
