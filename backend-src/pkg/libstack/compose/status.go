@@ -94,7 +94,8 @@ func getServiceStatus(ctx context.Context, service service) (libstack.Status, st
 func getContainerLogsTail(ctx context.Context, service service) (string, error) {
 	var combinedOutput bytes.Buffer
 
-	if err := libstack.WithCli(ctx, libstack.DockerCliOptions{}, func(ctx context.Context, cli *command.DockerCli) error {
+	// Log collection is read-only status polling, not detached stack teardown.
+	if err := libstack.WithCliContext(ctx, libstack.DockerCliOptions{}, func(ctx context.Context, cli *command.DockerCli) error {
 		out, err := cli.Client().ContainerLogs(ctx, service.Name, client.ContainerLogsOptions{
 			ShowStdout: true,
 			ShowStderr: true,
