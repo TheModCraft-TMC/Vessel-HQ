@@ -538,3 +538,46 @@ passes all four real browser/code/UserInfo/membership phases on this same exact
 backend, with no OOM or cleanup failures. It uses a companion callback, not the
 production frontend; the Dex frontend result is not relabeled as Authentik
 frontend or external-policy coverage.
+
+## Post-round-five exact artifact repeat
+
+The compatibility correction's final product/test source is
+**`371cd1d6b22c70c989c85e26348303e5648b64f6`**. Previous61c and intermediate457
+runs above are historical. Canonical clean Go1.26.10 artifacts:
+
+| Artifact | SHA-256 |
+| --- | --- |
+| Linux ARM64 | `d9f0f007c27709c8807caa0e0669f3a94a704ce5202b25f6da72ffeef071c60f` |
+| Linux AMD64 | `7fc4d2a7d0d2daf31dc6acbb4fdb25145e2777ecc9c477ed9561a0f64d712829` |
+| Windows AMD64, cross-compile only | `d84a00f415e98185cce040560e2041e0214bc8dc098f0f9b1462eae0f0a254d4` |
+
+Fresh production frontend **`D160u896K8Gc78umImdtU`** includes the verified
+Sheet/footer width-only correction. Its standalone server-file hash remains
+`ca9e62a794f3268b9846ed2bf785e86f4e293c2493350aca2f9a388d8035c103`;
+that is not a whole-frontend asset fingerprint.
+
+- `/tmp/vessel-rest-r5-final-platforms.json`: all six runnable suites pass;
+  Docker29.8.2, Podman5.8.1, kind Kubernetes1.35.0, official Edge2.45.0 and
+  Dex2.45.1. Docker/Compose and nested Swarm stack CRUD/force-update paths are
+  real. Production OAuth callback, invalid state, ACL, cookie reload and
+  1100px/390px pointer/layout checks pass. ACI remains blocked; **raw exit2**.
+- `/tmp/vessel-rest-r5-final-amd64-docker.json`: actual AMD64 application
+  Docker/container/log/Compose CRUD passes under Docker Desktop emulation;
+  **raw exit0**, not native hardware or a second full matrix.
+- `/tmp/vessel-rest-r5-final-role-drawer-ui.json`: actual production role
+  catalog130 permissions/custom role ID6, preserved bare borders, and real
+  drawer edge/footer `none / 0px` in three themes at1280px and390px pass.
+  No page errors. Screenshot is application UI only; the synthetic update flag
+  used to exercise the role-page conditional component is removed before the
+  final drawer capture.
+- The [separate real Authentik repeat](../security/authentik-local-verification.md)
+  uses this **same ARM64 binary** and passes all four phases. It remains a
+  companion callback proof, not Authentik production-frontend/external-policy
+  certification.
+
+Every run has `cleanup_failures: []`; no Authentik-owned resources/scratch
+remain and host Swarm stays inactive. The managed aggregate job retains the
+full matrix's **raw exit2 solely for unavailable ACI**, after explicitly
+checking all six suites and completing AMD64, UI and Authentik verification.
+Native Windows/npipe and native AMD64 runtime remain unavailable; a successful
+Windows PE cross-compile is not relabeled as runtime execution.

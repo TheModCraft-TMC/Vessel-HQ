@@ -133,3 +133,26 @@ provider-policy relaxation, or product fix was needed.
 MFA/federation, per-environment or per-stack ACLs, Azure ACI, Windows/npipe, or any
 other backend artifact. Independent Dex/production-frontend evidence is separate
 and is not relabeled as Authentik frontend coverage.
+
+## Post-round-five repeat on exact source371cd1d6b
+
+A fresh bounded repeat also **passes all four phases** on product/test source
+`371cd1d6b22c70c989c85e26348303e5648b64f6`, after the separate Docker CLI
+compatibility/cancellation/offline-configuration corrections. No earlier
+artifact result is relabeled. Exact Linux ARM64 binary SHA-256:
+`d9f0f007c27709c8807caa0e0669f3a94a704ce5202b25f6da72ffeef071c60f`.
+
+The unchanged reviewed v8 launcher completes in **59.2 seconds**. Real
+authorization-code/token/UserInfo responses, absent ID-token custom groups,
+all four expected membership states, the same standard user and all three
+administrator denials pass again. All five final sampled containers have
+`OOMKilled=false`; cleanup failures are empty, owned resource inventories
+are empty, private scratch is removed and host Swarm remains inactive.
+
+Fresh mode0600 safe report/log under a mode0700 directory:
+`/var/folders/t9/gvw3kssx763dpxz6ss4_gv_h0000gn/T/vessel-authentik-r5-final.v3Xuj2/`.
+Report SHA-256:
+`0cb806303ddcd356ef0c480f5af34a9520334f79a0e9f1622b89be5191e90922`.
+Use the same repeat command above with the new binary and another fresh private
+output directory. The companion-callback, production-frontend, external-policy
+and other coverage limits remain unchanged.

@@ -570,3 +570,79 @@ Previous release CI failed after the image printed its version: the launcher ove
 3. Record check results and unresolved limitations, including workflows needing live Kubernetes.
 4. Confirm deployment and image-version documentation against the intended release; this pass does not change release identity.
 5. Rewrite the draft body if scope changes. Describe plugin support as a future plan.
+
+## Round-five findings applied and fresh verification (2026-10-22)
+
+Both required independent whole-scope reviews completed against the original
+`5b175344be4a37e01a3adb2d859cf05a1d54c4e8` base, including the added Authentik
+evidence. The confirmed P1 was **Compose/Swarm's separate Docker CLI client**:
+it bypassed the application factory's compatibility negotiation and requested
+`/v1.55/info` for API1.24, API1.39 and missing-header engines. The parent
+independently reproduced the unchanged real-HTTP regression under race.
+
+Applied corrections:
+
+- Public CLI client injection retains resolved contexts, TLS/mTLS, Unix/agent
+  transports, headers, registries and explicit operator versions. Shared
+  `pkg/dockercompat` uses public fixed-version constructors; the full-SDK
+  adapter keeps real Ping metadata without forced renegotiation or live-client
+  version mutation. Actual old/new CLI and factory HTTP probes pass, including
+  slow/recovered/unavailable engines and missing-header1.24 fallback.
+- Read-only Compose status initialization, `Ps` and log collection retain the
+  original caller's cancellation. Parent failing-first log-tail proof exposed
+  the remaining detached initialization path. Stack teardown stays detached.
+- Parent separately reproduced the eager client's offline configuration
+  regression. Shared project loading preserves engine-free `Validate`/`Config`,
+  interpolation, YAML output, parallel-limit validation and their prior loading
+  context. The permanent test performs **zero engine requests** even with an
+  unavailable engine or already-cancelled caller.
+- Sheet edges and its environment-drawer footer retain the original width-only
+  border behavior, rather than Tailwind4's incidental solid borders. All five
+  compiled width-only utilities are checked. The actual drawer edge/footer are
+  `none / 0px` in light/dark/high-contrast at1280px and390px. The duplicate
+  volume-proxy SDK import and temporary review markers are removed.
+
+Fresh product/test source is **`371cd1d6b22c70c989c85e26348303e5648b64f6`**,
+not the earlier61c or intermediate457 checkpoints. Clean canonical builds
+(`vcs.modified=false`, Go1.26.10) produced:
+
+| Target | SHA-256 |
+| --- | --- |
+| Linux ARM64 | `d9f0f007c27709c8807caa0e0669f3a94a704ce5202b25f6da72ffeef071c60f` |
+| Linux AMD64 | `7fc4d2a7d0d2daf31dc6acbb4fdb25145e2777ecc9c477ed9561a0f64d712829` |
+| Windows AMD64 cross-compile only | `d84a00f415e98185cce040560e2041e0214bc8dc098f0f9b1462eae0f0a254d4` |
+
+All **211 Go packages** pass; race tests across **all42 changed Go package
+directories** pass. Module verification/tidy are clean. All18 backend/frontend
+schema/client files are byte-identical after complete and repeated generation.
+Fresh govulncheck still reports **14 records / six advisory IDs**, not a clean
+scan or resolution of the five remaining original selected-module ranges.
+
+The unchanged post-drawer frontend source passes all three architecture guards,
+typecheck including post-build, **357 files /2,434 frontend tests**,42 Node tests,
+uncached lint (**zero errors /192 existing warnings**), production and Storybook
+builds, all61 original npm advisory-range checks and a fresh **zero-vulnerability
+npm audit**. Stable production frontend build: **`D160u896K8Gc78umImdtU`**.
+
+The exact371 ARM64 binary plus that frontend pass Docker/Compose, nested Swarm
+(including force update), Podman/Compose, kind Kubernetes, official Edge and
+real Dex/production-frontend OAuth. The same AMD64 binary passes real
+Docker/container/log/Compose CRUD under emulation, not native AMD64 hardware.
+Roles still expose130 permissions and custom ID6. The
+[real Authentik repeat](../security/authentik-local-verification.md) passes all
+four browser/code/UserInfo/team phases on the **same371 binary** in59.2s.
+All live runs report zero cleanup failures; Authentik scratch/resources are
+removed, no OOM occurs and host Swarm remains inactive.
+
+Evidence: `/tmp/vessel-rest-r5-final-*` build/Go/contract/platform/UI reports;
+full frontend logs retain the `/tmp/vessel-rest-r5-*` prefix. Authentik's private
+safe report path/hash are recorded in its scoped document. The full requested
+platform matrix and managed aggregate job return **raw exit2 solely for ACI**;
+all six runnable suites and subsequent AMD64/UI/Authentik checks pass.
+
+Sixth mandatory whole-work review is the next step, within the authorized
+ten-round maximum. The previous hosted `cde139e4f` build/test success is
+historical, not certification of371; fresh final-head hosted CI must finish.
+Sonar's two known credentialed reviews, five Go ranges, ACI account/resource
+access and native Windows/AMD64 runtime limits remain explicit. No release,
+image, merge or dependency-fork publication occurred.
