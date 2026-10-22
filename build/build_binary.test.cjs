@@ -18,9 +18,16 @@ function fixture(t) {
     `#!/bin/bash
 set -eu
 printf '%s:%s %s\\n' "\${GOOS:-}" "\${GOARCH:-}" "$*" >> "$BUILD_LOG"
+if [[ -n "\${FAIL_MODULE:-}" && "$*" == *"$FAIL_MODULE" ]]; then
+  echo "module lookup failed: $FAIL_MODULE" >&2
+  exit 42
+fi
 case "$*" in
+  *'github.com/moby/moby/client') echo v0.5.1 ;;
+  *'github.com/docker/compose/v5') echo v5.3.1 ;;
   *'k8s.io/kubectl') echo v0.33.2 ;;
-  *'list -m'*) echo v1.2.3 ;;
+  *'helm.sh/helm/v4') echo v4.1.4 ;;
+  *'list -m'*) echo "unexpected module lookup: $*" >&2; exit 42 ;;
   'env GOOS') echo darwin ;;
   'env GOARCH') echo arm64 ;;
 esac
@@ -39,6 +46,7 @@ esac
     GO_VERSION: 'go1.26.6',
     GIT_COMMIT_HASH: 'test-commit',
     SKIP_GO_GET: 'true',
+    FAIL_MODULE: '',
   };
   return {
     root,
@@ -82,6 +90,22 @@ for (const arch of ['amd64', 'arm64']) {
     assert.match(result.log, /ReleaseVersion=1\.3\.1/);
   });
 }
+
+test('linker metadata reports maintained SDK and Compose modules', (t) => {
+  const result = fixture(t).run(['linux', 'amd64']);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.log, /DepDockerVersion=v0\.5\.1/);
+  assert.match(result.log, /DepComposeVersion=v5\.3\.1/);
+  assert.match(result.log, /DepHelmVersion=v4\.1\.4/);
+  assert.doesNotMatch(result.log, /github\.com\/docker\/(?:docker|compose\/v2)\b/);
+});
+
+test('metadata lookup failure stops before compilation', (t) => {
+  const result = fixture(t).run(['linux', 'amd64'], { FAIL_MODULE: 'github.com/moby/moby/client' });
+  assert.equal(result.status, 42);
+  assert.match(result.stderr, /module lookup failed: github\.com\/moby\/moby\/client/);
+  assert.doesNotMatch(result.log, /^linux:amd64 build /m);
+});
 
 test('Windows builds retain the exe extension', (t) => {
   const result = fixture(t).run(['windows', 'amd64']);
