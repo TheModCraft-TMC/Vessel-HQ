@@ -2451,7 +2451,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/client.ServiceUpdateResult"
+                $ref: "#/components/schemas/endpoints.forceUpdateServiceResponse"
         "400":
           description: Invalid request
         "403":
@@ -12663,14 +12663,6 @@ components:
             type: string
           type: array
       type: object
-    client.ServiceUpdateResult:
-      properties:
-        Warnings:
-          description: Warnings contains any warnings that occurred during the update.
-          items:
-            type: string
-          type: array
-      type: object
     containers.containerGpusResponse:
       properties:
         gpus:
@@ -13834,6 +13826,14 @@ components:
         ServiceID:
           description: ServiceId to update
           type: string
+      type: object
+    endpoints.forceUpdateServiceResponse:
+      properties:
+        Warnings:
+          items:
+            type: string
+          type: array
+          nullable: true
       type: object
     endpoints.groupCount:
       properties:

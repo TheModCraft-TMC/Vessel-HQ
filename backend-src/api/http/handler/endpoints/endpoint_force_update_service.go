@@ -28,6 +28,12 @@ func (payload *forceUpdateServicePayload) Validate(r *http.Request) error {
 	return nil
 }
 
+// forceUpdateServiceResponse is the endpoint's wire contract. The SDK result
+// also serializes nil warnings as null; describe that explicitly for clients.
+type forceUpdateServiceResponse struct {
+	Warnings []string `json:"Warnings" extensions:"x-nullable"`
+}
+
 // @id endpointForceUpdateService
 // @summary force update a docker service
 // @description force update a docker service
@@ -39,7 +45,7 @@ func (payload *forceUpdateServicePayload) Validate(r *http.Request) error {
 // @produce json
 // @param id path int true "endpoint identifier"
 // @param body body forceUpdateServicePayload true "details"
-// @success 200 {object} client.ServiceUpdateResult "Success"
+// @success 200 {object} forceUpdateServiceResponse "Success"
 // @failure 400 "Invalid request"
 // @failure 403 "Permission denied"
 // @failure 404 "endpoint not found"
@@ -121,5 +127,5 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		}
 	}()
 
-	return response.JSON(w, newService)
+	return response.JSON(w, forceUpdateServiceResponse{Warnings: newService.Warnings})
 }

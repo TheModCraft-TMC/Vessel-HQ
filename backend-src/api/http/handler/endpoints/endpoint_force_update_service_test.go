@@ -22,7 +22,7 @@ func TestServiceUpdateResponsePreservesJSON(t *testing.T) {
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			recorder := httptest.NewRecorder()
-			err := response.JSON(recorder, client.ServiceUpdateResult{Warnings: test.warnings})
+			err := response.JSON(recorder, forceUpdateServiceResponse{Warnings: test.warnings})
 			require.Nil(t, err)
 			require.JSONEq(t, test.want, recorder.Body.String())
 
@@ -32,6 +32,11 @@ func TestServiceUpdateResponsePreservesJSON(t *testing.T) {
 			err = response.JSON(apiRecorder, swarm.ServiceUpdateResponse{Warnings: test.warnings})
 			require.Nil(t, err)
 			require.Equal(t, apiRecorder.Body.String(), recorder.Body.String())
+
+			sdkRecorder := httptest.NewRecorder()
+			err = response.JSON(sdkRecorder, client.ServiceUpdateResult{Warnings: test.warnings})
+			require.Nil(t, err)
+			require.Equal(t, sdkRecorder.Body.String(), recorder.Body.String())
 		})
 	}
 }

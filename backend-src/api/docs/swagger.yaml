@@ -79,14 +79,6 @@ definitions:
           type: string
         type: array
     type: object
-  client.ServiceUpdateResult:
-    properties:
-      Warnings:
-        description: Warnings contains any warnings that occurred during the update.
-        items:
-          type: string
-        type: array
-    type: object
   containers.containerGpusResponse:
     properties:
       gpus:
@@ -1213,6 +1205,14 @@ definitions:
       ServiceID:
         description: ServiceId to update
         type: string
+    type: object
+  endpoints.forceUpdateServiceResponse:
+    properties:
+      Warnings:
+        items:
+          type: string
+        type: array
+        x-nullable: true
     type: object
   endpoints.groupCount:
     properties:
@@ -17580,7 +17580,7 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/client.ServiceUpdateResult'
+            $ref: '#/definitions/endpoints.forceUpdateServiceResponse'
         "400":
           description: Invalid request
         "403":
