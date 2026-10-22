@@ -103,7 +103,7 @@ func (handler *Handler) stackStart(w http.ResponseWriter, r *http.Request) *http
 		return httperror.Forbidden(errMsg, errors.New(errMsg))
 	}
 
-	isUnique, err := handler.checkUniqueStackNameInDocker(endpoint, stack.Name, stack.ID, stack.SwarmID != "")
+	isUnique, err := handler.checkUniqueStackNameInDocker(r.Context(), endpoint, stack.Name, stack.ID, stack.SwarmID != "")
 	if err != nil {
 		return httperror.InternalServerError("Unable to check for name collision", err)
 	}

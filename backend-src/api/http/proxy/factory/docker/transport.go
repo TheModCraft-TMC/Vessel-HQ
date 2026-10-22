@@ -67,6 +67,7 @@ type (
 	}
 
 	operationExecutor struct {
+		requestContext   context.Context
 		operationContext *restrictedDockerOperationContext
 		labelBlackList   []portainer.Pair
 	}
@@ -247,7 +248,7 @@ func (transport *Transport) proxyAgentRequest(r *http.Request, unversionedPath s
 
 		volumeName := volumeIDParameter[0]
 
-		resourceID, err := transport.getVolumeResourceID(volumeName)
+		resourceID, err := transport.getVolumeResourceID(r.Context(), volumeName)
 		if err != nil {
 			return nil, err
 		}
@@ -809,6 +810,7 @@ func (transport *Transport) rewriteOperationWithLabelFiltering(request *http.Req
 	}
 
 	executor := &operationExecutor{
+		requestContext:   request.Context(),
 		operationContext: operationContext,
 		labelBlackList:   settings.BlackListedLabels,
 	}
@@ -825,6 +827,7 @@ func (transport *Transport) rewriteOperation(request *http.Request, operation re
 	}
 
 	executor := &operationExecutor{
+		requestContext:   request.Context(),
 		operationContext: operationContext,
 	}
 

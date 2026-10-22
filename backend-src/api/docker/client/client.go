@@ -76,14 +76,14 @@ func (factory *ClientFactory) CreateClientWithContext(ctx context.Context, endpo
 	}
 
 	if strings.HasPrefix(endpoint.URL, "unix://") || strings.HasPrefix(endpoint.URL, "npipe://") {
-		return createLocalClient(ctx, endpoint)
+		return createLocalClient(ctx, endpoint, timeout)
 	}
 
 	return createTCPClient(ctx, endpoint, timeout)
 }
 
-func createLocalClient(ctx context.Context, endpoint *portainer.Endpoint) (*client.Client, error) {
-	return newCompatibleClient(ctx, nil,
+func createLocalClient(ctx context.Context, endpoint *portainer.Endpoint, timeout *time.Duration) (*client.Client, error) {
+	return newCompatibleClient(ctx, timeout, nil,
 		client.WithHost(endpoint.URL),
 	)
 }
@@ -102,7 +102,7 @@ func createTCPClient(ctx context.Context, endpoint *portainer.Endpoint, timeout 
 		opts = append(opts, client.WithScheme("https"))
 	}
 
-	return newCompatibleClient(ctx, httpCli, opts...)
+	return newCompatibleClient(ctx, timeout, httpCli, opts...)
 }
 
 // agentClientHeaders builds the headers every request to an agent is decorated with.
@@ -148,7 +148,7 @@ func createAgentClient(ctx context.Context, endpoint *portainer.Endpoint, endpoi
 		opts = append(opts, client.WithScheme("https"))
 	}
 
-	return newCompatibleClient(ctx, httpCli, opts...)
+	return newCompatibleClient(ctx, timeout, httpCli, opts...)
 }
 
 // newCompatibleClient completes negotiation before exposing the client to
@@ -162,7 +162,7 @@ func createAgentClient(ctx context.Context, endpoint *portainer.Endpoint, endpoi
 // then return the error. The entire probe shares the caller context and HTTP
 // timeout budget, not an unrelated short deadline. A zero HTTP timeout remains
 // unlimited, just as it is for subsequent operations.
-func newCompatibleClient(ctx context.Context, httpClient *http.Client, opts ...client.Opt) (*client.Client, error) {
+func newCompatibleClient(ctx context.Context, timeout *time.Duration, httpClient *http.Client, opts ...client.Opt) (*client.Client, error) {
 	create := func(extra ...client.Opt) (*client.Client, error) {
 		options := append(append([]client.Opt(nil), opts...), extra...)
 		if httpClient != nil {
@@ -179,9 +179,9 @@ func newCompatibleClient(ctx context.Context, httpClient *http.Client, opts ...c
 	}
 	defer cli.Close()
 
-	if httpClient != nil && httpClient.Timeout > 0 {
+	if probeTimeout := dockerRequestTimeout(timeout); probeTimeout > 0 {
 		var cancel context.CancelFunc
-		ctx, cancel = context.WithTimeout(ctx, httpClient.Timeout)
+		ctx, cancel = context.WithTimeout(ctx, probeTimeout)
 		defer cancel()
 	}
 	ping, err := cli.Ping(ctx, client.PingOptions{})
@@ -278,13 +278,20 @@ func httpClient(endpoint *portainer.Endpoint, timeout *time.Duration) (*http.Cli
 		transport = &NodeNameTransport{Transport: ssrf.NewTransport(nil)}
 	}
 
-	clientTimeout := defaultDockerRequestTimeout
-	if timeout != nil {
-		clientTimeout = *timeout
-	}
+	clientTimeout := dockerRequestTimeout(timeout)
 
 	return &http.Client{
 		Transport: transport,
 		Timeout:   clientTimeout,
 	}, nil
+}
+
+// dockerRequestTimeout applies the factory's documented default to initial
+// negotiation on every transport, including local Unix/npipe. Explicit0 keeps
+// the caller-controlled unlimited timeout; WithContext still permits cancellation.
+func dockerRequestTimeout(timeout *time.Duration) time.Duration {
+	if timeout != nil {
+		return *timeout
+	}
+	return defaultDockerRequestTimeout
 }

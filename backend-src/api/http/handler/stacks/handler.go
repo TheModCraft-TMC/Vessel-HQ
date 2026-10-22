@@ -177,7 +177,7 @@ func (handler *Handler) checkUniqueStackName(endpoint *portainer.Endpoint, name 
 	return true, nil
 }
 
-func (handler *Handler) checkUniqueStackNameInDocker(endpoint *portainer.Endpoint, name string, stackID portainer.StackID, swarmMode bool) (bool, error) {
+func (handler *Handler) checkUniqueStackNameInDocker(ctx context.Context, endpoint *portainer.Endpoint, name string, stackID portainer.StackID, swarmMode bool) (bool, error) {
 	isUniqueStackName, err := handler.checkUniqueStackName(endpoint, name, stackID)
 	if err != nil {
 		return false, err
@@ -187,13 +187,13 @@ func (handler *Handler) checkUniqueStackNameInDocker(endpoint *portainer.Endpoin
 		return isUniqueStackName, nil
 	}
 
-	dockerClient, err := handler.DockerClientFactory.CreateClient(endpoint, "", nil)
+	dockerClient, err := handler.DockerClientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
 	if err != nil {
 		return false, err
 	}
 	defer logs.CloseAndLogErr(dockerClient)
 	if swarmMode {
-		servicesResult, err := dockerClient.ServiceList(context.Background(), client.ServiceListOptions{})
+		servicesResult, err := dockerClient.ServiceList(ctx, client.ServiceListOptions{})
 		services := servicesResult.Items
 		if err != nil {
 			return false, err
@@ -207,7 +207,7 @@ func (handler *Handler) checkUniqueStackNameInDocker(endpoint *portainer.Endpoin
 		}
 	}
 
-	containersResult, err := dockerClient.ContainerList(context.Background(), client.ContainerListOptions{All: true})
+	containersResult, err := dockerClient.ContainerList(ctx, client.ContainerListOptions{All: true})
 	containers := containersResult.Items
 	if err != nil {
 		return false, err

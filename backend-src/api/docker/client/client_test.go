@@ -2,6 +2,7 @@ package client
 
 import (
 	"testing"
+	"time"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/pkg/fips"
@@ -88,4 +89,14 @@ func TestAgentClientHeaders_SignatureFailurePropagatesOutsideFIPSMode(t *testing
 	headers, err := agentClientHeaders(testhelpers.NewFailingSignatureService(), "", false)
 	require.Error(t, err)
 	require.Nil(t, headers)
+}
+
+func TestDockerRequestTimeout(t *testing.T) {
+	t.Parallel()
+	// The same helper is used for local/TCP/agent negotiation and HTTP clients.
+	// A nil timeout must not give eager local construction an unlimited wait.
+	require.Equal(t, 60*time.Second, dockerRequestTimeout(nil))
+	for _, timeout := range []time.Duration{0, 30 * time.Millisecond, 20 * time.Second} {
+		require.Equal(t, timeout, dockerRequestTimeout(&timeout))
+	}
 }

@@ -3,12 +3,14 @@
 package client
 
 import (
+	"context"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	portainer "github.com/portainer/portainer/api"
 
@@ -47,4 +49,49 @@ func TestFactoryNegotiatesLegacyUnixSocket(t *testing.T) {
 	_, err = cli.ContainerList(t.Context(), client.ContainerListOptions{})
 	require.NoError(t, err)
 	require.Equal(t, "1.24", cli.ClientVersion())
+}
+
+func TestFactoryLocalProbeTimeoutAndCancellation(t *testing.T) {
+	t.Parallel()
+	for _, callerDeadline := range []bool{false, true} {
+		name := "legacy-entry-positive-timeout"
+		if callerDeadline {
+			name = "caller-deadline-with-unlimited-http-timeout"
+		}
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			dir, err := os.MkdirTemp("/tmp", "vessel-dep-deadline-")
+			require.NoError(t, err)
+			defer os.RemoveAll(dir)
+			socket := filepath.Join(dir, "docker.sock")
+			listener, err := net.Listen("unix", socket)
+			require.NoError(t, err)
+			server := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				<-r.Context().Done()
+			}))
+			_ = server.Listener.Close()
+			server.Listener = listener
+			server.Start()
+			defer server.Close()
+			timeout := 30 * time.Millisecond
+			endpoint := &portainer.Endpoint{URL: "unix://" + socket}
+			factory := NewClientFactory(nil, nil)
+			start := time.Now()
+			if callerDeadline {
+				ctx, cancel := context.WithTimeout(t.Context(), timeout)
+				defer cancel()
+				timeout = 0
+				cli, err := factory.CreateClientWithContext(ctx, endpoint, "", &timeout)
+				require.ErrorIs(t, err, context.DeadlineExceeded)
+				require.Nil(t, cli)
+			} else {
+				// Even the compatibility entry point without a caller context
+				// must apply the supplied local negotiation budget.
+				cli, err := factory.CreateClient(endpoint, "", &timeout)
+				require.ErrorIs(t, err, context.DeadlineExceeded)
+				require.Nil(t, cli)
+			}
+			require.Less(t, time.Since(start), time.Second)
+		})
+	}
 }
