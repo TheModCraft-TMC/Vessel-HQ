@@ -9,9 +9,13 @@ initializes Swarm on the shared host or changes the user's Kubernetes context.
 ## Reproduce
 
 Requirements: Python 3, Docker with privileged Linux container support, a Linux
-Vessel binary matching the Docker server architecture, and a local runtime image
-providing the binary's normal runtime dependencies. This run used Docker Desktop
-Linux ARM64, Go 1.26.6, and the existing `vessel-issues-toolkit:arm64` tool image.
+Vessel binary matching its runtime image architecture, and a local runtime image
+providing the binary's normal runtime dependencies. Prefer native execution;
+configured cross-architecture emulation must be reported explicitly. The historical baseline used
+Docker Desktop Linux ARM64, Go 1.26.6, and the existing
+`vessel-issues-toolkit:arm64` tool image. The final exact-artifact run below uses
+Go **1.26.10** with that same runtime image; the mounted executable, not the
+image's compiler, determines the running backend's Go version.
 No product dependency is installed or changed by this harness. The Podman fixture
 installs `iptables-nft` from its signed Fedora repository (GPG checking explicitly
 enabled) inside its disposable container and sets container-local
@@ -284,9 +288,65 @@ Go 1.26.10 final artifact or unresolved advisory reconciliation.
   **No dependency regression is asserted without before/after evidence, and no
   product/UI code was changed by this verification task.**
 
-Final Go-artifact results must be recorded separately with their actual artifact
-fingerprint after rerunning; neither baseline nor candidate results certify a
-later final artifact.
+Neither baseline nor candidate results certify a later final artifact. The
+separate final-artifact run below supersedes their runtime coverage without
+rewriting the historical failures.
+
+### Final exact Go 1.26.10 artifact and integrated frontend
+
+Fresh combined run on 2026-10-22:
+
+- Clean backend implementation source
+  `030beb74fed2951e3552235135c2e01545cb6df8`; ARM64 SHA256
+  `37b916219eebb167ee14f4ff9a5f638bd0c0b1962159f846d728bd6d6c83e320`.
+  Before documentation-only updates, the integrated parent backend tree matched
+  this artifact's source tree exactly. The runtime confirms Go **1.26.10**,
+  Vessel **1.3.1**, API/datastore **2.45.0**, Compose **5.3.1** and SDK **0.5.1**.
+- Integrated production frontend build ID `79qONiyWoTz44XGPmvyya`; standalone
+  server SHA256
+  `ca9e62a794f3268b9846ed2bf785e86f4e293c2493350aca2f9a388d8035c103`.
+  It includes the real responsive-header fix and nullable generated response
+  contract. Its source artifact remained unchanged; only the disposable copy's
+  API rewrite was changed.
+- Actual report `/tmp/vessel-rest-final-platforms.json`; raw exit **2** because
+  explicitly requested ACI is access-gated. All six runnable suites **passed**;
+  cleanup failures are **zero**. No access-gated suite is counted as a pass.
+
+| Surface | Final-artifact result |
+| --- | --- |
+| Docker / Compose | Real environment/container CRUD and logs; Compose create/update/delete pass |
+| Nested Swarm | Stack/container/environment CRUD and actual force update pass; `ForceUpdate` changes 0 → 1 and a replacement task runs; wire `Warnings` is null |
+| Linux Podman / Compose | Actual Podman service/container CRUD/logs and Compose create/update/delete pass, with only the documented container-local firewall adapter |
+| kind Kubernetes | Real in-cluster service-account access, namespace/ready Deployment CRUD and application paths pass |
+| Official Edge agent | Real polling, reverse tunnel and container CRUD/logs pass |
+| Real Dex / production frontend | Invalid-state rejection, actual provider callback/token exchange/UserInfo, standard-user ACL, cookie-session reload, search/sort and natural mobile drawer pointer open/reopen/close pass |
+| ACI | **Not done yet:** authorized Azure access is unavailable; no resource created |
+
+The exact owned resource prefix has no remaining containers, networks or volumes;
+the shared host's Swarm state remains **inactive**. Safe application-only captures
+are `/tmp/vessel-rest-final-oauth.png` and
+`/tmp/vessel-rest-final-oauth-mobile.png`. The separate
+[56-case header matrix](../security/mobile-header-verification.md) provides broader
+responsive geometry coverage; it is not relabeled as final-backend coverage or a
+real Business Edition deployment.
+
+A separate **emulated Linux AMD64** run executes the clean final backend, not
+just its toolchain: SHA256
+`ee5011f6e801537427c2467a1d31e963cccc54bfd434c113a1e48b6e9425855a`,
+same source `030beb74f`, with local `vessel-rest-toolkit:amd64`. Actual
+Docker/container/log and Compose create/update/delete checks pass; runtime
+metadata confirms Go 1.26.10 and the exact source. Report:
+`/tmp/vessel-rest-final-amd64-docker.json`; raw exit **0**, zero cleanup failures.
+This is real backend/API execution under Docker Desktop's emulation, **not native
+AMD64 hardware coverage** and not a second all-platform-suite claim. Both toolkit
+architectures were also built and executed with real UID/GID 1000 and writable
+home checks; no image was published.
+
+These results do not clear the five remaining selected Go advisory ranges or
+provide Sonar review authorization, Azure/Authentik accounts, or Windows/npipe
+runtime execution. Those limits remain explicit in the security records. Future
+implementation changes require a new fingerprinted artifact run, not reuse of
+this result.
 
 Harness-only checks (no live resources required):
 

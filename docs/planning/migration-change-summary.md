@@ -212,7 +212,10 @@ lists the five default-branch cases and the PR counterpart for an authorized
 reviewer. No SonarCloud review credential is available to this task; the PR
 must not be described as passing that gate until the service records the review.
 
-## Extended remediation checkpoint — October 22, 2026
+## Historical extended remediation checkpoint — October 22, 2026
+
+Superseded for current verification by the integrated checkpoint below. The
+remaining-work statements here describe that earlier implementation point.
 
 The maintainer authorized the remaining dependency and live-platform work in the
 same PR, with at most ten review rounds. This checkpoint is separate from the
@@ -268,6 +271,69 @@ image publication, additional PR, or remote finding dismissal has occurred.
   Go/frontend artifact checks are not done yet. Azure ACI still requires authorized
   external account access; Dex coverage does not establish Authentik-specific
   group synchronization coverage.
+
+## Extended remediation — integrated local verification, October 22, 2026
+
+This is the fresh **pre-review local checkpoint**, not a claim that the PR's
+Sonar gate or every dependency alert is resolved. The original 226-issue scope
+remains separate from the authorized expanded work. Nothing was merged,
+published, dismissed, or submitted as an additional PR.
+
+- **82 of the 87 supplied dependency ranges are fixed or removed:** all 61 npm
+  ranges and 21 of 26 Go ranges. Frozen installation, the exact npm advisory
+  inventory, and a fresh npm audit pass with zero vulnerabilities at every
+  severity. Five original selected Go ranges remain genuinely unresolved.
+- Update the real toolchain and verified toolkit image to **Go 1.26.10** within
+  the existing minor line. Fresh `govulncheck` has **14 finding records / six
+  advisory IDs / zero standard-library finding records**; this is not a clean
+  scan. Preserve release **1.3.1**, API/datastore **2.45.0**, Node 24, and pnpm
+  **10.26.2**. [Exact Go evidence and fork decision](../../backend-src/DEPENDENCY_SECURITY.md).
+- Correct slow/recovered engine negotiation using only public SDK APIs, retaining
+  API 1.24/1.39, Podman 1.41, modern 1.54 and maximum-version capping. The actual
+  old/new SDK loopback reproduction now succeeds after the same 5.2-second
+  first-probe delay. Bound default local construction, preserve explicit-zero
+  timeout and existing detached/background operation semantics, and propagate
+  image-status construction errors instead of losing them or dereferencing nil.
+- Own the service-update response annotation, preserving real
+  `{"Warnings":null}`, empty arrays and populated arrays. Five generated-validator
+  regression cases pass. Blank/missing service identifiers fail validation before
+  SDK access. A fresh backend generation and two frontend generations preserve
+  **all 18 checked schema/client files byte-for-byte**; generated output is not
+  hand-edited.
+- Fix the independently reproduced mobile header overlap using available-width
+  container queries, reserved pointer-target space and bounded account controls.
+  Real production OAuth/session/mobile pointer checks pass, as do **56/56**
+  responsive interaction cases. Extra-action cases are geometry tests, not a
+  claim of a real Business Edition runtime. [Before/after evidence](../security/mobile-header-verification.md).
+
+| Fresh local check | Result and scope |
+| --- | --- |
+| Frontend architecture / routes / CSS Modules | 3,280 source files; 166 routes; 103 imports pass |
+| Typecheck and uncached lint | Pass; zero lint errors / 192 existing warnings |
+| Full frontend suite | 357 files; **2,434 passed**, five skipped, 11 todo |
+| Node tooling / Python safety | **40 Node tests**; **47 Sonar + 30 platform tests** pass |
+| Production and Storybook | Both builds pass |
+| Go 1.26.10 full suite | **210 packages** pass on the final implementation |
+| Race coverage | All 38 changed package directories checked at the preceding checkpoint; all 23 SDK-affected packages rechecked on final implementation source `030beb74f` |
+| Schema/client reproducibility | All 18 files unchanged; final backend schemas independently regenerated and validated twice |
+| Exact-artifact live coverage | ARM64 Docker/Compose, nested Swarm/force update, real Podman/Compose, in-cluster kind Kubernetes, official Edge and real Dex/production-frontend OAuth all pass; zero cleanup failures |
+| AMD64 execution | Final AMD64 backend executes under explicit Docker Desktop emulation; real Docker/container/log and Compose CRUD pass; zero cleanup failures. Not native AMD64 or a second all-platform claim |
+
+The final live run uses ARM64 backend SHA256
+`37b916219eebb167ee14f4ff9a5f638bd0c0b1962159f846d728bd6d6c83e320`
+(source `030beb74f`, clean build), and integrated frontend build
+`79qONiyWoTz44XGPmvyya`. Its raw exit is **2**, solely because the explicitly
+requested ACI suite is account-gated, not passed. See the
+[exact-artifact platform record](../themodcraft/isolated-platform-verification.md).
+Earlier baseline/candidate runs are not relabeled as this final artifact.
+
+**Not done yet:** the expanded whole-scope review and hosted CI still need to run
+for this integrated head. Five selected Go ranges need an approved maintained
+upstream/fork publication path; six intentional Sonar cases need authorized
+review credentials; actual ACI needs an authorized nonproduction Azure account.
+Dex does not establish external Authentik group-sync coverage, and Windows/npipe
+runtime execution is not available on this host. The manual Sonar path is preview
+by default, pins its reviewed sources, and has made no remote mutations.
 
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
