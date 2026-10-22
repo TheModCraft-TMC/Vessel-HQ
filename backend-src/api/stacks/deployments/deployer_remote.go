@@ -24,7 +24,6 @@ import (
 	"github.com/moby/moby/api/types/container"
 	"github.com/moby/moby/api/types/swarm"
 	"github.com/moby/moby/api/types/system"
-	"github.com/moby/moby/client"
 	dockerclient "github.com/moby/moby/client"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
@@ -399,7 +398,7 @@ func (d *stackDeployer) createDockerClient(ctx context.Context, endpoint *portai
 	}
 	defer logs.CloseAndLogErr(cli)
 
-	nodesResult, err := cli.NodeList(ctx, client.NodeListOptions{})
+	nodesResult, err := cli.NodeList(ctx, dockerclient.NodeListOptions{})
 	nodes := nodesResult.Items
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to list nodes")
