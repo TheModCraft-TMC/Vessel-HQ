@@ -18,7 +18,7 @@ class PlatformSmokeTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.binary = Path(self.tmp.name) / "binary"
         self.binary.write_bytes(b"test-artifact")
-        self.args = argparse.Namespace(binary=str(self.binary), runtime_image="test-runtime:local", kind="kind")
+        self.args = argparse.Namespace(binary=str(self.binary), runtime_image="test-runtime:local", kind="kind", expected_release="1.3.1", expected_datastore="2.45.0")
         self.runner = smoke.Smoke(self.args)
 
     def tearDown(self):
@@ -108,6 +108,20 @@ class PlatformSmokeTests(unittest.TestCase):
         response.status = status
         response.read.return_value = json.dumps(body).encode()
         return response
+
+    def test_session_checks_release_identity_without_exporting_runtime_environment(self):
+        version = {"ServerVersion": "1.3.1", "DatabaseVersion": "2.45.0", "Build": {}, "Dependencies": {},
+            "Runtime": {"Env": ["NEVER_EXPORT=test-value"]}}
+        with patch.object(self.runner, "request", side_effect=[{"ready": True}, None, {"jwt": "ephemeral-token"}, version]):
+            self.runner.initialize_session()
+        self.assertNotIn("Runtime", self.runner.results["server_version"])
+        self.assertNotIn("NEVER_EXPORT", json.dumps(self.runner.results))
+
+    def test_session_rejects_wrong_datastore_or_release_artifact(self):
+        version = {"ServerVersion": "2.45.0", "DatabaseVersion": "2.45.0"}
+        with patch.object(self.runner, "request", side_effect=[{"ready": True}, None, {"jwt": "ephemeral-token"}, version]):
+            with self.assertRaisesRegex(AssertionError, "Artifact identity mismatch"):
+                self.runner.initialize_session()
 
     def test_authenticated_request_and_multipart_endpoint_payload(self):
         self.runner.base = "http://127.0.0.1:12345"

@@ -161,6 +161,9 @@ class Smoke:
         self.request("POST", "/users/admin/init", {"Username": "admin", "Password": password}, auth=False)
         self.token = self.request("POST", "/auth", {"Username": "admin", "Password": password}, auth=False)["jwt"]
         version = self.request("GET", "/system/version")
+        if version.get("ServerVersion") != self.args.expected_release or version.get("DatabaseVersion") != self.args.expected_datastore:
+            raise AssertionError("Artifact identity mismatch: expected Vessel " + self.args.expected_release + "/datastore " +
+                self.args.expected_datastore + ", got " + str(version.get("ServerVersion")) + "/" + str(version.get("DatabaseVersion")))
         self.results["server_version"] = {key: version[key] for key in ("ServerVersion", "DatabaseVersion", "Build", "Dependencies")}
 
     def endpoint(self, suffix, url, creation_type=1, engine="docker"):
@@ -175,9 +178,15 @@ class Smoke:
             home_volume = self.new_volume("podman-home")
             name = self.run("podman", self.args.podman_image,
                 ["podman", "--storage-driver=vfs", "--cgroup-manager=cgroupfs", "--events-backend=file", "system", "service", "--time=0", "tcp:127.0.0.1:2375"],
-                ["--privileged", "--security-opt", "label=disable", "-p", "127.0.0.1::9000", "--network", network,
+                ["--privileged", "--security-opt", "label=disable", "-e", "NETAVARK_FW=iptables", "-p", "127.0.0.1::9000", "--network", network,
                  "--mount", f"type=volume,source={root_volume},target=/var/lib/containers",
                  "--mount", f"type=volume,source={home_volume},target=/home/podman/.local/share/containers"])
+            # The official minimal image ships nft but not iptables. Nested
+            # custom bridges need the latter on this Docker Desktop kernel.
+            # Install only inside this disposable fixture, using Fedora's signed
+            # package repository; never change host/global Podman settings.
+            self.docker("exec", name, "dnf", "install", "-y", "--setopt=gpgcheck=1", "iptables-nft", timeout=180)
+            self.results["podman_fixture_firewall"] = self.docker("exec", name, "rpm", "-q", "iptables-nft")
             wait_for(lambda: self.docker("exec", name, "podman", "--storage-driver=vfs", "info", "--format", "json"))
         else:
             volume = self.new_volume("dind-data")
@@ -218,7 +227,7 @@ class Smoke:
         def ready():
             state = self.request("GET", f"/stacks/{sid}")
             if state.get("Status") == 4:
-                raise AssertionError("Stack deployment failed: " + str(state.get("StatusHistory")))
+                raise AssertionError("Stack deployment failed: " + str(state.get("DeploymentStatus")))
             if swarm_id:
                 return any(task["Status"]["State"] == "running" for task in self.request("GET", route + "/tasks"))
             return self.request("GET", route + "/containers/json")
@@ -249,7 +258,7 @@ class Smoke:
             self.docker("exec", engine, "docker", "swarm", "init")
             swarm = self.request("GET", f"/endpoints/{endpoint}/docker/swarm")
             result["swarm_stack_crud"] = self.stack_crud(endpoint, swarm["ID"])
-        elif name == "docker":
+        elif name in ("docker", "podman"):
             result["compose_stack_crud"] = self.stack_crud(endpoint)
         self.request("PUT", f"/endpoints/{endpoint}", {"Name": self.prefix + "-updated"})
         assert self.request("GET", f"/endpoints/{endpoint}")["Name"] == self.prefix + "-updated"
@@ -586,6 +595,8 @@ class Smoke:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", "--artifact", required=True, help="Linux Vessel binary matching the Docker server architecture")
+    parser.add_argument("--expected-release", default=(Path(__file__).resolve().parents[2] / "RELEASE_VERSION").read_text().strip())
+    parser.add_argument("--expected-datastore", default="2.45.0")
     parser.add_argument("--runtime-image", default="vessel-issues-toolkit:arm64", help="Local image containing the binary's runtime/tool dependencies; never built or published here")
     parser.add_argument("--dind-image", default="docker:29-dind")
     parser.add_argument("--podman-image", default="quay.io/podman/stable:v5.8.1")

@@ -12,7 +12,14 @@ Requirements: Python 3, Docker with privileged Linux container support, a Linux
 Vessel binary matching the Docker server architecture, and a local runtime image
 providing the binary's normal runtime dependencies. This run used Docker Desktop
 Linux ARM64, Go 1.26.6, and the existing `vessel-issues-toolkit:arm64` tool image.
-No product dependency is installed or changed by this harness.
+No product dependency is installed or changed by this harness. The Podman fixture
+installs `iptables-nft` from its signed Fedora repository (GPG checking explicitly
+enabled) inside its disposable container and sets container-local
+`NETAVARK_FW=iptables`. The minimal official image has no iptables executable;
+its default nft firewall backend fails for nested Compose custom bridges on this
+Docker Desktop kernel. This fixture adaptation does not change host/global
+settings or skip actual container/Compose networking. The installed RPM version
+is recorded (`iptables-nft-1.8.11-12.fc43.aarch64` in the baseline run).
 
 ```sh
 export PATH=/Users/josh/.nvm/versions/node/v24.22.1/bin:$PATH
@@ -29,7 +36,10 @@ python3 scripts/integration/platform_smoke.py \
 
 `--artifact` is an alias for `--binary`. Results contain the binary SHA256,
 resolved fixture image digests, maintained release/datastore identities,
-individual checks, durations, and cleanup failures. They deliberately exclude
+individual checks, durations, and cleanup failures. Startup also asserts the
+maintained release from `RELEASE_VERSION` and datastore compatibility `2.45.0`
+(overridable with `--expected-release`/`--expected-datastore` for future releases).
+They deliberately exclude
 runtime environment values, administrator passwords, OAuth tokens, and Edge keys.
 **Do not infer coverage of updated Go dependencies from a baseline binary run.**
 
@@ -193,7 +203,7 @@ It reports Vessel **1.3.1**, datastore/API compatibility **2.45.0**.
 | --- | --- |
 | Docker 29.8.2 | Environment create/read/update/delete; running container create/read/rename/stop/delete and logs; Compose stack create/update/delete |
 | Swarm 29.8.2, nested DinD | Separate manager init inside owned disposable engine; running stack service and updated task; stack CRUD; environment/container CRUD; shared-host Swarm remains inactive |
-| Podman 5.8.1 | Actual privileged Linux Podman service using vfs; environment CRUD and running container CRUD/logs through Vessel's Podman path (not Docker relabeled as Podman) |
+| Podman 5.8.1 | Actual privileged Linux Podman service using vfs; environment CRUD, running container CRUD/logs, and Compose stack create/update/delete through Vessel's Podman path (not Docker relabeled as Podman); container-local iptables fixture adapter as explained above |
 | Kubernetes 1.35.0, kind 0.31.0 | Real in-cluster Vessel Pod and service-account auth; namespace CRUD; ready Deployment CRUD; Kubernetes stack/ConfigMap create/delete; environment create/delete |
 | Edge agent 2.45.0 | Official agent on owned nested engine; polling, reverse tunnel, actual environment Docker info and container CRUD/logs |
 | Dex 2.45.1 / Chrome / Playwright 1.58.2 | Real provider browser login; actual production Vessel frontend callback and companion callback separately passed; actual token exchange/UserInfo; invalid-state rejection before token exchange; provisioned standard user and admin-setting denial; reload restores cookie session; 1100px/390px login and authenticated page layouts passed |
@@ -208,7 +218,8 @@ The source artifact was read-only; only its disposable copy was customized.
 The final bounded/owned-resource baseline combined run is recorded in
 `/tmp/vessel-rest-platform-base-combined.json` (six runnable suites passed, ACI
 blocked, zero cleanup failures). Production frontend results are in
-`/tmp/vessel-rest-platform-base-frontend-oauth.json`.
+`/tmp/vessel-rest-platform-base-frontend-oauth.json`. The additional Podman Compose
+CRUD extension passed in `/tmp/vessel-rest-platform-base-podman-compose.json`.
 
 Updated Go-artifact results must be recorded separately with their actual artifact
 fingerprint after rerunning; the baseline rows above do not certify an upgraded
@@ -223,7 +234,7 @@ node --check scripts/integration/oauth_browser.cjs
 git diff --check
 ```
 
-Fifteen safety/transport unit tests passed during implementation. These verify
+Seventeen safety/transport unit tests passed during implementation. These verify
 resource ownership/bounds/cleanup, artifact identity, transport behavior, transient
 startup retries, and explicit Azure access gates; they are not counted as live
 platform coverage.
