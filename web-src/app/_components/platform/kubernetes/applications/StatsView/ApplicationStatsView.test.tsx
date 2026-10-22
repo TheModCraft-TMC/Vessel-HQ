@@ -1,15 +1,29 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 
 import { server } from '@/core/test-support/setup/server';
 import { suppressConsoleLogs } from '@/core/test-support/setup/suppress-console';
-import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
+import { withReactQuery } from '@/core/query/client/withReactQuery';
 import { withUserProvider } from '@/core/test-support/withUserProvider';
 import { withTestRouter } from '@/core/test-support/withRouter';
 
 import { ApplicationStatsView } from './ApplicationStatsView';
 
 vi.mock('recharts');
+
+const clients: QueryClient[] = [];
+
+afterEach(async () => {
+  // Unsubscribe before cancellation, then drain queued query notifications while
+  // jsdom still owns its window.
+  cleanup();
+  for (const client of clients.splice(0)) {
+    await client.cancelQueries();
+    client.clear();
+  }
+  await new Promise((resolve) => setTimeout(resolve, 0));
+});
 
 const podMetricsSuccess = {
   timestamp: '2024-01-01T00:00:00Z',
@@ -41,7 +55,11 @@ beforeEach(() => {
 });
 
 function renderComponent() {
-  const Wrapped = withTestQueryProvider(
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  clients.push(client);
+  const Wrapped = withReactQuery(
     withUserProvider(
       withTestRouter(ApplicationStatsView, {
         route: 'application-stats',
@@ -58,7 +76,8 @@ function renderComponent() {
           },
         ],
       })
-    )
+    ),
+    client
   );
   return render(<Wrapped />);
 }

@@ -1,0 +1,40 @@
+name: Extension host integration
+
+on:
+  pull_request:
+    paths:
+      - 'backend-src/api/nativeextensions/**'
+      - 'backend-src/api/internal/extensiontest/**'
+      - 'backend-src/api/http/handler/nativeextensions/**'
+      - 'backend-src/go.mod'
+      - 'backend-src/go.sum'
+      - 'Makefile'
+      - '.github/workflows/extension-sdk.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'backend-src/api/nativeextensions/**'
+      - 'backend-src/api/internal/extensiontest/**'
+      - 'backend-src/api/http/handler/nativeextensions/**'
+      - 'backend-src/go.mod'
+      - 'backend-src/go.sum'
+      - 'Makefile'
+      - '.github/workflows/extension-sdk.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  host-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend-src/go.mod
+          cache-dependency-path: backend-src/go.sum
+      - name: Test host against the pinned published SDK
+        env:
+          GOWORK: 'off'
+        run: make test-extension-host

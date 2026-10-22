@@ -1,0 +1,27 @@
+.root {
+  display: grid;
+  gap: 12px;
+}
+
+.dropzone {
+  padding: 20px;
+  border: 1px dashed var(--vessel-color-border);
+  border-radius: 8px;
+}
+
+.dropzone input {
+  max-width: 100%;
+}
+
+.idle,
+.hiddenPicker {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

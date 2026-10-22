@@ -8,6 +8,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.4.0
 	github.com/Microsoft/go-winio v0.6.2
 	github.com/RoaringBitmap/roaring/v2 v2.5.0
+	github.com/TheModCraft-TMC/Vessel-HQ/sdk/go v0.1.0-beta.1
 	github.com/VictoriaMetrics/fastcache v1.12.0
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/aws/aws-sdk-go-v2 v1.42.0
@@ -62,6 +63,8 @@ require (
 	golang.org/x/mod v0.41.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sync v0.23.0
+	google.golang.org/grpc v1.83.2
+	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 	helm.sh/helm/v4 v4.1.4
 	k8s.io/api v0.35.4
 	k8s.io/apimachinery v0.35.4
@@ -352,8 +355,6 @@ require (
 	google.golang.org/api v0.272.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
-	google.golang.org/grpc v1.83.2 // indirect
-	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.1 // indirect

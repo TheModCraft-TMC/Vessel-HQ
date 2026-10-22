@@ -6,6 +6,7 @@ import {
   Radio,
   FileText,
   Bell,
+  Puzzle,
 } from 'lucide-react';
 
 import { useLayoutIdentity } from '@/ui/layouts/layout-context';
@@ -119,6 +120,12 @@ export function SettingsSidebar({
             to="/activity-logs"
             icon={FileText}
             data-cy="portainerSidebar-activityLogs"
+          />
+          <SidebarItem
+            label="Extensions"
+            to="/extensions"
+            icon={Puzzle}
+            data-cy="portainerSidebar-extensions"
           />
         </>
       )}

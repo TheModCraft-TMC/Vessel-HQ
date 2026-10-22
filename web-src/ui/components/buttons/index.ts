@@ -1,6 +1,6 @@
 'use client';
 
-export { Button, type Props as ButtonProps } from './Button';
+export { Button, ButtonWithRef, type Props as ButtonProps } from './Button';
 export { AddButton } from './AddButton';
 export { ButtonGroup } from './ButtonGroup';
 export { LoadingButton } from './LoadingButton';

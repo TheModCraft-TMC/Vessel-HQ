@@ -1,6 +1,6 @@
 # Vessel HQ product and architecture roadmap
 
-Status: refactor foundation in progress; future product and design items in this document are not implementation commitments.
+Status: canonical frontend foundation established; experimental native extensions are in the `1.3.1-beta.1` preview. Future product and design items remain proposals, not implementation commitments.
 
 Last updated: October 21, 2026.
 
@@ -33,12 +33,12 @@ The React migration WIP was published from commit `0298e99dd56c08fdd4004fb995697
 - OCI index digest `sha256:1f3401136ffc26dcac53660473a1f1590d7727e27776ba2d4b1123ab6cef9345`
 - platforms `linux/amd64` and `linux/arm64`
 
-### Planned, not started
+### Current release policy
 
-- Create a new Docker Hub repository dedicated to Vessel HQ.
-- Publish future Vessel HQ images to that repository.
-- Update release automation, documentation, update discovery, and UI links only after its final name is known.
-- Keep the existing `themodcrafttmc/portainer` repository and its published tags intact. Do not repurpose or delete them.
+- Vessel images use `themodcrafttmc/vessel-hq`, mirrored to `ghcr.io/themodcraft-tmc/vessel-hq`; release automation, update discovery and UI links use the Vessel repository.
+- Stable release `1.3.0` is recorded in the [release notes](../releases/1.3.0.md). The current source version is `1.3.1`.
+- The October 16 [publication record](migration-change-summary.md#2026-10-16-beta-publication-and-verified-docker-hub-mirror) verifies the Docker Hub beta image and its `beta` alias. Previews do not promote `latest`; stable releases use that channel.
+- Keep the existing `themodcrafttmc/portainer` repository and its published tags intact. The transitional references above are historical.
 
 ## Completed frontend foundation
 
@@ -185,19 +185,42 @@ This sequence is planning context and has not been started:
 
 ## Future add-on and plugin support
 
-Status: proposed, not implemented or scheduled. Start with trusted companion applications running as separate services, a manifest and settings registry, sidebar integration, and scoped API access. Support Docker-based installations alongside Kubernetes; add managed Compose/Helm deployment after a manually deployed reference add-on works.
+Status: experimental implementation started October 15; full platform delivery is not scheduled. Administrator-installed native React extensions are the selected direction, with separately isolated backend services and a dedicated gRPC capability API. The current slice implements `.vesselhq` upload/storage of native UI and declared Linux executable artifacts, persistent registration/approval/revocation, native candidate preview, protected staging/validation tooling, mTLS registration diagnostics, scoped environment metadata reads, and delegated user-authorized Docker stack topology reads through native action slots. A development operator can compile an approved package set in isolation and select its generated modules after integrity/revision checks. An administrator-only notes example demonstrates persistent extension-owned writes, separate read/write grants, optimistic concurrency, and transactional audit. Automatic background orchestration, managed backend startup, additional workload RPCs, production activation, and rollback remain future work. Administrators explicitly trust installed frontend code; native JavaScript is not isolated from the console's browser context. See [current development scope](../native-extensions.md).
 
-Later phases can introduce explicit dashboard widgets, resource tabs, and resource actions through a versioned SDK. Browser isolation, authorization, revocation, compatibility, and upgrade recovery must be defined before widening plugin access. Portainer add-on package compatibility is not assumed.
+Start with one read-only resource tab and scoped grants. Protect core permission/authentication/build inputs with read-only baselines and trusted integrity checks; failed builds or validation leave the active console untouched. Define atomic activation, rollback, emergency disable, fresh approval for additional permissions, and current-policy enforcement on gRPC calls. Checksums protect source integrity, not runtime behavior of trusted UI code. Expand versioned slots and managed Compose/Helm deployment after the reference lifecycle works. Blueprint and Portainer package compatibility are not assumed; iframes are not the selected UI model.
 
-See the [plugin system proposal](plugin-system.md) for architecture, effort estimates, acceptance criteria, and open decisions. Finish the current frontend migration before implementation. Track the migration handoff in [Migration changes and draft commit message](migration-change-summary.md).
+The [standalone Go SDK](../extension-sdk-workspace.md) owns the shared protobuf contract
+and handles service mTLS, package verification, deadlines, typed metadata reads
+and persistent extension-owned note read/write calls. Independent machine grants,
+approval revision checks, transactional metadata audits and optimistic concurrency
+protect service notes. A private shared Unix gateway and a no-network container
+example avoid per-stack published ports. The stack drawer additionally reads
+sanitized Traefik routing labels and bounded live Docker network byte counters. The
+October 16 isolated Docker host smoke covered topology, traffic, notes persistence,
+permission revocation and non-admin denial; its [dated record](migration-change-summary.md#2026-10-16-node4-production-host-beta-smoke)
+does not establish equivalent Swarm, Podman, Kubernetes or ACI coverage.
+Future traffic work includes explicitly scoped Traefik request/latency metrics
+and Swarm task-level counter sampling. The immutable SDK `v0.1.0-beta.1` is already published under the original module
+identity. Future SDK work includes selecting the independent workspace's next module/release identity, production
+identity provisioning and rotation, compatibility policy, and additional RPCs
+only after their capabilities and grants are designed. Host-only delegated stack
+leases remain private, and administrator HTTP storage grants do not imply machine
+storage access. General reverse service routing and managed container startup are
+still future work.
+
+See the [plugin system proposal](plugin-system.md) for architecture, trust limitations, build/activation gates, acceptance criteria, and open decisions. Implementation requires a separate authorized scope and fresh baseline verification; historical migration notes do not establish readiness. Track this documentation follow-up separately in [Migration changes and draft commit message](migration-change-summary.md).
 
 ## Decisions still open
 
-- Final Docker Hub repository name and tag policy for the first non-transitional Vessel HQ image.
 - Exact `@themodcraft` packages and versions to adopt.
 - Final visual language after reviewing the Portainer 3 reference instance.
 - Supported minimum viewport and browser matrix.
 - Long-term maintenance and optimization of the current Next.js App Router and build pipeline.
-- The first stable Vessel HQ release number after the WIP line.
+- The next stable release scope and promotion criteria after the native extension preview.
 
 No implementation should be inferred from these open items. Record the decision and migration impact before changing production behavior.
+
+
+### Independent extension SDK workspace follow-up (2026-10-16)
+
+SDK and simple demo authoring sources now live in the [separate SDK workspace](../extension-sdk-workspace.md); Vessel consumes the immutable published beta.1 module without a local replacement. The configured target Git origin is preserved, while Go import identity remains unchanged. Next publication work must explicitly select the new module/release identity and verify proxy/checksum discovery before bumping Vessel. Do not repoint existing beta.1 tags. The UniFi-style React Flow extension and host integration remain in Vessel; installed compiled payloads are separate from authoring examples. Managed runtime, infrastructure writes and production identity lifecycle remain future work.

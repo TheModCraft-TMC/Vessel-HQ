@@ -118,3 +118,7 @@ func (tx *StoreTx) Webhook() dataservices.WebhookService { return nil }
 func (tx *StoreTx) Workflow() dataservices.WorkflowService {
 	return tx.store.WorkflowService.Tx(tx.tx)
 }
+
+func (tx *StoreTx) NativeExtension() dataservices.NativeExtensionService {
+	return tx.store.NativeExtensionService.Tx(tx.tx)
+}

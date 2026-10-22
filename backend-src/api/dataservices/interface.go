@@ -3,6 +3,7 @@ package dataservices
 import (
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/database/models"
+	"github.com/portainer/portainer/api/nativeextensions"
 )
 
 type (
@@ -21,6 +22,7 @@ type (
 		Registry() RegistryService
 		ResourceControl() ResourceControlService
 		Role() RoleService
+		NativeExtension() NativeExtensionService
 		APIKeyRepository() APIKeyRepository
 		Settings() SettingsService
 		Snapshot() SnapshotService
@@ -285,3 +287,7 @@ type (
 		BaseCRUD[portainer.Workflow, portainer.WorkflowID]
 	}
 )
+
+type NativeExtensionService interface {
+	BaseCRUD[nativeextensions.Record, int]
+}

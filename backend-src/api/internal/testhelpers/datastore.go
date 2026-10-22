@@ -29,6 +29,7 @@ type testDatastore struct {
 	source                  dataservices.SourceService
 	apiKeyRepositoryService dataservices.APIKeyRepository
 	role                    dataservices.RoleService
+	nativeExtension         dataservices.NativeExtensionService
 	sslSettings             dataservices.SSLSettingsService
 	settings                dataservices.SettingsService
 	snapshot                dataservices.SnapshotService
@@ -514,4 +515,8 @@ func (s *stubPendingActionService) Delete(ID portainer.PendingActionID) error {
 	s.actions = actions
 
 	return nil
+}
+
+func (d *testDatastore) NativeExtension() dataservices.NativeExtensionService {
+	return d.nativeExtension
 }

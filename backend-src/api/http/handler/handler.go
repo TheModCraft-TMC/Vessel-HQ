@@ -21,6 +21,7 @@ import (
 	"github.com/portainer/portainer/api/http/handler/kubernetes"
 	"github.com/portainer/portainer/api/http/handler/ldap"
 	"github.com/portainer/portainer/api/http/handler/motd"
+	"github.com/portainer/portainer/api/http/handler/nativeextensions"
 	"github.com/portainer/portainer/api/http/handler/registries"
 	"github.com/portainer/portainer/api/http/handler/resourcecontrols"
 	"github.com/portainer/portainer/api/http/handler/roles"
@@ -43,42 +44,43 @@ import (
 // Handler is a collection of all the feature handlers. It acts like a small
 // front controller: every /api request arrives here before being delegated.
 type Handler struct {
-	AuthHandler            *auth.Handler
-	BackupHandler          *backup.Handler
-	CustomTemplatesHandler *customtemplates.Handler
-	DockerHandler          *docker.Handler
-	EdgeGroupsHandler      *edgegroups.Handler
-	EdgeJobsHandler        *edgejobs.Handler
-	EdgeStacksHandler      *edgestacks.Handler
-	EndpointEdgeHandler    *endpointedge.Handler
-	EndpointGroupHandler   *endpointgroups.Handler
-	EndpointHandler        *endpoints.Handler
-	EndpointHelmHandler    *helm.Handler
-	EndpointProxyHandler   *endpointproxy.Handler
-	GitOperationHandler    *gitops.Handler
-	HelmTemplatesHandler   *helm.Handler
-	KubernetesHandler      *kubernetes.Handler
-	FileHandler            *file.Handler
-	LDAPHandler            *ldap.Handler
-	MOTDHandler            *motd.Handler
-	RegistryHandler        *registries.Handler
-	ResourceControlHandler *resourcecontrols.Handler
-	RoleHandler            *roles.Handler
-	SettingsHandler        *settings.Handler
-	SSLHandler             *ssl.Handler
-	StackHandler           *stacks.Handler
-	StorybookHandler       *storybook.Handler
-	SystemHandler          *system.Handler
-	TagHandler             *tags.Handler
-	TeamMembershipHandler  *teammemberships.Handler
-	TeamHandler            *teams.Handler
-	TemplatesHandler       *templates.Handler
-	UploadHandler          *upload.Handler
-	UserHandler            *users.Handler
-	UserActivityHandler    *useractivity.Handler
-	WebSocketHandler       *websocket.Handler
-	WebhookHandler         *webhooks.Handler
-	UserHelmHandler        *helm.Handler
+	AuthHandler             *auth.Handler
+	BackupHandler           *backup.Handler
+	CustomTemplatesHandler  *customtemplates.Handler
+	DockerHandler           *docker.Handler
+	EdgeGroupsHandler       *edgegroups.Handler
+	EdgeJobsHandler         *edgejobs.Handler
+	EdgeStacksHandler       *edgestacks.Handler
+	EndpointEdgeHandler     *endpointedge.Handler
+	EndpointGroupHandler    *endpointgroups.Handler
+	EndpointHandler         *endpoints.Handler
+	EndpointHelmHandler     *helm.Handler
+	EndpointProxyHandler    *endpointproxy.Handler
+	GitOperationHandler     *gitops.Handler
+	HelmTemplatesHandler    *helm.Handler
+	KubernetesHandler       *kubernetes.Handler
+	FileHandler             *file.Handler
+	LDAPHandler             *ldap.Handler
+	MOTDHandler             *motd.Handler
+	NativeExtensionsHandler *nativeextensions.Handler
+	RegistryHandler         *registries.Handler
+	ResourceControlHandler  *resourcecontrols.Handler
+	RoleHandler             *roles.Handler
+	SettingsHandler         *settings.Handler
+	SSLHandler              *ssl.Handler
+	StackHandler            *stacks.Handler
+	StorybookHandler        *storybook.Handler
+	SystemHandler           *system.Handler
+	TagHandler              *tags.Handler
+	TeamMembershipHandler   *teammemberships.Handler
+	TeamHandler             *teams.Handler
+	TemplatesHandler        *templates.Handler
+	UploadHandler           *upload.Handler
+	UserHandler             *users.Handler
+	UserActivityHandler     *useractivity.Handler
+	WebSocketHandler        *websocket.Handler
+	WebhookHandler          *webhooks.Handler
+	UserHelmHandler         *helm.Handler
 }
 
 // @title PortainerCE API
@@ -261,6 +263,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.StripPrefix("/api", h.ResourceControlHandler).ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/roles"):
 		http.StripPrefix("/api", h.RoleHandler).ServeHTTP(w, r)
+	case r.URL.Path == "/api/native-extensions" || strings.HasPrefix(r.URL.Path, "/api/native-extensions/"):
+		http.StripPrefix("/api", h.NativeExtensionsHandler).ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/settings"):
 		http.StripPrefix("/api", h.SettingsHandler).ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/stacks"):

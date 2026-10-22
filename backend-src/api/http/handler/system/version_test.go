@@ -131,7 +131,7 @@ func TestVersionCheckURLUsesMaintainedImageRepository(t *testing.T) {
 	t.Parallel()
 
 	require.Equal(t,
-		"https://hub.docker.com/v2/repositories/themodcrafttmc/portainer/tags?page_size=100&ordering=last_updated",
+		"https://hub.docker.com/v2/repositories/themodcrafttmc/vessel-hq/tags?page_size=100&ordering=last_updated",
 		portainer.VersionCheckURL,
 	)
 }

@@ -8,7 +8,7 @@
 <p align="center">
   <a href="https://github.com/TheModCraft-TMC/Vessel-HQ/releases/latest"><img src="https://img.shields.io/github/v/release/TheModCraft-TMC/Vessel-HQ?color=44cc11&amp;label=release&amp;style=for-the-badge" alt="Vessel HQ release" /></a>
   <a href="https://github.com/portainer/portainer"><img src="https://img.shields.io/badge/Portainer-CE%20fork-13b8a6?style=for-the-badge" alt="Portainer CE fork" /></a>
-  <img src="./docs/assets/turbopack-badge.svg" alt="Development bundler: Turbopack" />
+  <img src="./docs/assets/turbopack-badge.svg" alt="Development bundler: Turbopack k" />
   <img src="https://img.shields.io/badge/migration-GPT--5.6%20Sol%20only-10a37f?style=for-the-badge" alt="Migration built using GPT-5.6 Sol only" />
 </p>
 
@@ -25,7 +25,7 @@ The frontend migration was built using GPT-5.6 Sol agents exclusively. Local fro
 - Repository: [TheModCraft-TMC/Vessel-HQ](https://github.com/TheModCraft-TMC/Vessel-HQ).
 - Vessel release version: [RELEASE_VERSION](./RELEASE_VERSION).
 - Upstream API and datastore compatibility baseline: **Portainer 2.45.0**, separate from the Vessel release number.
-- Existing images: [themodcrafttmc/portainer](https://hub.docker.com/r/themodcrafttmc/portainer). A dedicated Vessel image repository is planned; see the [roadmap](./docs/planning/vessel-hq-roadmap.md).
+- Vessel images: [themodcrafttmc/vessel-hq](https://hub.docker.com/r/themodcrafttmc/vessel-hq), also mirrored at `ghcr.io/themodcraft-tmc/vessel-hq`. Preview releases use the `beta` channel; stable releases use `latest`. Historical images remain at [themodcrafttmc/portainer](https://hub.docker.com/r/themodcrafttmc/portainer).
 
 Vessel HQ is a community fork, not Portainer Business Edition. Future capabilities are documented separately from implemented behavior.
 
@@ -98,8 +98,8 @@ The pipeline produces `backend-src/api/docs/swagger.yaml`, then `backend-src/api
 ## Documentation and future plans
 
 - [Product and architecture roadmap](./docs/planning/vessel-hq-roadmap.md).
-- [Future add-on and plugin system](./docs/planning/plugin-system.md): companion applications first, then explicit UI extension points. Plugin support is not implemented.
-- [Migration changes and draft commit message](./docs/planning/migration-change-summary.md): living handoff while migration work is finalized.
+- [Experimental native extensions](./docs/native-extensions.md): whole-package upload, admin grants, protected multi-package builds, inline stack drawers, label-based Traefik routing, live Docker byte counters, and persistent notes. The [Go SDK workspace](./docs/extension-sdk-workspace.md) supports typed reads and extension-owned note writes through a shared mTLS TCP/Unix gateway, without per-stack published ports. Managed execution and production activation remain planned; see the [design](./docs/planning/plugin-system.md). The [prerelease guide](./docs/releases/native-extensions-prerelease.md) includes distribution instructions and the [upstream security review](./docs/security/upstream-2026-10-16.md).
+- [Migration changes and draft commit message](./docs/planning/migration-change-summary.md): dated migration, beta publication and verification record.
 - [Planning backlog](./docs/planning/README.md).
 - [Maintainer patch guide](./docs/maintainer-patches/README.md).
 - [Vault integration](./docs/vault-integration/README.md).

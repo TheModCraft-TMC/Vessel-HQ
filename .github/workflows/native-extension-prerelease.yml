@@ -1,0 +1,190 @@
+name: Native extension prerelease
+
+on:
+  push:
+    tags: ['v*-beta.*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-extension-prerelease
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'TheModCraft-TMC/Vessel-HQ'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Resolve immutable prerelease identity
+        id: version
+        shell: bash
+        run: |
+          version=$(bash scripts/check-release-version.sh)
+          [[ "$version" == *-beta.* ]]
+          [[ "${GITHUB_REF_TYPE}" == tag && "${GITHUB_REF_NAME}" == "v$version" ]]
+          echo "application=$version" >> "$GITHUB_OUTPUT"
+          echo "image=ghcr.io/themodcraft-tmc/vessel-hq" >> "$GITHUB_OUTPUT"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.26.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.21.0
+          cache: pnpm
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend-src/go.mod
+          cache-dependency-path: backend-src/go.sum
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate frontend and extension tooling
+        run: |
+          pnpm check:frontend-modernization
+          pnpm check:frontend-boundaries
+          pnpm check:app-router-compliance
+          pnpm typecheck
+          pnpm test:extensions --maxWorkers=4
+          pnpm test --maxWorkers=4
+          pnpm lint:ci
+          node --test scripts/native-extensions/*.test.mjs
+          bash scripts/check-release-version.test.sh
+          bash scripts/publish-release-mirrors.test.sh
+          node --test build/next-entrypoint.test.cjs
+      - name: Verify backend and published SDK integration
+        env:
+          GOWORK: 'off'
+        run: |
+          go -C backend-src test -mod=readonly ./...
+          go -C backend-src test -mod=readonly -race ./api/nativeextensions/... ./api/http/handler/nativeextensions
+      - name: Build application distribution
+        env:
+          BUILDNUMBER: ${{ github.run_number }}
+          GIT_COMMIT_HASH: ${{ github.sha }}
+          APPLICATION_VERSION: ${{ steps.version.outputs.application }}
+          NODE_OPTIONS: --max-old-space-size=4096
+        run: |
+          ./scripts/build-release-context.sh
+          mkdir -p dist/prerelease
+          for extension in stack-network-overview; do
+            node scripts/native-extensions/builder.mjs pack "examples/native-extensions/$extension" "dist/prerelease/$extension.vesselhq"
+          done
+          for arch in amd64 arm64; do
+            tar -czf "dist/prerelease/vessel-hq-$APPLICATION_VERSION-linux-$arch.tar.gz" \
+              -C dist/release-context "$arch/portainer" next next-entrypoint.js mustache-templates
+          done
+          cp docs/releases/native-extensions-prerelease.md dist/prerelease/README.md
+          (cd dist/prerelease && sha256sum *.tar.gz *.vesselhq > SHA256SUMS)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vessel-native-extension-prerelease
+          path: dist/prerelease/
+          if-no-files-found: error
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Execute-check both container architectures
+        run: |
+          for arch in amd64 arm64; do
+            docker buildx build --platform "linux/$arch" --load \
+              -t "vessel-prerelease-check:$arch" dist/release-context
+            docker run --rm --platform "linux/$arch" "vessel-prerelease-check:$arch" --version
+            python3 - "$arch" <<'PY'
+          import json
+          import subprocess
+          import sys
+          import time
+          import urllib.request
+
+          arch = sys.argv[1]
+          container = subprocess.check_output([
+              "docker", "run", "--detach", "--platform", f"linux/{arch}",
+              "--publish", "127.0.0.1::9000", f"vessel-prerelease-check:{arch}",
+              "--http-enabled",
+          ], text=True).strip()
+          try:
+              address = subprocess.check_output([
+                  "docker", "port", container, "9000/tcp",
+              ], text=True).strip().splitlines()[0]
+              origin = f"http://{address}"
+              deadline = time.monotonic() + 90
+              last_error = "not ready"
+              while time.monotonic() < deadline:
+                  try:
+                      with urllib.request.urlopen(f"{origin}/api/status", timeout=5) as response:
+                          assert response.status == 200
+                          assert isinstance(json.load(response), dict)
+                      with urllib.request.urlopen(origin, timeout=5) as response:
+                          assert response.status == 200
+                          assert "/_next/" in response.read().decode("utf-8")
+                      print(f"linux/{arch}: backend status and Next.js HTML passed")
+                      break
+                  except (OSError, ValueError, AssertionError) as error:
+                      last_error = str(error)
+                      time.sleep(2)
+              else:
+                  raise RuntimeError(f"linux/{arch} startup deadline exceeded: {last_error}")
+          except BaseException:
+              subprocess.run(["docker", "logs", container], check=False)
+              raise
+          finally:
+              subprocess.run(["docker", "rm", "--force", "--volumes", container],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+          PY
+          done
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Install registry copier
+        run: sudo apt-get update && sudo apt-get install -y skopeo
+      - name: Refuse to replace an existing immutable image
+        env:
+          IMAGE: ${{ steps.version.outputs.image }}
+          VERSION: ${{ steps.version.outputs.application }}
+        run: |
+          if docker buildx imagetools inspect "$IMAGE:$VERSION"; then
+            echo "Refusing to replace the published image $IMAGE:$VERSION" >&2
+            exit 1
+          fi
+      - name: Publish immutable prerelease image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          context: dist/release-context
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.version.outputs.image }}:${{ steps.version.outputs.application }}
+          build-args: |
+            RELEASE_VERSION=${{ steps.version.outputs.application }}
+            GIT_COMMIT=${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/TheModCraft-TMC/Vessel-HQ
+      - name: Verify image and promote beta channel
+        env:
+          IMAGE: ${{ steps.version.outputs.image }}
+          VERSION: ${{ steps.version.outputs.application }}
+          DIGEST: ${{ steps.image.outputs.digest }}
+        run: |
+          bash scripts/publish-release-mirrors.sh "$IMAGE" "$VERSION" "$DIGEST" \
+            "$IMAGE" docker.io/themodcrafttmc/vessel-hq
+          printf '%s@%s\n' "$IMAGE" "$DIGEST" docker.io/themodcrafttmc/vessel-hq "$DIGEST" > dist/prerelease/IMAGE.txt
+      - name: Publish GitHub prerelease assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.application }}
+        run: |
+          gh release create "v$VERSION" --repo TheModCraft-TMC/Vessel-HQ --verify-tag \
+            --prerelease --title "Vessel HQ $VERSION — native extensions preview" \
+            --notes-file docs/releases/native-extensions-prerelease.md dist/prerelease/*

@@ -8,6 +8,7 @@ describe('development auto login', () => {
     vi.stubEnv('DEV_AUTO_LOGIN', 'true');
     vi.stubEnv('DEV_AUTO_LOGIN_USERNAME', 'dev-admin');
     vi.stubEnv('DEV_AUTO_LOGIN_PASSWORD', 'development-password');
+    vi.stubEnv('DEV_AUTO_CREATE_LOCAL_ENVIRONMENT', 'true');
   });
 
   afterEach(() => {
@@ -77,6 +78,41 @@ describe('development auto login', () => {
 
     expect(response.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it('supports auto-login without provisioning Docker for a separately managed backend', async () => {
+    vi.stubEnv('DEV_AUTO_CREATE_LOCAL_ENVIRONMENT', 'false');
+    const fetchMock = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(
+        Response.json(
+          { jwt: 'development-jwt' },
+          {
+            headers: {
+              'set-cookie': 'portainer_api_key=development-jwt; Path=/',
+            },
+          }
+        )
+      );
+
+    const response = await POST(loginRequest());
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('set-cookie')).toContain('portainer_api_key=');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls[1][0]).toBe('http://localhost:9000/api/auth');
+  });
+
+  it('never accepts development credentials in production', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('DEV_AUTO_CREATE_LOCAL_ENVIRONMENT', 'false');
+    const fetchMock = vi.spyOn(globalThis, 'fetch');
+
+    const response = await POST(loginRequest());
+
+    expect(response.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
 

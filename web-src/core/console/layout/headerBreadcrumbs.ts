@@ -20,6 +20,7 @@ const segmentLabels: Record<string, string> = {
   docker: 'Docker',
   edge: 'Edge',
   environments: 'Environments',
+  extensions: 'Extensions',
   exec: 'Console',
   groups: 'Environment groups',
   helm: 'Helm',

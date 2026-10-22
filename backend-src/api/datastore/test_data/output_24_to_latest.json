@@ -101,6 +101,7 @@
   ],
   "extension": null,
   "helm_user_repository": null,
+  "native_extensions": null,
   "pending_actions": null,
   "registries": [
     {

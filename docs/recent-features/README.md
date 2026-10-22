@@ -1,6 +1,17 @@
-# Features added in the last four weeks
+# Vessel HQ feature catalog
 
-This catalog covers work added, restored, or consolidated in the TheModCraft Portainer fork from **August 15 through September 12, 2026**. The catalog checkpoint used fork release **2.39.3.2.26**; the next prepared release is described in the [2.39.3.2.27-beta.2 release notes](../releases/2.39.3.2.27-beta.2.md). Upstream API and database compatibility remain at Portainer **2.45.0**.
+This catalog covers maintained fork features through **October 16, 2026**. The source release identity is **1.3.1**; upstream API and datastore compatibility remain at Portainer **2.45.0**. The August–September entries below retain their original dates.
+
+## October updates
+
+| Date | Feature | What it adds | More detail |
+| --- | --- | --- | --- |
+| Oct 12 | React Compiler table fix | Keeps asynchronously loaded rows and selection current when shared tables read mutable TanStack Table instances. | [1.3.0 release notes](../releases/1.3.0.md) |
+| Oct 15–16 | Experimental native extensions | Immutable package upload, administrator trust/grants, protected builds, inline stack topology, label-derived Traefik routing, Docker byte counters and persistent notes with separate UI/service permissions. Managed execution and production activation remain future work. | [Native extensions](../native-extensions.md) |
+| Oct 16 | Independent Go SDK workspace | Separates SDK and simple demo authoring from Vessel; the host consumes the published immutable beta.1 module without a local replacement. | [SDK workspace](../extension-sdk-workspace.md) |
+| Oct 16 | Beta distribution and CI | Recorded application/SDK beta publication and Docker Hub multi-architecture mirror; current CI also supports frontend validation without publishing images. | [Prerelease guide](../releases/native-extensions-prerelease.md), [verification](../themodcraft/verification.md) |
+
+Publication and Docker smoke results are recorded in the [dated handoff](../planning/migration-change-summary.md). They are historical evidence, not checks rerun for this catalog refresh. Docker smoke coverage does not establish equivalent Swarm, Podman, Kubernetes or Azure ACI coverage.
 
 ## Feature catalog
 

@@ -21,6 +21,7 @@ import (
 	"github.com/portainer/portainer/api/dataservices/endpointrelation"
 	"github.com/portainer/portainer/api/dataservices/extension"
 	"github.com/portainer/portainer/api/dataservices/helmuserrepository"
+	"github.com/portainer/portainer/api/dataservices/nativeextension"
 	"github.com/portainer/portainer/api/dataservices/pendingactions"
 	"github.com/portainer/portainer/api/dataservices/registry"
 	"github.com/portainer/portainer/api/dataservices/resourcecontrol"
@@ -69,6 +70,7 @@ type Store struct {
 	RegistryService           *registry.Service
 	ResourceControlService    *resourcecontrol.Service
 	RoleService               *role.Service
+	NativeExtensionService    *nativeextension.Service
 	APIKeyRepositoryService   *apikeyrepository.Service
 	ScheduleService           *schedule.Service
 	SettingsService           *settings.Service
@@ -88,6 +90,12 @@ type Store struct {
 }
 
 func (store *Store) initServices() error {
+	ns, err := nativeextension.NewService(store.connection)
+	if err != nil {
+		return err
+	}
+	store.NativeExtensionService = ns
+
 	activityLogService, err := activitylog.NewService(store.connection)
 	if err != nil {
 		return err
@@ -846,4 +854,8 @@ func (store *Store) Import(filename string) (err error) {
 	}
 
 	return store.connection.RestoreMetadata(backup.Metadata)
+}
+
+func (store *Store) NativeExtension() dataservices.NativeExtensionService {
+	return store.NativeExtensionService
 }

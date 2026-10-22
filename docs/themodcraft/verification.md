@@ -1,5 +1,27 @@
 # Verification
 
+Run frontend and release commands from the repository root. Run Go commands
+from `backend-src/`; use `GOWORK=off` to verify the published SDK dependency
+without a local workspace override.
+
+## Frontend
+
+```sh
+pnpm check:frontend-modernization
+pnpm check:frontend-boundaries
+pnpm check:app-router-compliance
+pnpm typecheck
+pnpm test
+pnpm lint:ci
+pnpm build
+```
+
+For GitHub validation without image publication, dispatch
+`.github/workflows/build-linux-image.yml` with `verify_only: true`. This runs
+the frontend guards, type checking, tests, lint and production build; publishing
+jobs are skipped. SDK checks run in the independent SDK repository; see the
+[workspace guide](../extension-sdk-workspace.md).
+
 ## Overview cache
 
 ```sh
@@ -39,7 +61,7 @@ git diff --check
 file dist/release-context/amd64/portainer
 file dist/release-context/arm64/portainer
 (cd dist/release-context && shasum -a 256 -c SHA256SUMS)
-docker buildx imagetools inspect themodcrafttmc/portainer:<release-version>
+docker buildx imagetools inspect themodcrafttmc/vessel-hq:<release-version>
 ```
 
 Execute-check both platform images before publishing and confirm that the immutable tag plus its channel alias (`beta` for prereleases, `latest` for stable releases) resolve to the same registry digest.

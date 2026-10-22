@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouteParams } from '@console/routing/useRouteParams';
 
+import { StackDetailExtensionActions } from '@/core/native-extensions/StackDetailExtensionActions';
 import { useStack } from '@/domains/stacks/queries/common/useStack';
 import { StackContainersDatatable } from '@/domains/stacks/views/ItemView/StackContainersDatatable';
 import { StackDetails } from '@/domains/stacks/views/ItemView/StackDetails';
@@ -78,6 +79,18 @@ export default function Page() {
           stackName={stackName}
           stack={stack}
         />
+        {stack &&
+          !isOrphaned &&
+          (stack.Type === StackType.DockerCompose ||
+            stack.Type === StackType.DockerSwarm) && (
+            <StackDetailExtensionActions
+              context={{
+                environmentId: stack.EndpointId,
+                stackId: stack.Id,
+                stackName: stack.Name,
+              }}
+            />
+          )}
         <div className="space-y-4">
           {(!isOrphaned || isOrphanedRunning) && (
             <>

@@ -53,7 +53,37 @@ make dev-client
 `make dev-server` rebuilds the server binary and starts a container named
 `portainer`. `make dev-client` runs the frontend development server.
 
+## Native extension development instance
+
+The prepared machine's normal `http://localhost:8999` instance now contains the
+approved Network Overview and Persistent Notes examples. Open
+`/1/docker/stacks/extension-network-demo?regular=true&type=2&id=1` for the extension-specific inline
+Network overview card between Stack details and Containers. The test stack's web service and request generator publish
+no ports. The console on port 19000 is an earlier separate standalone reference
+runtime with a different datastore; installing there does not install on 8999.
+
+The approved set is selected only after an isolated complete frontend build and
+integrity checks. A fresh checkout/backend needs its own upload, explicit grants
+and compiled selection; see the [extension guide](native-extensions.md). The
+current generated modules are local development selection, not a production
+activation mechanism.
+
+The normal backend also has one shared private mTLS Unix gateway for Go service
+notes, using the `vessel-extension-dev-gateway-20261016` Docker volume. An SDK
+container uses that socket with its own package-bound client identity, without
+Docker socket access or a published service port. This manually configured local
+gateway is not automatically recreated by the generic dev-server launcher.
+Its certificates are short-lived development fixtures; production identity
+issuance and managed lifecycle are future work. No credentials are committed.
+
 ## Useful development settings
+
+The frontend launcher enables `DEV_AUTO_LOGIN=true`. Set server-only
+`DEV_AUTO_LOGIN_USERNAME` and `DEV_AUTO_LOGIN_PASSWORD` in the ignored `.env`
+or process environment. Auto-login is enabled only in development. When using
+a separately managed backend without Docker, set
+`DEV_AUTO_CREATE_LOCAL_ENVIRONMENT=false` to sign in without automatically
+provisioning a local Docker endpoint; the default still provisions it.
 
 The server container script supports these environment variables:
 

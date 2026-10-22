@@ -52,8 +52,11 @@ clean: ## Remove all build and download artifacts
 	@rm -rf dist/*
 
 ##@ Testing
-.PHONY: test test-client test-server
+.PHONY: test test-client test-server test-extension-host
 test: test-server test-client ## Run all tests
+
+test-extension-host: ## Verify the published extension SDK against host authorization
+	GOWORK=off go -C backend-src test -mod=readonly -race ./api/nativeextensions/... ./api/http/handler/nativeextensions
 
 test-client: ## Run client tests
 	pnpm run test $(ARGS) --coverage

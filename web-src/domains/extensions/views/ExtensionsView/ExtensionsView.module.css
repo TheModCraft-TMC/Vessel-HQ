@@ -1,0 +1,99 @@
+.root {
+  display: grid;
+  gap: 20px;
+  color: var(--vessel-color-text);
+}
+
+.advanced {
+  border: 1px solid var(--vessel-color-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.card,
+.addCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 80px;
+  padding: 16px;
+  border: 1px solid var(--vessel-color-border);
+  border-radius: 8px;
+  min-width: 0;
+  color: inherit;
+  background: var(--vessel-color-surface);
+  text-align: left;
+  transition: border-color var(--vessel-motion-fast) ease;
+}
+
+.card:hover,
+.addCard:hover {
+  border-color: var(--vessel-color-focus);
+  text-decoration: none;
+}
+
+.card:focus-visible,
+.addCard:focus-visible {
+  outline: 2px solid var(--vessel-color-focus);
+  outline-offset: 3px;
+}
+
+.cardText {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.cardText > strong {
+  color: var(--vessel-color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardText > span {
+  color: var(--vessel-color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.extensionIcon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--vessel-color-border);
+  flex-shrink: 0;
+  color: var(--vessel-color-text);
+}
+
+.arrow {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--vessel-color-text-muted);
+}
+
+.addCard {
+  border-style: dashed;
+  justify-content: center;
+}
+
+@media (max-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

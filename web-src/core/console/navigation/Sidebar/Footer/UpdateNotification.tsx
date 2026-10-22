@@ -47,7 +47,7 @@ export function UpdateNotification() {
         <a
           className="hyperlink space-left"
           target="_blank"
-          href={`https://hub.docker.com/r/themodcrafttmc/portainer/tags?name=${LatestVersion}`}
+          href={`https://hub.docker.com/r/themodcrafttmc/vessel-hq/tags?name=${LatestVersion}`}
           rel="noreferrer"
         >
           See what&apos;s new

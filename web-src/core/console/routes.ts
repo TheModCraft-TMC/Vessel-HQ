@@ -4,6 +4,10 @@ export type ConsoleRoute = {
 };
 
 export const consoleRoutes: Record<string, ConsoleRoute> = {
+  extensions: {
+    title: 'Extensions',
+    description: 'Review native extension manifests and scoped permissions.',
+  },
   workflows: {
     title: 'Workflows',
     description: 'Deploy and manage GitOps workflows.',
