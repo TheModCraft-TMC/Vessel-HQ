@@ -296,7 +296,9 @@ node --check scripts/integration/oauth_browser.cjs
 git diff --check
 ```
 
-Twenty-nine safety/transport unit tests passed during implementation. These verify
+Thirty safety/transport unit tests passed during implementation. These verify
 resource ownership/bounds/cleanup, artifact identity, transport behavior, transient
-startup retries, and explicit Azure access gates; they are not counted as live
-platform coverage.
+startup retries, explicit Azure access gates, and credential-safe failure reports.
+Unexpected HTTP responses never export response bodies or query values, including
+an unexpected successful settings response during an ACL check. These unit tests
+are not counted as live platform coverage.

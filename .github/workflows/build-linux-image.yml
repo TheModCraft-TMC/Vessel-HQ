@@ -104,6 +104,11 @@ jobs:
           pnpm test
           pnpm storybook:build --disable-telemetry
 
+      - name: Test integration harness safety
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/integration -p 'test_*.py'
+          node --check scripts/integration/oauth_browser.cjs
+
       - name: Test backend
         working-directory: backend-src
         run: go test ./...
