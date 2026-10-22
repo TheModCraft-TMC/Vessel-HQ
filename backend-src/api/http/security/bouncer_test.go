@@ -485,8 +485,8 @@ func TestJWTRevocation(t *testing.T) {
 	err = store.User().Create(&portainer.User{ID: 1})
 	require.NoError(t, err)
 
-	jwtService.SetUserSessionDuration(time.Second)
-
+	// Revocation, not wall-clock expiry, is the behavior under test. A one-
+	// second lifetime can expire during setup because JWT dates use seconds.
 	token, _, err := jwtService.GenerateToken(&portainer.TokenData{ID: 1})
 	require.NoError(t, err)
 
@@ -538,11 +538,25 @@ func TestJWTRevocation(t *testing.T) {
 	_, err = bouncer.CookieAuthLookup(r)
 	require.Error(t, err)
 
-	time.Sleep(time.Second)
+	bouncer.cleanUpExpiredJWTPass()
+	require.Equal(t, 2, revokeLen(), "valid and non-expiring revocations must remain cached")
+}
+
+func TestCleanUpExpiredJWTKeepsFutureAndNonExpiringRevocations(t *testing.T) {
+	t.Parallel()
+	bouncer := &RequestBouncer{}
+	bouncer.revokedJWT.Store("expired", time.Now().Add(-time.Hour))
+	bouncer.revokedJWT.Store("future", time.Now().Add(time.Hour))
+	bouncer.revokedJWT.Store("permanent", time.Time{})
 
 	bouncer.cleanUpExpiredJWTPass()
 
-	require.Equal(t, 1, revokeLen())
+	_, expired := bouncer.revokedJWT.Load("expired")
+	require.False(t, expired)
+	_, future := bouncer.revokedJWT.Load("future")
+	require.True(t, future)
+	_, permanent := bouncer.revokedJWT.Load("permanent")
+	require.True(t, permanent)
 }
 
 func TestCSPHeaderDefault(t *testing.T) {
