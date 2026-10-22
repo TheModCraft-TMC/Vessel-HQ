@@ -41,7 +41,14 @@ python3 scripts/integration/platform_smoke.py \
 
 `--artifact` is an alias for `--binary`. At construction, the harness opens the
 supplied executable once and copies its bytes into its private temporary directory
-(no symlink or hard link). It hashes and mounts that same snapshot for both Docker
+(no symlink or hard link). The source is an **explicitly trusted local CLI input**
+from any directory, including an outside-repository `/tmp` build artifact or a
+builder's symlink; the source is opened read-only. A four-byte ELF-magic check on
+that same open stream rejects accidental `.env`/key/data-file selections before
+copying any payload. This is only format-mistake protection, not an authenticity
+check, architecture verifier, or traversal fix. This is not a repository-confined
+file API or a sandbox for LLM-supplied paths/executables. Do not expose the CLI as
+an untrusted remote execution service. It hashes and mounts that same snapshot for both Docker
 and kind. A later atomic replacement, in-place rewrite, or removal of the builder's
 source path therefore cannot change the mounted bytes or invalidate the recorded
 hash. Results contain that snapshot's binary SHA256,
@@ -144,6 +151,11 @@ A harmless temp-only regression fixture demonstrates why this matters: unguarded
 `copytree(..., symlinks=True)` followed by a write to a copied absolute symlink
 **does change the source target**. Regression tests now reject both absolute and
 relative escapes before any rewrite, while preserving the original target bytes.
+The guard resolves strictly first, so cyclic links are rejected on Python 3.14 too
+(nonstrict resolution there can leave a cycle unresolved without raising). Only
+`FileNotFoundError` permits a nonstrict fallback, followed by the same root
+containment check: internal optional/dangling package-bin links remain supported,
+while dangling escapes, permission failures and cycles are not bypassed.
 This is not a sandbox for arbitrary executable JavaScript: supply trusted builds. That mode tests actual frontend invalid-state rejection without
 a token exchange, OAuth login-link layout, provider login, callback exchange,
 identity/ACL, post-login navigation, cookie-session restoration after reload, and
@@ -168,6 +180,29 @@ python3 scripts/integration/platform_smoke.py \
   --output /tmp/vessel-rest-platform-final.json
 ```
 
+Reports default to a securely created unique `vessel-rest-platform-results-*.json`
+in Python's system temporary directory; the printed `Results:` path is retained
+after private-fixture cleanup, including interruption. `--output` must name a **new** file. Reports and
+published screenshots are created exclusively with mode `0600`; existing regular
+files, hardlinks, symlinks (including dangling ones), and creation races are refused,
+never truncated or followed. Use fresh filenames when repeating the examples.
+Caller-chosen parent directories remain caller-trusted: this is no directory
+sandbox, and a different user controlling the parent can still remove/rename
+outputs. Choose private directories for sensitive local reports.
+
+`--oauth-screenshot` selects a new PNG output (prefer a `.png` extension). The
+browser first captures into private temporary storage, including all suffixed
+login/mobile/failure captures; only those safe application captures are then
+published with the same exclusive-creation policy. A collision on any suffixed
+output fails the suite, may leave already-published captures, and never overwrites
+the old file or its target. Private browser captures are removed during cleanup.
+
+Use ordinary Python without `-O` or `PYTHONOPTIMIZE`: the CLI refuses optimized
+execution rather than silently removing other suites' assertion checks. The
+companion callback's identity/role verification is an explicit runtime failure,
+not a programming assertion; errors still restore the administrator token, return
+a safe HTTP 500, and never claim successful ACL denial on the failure page.
+
 Exit codes: **0** all requested suites passed; **1** a test or cleanup failed;
 **2** all runnable suites passed but an explicitly requested suite has an external
 access gate; **130** interrupted (Ctrl-C/SIGTERM, with cleanup attempted). `aci` records a blocked status, never a simulated pass. It checks only
@@ -182,6 +217,37 @@ were absent. No Azure resource was created.
 External Authentik-specific group synchronization remains separate from the Dex
 provider smoke. SonarCloud authorization is owned by the parent verification
 workflow and is not manufactured or modified here.
+
+## Scoped PR #234 Sonar follow-up
+
+These are source-level dispositions for the seven findings in the fresh public
+snapshot, not a claim of remote transitions or a green current quality gate.
+
+| Sonar finding | Disposition |
+| --- | --- |
+| `AaFi6JH3pea8zfGF2Be_`, `pythonsecurity:S8707` | Reviewed intentional trusted CLI **read**, not an HTTP-controlled path or write traversal. `main()` takes `args.binary` only from argparse; the callback never constructs a `Smoke` or assigns the binary path. The chosen source is opened `rb`, copied once to a newly created file in a private `TemporaryDirectory`, made read-only, then that private copy alone is hashed/mounted in Docker and kind. No source-path write occurs. Regression tests preserve external paths, `..`, source symlinks, replacement and removal without changing source bytes. Repository allowlists or forbidding `/tmp`/builder links would break the supported clean-artifact workflow without fixing a real boundary. **An authorized Sonar reviewer must record the false-positive disposition**; no taint-flow obfuscation, blanket exclusion, or remote acceptance is performed here. The trust requirement applies equally to a human- or LLM-invoked CLI: inspect/approve the selected executable rather than treating this verifier as an execution sandbox. |
+| `AaFi6JH3pea8zfGF2Be8`, `python:S5779` | Replace the callback identity/role assertion with an explicit runtime verification failure. Real loopback callback tests reject wrong username, administrator role, and settings-access success, restore the original token and keep safe failure pages. The check also runs under optimized Python; the full CLI refuses optimized mode because other suites still intentionally use assertions. |
+| `AaFi6JH3pea8zfGF2Be9`, `python:S5332` | Narrow expression-level `NOSONAR` for the intentional HTTP fixture below; no scheme obfuscation, fake TLS, or networking change. |
+| `AaFi6JH3pea8zfGF2Be-`, `python:S5443` | Fix real report/screenshot output clobber: unique secure default, exclusive private explicit outputs, privately staged browser captures. Temp-only regressions first demonstrated symlink/hardlink overwrite and unsafe permissions. |
+| `AaFi6JIRpea8zfGF2BfA`, `python:S3516` | Simplify `review()` to one return after an apply-only loop. Default preview and all-case, immediately-before-write preflights are unchanged; manual review tests retain the exact closed set. |
+| `AaFgfrDLBmL4uU2_jom2`, `docker:S6471` | Toolkit root bootstrap remains intentional: create requested UID/GID/socket groups, then drop to `PUSER`. No Dockerfile, entrypoint, manifest key/hash, permission gate, or runtime identity was changed. The existing [six-case manual path](../security/sonar-root-review.md) still requires authorized credentials and live source/transition/readback checks. It does not include the CLI-read finding or any new case. |
+| `AaFi6JCwpea8zfGF2Be7`, `godre:S8239` | Correct cancellable status polling, separately from intentionally detached stack teardown; see the [backend review](../../backend-src/SECURITY_REVIEWS.md). |
+
+### Isolated Edge fixture HTTP boundary
+
+`suite_edge()` runs an official disposable agent **inside its owned nested DinD
+engine**. The URL's gateway comes from that engine's `docker network inspect
+bridge`, not a caller-supplied remote deployment URL or the host's bridge. Vessel
+shares the outer engine's network namespace and serves the nested agent at its
+bridge gateway. Only disposable fixture Edge keys/API credentials cross that
+bridge. The agent uses its nested engine's socket and volumes, not the shared
+host's Docker socket; no agent port or host network is exposed. The only host API
+publication remains random loopback. This local fixture is not claimed to encrypt
+poll/bootstrap HTTP; the real reverse tunnel still runs normally. Switching this
+URL alone to HTTPS would fail because the fixture has no TLS listener/trust setup,
+not add encryption. No production transport policy or ordinary external TLS
+verification is weakened. This is narrower than, and distinct from, the product's
+[encrypted-tunnel inner HTTP rationale](../../backend-src/SECURITY_REVIEWS.md#loopback-edge-tunnel-http--gos5332).
 
 ## Resource ownership and cleanup
 
@@ -206,7 +272,8 @@ workflow and is not manufactured or modified here.
   reported exact prefix after interruption. SIGKILL/host failure cannot guarantee
   cleanup: remove only those exact recorded resources, never a global prune.
 - Private temp data/config/passwords and owned subprocesses are removed/stopped.
-  Report JSON and explicitly requested safe screenshots remain in `/tmp`.
+  Report JSON and explicitly requested safe screenshots remain at their printed
+  or caller-selected output paths (normally in temporary storage).
 
 Read-only post-run checks:
 
@@ -363,3 +430,52 @@ startup retries, explicit Azure access gates, and credential-safe failure report
 Unexpected HTTP responses never export response bodies or query values, including
 an unexpected successful settings response during an ACL check. These unit tests
 are not counted as live platform coverage.
+
+### Scoped expanded-remediation follow-up (2026-10-22)
+
+Failing-first temp-only tests demonstrated the real report/screenshot clobber and
+output-permission defects before their fixes. The non-ELF-selection regression
+also failed first, then verified that a rejected synthetic secret/data input is
+not copied and only its own private snapshot directory is removed.
+
+A fresh official `python:3.14-slim` run reproduced the existing self-cycle guard
+regression (43 tests, one failure) before the portable strict-resolution fix.
+The fixture mounted scripts read-only, had no network or host socket, used a
+read-only root plus temporary tmpfs, and had bounded memory/CPU. This is not a
+Python-version pin to avoid the failing case. The internal-dangling-package-link
+regression preserves the legitimate nonstrict missing-target case without
+falling back for `ELOOP` or other resolution errors. Host Python 3.9.6 and the
+same bounded official Python 3.14 container both pass all 44 focused
+safety/transport tests after the fixes, including actual companion
+callback HTTP requests, optimized-Python safety checks and a further failing-first
+regression ensuring interrupted unique reports remain retained and discoverable
+via the printed output path. The manual-review
+suite passes 19 tests and issue-sync passes 28; Node 24.22.1 browser-companion
+syntax and whitespace checks pass. Harness HTTP-error responses are explicitly
+closed; the final integration-safety Python 3.14 run emits no ResourceWarnings.
+The official test image digest is
+`sha256:0514bc76712d64f8bb48adcb95b1ab0d88c69fee95d62fe4c18ee948bee9b1e1`.
+
+The new Go polling tests also failed first against the old implementation:
+in-flight `Ps` ignored cancellation, the caller's earlier deadline was not
+inherited, and the polling delay both delayed cancellation and started `Ps`
+after cancellation. The fix uses the original caller context, not the detached
+`WithCli` callback context, and makes the delay interruptible. Deployment and
+teardown detachment remain unchanged. Both affected packages pass normal and race
+checks with Go 1.26.10 (integration opt-ins remain disabled):
+
+```sh
+# From backend-src:
+GOTOOLCHAIN=go1.26.10 GOSUMDB=sum.golang.org \
+  go test -p 3 -count 1 -timeout 90s ./pkg/libstack/compose ./pkg/libstack
+GOTOOLCHAIN=go1.26.10 GOSUMDB=sum.golang.org \
+  go test -race -p 3 -count 1 -timeout 180s ./pkg/libstack/compose ./pkg/libstack
+```
+
+These harness/unit checks do **not** certify a new backend binary or production
+frontend run. The earlier `030beb74f` integration record remains historical;
+parent verification must rebuild the exact final source and repeat relevant/full
+platform checks, including this guard with an actual stable frontend artifact.
+Use fresh report/screenshot paths because explicit outputs are now create-only.
+Authorized Sonar recording and live current-head gate verification remain
+operator-owned, not an implied outcome of local source remediation.
