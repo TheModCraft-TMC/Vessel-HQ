@@ -65,7 +65,7 @@ export function ImagesDatatable({
         withColumnFilters(tableState.columnFilters, tableState.setColumnFilters)
       )}
       renderTableActions={(selectedItems) => (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <RemoveButtonMenu selectedItems={selectedItems} />
 
           <PruneButton images={imagesQuery.data || []} />
