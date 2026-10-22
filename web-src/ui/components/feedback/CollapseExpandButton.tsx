@@ -30,9 +30,9 @@ export function CollapseExpandButton({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
-      {/* REVIEW: Tailwind 4 removes bg-opacity utilities; keep the existing
+      {/* Tailwind 4 removes bg-opacity utilities; keep the existing
           translucent hover background in every edition/theme with color alpha. */}
-      <div className="flex items-center rounded-full p-[3px] transition ease-in-out group-hover:bg-blue-5/10 group-hover:be:bg-gray-5/10 th-dark:group-hover:bg-gray-true-7/10">
+      <div className="group-hover:bg-blue-5/10 group-hover:be:bg-gray-5/10 th-dark:group-hover:bg-gray-true-7/10 flex items-center rounded-full p-[3px] transition ease-in-out">
         <Icon
           icon={ChevronDown}
           size="md"

@@ -98,7 +98,7 @@ export function RoleEditor({
               </Button>
             </div>
           </div>
-          <div className="grid max-h-[45vh] grid-cols-1 gap-2 overflow-y-auto rounded-sm border p-3 md:grid-cols-2">
+          <div className="grid max-h-[45vh] grid-cols-1 gap-2 overflow-y-auto rounded-sm [border-width:1px] p-3 md:grid-cols-2">
             {availableAuthorizations.map((authorization) => (
               <Checkbox
                 key={authorization}

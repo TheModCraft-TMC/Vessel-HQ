@@ -57,15 +57,11 @@ test('Tailwind does not reintroduce preflight or put utilities below Bootstrap i
 });
 
 test('collapse controls preserve translucent hover colors across editions and dark theme', async () => {
-  // REVIEW: v4 silently ignores bg-opacity-10; compiling successfully is not
+  // v4 silently ignores bg-opacity-10; compiling successfully is not
   // sufficient unless the replacement color utilities actually retain alpha.
   const file = path.resolve('web-src/shared/assets/css/tailwind.css');
   const result = await postcss([tailwind()]).process(fs.readFileSync(file, 'utf8'), { from: file });
-  for (const candidate of [
-    'group-hover\\:bg-blue-5\\/10',
-    'group-hover\\:be\\:bg-gray-5\\/10',
-    'th-dark\\:group-hover\\:bg-gray-true-7\\/10',
-  ]) {
+  for (const candidate of ['group-hover\\:bg-blue-5\\/10', 'group-hover\\:be\\:bg-gray-5\\/10', 'th-dark\\:group-hover\\:bg-gray-true-7\\/10']) {
     let background;
     result.root.walkRules((rule) => {
       if (rule.selector.startsWith(`.${candidate}:`)) {
@@ -76,6 +72,19 @@ test('collapse controls preserve translucent hover colors across editions and da
     });
     assert.match(background || '', /10%, transparent\)/, candidate);
   }
+});
+
+test('previously width-only borders do not acquire a new solid border style', async () => {
+  for (const component of ['web-src/domains/users/RolesView/RoleEditor.tsx', 'web-src/core/console/navigation/Sidebar/Footer/UpdateNotification.tsx']) {
+    assert.match(fs.readFileSync(component, 'utf8'), /\[border-width:1px\]/, component);
+  }
+  const file = path.resolve('web-src/shared/assets/css/tailwind.css');
+  const result = await postcss([tailwind()]).process(fs.readFileSync(file, 'utf8'), { from: file });
+  let declarations;
+  result.root.walkRules('.\\[border-width\\:1px\\]', (rule) => {
+    declarations = rule.nodes.filter((node) => node.type === 'decl').map(({ prop, value }) => [prop, value]);
+  });
+  assert.deepEqual(declarations, [['border-width', '1px']]);
 });
 
 test('every stylesheet using @apply still compiles with its own explicit v4 reference', async () => {
