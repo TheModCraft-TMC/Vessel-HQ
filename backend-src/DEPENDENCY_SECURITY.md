@@ -128,6 +128,23 @@ The probe uses the configured HTTP timeout (default60s, an explicit positive ove
 
 Failing-first real-HTTP tests demonstrate the prior failures for slow1.24/1.39 and recovered1.24/1.39 engines; modern1.54 also proves the first valid slow response must not be cut off. The corrected tests and existing TCP/TLS/agent/Unix protocol tests pass under the race detector on Go1.26.10. Additional real-HTTP tests cover first-probe recovery at1.41/1.54, concurrent operations on one negotiated client, malformed versions, max-version capping, short HTTP timeout, cancellation during construction with HTTP timeout0, and cancellation after successful construction. These are SDK/HTTP compatibility tests, not claims of live ancient-daemon feature coverage.
 
+### Final bounded current-graph verification (Go1.26.10)
+
+Implementation source: `030beb74fed2951e3552235135c2e01545cb6df8`, built from a clean tree. The following are fresh results for that source, not reused Go1.26.6 or initial-adapter evidence:
+
+- All23 implementation-affected packages pass `go test -mod=readonly -race -p 3 -count=1 -timeout 120s` (19 packages with tests, four without test files). Final client/image regressions also pass in a separate fresh race run. `go mod tidy -diff` and whitespace checks pass without changing module files.
+- Two independent backend schema generations using Go1.26.10/Swag1.16.6 and swagger2openapi7.0.8 are byte-identical to each other **and** the committed schemas. Swagger SHA256: `d1b0c18179000cfcfbcbe73acb43d53016b1249347ddc6bca42118ef51fa48aa`; OpenAPI SHA256: `c777692be910f6420163c770c85e74886653a1727305e87886793e292ea6807e`. Both validate through the parent's canonical maintained OpenAPI validator, not the retired external swagger-cli4 validator. Frontend contracts were not edited or regenerated in this continuation.
+- Fresh govulncheck1.9.0 source/symbol scan on Go1.26.10 has **14 finding records across six advisory IDs, zero standard-library finding records**. GO-2026-4883 and GO-2026-4887 have old-monolith init traces through both `pkg/namesgenerator` and `api/types/versions`; these are not demonstrated calls to the vulnerable daemon handlers. GO-2026-5617, GO-2026-5668 and GO-2026-5746 are old-Docker module-only findings. GO-2026-5932 is the additional `x/crypto/openpgp` module-only finding. This is **not a clean scan**; JSON-mode exit0 is not used as the verdict. Component/symbol reachability does not remove any selected vulnerable module or advisory range.
+- Fresh selected-module comparison against all26 supplied Go alert ranges remains **21 fixed/removed and five unresolved**: alerts4–7 (`github.com/docker/docker v28.5.2+incompatible`) and24 (`github.com/docker/distribution v2.8.3+incompatible`). No advisory is excluded or suppressed.
+- Both CGO-disabled Linux candidates are static ELF binaries, with `vcs.modified=false` and the exact source above stamped in Go buildinfo and application metadata. Release1.3.1 and API/datastore2.45.0 are unchanged. Build number is `local-dependency-security-030beb74f`; dependencies report SDK0.5.1, Compose5.3.1, kubectl1.35.1 and Helm4.1.4. Frontend tool metadata explicitly says `not-built`, because this job builds only the backend. These are local candidates, **not published images or releases**.
+
+| Local candidate (ephemeral path) | SHA256 |
+| --- | --- |
+| `/tmp/vessel-dep-go-030beb74f-linux-arm64` | `37b916219eebb167ee14f4ff9a5f638bd0c0b1962159f846d728bd6d6c83e320` |
+| `/tmp/vessel-dep-go-030beb74f-linux-amd64` | `ee5011f6e801537427c2467a1d31e963cccc54bfd434c113a1e48b6e9425855a` |
+
+The parent independently reports a210-package full suite, all changed-package race tests and six runnable combined platform suites passing for the preceding07d candidate; ACI returned its explicit access-gate exit2, not a pass. Those results are not relabeled as030beb runtime coverage. The parent owns the final030beb combined live/full-suite repeat and global verification documentation. Windows/npipe runtime execution is unavailable in this Darwin/Linux testing; the SDK's public npipe transport configuration is retained.
+
 ### Alternative graph proof — not shipped or published
 
 The separate experiment in `/tmp/vessel-dep-go-nextgraph` is **not** this release graph. Its isolated Kompose source fork has commits `7646953`, `b71b4c0`, `5b98428` (stable `autoscaling/v2` migration, full suite and stable-HPA-wire regression pass). The isolated Podman container-libs/image fork commit `6dbaaf1` genuinely migrates eight source/test files to Distributionv3; Docker/config/registries/TLS tests pass. These local commits and their upstream provenance remain intact in their own clones. Nothing has been pushed or published.
