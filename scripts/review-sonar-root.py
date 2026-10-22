@@ -147,10 +147,9 @@ def review(api, apply=False):
     cases = load_manifest()
     plan = preflight(api, cases)  # All six MUST pass before any mutation.
     print(json.dumps({"dry_run": not apply, "cases": plan}), flush=True)
-    if not apply:
-        return plan
-    for index, case in enumerate(cases):
-        record_case(api, cases, index, case)
+    if apply:
+        for index, case in enumerate(cases):
+            record_case(api, cases, index, case)
     return plan
 
 
