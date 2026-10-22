@@ -156,8 +156,11 @@ class Smoke:
         except urllib.error.HTTPError as error:
             status, raw = error.code, error.read()
         if (expected is not None and status != expected) or (expected is None and status >= 400):
-            # Error responses may contain provider details, but never dump successful auth responses.
-            raise RuntimeError(f"{method} {path}: HTTP {status}: {raw.decode(errors='replace')[:1500]}")
+            # An unexpected success (for example an ACL failure on /settings)
+            # can contain credentials, as can a provider's error response. Keep
+            # report diagnostics to route/status, never bodies or query values.
+            safe_path = urllib.parse.urlsplit(path).path
+            raise RuntimeError(f"{method} {safe_path}: HTTP {status} (response body omitted)")
         if not raw:
             return None
         try:

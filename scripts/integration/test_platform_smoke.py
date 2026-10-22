@@ -167,6 +167,21 @@ class PlatformSmokeTests(unittest.TestCase):
         self.assertIn(b"EndpointCreationType", request.data)
         self.assertIn(b"tcp://127.0.0.1:2375", request.data)
 
+    def test_failed_checks_never_export_response_secrets_or_query_values(self):
+        self.runner.base = "http://127.0.0.1:12345"
+        payload = {"ClientSecret": "NEVER_EXPORT_RESPONSE", "jwt": "NEVER_EXPORT_TOKEN"}
+        cases = [
+            ("/settings?opaque=NEVER_EXPORT_QUERY", 403, {"return_value": self.response(payload, 200)}),
+            ("/auth?opaque=NEVER_EXPORT_QUERY", None, {"side_effect": urllib.error.HTTPError(
+                "url", 400, "invalid", {}, io.BytesIO(json.dumps(payload).encode()))}),
+        ]
+        for path, expected, mock_options in cases:
+            with self.subTest(path=path), patch.object(smoke.urllib.request, "urlopen", **mock_options):
+                with self.assertRaises(RuntimeError) as error:
+                    self.runner.request("GET", path, expected=expected)
+                self.assertNotIn("NEVER_EXPORT", str(error.exception))
+                self.assertIn("HTTP ", str(error.exception))
+
     def test_expected_http_errors_are_checked_not_swallowed(self):
         self.runner.base = "http://127.0.0.1:12345"
         error = urllib.error.HTTPError("url", 404, "missing", {}, io.BytesIO(b'{"message":"missing"}'))
