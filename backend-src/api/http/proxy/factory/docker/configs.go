@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/http/proxy/factory/utils"
@@ -14,7 +14,8 @@ import (
 const configObjectIdentifier = "ID"
 
 func getInheritedResourceControlFromConfigLabels(dockerClient *client.Client, endpointID portainer.EndpointID, configID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	config, _, err := dockerClient.ConfigInspectWithRaw(context.Background(), configID)
+	configResult, err := dockerClient.ConfigInspect(context.Background(), configID, client.ConfigInspectOptions{})
+	config := configResult.Config
 	if err != nil {
 		return nil, err
 	}

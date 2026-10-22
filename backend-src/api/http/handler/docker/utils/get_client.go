@@ -3,7 +3,7 @@ package utils
 import (
 	"net/http"
 
-	dockerclient "github.com/docker/docker/client"
+	dockerclient "github.com/moby/moby/client"
 	portainer "github.com/portainer/portainer/api"
 	prclient "github.com/portainer/portainer/api/docker/client"
 	"github.com/portainer/portainer/api/http/middlewares"

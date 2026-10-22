@@ -6,9 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/swarm"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/network"
+	"github.com/moby/moby/api/types/swarm"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/datastore"
@@ -255,17 +255,19 @@ func TestTransport_adminProxy(t *testing.T) {
 func TestTransport_getRealResourceID(t *testing.T) {
 	t.Parallel()
 	srv, _ := mockDockerAPIServer(t, RoutesDefinition{
-		{http.MethodGet, "/networks"}:           []network.Summary{{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}},
-		{http.MethodGet, "/networks/mynetwork"}: network.Inspect{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"},
-		{http.MethodGet, "/networks/16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4"}:        network.Inspect{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"},
-		{http.MethodGet, "/containers/mycontainer/json"}:                                                      container.InspectResponse{ContainerJSONBase: &container.ContainerJSONBase{ID: "545fc03ed1fd5008c3bfa2441209ff024e21e396acbeb58b2355930ad1295aa6", Name: "mycontainer"}},
-		{http.MethodGet, "/containers/545fc03ed1fd5008c3bfa2441209ff024e21e396acbeb58b2355930ad1295aa6/json"}: container.InspectResponse{ContainerJSONBase: &container.ContainerJSONBase{ID: "545fc03ed1fd5008c3bfa2441209ff024e21e396acbeb58b2355930ad1295aa6", Name: "mycontainer"}},
-		{http.MethodGet, "/services/myservice"}:                                                               swarm.Service{ID: "ibt43uf5awhg06bxp8rkd7bhi", Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: "myservice"}}},
-		{http.MethodGet, "/services/ibt43uf5awhg06bxp8rkd7bhi"}:                                               swarm.Service{ID: "ibt43uf5awhg06bxp8rkd7bhi", Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: "myservice"}}},
-		{http.MethodGet, "/configs/myconfig"}:                                                                 swarm.Config{ID: "3mlqqza0k413ecebk0mfa11em", Spec: swarm.ConfigSpec{Annotations: swarm.Annotations{Name: "myconfig"}}},
-		{http.MethodGet, "/configs/3mlqqza0k413ecebk0mfa11em"}:                                                swarm.Config{ID: "3mlqqza0k413ecebk0mfa11em", Spec: swarm.ConfigSpec{Annotations: swarm.Annotations{Name: "myconfig"}}},
-		{http.MethodGet, "/secrets/mysecret"}:                                                                 swarm.Secret{ID: "v9i7o4ivg33u4z3jfyxto162d", Spec: swarm.SecretSpec{Annotations: swarm.Annotations{Name: "mysecret"}}},
-		{http.MethodGet, "/secrets/v9i7o4ivg33u4z3jfyxto162d"}:                                                swarm.Secret{ID: "v9i7o4ivg33u4z3jfyxto162d", Spec: swarm.SecretSpec{Annotations: swarm.Annotations{Name: "mysecret"}}},
+		{http.MethodGet, "/networks"}:           []network.Summary{{Network: network.Network{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}}},
+		{http.MethodGet, "/networks/mynetwork"}: network.Inspect{Network: network.Network{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}},
+		{http.MethodGet, "/networks/16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4"}: network.Inspect{Network: network.Network{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}},
+		{http.MethodGet, "/containers/mycontainer/json"}: container.InspectResponse{ID: "545fc03ed1fd5008c3bfa2441209ff024e21e396acbeb58b2355930ad1295aa6",
+			Name: "mycontainer"},
+		{http.MethodGet, "/containers/545fc03ed1fd5008c3bfa2441209ff024e21e396acbeb58b2355930ad1295aa6/json"}: container.InspectResponse{ID: "545fc03ed1fd5008c3bfa2441209ff024e21e396acbeb58b2355930ad1295aa6",
+			Name: "mycontainer"},
+		{http.MethodGet, "/services/myservice"}:                 swarm.Service{ID: "ibt43uf5awhg06bxp8rkd7bhi", Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: "myservice"}}},
+		{http.MethodGet, "/services/ibt43uf5awhg06bxp8rkd7bhi"}: swarm.Service{ID: "ibt43uf5awhg06bxp8rkd7bhi", Spec: swarm.ServiceSpec{Annotations: swarm.Annotations{Name: "myservice"}}},
+		{http.MethodGet, "/configs/myconfig"}:                   swarm.Config{ID: "3mlqqza0k413ecebk0mfa11em", Spec: swarm.ConfigSpec{Annotations: swarm.Annotations{Name: "myconfig"}}},
+		{http.MethodGet, "/configs/3mlqqza0k413ecebk0mfa11em"}:  swarm.Config{ID: "3mlqqza0k413ecebk0mfa11em", Spec: swarm.ConfigSpec{Annotations: swarm.Annotations{Name: "myconfig"}}},
+		{http.MethodGet, "/secrets/mysecret"}:                   swarm.Secret{ID: "v9i7o4ivg33u4z3jfyxto162d", Spec: swarm.SecretSpec{Annotations: swarm.Annotations{Name: "mysecret"}}},
+		{http.MethodGet, "/secrets/v9i7o4ivg33u4z3jfyxto162d"}:  swarm.Secret{ID: "v9i7o4ivg33u4z3jfyxto162d", Spec: swarm.SecretSpec{Annotations: swarm.Annotations{Name: "mysecret"}}},
 	})
 	defer srv.Close()
 
@@ -332,9 +334,9 @@ func TestTransport_proxyNetworkRequest(t *testing.T) {
 	}))
 
 	srv, version := mockDockerAPIServer(t, RoutesDefinition{
-		{http.MethodGet, "/networks"}:           []network.Summary{{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}},
-		{http.MethodGet, "/networks/mynetwork"}: network.Inspect{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"},
-		{http.MethodGet, "/networks/16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4"}:             network.Inspect{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"},
+		{http.MethodGet, "/networks"}:           []network.Summary{{Network: network.Network{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}}},
+		{http.MethodGet, "/networks/mynetwork"}: network.Inspect{Network: network.Network{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}},
+		{http.MethodGet, "/networks/16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4"}:             network.Inspect{Network: network.Network{ID: "16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4", Name: "mynetwork"}},
 		{http.MethodPost, "/networks/mynetwork/connect"}:                                                           struct{}{},
 		{http.MethodPost, "/networks/16e37c629e88694663791dc738fd37affb908d7b85ce00a20680675d10554fd4/connect"}:    struct{}{},
 		{http.MethodPost, "/networks/mynetwork/disconnect"}:                                                        struct{}{},
@@ -587,7 +589,7 @@ func TestTransport_proxyExecRequest_accessControl(t *testing.T) {
 	require.NoError(t, err)
 
 	srv, version := mockDockerAPIServer(t, RoutesDefinition{
-		{http.MethodGet, "/exec/" + execID + "/json"}:    container.ExecInspect{ExecID: execID, ContainerID: containerID},
+		{http.MethodGet, "/exec/" + execID + "/json"}:    container.ExecInspectResponse{ID: execID, ContainerID: containerID},
 		{http.MethodPost, "/exec/" + execID + "/start"}:  struct{}{},
 		{http.MethodPost, "/exec/" + execID + "/resize"}: struct{}{},
 	})

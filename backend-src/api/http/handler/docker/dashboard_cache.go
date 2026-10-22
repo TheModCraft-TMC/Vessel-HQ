@@ -7,12 +7,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/api/types/volume"
+	"github.com/moby/moby/client"
+
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/network"
+	"github.com/moby/moby/api/types/swarm"
+	"github.com/moby/moby/api/types/volume"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/docker/stats"
 	"github.com/portainer/portainer/pkg/schedule"
@@ -154,17 +154,20 @@ func (h *Handler) fetchDashboardData(ctx context.Context, key dashboardCacheKey)
 	}
 	defer func() { _ = cli.Close() }()
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
+	containersResult, err := cli.ContainerList(ctx, client.ContainerListOptions{All: true})
+	containers := containersResult.Items
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve Docker containers: %w", err)
 	}
 
-	images, err := cli.ImageList(ctx, image.ListOptions{})
+	imagesResult, err := cli.ImageList(ctx, client.ImageListOptions{})
+	images := imagesResult.Items
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve Docker images: %w", err)
 	}
 
-	info, err := cli.Info(ctx)
+	infoResult, err := cli.Info(ctx, client.InfoOptions{})
+	info := infoResult.Info
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve Docker info: %w", err)
 	}
@@ -174,18 +177,20 @@ func (h *Handler) fetchDashboardData(ctx context.Context, key dashboardCacheKey)
 
 	var services []swarm.Service
 	if isSwarmManager {
-		services, err = cli.ServiceList(ctx, types.ServiceListOptions{})
+		servicesResult, err := cli.ServiceList(ctx, client.ServiceListOptions{})
+		services = servicesResult.Items
 		if err != nil {
 			return nil, fmt.Errorf("unable to retrieve Docker services: %w", err)
 		}
 	}
 
-	volumesResponse, err := cli.VolumeList(ctx, volume.ListOptions{})
+	volumesResponse, err := cli.VolumeList(ctx, client.VolumeListOptions{})
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve Docker volumes: %w", err)
 	}
 
-	networks, err := cli.NetworkList(ctx, network.ListOptions{})
+	networksResult, err := cli.NetworkList(ctx, client.NetworkListOptions{})
+	networks := networksResult.Items
 	if err != nil {
 		return nil, fmt.Errorf("unable to retrieve Docker networks: %w", err)
 	}
@@ -203,12 +208,16 @@ func (h *Handler) fetchDashboardData(ctx context.Context, key dashboardCacheKey)
 		imageCounts.Size += images[i].Size
 	}
 
+	volumes := make([]*volume.Volume, len(volumesResponse.Items))
+	for i := range volumesResponse.Items {
+		volumes[i] = &volumesResponse.Items[i]
+	}
 	return &dashboardData{
 		containers:     containers,
 		containerStats: containerStats,
 		images:         imageCounts,
 		services:       services,
-		volumes:        volumesResponse.Volumes,
+		volumes:        volumes,
 		networks:       networks,
 		isSwarm:        isSwarm,
 		isSwarmManager: isSwarmManager,

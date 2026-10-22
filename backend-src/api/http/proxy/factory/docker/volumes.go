@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"path"
 
+	dockerclient "github.com/moby/moby/client"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/docker"
 	"github.com/portainer/portainer/api/http/proxy/factory/utils"
@@ -17,19 +19,19 @@ import (
 	"github.com/portainer/portainer/api/internal/snapshot"
 	"github.com/portainer/portainer/api/logs"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/segmentio/encoding/json"
 )
 
 const volumeObjectIdentifier = "ResourceID"
 
 func getInheritedResourceControlFromVolumeLabels(dockerClient *client.Client, endpointID portainer.EndpointID, volumeID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	volume, err := dockerClient.VolumeInspect(context.Background(), volumeID)
+	volume, err := dockerClient.VolumeInspect(context.Background(), volumeID, client.VolumeInspectOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	stackResourceID := getStackResourceIDFromLabels(volume.Labels, endpointID)
+	stackResourceID := getStackResourceIDFromLabels(volume.Volume.Labels, endpointID)
 	if stackResourceID != "" {
 		return authorization.GetResourceControlByResourceIDAndType(stackResourceID, portainer.StackResourceControl, resourceControls), nil
 	}
@@ -189,7 +191,7 @@ func (transport *Transport) decorateVolumeResourceCreationOperation(request *htt
 		}
 		defer logs.CloseAndLogErr(cli)
 
-		if _, err := cli.VolumeInspect(context.Background(), volumeID); err == nil {
+		if _, err := cli.VolumeInspect(context.Background(), volumeID, client.VolumeInspectOptions{}); err == nil {
 			return &http.Response{
 				StatusCode: http.StatusConflict,
 			}, errors.New("a volume with the same name already exists")
@@ -291,7 +293,8 @@ func (transport *Transport) getDockerID() (string, error) {
 	}
 	defer logs.CloseAndLogErr(client)
 
-	info, err := client.Info(context.Background())
+	infoResult, err := client.Info(context.Background(), dockerclient.InfoOptions{})
+	info := infoResult.Info
 	if err != nil {
 		return "", err
 	}

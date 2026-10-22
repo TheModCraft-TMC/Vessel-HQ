@@ -6,12 +6,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/moby/moby/client"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/datastore"
 	"github.com/portainer/portainer/api/http/security"
 
-	"github.com/docker/docker/api/types/volume"
 	"github.com/segmentio/encoding/json"
 	"github.com/stretchr/testify/require"
 )
@@ -104,7 +105,7 @@ func (f *volumeCreationFixtures) newTransport() *Transport {
 	}
 }
 
-func (f *volumeCreationFixtures) newRequest(t *testing.T, body volume.CreateOptions, user portainer.User) *http.Request {
+func (f *volumeCreationFixtures) newRequest(t *testing.T, body client.VolumeCreateOptions, user portainer.User) *http.Request {
 	t.Helper()
 
 	data, err := json.Marshal(body)
@@ -133,7 +134,7 @@ func TestDecorateVolumeResourceCreationOperation_BindDriverOptForbidden(t *testi
 		AllowBindMountsForRegularUsers: false,
 	})
 
-	body := volume.CreateOptions{
+	body := client.VolumeCreateOptions{
 		Name:   "evil-volume",
 		Driver: "local",
 		DriverOpts: map[string]string{
@@ -159,7 +160,7 @@ func TestDecorateVolumeResourceCreationOperation_BindDriverOptAllowedForAdmin(t 
 		AllowBindMountsForRegularUsers: false,
 	})
 
-	body := volume.CreateOptions{
+	body := client.VolumeCreateOptions{
 		Name:   "admin-volume",
 		Driver: "local",
 		DriverOpts: map[string]string{
@@ -184,7 +185,7 @@ func TestDecorateVolumeResourceCreationOperation_BindDriverOptAllowedWhenSetting
 		AllowBindMountsForRegularUsers: true,
 	})
 
-	body := volume.CreateOptions{
+	body := client.VolumeCreateOptions{
 		Name:   "allowed-volume",
 		Driver: "local",
 		DriverOpts: map[string]string{
@@ -212,7 +213,7 @@ func TestDecorateVolumeResourceCreationOperation_BindMountRestrictions(t *testin
 			AllowBindMountsForRegularUsers: false,
 		})
 
-		body := volume.CreateOptions{
+		body := client.VolumeCreateOptions{
 			Name:       "evil-volume",
 			Driver:     "local",
 			DriverOpts: driverOpts,
@@ -244,7 +245,7 @@ func TestDecorateVolumeResourceCreationOperation_NonBindDriverOptNotForbidden(t 
 		AllowBindMountsForRegularUsers: false,
 	})
 
-	body := volume.CreateOptions{
+	body := client.VolumeCreateOptions{
 		Name:   "normal-volume",
 		Driver: "local",
 		DriverOpts: map[string]string{

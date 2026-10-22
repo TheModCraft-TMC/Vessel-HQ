@@ -3,7 +3,7 @@ package uac
 import (
 	"testing"
 
-	"github.com/docker/docker/api/types/network"
+	"github.com/moby/moby/api/types/network"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/datastore"
@@ -36,14 +36,14 @@ func TestNetworkResourceControlGetter(t *testing.T) {
 
 	is.NoError(store.ViewTx(func(tx dataservices.DataStoreTx) error {
 		// by direct ID
-		rc, err := NetworkResourceControlGetter(tx, envID)(network.Inspect{ID: networkID})
+		rc, err := NetworkResourceControlGetter(tx, envID)(network.Summary{Network: network.Network{ID: networkID}})
 		is.NoError(err)
 		is.NotNil(rc)
 		is.Equal(networkID, rc.ResourceID)
 
 		// by compose stack label
 		rc, err = NetworkResourceControlGetter(tx, envID)(
-			network.Inspect{ID: "unknown", Labels: map[string]string{consts.ComposeStackNameLabel: stackName}},
+			network.Summary{Network: network.Network{ID: "unknown", Labels: map[string]string{consts.ComposeStackNameLabel: stackName}}},
 		)
 		is.NoError(err)
 		is.NotNil(rc)
@@ -51,7 +51,7 @@ func TestNetworkResourceControlGetter(t *testing.T) {
 
 		// by swarm stack label
 		rc, err = NetworkResourceControlGetter(tx, envID)(
-			network.Inspect{ID: "unknown", Labels: map[string]string{consts.SwarmStackNameLabel: stackName}},
+			network.Summary{Network: network.Network{ID: "unknown", Labels: map[string]string{consts.SwarmStackNameLabel: stackName}}},
 		)
 		is.NoError(err)
 		is.NotNil(rc)
@@ -59,7 +59,7 @@ func TestNetworkResourceControlGetter(t *testing.T) {
 
 		// by service ID
 		rc, err = NetworkResourceControlGetter(tx, envID)(
-			network.Inspect{ID: "unknown", Labels: map[string]string{consts.SwarmServiceIDLabel: serviceID}},
+			network.Summary{Network: network.Network{ID: "unknown", Labels: map[string]string{consts.SwarmServiceIDLabel: serviceID}}},
 		)
 		is.NoError(err)
 		is.NotNil(rc)

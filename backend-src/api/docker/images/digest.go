@@ -7,8 +7,8 @@ import (
 
 	portainer "github.com/portainer/portainer/api"
 
-	"github.com/docker/docker/api/types/image"
-	dockerclient "github.com/docker/docker/client"
+	"github.com/moby/moby/api/types/image"
+	dockerclient "github.com/moby/moby/client"
 	"github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"

@@ -27,9 +27,7 @@ import (
 	httprequest "github.com/portainer/portainer/pkg/libhttp/request"
 	"github.com/portainer/portainer/pkg/libhttp/ssrf"
 
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/swarm"
-	dockerclient "github.com/docker/docker/client"
+	dockerclient "github.com/moby/moby/client"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/encoding/json"
 )
@@ -377,7 +375,7 @@ func (transport *Transport) proxyExecRequest(request *http.Request, unversionedP
 	}
 	defer logs.CloseAndLogErr(client)
 
-	execInspect, err := client.ContainerExecInspect(request.Context(), execID)
+	execInspect, err := client.ExecInspect(request.Context(), execID, dockerclient.ExecInspectOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -746,14 +744,15 @@ func (transport *Transport) restrictedResourceOperation(request *http.Request, r
 func getDockerResourceUUID(client *dockerclient.Client, resourceType portainer.ResourceControlType, resourceId string) (string, error) {
 	switch resourceType {
 	case portainer.NetworkResourceControl:
-		network, err := client.NetworkInspect(context.Background(), resourceId, network.InspectOptions{})
+		network, err := client.NetworkInspect(context.Background(), resourceId, dockerclient.NetworkInspectOptions{})
 		if err != nil {
 			return "", err
 		}
-		return network.ID, nil
+		return network.Network.ID, nil
 
 	case portainer.ContainerResourceControl:
-		container, err := client.ContainerInspect(context.Background(), resourceId)
+		containerResult, err := client.ContainerInspect(context.Background(), resourceId, dockerclient.ContainerInspectOptions{})
+		container := containerResult.Container
 		if err != nil {
 			return "", err
 		}
@@ -768,21 +767,24 @@ func getDockerResourceUUID(client *dockerclient.Client, resourceType portainer.R
 		return "", nil
 
 	case portainer.ServiceResourceControl:
-		service, _, err := client.ServiceInspectWithRaw(context.Background(), resourceId, swarm.ServiceInspectOptions{})
+		serviceResult, err := client.ServiceInspect(context.Background(), resourceId, dockerclient.ServiceInspectOptions{})
+		service := serviceResult.Service
 		if err != nil {
 			return "", err
 		}
 		return service.ID, nil
 
 	case portainer.ConfigResourceControl:
-		config, _, err := client.ConfigInspectWithRaw(context.Background(), resourceId)
+		configResult, err := client.ConfigInspect(context.Background(), resourceId, dockerclient.ConfigInspectOptions{})
+		config := configResult.Config
 		if err != nil {
 			return "", err
 		}
 		return config.ID, nil
 
 	case portainer.SecretResourceControl:
-		secret, _, err := client.SecretInspectWithRaw(context.Background(), resourceId)
+		secretResult, err := client.SecretInspect(context.Background(), resourceId, dockerclient.SecretInspectOptions{})
+		secret := secretResult.Secret
 		if err != nil {
 			return "", err
 		}

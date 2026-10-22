@@ -1,0 +1,99 @@
+# Backend dependency security remediation
+
+## Status (not a zero-alert claim)
+
+This change remediates **21 of the 26 Go alerts** in the supplied open-alert snapshot. **Five no-patch alerts remain in selected transitive modules**. They are not dismissed, ignored, aliased, or represented as fixed because their daemon/client entry points are not linked. The release identity and API/datastore compatibility baseline remain unchanged.
+
+The application's direct Docker API/client imports now use the actual upstream modules `github.com/moby/moby/api v1.55.0` and `github.com/moby/moby/client v0.5.1`. Compose migrates from v2.40.3 to v5.3.1 and Docker CLI to v29.6.1. This is a source/API migration, not a `replace` of the vulnerable monolith with a different module identity. Registry auth serialization, resource-control lookups, Swarm filters/spec versions, container recreation/rollback, snapshots, diagnostics, and detached Compose contexts have been adapted.
+
+## Inventory of all 26 supplied alerts
+
+Numbers are repository Dependabot alert numbers. GHSA links identify the full advisory consulted. Selected versions are from fresh `go list -m all`, not just direct `require` lines.
+
+| Alert | Module | Advisory | Selected version / disposition |
+| --- | --- | --- | --- |
+| 1 | `github.com/docker/cli` | [GHSA-p436-gjf2-799p](https://github.com/advisories/GHSA-p436-gjf2-799p) | v29.6.1; patched >=29.2.0 |
+| 2 | `github.com/moby/buildkit` | [GHSA-4c29-8rgm-jvjj](https://github.com/advisories/GHSA-4c29-8rgm-jvjj) | v0.31.1; patched >=0.28.1 |
+| 3 | `github.com/moby/buildkit` | [GHSA-4vrq-3vrq-g6gg](https://github.com/advisories/GHSA-4vrq-3vrq-g6gg) | v0.31.1; patched >=0.28.1 |
+| 4 | `github.com/docker/docker` | [GHSA-pxq6-2prw-chj9](https://github.com/advisories/GHSA-pxq6-2prw-chj9) | **Unresolved**, v28.5.2; vulnerable <29.3.1, no patched monolith release |
+| 5 | `github.com/docker/docker` | [GHSA-x86f-5xw2-fm2r](https://github.com/advisories/GHSA-x86f-5xw2-fm2r) | **Unresolved**, v28.5.2; vulnerable <=28.5.2, no patched monolith release |
+| 6 | `github.com/docker/docker` | [GHSA-vp62-88p7-qqf5](https://github.com/advisories/GHSA-vp62-88p7-qqf5) | **Unresolved**, v28.5.2; vulnerable <=28.5.2, no patched monolith release |
+| 7 | `github.com/docker/docker` | [GHSA-rg2x-37c3-w2rh](https://github.com/advisories/GHSA-rg2x-37c3-w2rh) | **Unresolved**, v28.5.2; vulnerable <=28.5.2, no patched monolith release |
+| 8 | `github.com/moby/go-archive` | [GHSA-hfg8-hc9c-6c3h](https://github.com/advisories/GHSA-hfg8-hc9c-6c3h) | v0.3.3; patched >=0.3.0 |
+| 9 | `github.com/moby/buildkit` | [GHSA-7236-3392-c5c6](https://github.com/advisories/GHSA-7236-3392-c5c6) | v0.31.1; patched >=0.31.1 |
+| 10 | `github.com/moby/buildkit` | [GHSA-72x6-4j93-7w86](https://github.com/advisories/GHSA-72x6-4j93-7w86) | v0.31.1; patched >=0.31.1 |
+| 11 | `google.golang.org/grpc` | [GHSA-vp52-pcj8-j9qc](https://github.com/advisories/GHSA-vp52-pcj8-j9qc) | v1.83.2; patched >=1.83.1 |
+| 12 | `google.golang.org/grpc` | [GHSA-qc2q-p7wx-3px3](https://github.com/advisories/GHSA-qc2q-p7wx-3px3) | v1.83.2; patched >=1.83.1 |
+| 13 | `google.golang.org/grpc` | [GHSA-2v4p-qf9q-27wj](https://github.com/advisories/GHSA-2v4p-qf9q-27wj) | v1.83.2, including the 1.83-branch missing-authority fix |
+| 14 | `github.com/containerd/containerd` | [GHSA-7jxh-36q5-gcqv](https://github.com/advisories/GHSA-7jxh-36q5-gcqv) | **Removed**; standalone `github.com/containerd/errdefs` replaces the only application import |
+| 15 | `github.com/containerd/containerd/v2` | [GHSA-7jxh-36q5-gcqv](https://github.com/advisories/GHSA-7jxh-36q5-gcqv) | v2.2.9; patched >=2.2.8 |
+| 16 | `go.opentelemetry.io/otel/sdk` | [GHSA-8wmf-6v46-5gfg](https://github.com/advisories/GHSA-8wmf-6v46-5gfg) | v1.45.0; patched >=1.45.0 |
+| 17 | `go.opentelemetry.io/otel/exporters/otlp/otlptrace` | [GHSA-8wmf-6v46-5gfg](https://github.com/advisories/GHSA-8wmf-6v46-5gfg) | v1.45.0; patched >=1.45.0 |
+| 18 | `go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc` | [GHSA-8wmf-6v46-5gfg](https://github.com/advisories/GHSA-8wmf-6v46-5gfg) | v1.45.0; patched >=1.45.0 |
+| 19 | `go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp` | [GHSA-8wmf-6v46-5gfg](https://github.com/advisories/GHSA-8wmf-6v46-5gfg) | v1.45.0; patched >=1.45.0 |
+| 20 | `github.com/containerd/containerd` | [GHSA-pg57-6jwg-q645](https://github.com/advisories/GHSA-pg57-6jwg-q645) | **Removed** |
+| 21 | `github.com/containerd/containerd/v2` | [GHSA-pg57-6jwg-q645](https://github.com/advisories/GHSA-pg57-6jwg-q645) | v2.2.9; patched >=2.2.9 |
+| 22 | `github.com/moby/sys/user` | [GHSA-mjcv-p78q-w5fw](https://github.com/advisories/GHSA-mjcv-p78q-w5fw) | v0.4.1; patched >=0.4.1 |
+| 23 | `github.com/containerd/containerd/v2` | [GHSA-p7v4-vr35-mj6f](https://github.com/advisories/GHSA-p7v4-vr35-mj6f) | v2.2.9; patched >=2.2.7 |
+| 24 | `github.com/docker/distribution` | [GHSA-685w-q87j-wqw3](https://github.com/advisories/GHSA-685w-q87j-wqw3) | **Unresolved**, v2.8.3; vulnerable <=2.8.3, no patched v2 release |
+| 25 | `github.com/containerd/containerd` | [GHSA-rp3h-jf77-q9p4](https://github.com/advisories/GHSA-rp3h-jf77-q9p4) | **Removed** |
+| 26 | `github.com/containerd/containerd/v2` | [GHSA-rp3h-jf77-q9p4](https://github.com/advisories/GHSA-rp3h-jf77-q9p4) | v2.2.9; patched >=2.2.8 |
+
+## Exact remaining dependencies and real removal options
+
+Fresh package-import graph (`go list -deps`) has these old-module paths:
+
+```text
+pkg/libstack/compose
+  -> docker/compose/v5/pkg/compose
+  -> docker/buildx/store/storeutil -> docker/buildx/store
+  -> docker/docker/pkg/namesgenerator
+
+api/docker/images
+  -> go.podman.io/image/v5/docker -> go.podman.io/image/v5/manifest
+  -> docker/docker/api/types/versions
+
+api/docker/images
+  -> go.podman.io/image/v5/docker
+  -> docker/distribution/registry/api/errcode
+  -> docker/distribution/registry/api/v2 (also directly imported by that helper)
+```
+
+These are the only linked packages from the two old modules in the fresh main-package dependency graph. No application source imports the monolith directly anymore. That **does not** remove its selected vulnerable version or clear its advisory range. It also does not establish safety of a remotely managed daemon. In particular, the registry advisory concerns `manifests.Get()` body-vs-requested-digest verification, not merely the `Docker-Content-Digest` response header.
+
+The raw module graph additionally retains these requirements:
+
+- Compose5.3.1 -> Docker28.5.2; Buildx0.35.0 -> Docker28.5.2 and Distribution2.8.3.
+- Podman image5.37.0 -> Docker28.3.3 and Distribution2.8.3.
+- Prometheus0.311.3 -> Docker28.5.2.
+- Kompose1.37.0 -> Docker27.1.2. Its fsouza client is legitimately upgraded to1.13.3 (split SDK), but its upstream indirect requirement still exists.
+
+Upstream alternatives were actually inspected, not assumed:
+
+1. Buildx0.38.1 and master `a9bcf45d2a7c1a80417c3858618a34c4396fe02d` still import the old monolith's `pkg/namesgenerator`. Merely upgrading Buildx does not remove it.
+2. **Compose5.5.1 removes the Buildx Go dependency** and needs only Go1.26.3. A trial upgrade exposed a real compatibility blocker: it requires containerd2.3.4, which raises Kubernetes modules to0.36.3. Both Kompose1.38.0 and current main `59af0f0e641e3a4e4b4c7696dc65acf5c8c8df77` still import removed `k8s.io/api/autoscaling/v2beta2`. Current kubectl0.35 also imports removed `k8s.io/api/scheduling/v1alpha1`. `go mod tidy` fails with these missing packages. The trial was reverted rather than forcing a lower containerd version with `replace`, dropping Kompose, or shipping a non-compiling graph. A legitimate route is an upstream Kompose source migration to `autoscaling/v2`, a coordinated Kubernetes/kubectl upgrade, and then Compose5.5.1 or newer. Latest Compose5.6.1 additionally requires Go1.26.8.
+3. Podman image5.42.0 uses the split Docker SDK, but **still imports Distribution2.8.3 error-code APIs**. Updating that module alone cannot clear alert24. A real removal route is to migrate Vessel's registry digest/reference helper to the already-used ORAS OCI client and `distribution/reference`, with regression coverage for Basic/Bearer auth, Docker Hub anonymous fallback, HEAD/GET fallback, digest integrity, TLS/insecure registry settings, and any relied-upon containers-auth/registries.conf behavior. This must not be confused with dropping Podman engine support: Podman endpoint management uses the Docker-compatible API independently. No incomplete helper replacement was shipped.
+4. Latest Docker CLI29.9.2 and master `6d274590f2f63276a54da8adf475a455d21c1fdd` still contain Distribution v2 registry-client imports; latest Distribution v2 is2.8.3. The maintained `github.com/distribution/distribution/v3 v3.1.2` no longer provides the old `registry/client` package. Aliasing the v2 module path to v3 is not an API migration or a valid fix. All live imports and upstream requirements must be migrated or removed instead.
+5. Prometheus0.315.1 no longer requires the monolith, but also raises Kubernetes modules (to0.37 in the trial). Kompose's same removed-HPA-API incompatibility must be resolved first. The trial was reverted.
+
+## Fresh verification
+
+All commands ran locally; no GitHub/Sonar state, image publication, remote branches, or host Swarm state was modified.
+
+- `GOTOOLCHAIN=local go test -p 4 -count=1 -timeout 90s ./...`: **PASS, 210 packages** on Go1.26.6/darwin-arm64.
+- `go test -race -p 3 -count=1 -timeout 120s` on all23 implementation-affected packages: **PASS**. The first run exposed two existing test-only races polling mutable fake-deployer fields. Those tests now join deployment completion before reading the fields; the rerun passes without suppressing the detector.
+- Protocol tests pin negotiated API1.40,1.41 and1.54. **Podman's advertised API1.41 is not rejected.** Split SDK0.5.1 has a hard negotiation floor1.40 and no public minimum-version override. Compatibility with pre-1.40 endpoints is **not proven** and must not be silently claimed. The older factory negotiated without this new floor.
+- Detached Compose regression tests prove cancelled caller contexts do not cancel Build/Up/Down and caller values survive. Constructor errors are propagated. Compose's default bind `create_host_path=true` now serializes as omitted/default (`bind: {}`), not a behavior change.
+- Real isolated Docker engine29.8.2, negotiated API1.55: **PASS** for registry pull, Compose validate/deploy, network and named-volume attachment, one-off run, and full teardown with already-cancelled caller contexts. `TestDependencyRuntimeSmoke` requires `VESSEL_DEPENDENCY_DOCKER_HOST` explicitly; it does not target the developer's default Docker context.
+- The existing Swarm integration tests `TestSwarmDeployWithRemoveOrphans` and `TestSwarmDeployWithEnvVars`: **PASS** on that disposable dind. Only that engine was initialized as a Swarm and torn down.
+- Real Podman service and broader Kubernetes/platform testing are delegated to the parent's isolated platform harness; protocol mocks are not described as real Podman coverage.
+- Linux ARM64 CGO-disabled backend build: **PASS**. Parent packaging owns linker-metadata query changes for the split SDK/Compose module paths.
+- `go mod tidy`, raw comparison of all26 supplied advisory ranges against selected modules, and `git diff --check`: completed. Range comparison reports **21 fixed/removed; five unresolved**, as above.
+
+## Additional current vulnerability scan findings
+
+`govulncheck v1.9.0 -format=json ./...` completed; JSON-mode exit0 is **not** a clean-scan verdict. Its fresh database reports16 advisory IDs with symbol-level traces:14 in Go1.26.6's standard library and2 old-monolith advisories (GO-2026-4883 and GO-2026-4887). Monolith traces pass through `namesgenerator.init`, not a demonstrated call to vulnerable daemon plugin handlers; the selected vulnerable module is nevertheless still present and not counted as remediated. Module-level findings also include the unmaintained `x/crypto/openpgp` advisory; no clean bill of health is asserted from absence of a symbol trace.
+
+The scan also found and this change patches `x/net` to0.60.0, `x/crypto` to0.57.0 and `x/mod` to0.41.0 (including SSH DoS and sumdb integrity fixes), beyond the supplied26 alerts.
+
+The remaining standard-library fixes require a real Go security patch update: most are fixed in1.26.9; **GO-2026-6809 (`crypto/x509`, compromised intermediate distrust) requires1.26.10**. Approval/coordination was requested from the parent before changing the Go baseline or build scope. This backend change retains the requested1.26.6 declaration pending that decision, so the scan must not be presented as passing.

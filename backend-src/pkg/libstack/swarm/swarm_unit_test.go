@@ -10,9 +10,9 @@ import (
 	"github.com/docker/cli/cli/compose/convert"
 	composetypes "github.com/docker/cli/cli/compose/types"
 	configtypes "github.com/docker/cli/cli/config/types"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/client"
-	dockerregistry "github.com/docker/docker/registry"
+
+	"github.com/moby/moby/api/types/swarm"
+	"github.com/moby/moby/client"
 	"github.com/portainer/portainer/api/filesystem"
 	"github.com/portainer/portainer/pkg/libstack"
 	"github.com/stretchr/testify/require"
@@ -85,7 +85,7 @@ func Test_cliOptions(t *testing.T) {
 
 	registries := []configtypes.AuthConfig{
 		{ServerAddress: "registry.example.com", Username: "user", Password: "pass"},
-		{ServerAddress: dockerregistry.IndexServer, Username: "other"},
+		{ServerAddress: libstack.DockerHubAuthKey, Username: "other"},
 	}
 
 	tests := []struct {
@@ -194,7 +194,7 @@ func Test_encodeRegistryAuth(t *testing.T) {
 	t.Parallel()
 
 	dockerIORegistry := configtypes.AuthConfig{
-		ServerAddress: dockerregistry.IndexServer,
+		ServerAddress: libstack.DockerHubAuthKey,
 		Username:      "user",
 		Password:      "pass",
 	}
@@ -267,12 +267,12 @@ func Test_normalizeRegistryServerAddresses(t *testing.T) {
 		{
 			name:             "empty ServerAddress is normalized to IndexServer",
 			registries:       []configtypes.AuthConfig{{ServerAddress: "", Username: "user"}},
-			expectedReturned: []configtypes.AuthConfig{{ServerAddress: dockerregistry.IndexServer, Username: "user"}},
+			expectedReturned: []configtypes.AuthConfig{{ServerAddress: libstack.DockerHubAuthKey, Username: "user"}},
 		},
 		{
 			name:             "docker.io default namespace is normalized to IndexServer",
-			registries:       []configtypes.AuthConfig{{ServerAddress: dockerregistry.DefaultNamespace, Username: "user"}},
-			expectedReturned: []configtypes.AuthConfig{{ServerAddress: dockerregistry.IndexServer, Username: "user"}},
+			registries:       []configtypes.AuthConfig{{ServerAddress: libstack.DockerHubRegistryDomain, Username: "user"}},
+			expectedReturned: []configtypes.AuthConfig{{ServerAddress: libstack.DockerHubAuthKey, Username: "user"}},
 		},
 		{
 			name:             "custom registry address is left untouched",
@@ -281,19 +281,19 @@ func Test_normalizeRegistryServerAddresses(t *testing.T) {
 		},
 		{
 			name:             "IndexServer address is left untouched",
-			registries:       []configtypes.AuthConfig{{ServerAddress: dockerregistry.IndexServer, Username: "user"}},
-			expectedReturned: []configtypes.AuthConfig{{ServerAddress: dockerregistry.IndexServer, Username: "user"}},
+			registries:       []configtypes.AuthConfig{{ServerAddress: libstack.DockerHubAuthKey, Username: "user"}},
+			expectedReturned: []configtypes.AuthConfig{{ServerAddress: libstack.DockerHubAuthKey, Username: "user"}},
 		},
 		{
 			name: "mix of registries normalizes only the matching ones",
 			registries: []configtypes.AuthConfig{
 				{ServerAddress: "", Username: "empty"},
-				{ServerAddress: dockerregistry.DefaultNamespace, Username: "default-namespace"},
+				{ServerAddress: libstack.DockerHubRegistryDomain, Username: "default-namespace"},
 				{ServerAddress: "registry.example.com", Username: "custom"},
 			},
 			expectedReturned: []configtypes.AuthConfig{
-				{ServerAddress: dockerregistry.IndexServer, Username: "empty"},
-				{ServerAddress: dockerregistry.IndexServer, Username: "default-namespace"},
+				{ServerAddress: libstack.DockerHubAuthKey, Username: "empty"},
+				{ServerAddress: libstack.DockerHubAuthKey, Username: "default-namespace"},
 				{ServerAddress: "registry.example.com", Username: "custom"},
 			},
 		},
@@ -1081,45 +1081,39 @@ func Test_Validate(t *testing.T) {
 
 type mockAPIClient struct {
 	client.APIClient
-	serviceListFn   func(context.Context, swarm.ServiceListOptions) ([]swarm.Service, error)
-	taskListFn      func(context.Context, swarm.TaskListOptions) ([]swarm.Task, error)
+	serviceListFn   func(context.Context, client.ServiceListOptions) ([]swarm.Service, error)
+	taskListFn      func(context.Context, client.TaskListOptions) ([]swarm.Task, error)
 	serviceUpdateFn func(
 		context.Context,
 		string,
 		swarm.Version,
 		swarm.ServiceSpec,
-		swarm.ServiceUpdateOptions,
+		client.ServiceUpdateOptions,
 	) (swarm.ServiceUpdateResponse, error)
 }
 
-func (m *mockAPIClient) ServiceList(ctx context.Context, opts swarm.ServiceListOptions) ([]swarm.Service, error) {
+func (m *mockAPIClient) ServiceList(ctx context.Context, opts client.ServiceListOptions) (client.ServiceListResult, error) {
 	if m.serviceListFn == nil {
-		return nil, nil
+		return client.ServiceListResult{}, nil
 	}
-
-	return m.serviceListFn(ctx, opts)
+	items, err := m.serviceListFn(ctx, opts)
+	return client.ServiceListResult{Items: items}, err
 }
 
-func (m *mockAPIClient) TaskList(ctx context.Context, opts swarm.TaskListOptions) ([]swarm.Task, error) {
+func (m *mockAPIClient) TaskList(ctx context.Context, opts client.TaskListOptions) (client.TaskListResult, error) {
 	if m.taskListFn == nil {
-		return nil, nil
+		return client.TaskListResult{}, nil
 	}
-
-	return m.taskListFn(ctx, opts)
+	items, err := m.taskListFn(ctx, opts)
+	return client.TaskListResult{Items: items}, err
 }
 
-func (m *mockAPIClient) ServiceUpdate(
-	ctx context.Context,
-	id string,
-	ver swarm.Version,
-	spec swarm.ServiceSpec,
-	opts swarm.ServiceUpdateOptions,
-) (swarm.ServiceUpdateResponse, error) {
+func (m *mockAPIClient) ServiceUpdate(ctx context.Context, id string, opts client.ServiceUpdateOptions) (client.ServiceUpdateResult, error) {
 	if m.serviceUpdateFn == nil {
-		return swarm.ServiceUpdateResponse{}, nil
+		return client.ServiceUpdateResult{}, nil
 	}
-
-	return m.serviceUpdateFn(ctx, id, ver, spec, opts)
+	r, err := m.serviceUpdateFn(ctx, id, opts.Version, opts.Spec, opts)
+	return client.ServiceUpdateResult{Warnings: r.Warnings}, err
 }
 
 func Test_deployServices_forceRecreate(t *testing.T) {
@@ -1154,7 +1148,7 @@ func Test_deployServices_forceRecreate(t *testing.T) {
 
 			var capturedForceUpdate uint64
 			mock := &mockAPIClient{
-				serviceListFn: func(_ context.Context, _ swarm.ServiceListOptions) ([]swarm.Service, error) {
+				serviceListFn: func(_ context.Context, _ client.ServiceListOptions) ([]swarm.Service, error) {
 					return []swarm.Service{existingSvc}, nil
 				},
 				serviceUpdateFn: func(
@@ -1162,7 +1156,7 @@ func Test_deployServices_forceRecreate(t *testing.T) {
 					_ string,
 					_ swarm.Version,
 					spec swarm.ServiceSpec,
-					_ swarm.ServiceUpdateOptions,
+					_ client.ServiceUpdateOptions,
 				) (swarm.ServiceUpdateResponse, error) {
 					capturedForceUpdate = spec.TaskTemplate.ForceUpdate
 					return swarm.ServiceUpdateResponse{}, nil
@@ -1227,7 +1221,7 @@ func Test_getServiceStatus(t *testing.T) {
 			t.Parallel()
 
 			mock := &mockAPIClient{
-				taskListFn: func(context.Context, swarm.TaskListOptions) ([]swarm.Task, error) {
+				taskListFn: func(context.Context, client.TaskListOptions) ([]swarm.Task, error) {
 					return []swarm.Task{tt.task}, nil
 				},
 			}

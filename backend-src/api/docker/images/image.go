@@ -7,8 +7,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/image"
+	"github.com/moby/moby/api/types/image"
 	"github.com/opencontainers/go-digest"
 	"github.com/pkg/errors"
 	"go.podman.io/image/v5/docker/reference"
@@ -172,7 +171,7 @@ func (i *Image) hubLink() (string, error) {
 }
 
 // IsLocalImage checks if the image has been built locally
-func IsLocalImage(image types.ImageInspect) bool {
+func IsLocalImage(image image.InspectResponse) bool {
 	return len(image.RepoDigests) == 0
 }
 

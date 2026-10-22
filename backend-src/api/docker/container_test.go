@@ -13,8 +13,8 @@ import (
 	portainer "github.com/portainer/portainer/api"
 	dockerclient "github.com/portainer/portainer/api/docker/client"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/network"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,11 +23,11 @@ func TestApplyVersionConstraint(t *testing.T) {
 	initialNet := network.NetworkingConfig{
 		EndpointsConfig: map[string]*network.EndpointSettings{
 			"key1": {
-				MacAddress: "mac1",
+				MacAddress: network.HardwareAddr{0x02, 0x42, 0xac, 0x11, 0, 1},
 				EndpointID: "endpointID1",
 			},
 			"key2": {
-				MacAddress: "mac2",
+				MacAddress: network.HardwareAddr{0x02, 0x42, 0xac, 0x11, 0, 2},
 				EndpointID: "endpointID2",
 			},
 		},
@@ -229,10 +229,8 @@ func writeError(w http.ResponseWriter, status int, message string) {
 
 func testInspectResponse() container.InspectResponse {
 	return container.InspectResponse{
-		ContainerJSONBase: &container.ContainerJSONBase{
-			ID:   originalContainerID,
-			Name: originalContainerFullName,
-		},
+		ID:     originalContainerID,
+		Name:   originalContainerFullName,
 		Config: &container.Config{Image: "alpine:latest"},
 		NetworkSettings: &container.NetworkSettings{
 			Networks: map[string]*network.EndpointSettings{

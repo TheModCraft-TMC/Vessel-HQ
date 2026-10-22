@@ -5,13 +5,15 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/moby/moby/client"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/http/middlewares"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 	"github.com/portainer/portainer/pkg/libhttp/request"
 	"github.com/portainer/portainer/pkg/libhttp/response"
 
-	containertypes "github.com/docker/docker/api/types/container"
+	containertypes "github.com/moby/moby/api/types/container"
 )
 
 type containerGpusResponse struct {
@@ -51,7 +53,8 @@ func (handler *Handler) containerGpusInspect(w http.ResponseWriter, r *http.Requ
 		return httperror.InternalServerError("Unable to connect to the Docker daemon", err)
 	}
 
-	container, err := cli.ContainerInspect(r.Context(), containerId)
+	containerResult, err := cli.ContainerInspect(r.Context(), containerId, client.ContainerInspectOptions{})
+	container := containerResult.Container
 	if err != nil {
 		return httperror.NotFound("Unable to find the container", err)
 	}

@@ -505,11 +505,17 @@ func Test_updateSwarmStack_Prune(t *testing.T) {
 	require.NotNil(t, stored.Option, "stack.Option should not be nil")
 	assert.True(t, stored.Option.Prune, "stack.Option.Prune should be persisted as true")
 
-	go stackDeploy(setup.store, setup.stack.ID, deploymentConfig, postDeploy)
-
-	require.Eventually(t, func() bool {
-		return deployer.DeploySwarmCallCount == 1
-	}, 5*time.Second, 10*time.Millisecond, "DeploySwarmStack should be called exactly once")
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		stackDeploy(setup.store, setup.stack.ID, deploymentConfig, postDeploy)
+	}()
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("DeploySwarmStack did not finish")
+	}
+	assert.Equal(t, 1, deployer.DeploySwarmCallCount, "DeploySwarmStack should be called exactly once")
 	assert.True(t, deployer.LastPrune, "deployer should be invoked with prune=true")
 }
 
@@ -548,10 +554,16 @@ func Test_updateComposeStack_Prune(t *testing.T) {
 	require.NotNil(t, stored.Option, "stack.Option should not be nil")
 	assert.True(t, stored.Option.Prune, "stack.Option.Prune should be persisted as true")
 
-	go stackDeploy(setup.store, setup.stack.ID, deploymentConfig, postDeploy)
-
-	require.Eventually(t, func() bool {
-		return deployer.DeployComposeCallCount == 1
-	}, 5*time.Second, 10*time.Millisecond, "DeployComposeStack should be called exactly once")
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		stackDeploy(setup.store, setup.stack.ID, deploymentConfig, postDeploy)
+	}()
+	select {
+	case <-done:
+	case <-time.After(5 * time.Second):
+		t.Fatal("DeployComposeStack did not finish")
+	}
+	assert.Equal(t, 1, deployer.DeployComposeCallCount, "DeployComposeStack should be called exactly once")
 	assert.True(t, deployer.LastPrune, "deployer should be invoked with prune=true")
 }

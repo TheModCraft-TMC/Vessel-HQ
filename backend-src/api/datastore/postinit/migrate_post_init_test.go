@@ -10,8 +10,8 @@ import (
 	"github.com/portainer/portainer/api/datastore"
 	"github.com/portainer/portainer/api/pendingactions/actions"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/client"
 	"github.com/segmentio/encoding/json"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -31,13 +31,11 @@ func TestMigrateGPUs(t *testing.T) {
 		}
 
 		container := container.InspectResponse{
-			ContainerJSONBase: &container.ContainerJSONBase{
-				ID: "container1",
-				HostConfig: &container.HostConfig{
-					Resources: container.Resources{
-						DeviceRequests: []container.DeviceRequest{
-							{Driver: "nvidia"},
-						},
+			ID: "container1",
+			HostConfig: &container.HostConfig{
+				Resources: container.Resources{
+					DeviceRequests: []container.DeviceRequest{
+						{Driver: "nvidia"},
 					},
 				},
 			},

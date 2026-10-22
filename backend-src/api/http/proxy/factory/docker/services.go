@@ -12,8 +12,7 @@ import (
 	"github.com/portainer/portainer/api/internal/authorization"
 	"github.com/portainer/portainer/api/logs"
 
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/segmentio/encoding/json"
 )
 
@@ -106,7 +105,8 @@ func anyClusterNodeHasBindMountVolume(ctx context.Context, getClient func(nodeNa
 	}
 	defer logs.CloseAndLogErr(cli)
 
-	nodes, err := cli.NodeList(ctx, swarm.NodeListOptions{})
+	nodesResult, err := cli.NodeList(ctx, client.NodeListOptions{})
+	nodes := nodesResult.Items
 	if err != nil {
 		return false, err
 	}
@@ -139,7 +139,8 @@ func anyClusterNodeHasBindMountVolume(ctx context.Context, getClient func(nodeNa
 }
 
 func getInheritedResourceControlFromServiceLabels(dockerClient *client.Client, endpointID portainer.EndpointID, serviceID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	service, _, err := dockerClient.ServiceInspectWithRaw(context.Background(), serviceID, swarm.ServiceInspectOptions{})
+	serviceResult, err := dockerClient.ServiceInspect(context.Background(), serviceID, client.ServiceInspectOptions{})
+	service := serviceResult.Service
 	if err != nil {
 		return nil, err
 	}

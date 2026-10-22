@@ -6,14 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/docker/docker/api/types"
-	dockercontainer "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/api/types/system"
-	"github.com/docker/docker/api/types/volume"
-	"github.com/docker/docker/client"
+	dockercontainer "github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/image"
+	"github.com/moby/moby/api/types/network"
+	"github.com/moby/moby/api/types/swarm"
+	"github.com/moby/moby/api/types/system"
+	"github.com/moby/moby/api/types/volume"
+	"github.com/moby/moby/client"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/segmentio/encoding/json"
 	"github.com/stretchr/testify/require"
@@ -128,7 +127,7 @@ func newDockerMockServer(t *testing.T, swarmEnabled bool, nodes []swarm.Node) *h
 			_ = json.NewEncoder(w).Encode([]network.Summary{})
 
 		case strings.HasSuffix(path, "/version"):
-			_ = json.NewEncoder(w).Encode(types.Version{
+			_ = json.NewEncoder(w).Encode(system.VersionResponse{
 				Version:    "20.10.0",
 				APIVersion: "1.41",
 			})

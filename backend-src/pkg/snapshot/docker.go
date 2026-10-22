@@ -15,19 +15,17 @@ import (
 	edgeutils "github.com/portainer/portainer/pkg/edge"
 	networkingutils "github.com/portainer/portainer/pkg/networking"
 
-	"github.com/docker/docker/api/types"
-	dockercontainer "github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/volume"
-	"github.com/docker/docker/client"
-	"github.com/docker/docker/pkg/stdcopy"
+	"github.com/moby/moby/api/pkg/stdcopy"
+	dockercontainer "github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/system"
+	"github.com/moby/moby/api/types/volume"
+	"github.com/moby/moby/client"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/encoding/json"
 )
 
 func CreateDockerSnapshot(cli *client.Client) (*portainer.DockerSnapshot, error) {
-	if _, err := cli.Ping(context.Background()); err != nil {
+	if _, err := cli.Ping(context.Background(), client.PingOptions{}); err != nil {
 		return nil, err
 	}
 
@@ -75,7 +73,8 @@ func CreateDockerSnapshot(cli *client.Client) (*portainer.DockerSnapshot, error)
 }
 
 func dockerSnapshotInfo(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
-	info, err := cli.Info(context.Background())
+	infoResult, err := cli.Info(context.Background(), client.InfoOptions{})
+	info := infoResult.Info
 	if err != nil {
 		return err
 	}
@@ -90,7 +89,8 @@ func dockerSnapshotInfo(snapshot *portainer.DockerSnapshot, cli *client.Client) 
 }
 
 func dockerSnapshotNodes(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
-	nodes, err := cli.NodeList(context.Background(), types.NodeListOptions{})
+	nodesResult, err := cli.NodeList(context.Background(), client.NodeListOptions{})
+	nodes := nodesResult.Items
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,8 @@ func dockerSnapshotNodes(snapshot *portainer.DockerSnapshot, cli *client.Client)
 func dockerSnapshotSwarmServices(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
 	stacks := make(map[string]struct{})
 
-	services, err := cli.ServiceList(context.Background(), types.ServiceListOptions{})
+	servicesResult, err := cli.ServiceList(context.Background(), client.ServiceListOptions{})
+	services := servicesResult.Items
 	if err != nil {
 		return err
 	}
@@ -133,7 +134,8 @@ func dockerSnapshotSwarmServices(snapshot *portainer.DockerSnapshot, cli *client
 
 func dockerSnapshotContainers(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
 	ctx := context.Background()
-	containers, err := cli.ContainerList(ctx, dockercontainer.ListOptions{All: true})
+	containersResult, err := cli.ContainerList(ctx, client.ContainerListOptions{All: true})
+	containers := containersResult.Items
 	if err != nil {
 		return err
 	}
@@ -155,7 +157,8 @@ func dockerSnapshotContainers(snapshot *portainer.DockerSnapshot, cli *client.Cl
 		}
 
 		// Snapshot GPUs and Env
-		response, err := cli.ContainerInspect(context.Background(), container.ID)
+		responseResult, err := cli.ContainerInspect(context.Background(), container.ID, client.ContainerInspectOptions{})
+		response := responseResult.Container
 		if err != nil && !snapshot.Swarm {
 			return err
 		} else if err != nil {
@@ -222,14 +225,15 @@ func dockerSnapshotContainers(snapshot *portainer.DockerSnapshot, cli *client.Cl
 	snapshot.StackCount += len(stacks)
 
 	for _, container := range containers {
-		snapshot.SnapshotRaw.Containers = append(snapshot.SnapshotRaw.Containers, portainer.DockerContainerSnapshot{Container: container, Env: containerEnvs[container.ID]})
+		snapshot.SnapshotRaw.Containers = append(snapshot.SnapshotRaw.Containers, portainer.DockerContainerSnapshot{Summary: container, Env: containerEnvs[container.ID]})
 	}
 
 	return nil
 }
 
 func dockerSnapshotImages(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
-	images, err := cli.ImageList(context.Background(), image.ListOptions{})
+	imagesResult, err := cli.ImageList(context.Background(), client.ImageListOptions{})
+	images := imagesResult.Items
 	if err != nil {
 		return err
 	}
@@ -241,19 +245,20 @@ func dockerSnapshotImages(snapshot *portainer.DockerSnapshot, cli *client.Client
 }
 
 func dockerSnapshotVolumes(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
-	volumes, err := cli.VolumeList(context.Background(), volume.ListOptions{})
+	volumes, err := cli.VolumeList(context.Background(), client.VolumeListOptions{})
 	if err != nil {
 		return err
 	}
 
-	snapshot.VolumeCount = len(volumes.Volumes)
-	snapshot.SnapshotRaw.Volumes = volumes
+	snapshot.VolumeCount = len(volumes.Items)
+	snapshot.SnapshotRaw.Volumes = volume.ListResponse{Volumes: volumes.Items, Warnings: volumes.Warnings}
 
 	return nil
 }
 
 func dockerSnapshotNetworks(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
-	networks, err := cli.NetworkList(context.Background(), network.ListOptions{})
+	networksResult, err := cli.NetworkList(context.Background(), client.NetworkListOptions{})
+	networks := networksResult.Items
 	if err != nil {
 		return err
 	}
@@ -264,13 +269,33 @@ func dockerSnapshotNetworks(snapshot *portainer.DockerSnapshot, cli *client.Clie
 }
 
 func dockerSnapshotVersion(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
-	version, err := cli.ServerVersion(context.Background())
+	version, err := cli.ServerVersion(context.Background(), client.ServerVersionOptions{})
 	if err != nil {
 		return err
 	}
 
-	snapshot.SnapshotRaw.Version = version
-	snapshot.IsPodman = isPodman(version)
+	snapshot.SnapshotRaw.Version = portainer.DockerVersion{VersionResponse: system.VersionResponse{
+		Platform:      system.PlatformInfo{Name: version.Platform.Name},
+		Version:       version.Version,
+		APIVersion:    version.APIVersion,
+		MinAPIVersion: version.MinAPIVersion,
+		Os:            version.Os,
+		Arch:          version.Arch,
+		Experimental:  version.Experimental,
+		Components:    version.Components,
+	}}
+	// The split SDK exposes these deprecated fields only in Engine component
+	// details. Preserve the snapshot API/datastore fields for existing clients.
+	for _, c := range version.Components {
+		if c.Name == "Engine" {
+			v := &snapshot.SnapshotRaw.Version
+			v.GitCommit = c.Details["GitCommit"]
+			v.GoVersion = c.Details["GoVersion"]
+			v.KernelVersion = c.Details["KernelVersion"]
+			v.BuildTime = c.Details["BuildTime"]
+		}
+	}
+	snapshot.IsPodman = isPodman(snapshot.SnapshotRaw.Version.VersionResponse)
 
 	return nil
 }
@@ -311,7 +336,7 @@ func dockerSnapshotContainerErrorLogs(snapshot *portainer.DockerSnapshot, cli *c
 		return nil
 	}
 
-	rd, err := cli.ContainerLogs(context.Background(), containerId, dockercontainer.LogsOptions{
+	rd, err := cli.ContainerLogs(context.Background(), containerId, client.ContainerLogsOptions{
 		ShowStdout: false,
 		ShowStderr: true,
 		Tail:       "5",
@@ -340,7 +365,7 @@ func dockerSnapshotContainerErrorLogs(snapshot *portainer.DockerSnapshot, cli *c
 
 // isPodman checks if the version is for Podman by checking if any of the components contain "podman".
 // If it's podman, a component name should be "Podman Engine"
-func isPodman(version types.Version) bool {
+func isPodman(version system.VersionResponse) bool {
 	for _, component := range version.Components {
 		if strings.Contains(strings.ToLower(component.Name), "podman") {
 			return true

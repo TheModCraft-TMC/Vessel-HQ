@@ -17,7 +17,7 @@ import (
 	"github.com/portainer/portainer/api/internal/authorization"
 	"github.com/portainer/portainer/api/logs"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/segmentio/encoding/json"
 )
 
@@ -116,7 +116,8 @@ func CheckContainerBindMountRestrictions(ctx context.Context, binds, volumesFrom
 }
 
 func getInheritedResourceControlFromContainerLabels(dockerClient *client.Client, endpointID portainer.EndpointID, containerID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	container, err := dockerClient.ContainerInspect(context.Background(), containerID)
+	containerResult, err := dockerClient.ContainerInspect(context.Background(), containerID, client.ContainerInspectOptions{})
+	container := containerResult.Container
 	if err != nil {
 		return nil, err
 	}

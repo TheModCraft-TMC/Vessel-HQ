@@ -12,9 +12,16 @@ import (
 	"github.com/docker/cli/cli/command"
 	configtypes "github.com/docker/cli/cli/config/types"
 	"github.com/docker/cli/cli/flags"
-	"github.com/docker/docker/registry"
+
 	"github.com/docker/go-connections/tlsconfig"
 	"github.com/rs/zerolog/log"
+)
+
+// Docker Hub uses its historical v1 URL as the credential-store key, even for
+// v2 API requests. Keep this wire convention independent of the daemon module.
+const (
+	DockerHubRegistryDomain = "docker.io"
+	DockerHubAuthKey        = "https://index.docker.io/v1/"
 )
 
 // DockerCliOptions holds the settings required to initialise a DockerCli.
@@ -74,8 +81,8 @@ func WithCli(
 	defer logs.CloseAndLogErr(cli.Client())
 
 	for _, r := range options.Registries {
-		if r.ServerAddress == "" || r.ServerAddress == registry.DefaultNamespace {
-			r.ServerAddress = registry.IndexServer
+		if r.ServerAddress == "" || r.ServerAddress == DockerHubRegistryDomain {
+			r.ServerAddress = DockerHubAuthKey
 		}
 
 		cli.ConfigFile().AuthConfigs[r.ServerAddress] = r

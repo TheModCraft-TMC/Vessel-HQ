@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/moby/moby/client"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/internal/registryutils"
 	"github.com/portainer/portainer/api/logs"
@@ -13,9 +15,6 @@ import (
 	"github.com/portainer/portainer/pkg/libhttp/request"
 	"github.com/portainer/portainer/pkg/libhttp/response"
 	"github.com/rs/zerolog/log"
-
-	dockertypes "github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/image"
 )
 
 // @summary Execute a webhook
@@ -75,7 +74,8 @@ func (handler *Handler) executeServiceWebhook(
 	}
 	defer logs.CloseAndLogErr(dockerClient)
 
-	service, _, err := dockerClient.ServiceInspectWithRaw(context.Background(), resourceID, dockertypes.ServiceInspectOptions{InsertDefaults: true})
+	serviceResult, err := dockerClient.ServiceInspect(context.Background(), resourceID, client.ServiceInspectOptions{InsertDefaults: true})
+	service := serviceResult.Service
 	if err != nil {
 		return httperror.InternalServerError("Error looking up service", err)
 	}
@@ -94,7 +94,7 @@ func (handler *Handler) executeServiceWebhook(
 		service.Spec.TaskTemplate.ContainerSpec.Image = imageName[:tagIndex] + ":" + imageTag
 	}
 
-	serviceUpdateOptions := dockertypes.ServiceUpdateOptions{
+	serviceUpdateOptions := client.ServiceUpdateOptions{
 		QueryRegistry: true,
 	}
 
@@ -117,14 +117,16 @@ func (handler *Handler) executeServiceWebhook(
 	}
 
 	if imageTag != "" {
-		rc, err := dockerClient.ImagePull(context.Background(), service.Spec.TaskTemplate.ContainerSpec.Image, image.PullOptions{RegistryAuth: serviceUpdateOptions.EncodedRegistryAuth})
+		rc, err := dockerClient.ImagePull(context.Background(), service.Spec.TaskTemplate.ContainerSpec.Image, client.ImagePullOptions{RegistryAuth: serviceUpdateOptions.EncodedRegistryAuth})
 		if err != nil {
 			return httperror.NotFound("Error pulling image with the specified tag", err)
 		}
 		defer logs.CloseAndLogErr(rc)
 	}
 
-	if _, err := dockerClient.ServiceUpdate(context.Background(), resourceID, service.Version, service.Spec, serviceUpdateOptions); err != nil {
+	serviceUpdateOptions.Version = service.Version
+	serviceUpdateOptions.Spec = service.Spec
+	if _, err := dockerClient.ServiceUpdate(context.Background(), resourceID, serviceUpdateOptions); err != nil {
 		return httperror.InternalServerError("Error updating service", err)
 	}
 

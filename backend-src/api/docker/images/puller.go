@@ -7,8 +7,7 @@ import (
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/logs"
 
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/rs/zerolog/log"
 )
 
@@ -37,7 +36,7 @@ func (puller *Puller) Pull(ctx context.Context, img Image) error {
 			Msg("failed to get an encoded registry auth via image, try to pull image without registry auth")
 	}
 
-	out, err := puller.client.ImagePull(ctx, img.FullName(), image.PullOptions{
+	out, err := puller.client.ImagePull(ctx, img.FullName(), client.ImagePullOptions{
 		RegistryAuth: registryAuth,
 	})
 	if err != nil {

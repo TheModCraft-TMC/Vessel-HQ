@@ -13,7 +13,7 @@ import (
 	"github.com/portainer/portainer/api/logs"
 	"github.com/portainer/portainer/api/stacks/stackutils"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 )
 
 type SwarmStackDeploymentConfig struct {

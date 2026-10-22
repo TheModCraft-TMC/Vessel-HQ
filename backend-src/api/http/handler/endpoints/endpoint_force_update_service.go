@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/moby/moby/client"
+
 	portaineree "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/docker/consts"
 	"github.com/portainer/portainer/api/docker/images"
@@ -13,10 +15,6 @@ import (
 	"github.com/portainer/portainer/pkg/libhttp/request"
 	"github.com/portainer/portainer/pkg/libhttp/response"
 	"github.com/rs/zerolog/log"
-
-	dockertypes "github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/filters"
 )
 
 type forceUpdateServicePayload struct {
@@ -82,7 +80,8 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		}
 	}()
 
-	service, _, err := dockerClient.ServiceInspectWithRaw(context.Background(), payload.ServiceID, dockertypes.ServiceInspectOptions{InsertDefaults: true})
+	serviceResult, err := dockerClient.ServiceInspect(context.Background(), payload.ServiceID, client.ServiceInspectOptions{InsertDefaults: true})
+	service := serviceResult.Service
 	if err != nil {
 		return httperror.InternalServerError("Error looking up service", err)
 	}
@@ -93,7 +92,7 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		service.Spec.TaskTemplate.ContainerSpec.Image = strings.Split(service.Spec.TaskTemplate.ContainerSpec.Image, "@sha")[0]
 	}
 
-	newService, err := dockerClient.ServiceUpdate(context.Background(), payload.ServiceID, service.Version, service.Spec, dockertypes.ServiceUpdateOptions{QueryRegistry: true})
+	newService, err := dockerClient.ServiceUpdate(context.Background(), payload.ServiceID, client.ServiceUpdateOptions{Version: service.Version, Spec: service.Spec, QueryRegistry: true})
 	if err != nil {
 		return httperror.InternalServerError("Error force update service", err)
 	}
@@ -108,10 +107,11 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		images.EvictImageStatus(service.Spec.Labels[consts.SwarmStackNameLabel])
 
 		// ignore errors from this cleanup function, log them instead
-		containers, err := dockerClient.ContainerList(context.TODO(), container.ListOptions{
+		containersResult, err := dockerClient.ContainerList(context.TODO(), client.ContainerListOptions{
 			All:     true,
-			Filters: filters.NewArgs(filters.Arg("label", consts.SwarmServiceIDLabel+"="+payload.ServiceID)),
+			Filters: make(client.Filters).Add("label", consts.SwarmServiceIDLabel+"="+payload.ServiceID),
 		})
+		containers := containersResult.Items
 		if err != nil {
 			log.Warn().Err(err).Str("Environment", endpoint.Name).Msg("Error listing containers")
 		}
