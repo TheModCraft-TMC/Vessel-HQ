@@ -34,7 +34,7 @@ export function ResourcesTable() {
   const environmentId = useEnvironmentId();
   const params = useRouteParams();
   const { name, namespace, revision } = params;
-  const revisionNumber = revision ? parseInt(revision, 10) : undefined;
+  const revisionNumber = revision ? Number.parseInt(revision, 10) : undefined;
 
   const tableState = useTableState(settingsStore, storageKey);
   const helmReleaseQuery = useHelmRelease(environmentId, name, namespace, {
@@ -55,7 +55,7 @@ export function ResourcesTable() {
         settingsManager={tableState}
         emptyContentLabel="No resources found"
         title={
-          <TextTip inline color="blue" className="!text-xs">
+          <TextTip inline color="blue" className="text-xs!">
             Only resources currently in the cluster will be displayed.
           </TextTip>
         }

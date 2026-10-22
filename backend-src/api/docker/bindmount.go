@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	cerrdefs "github.com/containerd/errdefs"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 )
 
 var windowsAbsolutePathPrefix = regexp.MustCompile(`^([A-Za-z]:[\\/]|\\\\)`)
@@ -52,7 +52,7 @@ func IsBindPath(bind string) bool {
 }
 
 func InspectVolumeIsBindMount(ctx context.Context, cli *client.Client, volumeName string) (bool, error) {
-	vol, err := cli.VolumeInspect(ctx, volumeName)
+	vol, err := cli.VolumeInspect(ctx, volumeName, client.VolumeInspectOptions{})
 	if err != nil {
 		if cerrdefs.IsNotFound(err) {
 			return false, nil
@@ -61,5 +61,5 @@ func InspectVolumeIsBindMount(ctx context.Context, cli *client.Client, volumeNam
 		return false, fmt.Errorf("failed to inspect volume %q: %w", volumeName, err)
 	}
 
-	return IsBindMount(MountDescriptor{Driver: vol.Driver, DriverOpts: vol.Options}), nil
+	return IsBindMount(MountDescriptor{Driver: vol.Volume.Driver, DriverOpts: vol.Volume.Options}), nil
 }

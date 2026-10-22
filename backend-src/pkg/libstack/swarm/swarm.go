@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/moby/moby/api/pkg/authconfig"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/filesystem"
 	"github.com/portainer/portainer/pkg/libstack"
@@ -23,13 +25,12 @@ import (
 	"github.com/docker/cli/cli/compose/schema"
 	composetypes "github.com/docker/cli/cli/compose/types"
 	configtypes "github.com/docker/cli/cli/config/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/network"
-	registrytypes "github.com/docker/docker/api/types/registry"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/client"
-	dockerregistry "github.com/docker/docker/registry"
+
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/network"
+	registrytypes "github.com/moby/moby/api/types/registry"
+	"github.com/moby/moby/api/types/swarm"
+	"github.com/moby/moby/client"
 	"github.com/rs/zerolog/log"
 )
 
@@ -179,7 +180,8 @@ func (d *SwarmDeployer) Remove(ctx context.Context, projectName string, options 
 // It reimplements `docker stack deploy` in-process using the docker/cli compose loader and
 // convert packages. Reference: https://github.com/docker/cli/blob/v28.5.2/cli/command/stack/swarm/deploy_composefile.go
 func deployStack(ctx context.Context, dockerCLI *command.DockerCli, filePaths []string, options DeployOptions) error {
-	info, err := dockerCLI.Client().Info(ctx)
+	infoResult, err := dockerCLI.Client().Info(ctx, client.InfoOptions{})
+	info := infoResult.Info
 	if err != nil {
 		return fmt.Errorf("failed to get docker info: %w", err)
 	}
@@ -254,31 +256,36 @@ func deployStack(ctx context.Context, dockerCLI *command.DockerCli, filePaths []
 	)
 }
 
-func getStackFilter(namespace string) filters.Args {
-	f := filters.NewArgs()
+func getStackFilter(namespace string) client.Filters {
+	f := make(client.Filters)
 	f.Add("label", convert.LabelNamespace+"="+namespace)
 
 	return f
 }
 
 func getStackServices(ctx context.Context, apiClient client.APIClient, namespace string) ([]swarm.Service, error) {
-	return apiClient.ServiceList(ctx, swarm.ServiceListOptions{Filters: getStackFilter(namespace)})
+	result, err := apiClient.ServiceList(ctx, client.ServiceListOptions{Filters: getStackFilter(namespace)})
+	return result.Items, err
 }
 
 func getStackNetworks(ctx context.Context, apiClient client.APIClient, namespace string) ([]network.Summary, error) {
-	return apiClient.NetworkList(ctx, network.ListOptions{Filters: getStackFilter(namespace)})
+	result, err := apiClient.NetworkList(ctx, client.NetworkListOptions{Filters: getStackFilter(namespace)})
+	return result.Items, err
 }
 
 func getStackSecrets(ctx context.Context, apiClient client.APIClient, namespace string) ([]swarm.Secret, error) {
-	return apiClient.SecretList(ctx, swarm.SecretListOptions{Filters: getStackFilter(namespace)})
+	result, err := apiClient.SecretList(ctx, client.SecretListOptions{Filters: getStackFilter(namespace)})
+	return result.Items, err
 }
 
 func getStackConfigs(ctx context.Context, apiClient client.APIClient, namespace string) ([]swarm.Config, error) {
-	return apiClient.ConfigList(ctx, swarm.ConfigListOptions{Filters: getStackFilter(namespace)})
+	result, err := apiClient.ConfigList(ctx, client.ConfigListOptions{Filters: getStackFilter(namespace)})
+	return result.Items, err
 }
 
 func getStackTasks(ctx context.Context, apiClient client.APIClient, namespace string) ([]swarm.Task, error) {
-	return apiClient.TaskList(ctx, swarm.TaskListOptions{Filters: getStackFilter(namespace)})
+	result, err := apiClient.TaskList(ctx, client.TaskListOptions{Filters: getStackFilter(namespace)})
+	return result.Items, err
 }
 
 func getServicesDeclaredNetworks(services []composetypes.ServiceConfig) map[string]struct{} {
@@ -305,14 +312,14 @@ func validateExternalNetworks(ctx context.Context, apiClient client.NetworkAPICl
 			continue
 		}
 
-		nw, err := apiClient.NetworkInspect(ctx, name, network.InspectOptions{})
+		nw, err := apiClient.NetworkInspect(ctx, name, client.NetworkInspectOptions{})
 		switch {
 		case errdefs.IsNotFound(err):
 			return fmt.Errorf("network %q is declared as external, but could not be found. You need to create a swarm-scoped network before the stack is deployed", name)
 		case err != nil:
 			return err
-		case nw.Scope != "swarm":
-			return fmt.Errorf("network %q is declared as external, but it is not in the right scope: %q instead of \"swarm\"", name, nw.Scope)
+		case nw.Network.Scope != "swarm":
+			return fmt.Errorf("network %q is declared as external, but it is not in the right scope: %q instead of \"swarm\"", name, nw.Network.Scope)
 		}
 	}
 
@@ -323,7 +330,7 @@ func createNetworks(
 	ctx context.Context,
 	apiClient client.APIClient,
 	namespace convert.Namespace,
-	networks map[string]network.CreateOptions,
+	networks map[string]client.NetworkCreateOptions,
 ) error {
 	existingNetworks, err := getStackNetworks(ctx, apiClient, namespace.Name())
 	if err != nil {
@@ -356,17 +363,18 @@ func createNetworks(
 
 func createSecrets(ctx context.Context, apiClient client.APIClient, secrets []swarm.SecretSpec) error {
 	for _, secretSpec := range secrets {
-		existing, _, err := apiClient.SecretInspectWithRaw(ctx, secretSpec.Name)
+		existingResult, err := apiClient.SecretInspect(ctx, secretSpec.Name, client.SecretInspectOptions{})
+		existing := existingResult.Secret
 
 		switch {
 		case err == nil:
-			if err := apiClient.SecretUpdate(ctx, existing.ID, existing.Version, secretSpec); err != nil {
+			if _, err := apiClient.SecretUpdate(ctx, existing.ID, client.SecretUpdateOptions{Version: existing.Version, Spec: secretSpec}); err != nil {
 				return fmt.Errorf("failed to update secret %s: %w", secretSpec.Name, err)
 			}
 		case errdefs.IsNotFound(err):
 			log.Info().Str("secret", secretSpec.Name).Msg("creating secret")
 
-			if _, err := apiClient.SecretCreate(ctx, secretSpec); err != nil {
+			if _, err := apiClient.SecretCreate(ctx, client.SecretCreateOptions{Spec: secretSpec}); err != nil {
 				return fmt.Errorf("failed to create secret %s: %w", secretSpec.Name, err)
 			}
 		default:
@@ -379,17 +387,18 @@ func createSecrets(ctx context.Context, apiClient client.APIClient, secrets []sw
 
 func createConfigs(ctx context.Context, apiClient client.APIClient, configs []swarm.ConfigSpec) error {
 	for _, configSpec := range configs {
-		existing, _, err := apiClient.ConfigInspectWithRaw(ctx, configSpec.Name)
+		existingResult, err := apiClient.ConfigInspect(ctx, configSpec.Name, client.ConfigInspectOptions{})
+		existing := existingResult.Config
 
 		switch {
 		case err == nil:
-			if err := apiClient.ConfigUpdate(ctx, existing.ID, existing.Version, configSpec); err != nil {
+			if _, err := apiClient.ConfigUpdate(ctx, existing.ID, client.ConfigUpdateOptions{Version: existing.Version, Spec: configSpec}); err != nil {
 				return fmt.Errorf("failed to update config %s: %w", configSpec.Name, err)
 			}
 		case errdefs.IsNotFound(err):
 			log.Info().Str("config", configSpec.Name).Msg("creating config")
 
-			if _, err := apiClient.ConfigCreate(ctx, configSpec); err != nil {
+			if _, err := apiClient.ConfigCreate(ctx, client.ConfigCreateOptions{Spec: configSpec}); err != nil {
 				return fmt.Errorf("failed to create config %s: %w", configSpec.Name, err)
 			}
 		default:
@@ -402,13 +411,13 @@ func createConfigs(ctx context.Context, apiClient client.APIClient, configs []sw
 
 // normalizeRegistryServerAddresses returns a copy of registries with each ServerAddress
 // rewritten so it matches the domain encodeRegistryAuth resolves for docker.io images
-// (dockerregistry.IndexServer).
+// (libstack.DockerHubAuthKey).
 func normalizeRegistryServerAddresses(registries []configtypes.AuthConfig) []configtypes.AuthConfig {
 	normalized := make([]configtypes.AuthConfig, len(registries))
 
 	for i, r := range registries {
-		if r.ServerAddress == "" || r.ServerAddress == dockerregistry.DefaultNamespace {
-			r.ServerAddress = dockerregistry.IndexServer
+		if r.ServerAddress == "" || r.ServerAddress == libstack.DockerHubRegistryDomain {
+			r.ServerAddress = libstack.DockerHubAuthKey
 		}
 
 		normalized[i] = r
@@ -428,12 +437,12 @@ func encodeRegistryAuth(image string, registries []configtypes.AuthConfig) (stri
 
 	domain := reference.Domain(named)
 	if domain == "docker.io" {
-		domain = dockerregistry.IndexServer
+		domain = libstack.DockerHubAuthKey
 	}
 
 	for _, r := range registries {
 		if r.ServerAddress == domain {
-			encoded, err := registrytypes.EncodeAuthConfig(registrytypes.AuthConfig{
+			encoded, err := authconfig.Encode(registrytypes.AuthConfig{
 				Username:      r.Username,
 				Password:      r.Password,
 				ServerAddress: r.ServerAddress,
@@ -482,7 +491,7 @@ func deployServices(
 		if existing, exists := existingServiceMap[name]; exists {
 			log.Info().Str("service", name).Str("id", existing.ID).Msg("updating service")
 
-			updateOpts := swarm.ServiceUpdateOptions{EncodedRegistryAuth: encodedAuth}
+			updateOpts := client.ServiceUpdateOptions{EncodedRegistryAuth: encodedAuth}
 
 			if pullImage {
 				// pullImage=true → ResolveImageAlways: always query the registry during
@@ -502,7 +511,9 @@ func deployServices(
 				serviceSpec.TaskTemplate.ForceUpdate = existing.Spec.TaskTemplate.ForceUpdate
 			}
 
-			response, err := apiClient.ServiceUpdate(ctx, existing.ID, existing.Version, serviceSpec, updateOpts)
+			updateOpts.Version = existing.Version
+			updateOpts.Spec = serviceSpec
+			response, err := apiClient.ServiceUpdate(ctx, existing.ID, updateOpts)
 			if err != nil {
 				return fmt.Errorf("failed to update service %s: %w", name, err)
 			}
@@ -513,13 +524,14 @@ func deployServices(
 		} else {
 			log.Info().Str("service", name).Msg("creating service")
 
-			createOpts := swarm.ServiceCreateOptions{EncodedRegistryAuth: encodedAuth}
+			createOpts := client.ServiceCreateOptions{EncodedRegistryAuth: encodedAuth}
 
 			if pullImage {
 				createOpts.QueryRegistry = true
 			}
 
-			if _, err := apiClient.ServiceCreate(ctx, serviceSpec, createOpts); err != nil {
+			createOpts.Spec = serviceSpec
+			if _, err := apiClient.ServiceCreate(ctx, createOpts); err != nil {
 				return fmt.Errorf("failed to create service %s: %w", name, err)
 			}
 		}
@@ -566,7 +578,7 @@ func removeServices(ctx context.Context, apiClient client.APIClient, services []
 	for _, svc := range services {
 		log.Info().Str("service", svc.Spec.Name).Msg("removing service")
 
-		if err := apiClient.ServiceRemove(ctx, svc.ID); err != nil {
+		if _, err := apiClient.ServiceRemove(ctx, svc.ID, client.ServiceRemoveOptions{}); err != nil {
 			errs = append(errs, fmt.Errorf("failed to remove service %s: %w", svc.Spec.Name, err))
 		}
 	}
@@ -580,7 +592,7 @@ func removeNetworks(ctx context.Context, apiClient client.APIClient, networks []
 	for _, nw := range networks {
 		log.Info().Str("network", nw.Name).Msg("removing network")
 
-		if err := apiClient.NetworkRemove(ctx, nw.ID); err != nil {
+		if _, err := apiClient.NetworkRemove(ctx, nw.ID, client.NetworkRemoveOptions{}); err != nil {
 			errs = append(errs, fmt.Errorf("failed to remove network %s: %w", nw.Name, err))
 		}
 	}
@@ -594,7 +606,7 @@ func removeSecrets(ctx context.Context, apiClient client.APIClient, secrets []sw
 	for _, secret := range secrets {
 		log.Info().Str("secret", secret.Spec.Name).Msg("removing secret")
 
-		if err := apiClient.SecretRemove(ctx, secret.ID); err != nil {
+		if _, err := apiClient.SecretRemove(ctx, secret.ID, client.SecretRemoveOptions{}); err != nil {
 			errs = append(errs, fmt.Errorf("failed to remove secret %s: %w", secret.Spec.Name, err))
 		}
 	}
@@ -608,7 +620,7 @@ func removeConfigs(ctx context.Context, apiClient client.APIClient, configs []sw
 	for _, cfg := range configs {
 		log.Info().Str("config", cfg.Spec.Name).Msg("removing config")
 
-		if err := apiClient.ConfigRemove(ctx, cfg.ID); err != nil {
+		if _, err := apiClient.ConfigRemove(ctx, cfg.ID, client.ConfigRemoveOptions{}); err != nil {
 			errs = append(errs, fmt.Errorf("failed to remove config %s: %w", cfg.Spec.Name, err))
 		}
 	}
@@ -845,7 +857,8 @@ func (d *SwarmDeployer) WaitForStatus(
 
 				services, err := getStackServices(callerCtx, apiClient, projectName)
 				if err != nil {
-					log.Warn().Str("project_name", projectName).Err(err).Msg("failed to list stack services")
+					log.Warn().
+						Str("project_name", projectName).Err(err).Msg("failed to list stack services")
 					continue
 				}
 
@@ -916,9 +929,10 @@ func getServiceStatus(
 	apiClient client.APIClient,
 	svc swarm.Service,
 ) (libstack.Status, string, error) {
-	tasks, err := apiClient.TaskList(ctx, swarm.TaskListOptions{
-		Filters: filters.NewArgs(filters.KeyValuePair{Key: "service", Value: svc.ID}),
+	tasksResult, err := apiClient.TaskList(ctx, client.TaskListOptions{
+		Filters: make(client.Filters).Add("service", svc.ID),
 	})
+	tasks := tasksResult.Items
 	if err != nil {
 		return "", "", fmt.Errorf("failed to list tasks for service %s: %w", svc.Spec.Name, err)
 	}
@@ -930,7 +944,8 @@ func getServiceStatus(
 	}
 
 	if svc.Spec.Mode.Global != nil {
-		nodes, err := apiClient.NodeList(ctx, swarm.NodeListOptions{})
+		nodesResult, err := apiClient.NodeList(ctx, client.NodeListOptions{})
+		nodes := nodesResult.Items
 		if err != nil {
 			return "", "", fmt.Errorf("failed to list nodes: %w", err)
 		}

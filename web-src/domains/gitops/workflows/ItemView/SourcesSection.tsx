@@ -36,7 +36,7 @@ function SourceRow({ query }: { query: WorkflowSourceQuery['query'] }) {
   if (query.isLoading) {
     return (
       <li className="animate-pulse px-4 py-3">
-        <div className="h-4 w-48 rounded bg-gray-3 th-dark:bg-gray-8" />
+        <div className="h-4 w-48 rounded-sm bg-gray-3 th-dark:bg-gray-8" />
       </li>
     );
   }
@@ -57,7 +57,7 @@ function SourceRow({ query }: { query: WorkflowSourceQuery['query'] }) {
         to="/sources/:sourceId"
         params={{ sourceId: source.id }}
         data-cy={`workflow-source-link-${source.id}`}
-        className="flex items-center gap-4 px-4 py-3 no-underline hover:bg-gray-1 hover:no-underline th-dark:hover:bg-gray-10"
+        className="flex items-center gap-4 px-4 py-3 no-underline hover:bg-gray-1 hover:no-underline hover:th-dark:bg-gray-10"
       >
         <StatusBadge status={source.status} />
         <div className="min-w-0 flex-1">

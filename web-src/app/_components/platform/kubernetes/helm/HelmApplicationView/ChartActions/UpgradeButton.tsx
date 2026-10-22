@@ -5,12 +5,18 @@ import { useState } from 'react';
 import { Link } from '@console/navigation/Link';
 
 import { EnvironmentId } from '@/domains/environments';
-import { notifySuccess } from '@/ui/components/toast/notifications';
+import {
+  notifySuccess,
+  notifyError,
+} from '@/ui/components/toast/notifications';
 import { semverCompare } from '@/shared/semver';
 import { Button, LoadingButton } from '@/ui/components/buttons';
 import { InlineLoader } from '@/ui/components/feedback/InlineLoader';
 import { Tooltip } from '@/ui/components/feedback/Tip/Tooltip';
-import { HelmRelease, UpdateHelmReleasePayload } from '@/domains/configuration/helm/types';
+import {
+  HelmRelease,
+  UpdateHelmReleasePayload,
+} from '@/domains/configuration/helm/types';
 import { useUpdateHelmReleaseMutation } from '@/domains/configuration/helm/helmReleaseQueries/useUpdateHelmReleaseMutation';
 import { useHelmRepoVersions } from '@/domains/configuration/helm/helmChartSourceQueries/useHelmRepoVersions';
 import { useHelmRelease } from '@/domains/configuration/helm/helmReleaseQueries/useHelmRelease';
@@ -163,7 +169,10 @@ export function UpgradeButton({
       // clicking 'refresh versions' should get the latest versions from the repo, not the cached versions
       setUseCache(false);
     }
-    helmRepoVersionsQuery.refetch();
+    // Query errors are reported by withError; also handle unexpected refetch rejections.
+    helmRepoVersionsQuery.refetch().catch((error) => {
+      notifyError('Unable to refresh chart versions', error);
+    });
   }
 
   async function handleUpgrade() {

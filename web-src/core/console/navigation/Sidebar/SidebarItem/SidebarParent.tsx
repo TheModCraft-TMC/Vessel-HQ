@@ -47,7 +47,7 @@ export function SidebarParent({
         to={to}
         params={params}
         className={clsx(
-          'flex h-full flex-1 list-none items-center border-none !text-inherit hover:!text-inherit hover:no-underline focus:!text-inherit focus:!no-underline',
+          'flex h-full flex-1 list-none items-center border-none text-inherit! hover:text-inherit! hover:no-underline focus:text-inherit! focus:no-underline!',
           isOpen ? 'justify-start pl-3' : 'justify-center'
         )}
         data-cy={`${dataCy}-link`}
@@ -69,7 +69,7 @@ export function SidebarParent({
   const childList = (
     <ul
       id={listId}
-      className={clsx('!pl-11 text-white', {
+      className={clsx('pl-11! text-white', {
         hidden: !isExpanded,
         block: isExpanded,
       })}

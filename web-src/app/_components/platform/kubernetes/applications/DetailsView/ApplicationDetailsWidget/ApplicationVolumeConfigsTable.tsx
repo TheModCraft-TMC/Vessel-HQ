@@ -75,7 +75,7 @@ export function ApplicationVolumeConfigsTable({ namespace, app }: Props) {
               <td>
                 {item.key && (
                   <div className="flex items-center">
-                    <Icon icon={Plus} className="!mr-1" />
+                    <Icon icon={Plus} className="mr-1!" />
                     {item.key}
                   </div>
                 )}
@@ -89,7 +89,7 @@ export function ApplicationVolumeConfigsTable({ namespace, app }: Props) {
                     params={{ name: volumeConfigName, namespace }}
                     data-cy={`secret-link-${volumeConfigName}`}
                   >
-                    <Icon icon={Plus} className="!mr-1" />
+                    <Icon icon={Plus} className="mr-1!" />
                     {volumeConfigName}
                   </Link>
                 ) : (
@@ -99,7 +99,7 @@ export function ApplicationVolumeConfigsTable({ namespace, app }: Props) {
                     params={{ name: volumeConfigName, namespace }}
                     data-cy={`config-link-${volumeConfigName}`}
                   >
-                    <Icon icon={Plus} className="!mr-1" />
+                    <Icon icon={Plus} className="mr-1!" />
                     {volumeConfigName}
                   </Link>
                 )}

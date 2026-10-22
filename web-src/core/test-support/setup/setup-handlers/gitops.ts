@@ -18,7 +18,7 @@ export const gitopsHandlers = [
   }),
   http.get('/api/gitops/sources/:id', ({ params: { id } }) => {
     return HttpResponse.json<SourcesSourceDetail>({
-      id: typeof id === 'string' ? parseInt(id, 10) : 0,
+      id: typeof id === 'string' ? Number.parseInt(id, 10) : 0,
       name: 'source',
       status: 'healthy',
       type: 'git',

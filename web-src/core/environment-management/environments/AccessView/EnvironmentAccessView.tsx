@@ -55,21 +55,27 @@ export function EnvironmentAccessView() {
           <WidgetTitle icon={HardDrive} title="Environment" />
           <WidgetBody
             loading={environmentQuery.isLoading || groupQuery.isLoading}
-            className="!p-0"
+            className="p-0!"
           >
             {environment && (
               <table className="mb-0 table">
                 <tbody>
                   <tr>
-                    <td>Name</td>
+                    <th scope="row" className="text-left font-normal">
+                      Name
+                    </th>
                     <td>{environment.Name}</td>
                   </tr>
                   <tr>
-                    <td>URL</td>
+                    <th scope="row" className="text-left font-normal">
+                      URL
+                    </th>
                     <td>{stripProtocol(environment.URL)}</td>
                   </tr>
                   <tr>
-                    <td>Group</td>
+                    <th scope="row" className="text-left font-normal">
+                      Group
+                    </th>
                     <td>
                       {group ? (
                         <Link

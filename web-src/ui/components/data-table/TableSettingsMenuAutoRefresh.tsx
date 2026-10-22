@@ -53,7 +53,7 @@ export function TableSettingsMenuAutoRefresh({ onChange, value }: Props) {
             }
             onTransitionEnd={() => setIsCheckVisible(false)}
           >
-            <Icon icon={Check} className="!ml-1" mode="success" />
+            <Icon icon={Check} className="ml-1!" mode="success" />
           </span>
         </div>
       )}

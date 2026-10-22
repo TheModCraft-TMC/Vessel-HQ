@@ -19,7 +19,7 @@ export function ApplicationServicesTable({
   return (
     <>
       <div className="text-muted mb-4 flex items-center">
-        <Icon icon={ExternalLink} className="!mr-2" />
+        <Icon icon={ExternalLink} className="mr-2!" />
         Accessing the application
       </div>
       {appServices && appServices.length === 0 && (
@@ -57,7 +57,7 @@ export function ApplicationServicesTable({
                             rel="noopener noreferrer"
                             href={`http://${service.status.loadBalancer.ingress[0].ip}:${service.spec.ports[0].port}`}
                           >
-                            <Icon icon={ExternalLink} className="!mr-1" />
+                            <Icon icon={ExternalLink} className="mr-1!" />
                             <span data-cy="k8sAppDetail-containerPort">
                               Access
                             </span>
@@ -94,7 +94,7 @@ export function ApplicationServicesTable({
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <Icon icon={ExternalLink} className="!mr-1" />
+                            <Icon icon={ExternalLink} className="mr-1!" />
                             <span data-cy="k8sAppDetail-containerPort">
                               {port.port}
                             </span>

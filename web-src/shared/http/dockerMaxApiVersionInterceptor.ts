@@ -26,7 +26,7 @@ export async function dockerMaxAPIVersionInterceptor(
     );
 
     if (found?.groups) {
-      const envId = parseInt(found.groups.environmentId, 10);
+      const envId = Number.parseInt(found.groups.environmentId, 10);
       if (Number.isNaN(envId)) {
         return config;
       }
@@ -34,7 +34,7 @@ export async function dockerMaxAPIVersionInterceptor(
       const { data } = await envVersionAxios.get<SystemVersion>(
         buildDockerProxyUrl(envId, 'version')
       );
-      const apiVersion = parseFloat(data.ApiVersion ?? '0');
+      const apiVersion = Number.parseFloat(data.ApiVersion ?? '0');
 
       if (apiVersion > MAX_DOCKER_API_VERSION) {
         config.url = config.url?.replace(

@@ -43,7 +43,7 @@ export function HelmTemplatesSelectedItem({
           <div className="vertical-center h-full w-full justify-end pr-5">
             <Button
               color="link"
-              className="!text-gray-8 hover:no-underline th-highcontrast:!text-white th-dark:!text-white"
+              className="text-gray-8! hover:no-underline th-highcontrast:text-white! th-dark:text-white!"
               onClick={clearHelmChart}
               data-cy="clear-selection"
             >

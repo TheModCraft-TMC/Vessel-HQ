@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/moby/moby/client"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	dockerclient "github.com/portainer/portainer/api/docker/client"
@@ -22,8 +24,6 @@ import (
 	"github.com/portainer/portainer/api/stacks/teardown"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 )
@@ -193,7 +193,8 @@ func (handler *Handler) checkUniqueStackNameInDocker(endpoint *portainer.Endpoin
 	}
 	defer logs.CloseAndLogErr(dockerClient)
 	if swarmMode {
-		services, err := dockerClient.ServiceList(context.Background(), types.ServiceListOptions{})
+		servicesResult, err := dockerClient.ServiceList(context.Background(), client.ServiceListOptions{})
+		services := servicesResult.Items
 		if err != nil {
 			return false, err
 		}
@@ -206,7 +207,8 @@ func (handler *Handler) checkUniqueStackNameInDocker(endpoint *portainer.Endpoin
 		}
 	}
 
-	containers, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true})
+	containersResult, err := dockerClient.ContainerList(context.Background(), client.ContainerListOptions{All: true})
+	containers := containersResult.Items
 	if err != nil {
 		return false, err
 	}

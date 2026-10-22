@@ -11,7 +11,7 @@ export function SecurityOptRow({ securityOpts }: SecurityOptRowProps) {
 
   return (
     <DetailsTable.Row label="SecurityOpt">
-      <table className="table-bordered table-condensed !m-0 table">
+      <table className="table-bordered table-condensed m-0! table">
         <tbody>
           {securityOpts.map((value, index) => (
             <tr key={index}>

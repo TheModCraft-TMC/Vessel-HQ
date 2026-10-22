@@ -24,7 +24,7 @@ export function ImagePullSecretBadge({
   const registryIdStr =
     secret?.metadata?.annotations?.['portainer.io/registry.id'];
   const registryId = registryIdStr
-    ? parseInt(registryIdStr, 10) || undefined
+    ? Number.parseInt(registryIdStr, 10) || undefined
     : undefined;
 
   const registryTooltip = registry && (
@@ -38,7 +38,7 @@ export function ImagePullSecretBadge({
               <Link
                 to="/registries/:id"
                 params={{ id: registry.Id }}
-                className="!text-inherit underline"
+                className="text-inherit! underline"
                 data-cy={`registry-link-${registry.Id}`}
                 rel="noopener noreferrer"
                 target="_blank"
@@ -67,7 +67,7 @@ export function ImagePullSecretBadge({
       to="/:endpointId/kubernetes/secrets/:namespace/:name"
       params={{ name: secretName, namespace }}
       data-cy={`image-pull-secret-link-${secretName}`}
-      className="!text-inherit"
+      className="text-inherit!"
     >
       {secretName}
     </Link>

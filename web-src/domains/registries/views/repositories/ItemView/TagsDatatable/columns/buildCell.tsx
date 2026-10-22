@@ -51,6 +51,6 @@ export function buildCell<T = RepositoryTagViewModel>(
 }
 
 function number(value: string | undefined) {
-  const num = parseInt(value || '', 10);
+  const num = Number.parseInt(value || '', 10);
   return Number.isNaN(num) ? undefined : num;
 }

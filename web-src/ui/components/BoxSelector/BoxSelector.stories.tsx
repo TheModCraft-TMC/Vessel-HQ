@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useState } from 'react';
 import { Anchor, Boxes as Docker, Briefcase } from 'lucide-react';
 
@@ -9,6 +9,12 @@ import { BoxSelector } from './BoxSelector';
 import { BoxSelectorOption } from './types';
 
 const meta: Meta = {
+  loaders: [
+    async () => {
+      await initFeatureService(Edition.CE);
+      return {};
+    },
+  ],
   title: 'Components/BoxSelector',
   component: BoxSelector,
 };
@@ -51,7 +57,6 @@ function Example() {
 }
 
 function LimitedFeature() {
-  initFeatureService(Edition.CE);
   const [value, setValue] = useState(3);
   const options: BoxSelectorOption<number>[] = [
     {

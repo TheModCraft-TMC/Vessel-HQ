@@ -1206,6 +1206,14 @@ definitions:
         description: ServiceId to update
         type: string
     type: object
+  endpoints.forceUpdateServiceResponse:
+    properties:
+      Warnings:
+        items:
+          type: string
+        type: array
+        x-nullable: true
+    type: object
   endpoints.groupCount:
     properties:
       count:
@@ -7252,14 +7260,6 @@ definitions:
         type: integer
       unhealthy:
         type: integer
-    type: object
-  swarm.ServiceUpdateResponse:
-    properties:
-      Warnings:
-        description: Optional warning messages
-        items:
-          type: string
-        type: array
     type: object
   system.nodesCountResponse:
     properties:
@@ -17580,7 +17580,7 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: '#/definitions/swarm.ServiceUpdateResponse'
+            $ref: '#/definitions/endpoints.forceUpdateServiceResponse'
         "400":
           description: Invalid request
         "403":
@@ -25419,7 +25419,7 @@ paths:
       deprecated: true
       description: |-
         Deprecated: use the `/system/status` endpoint instead.
-        Retrieve Portainer status
+        Retrieve Vessel HQ status
         **Access policy**: public
       operationId: StatusInspect
       produces:
@@ -25429,7 +25429,7 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/system.status'
-      summary: Check Portainer status
+      summary: Check Vessel HQ status
       tags:
       - status
   /system/info:
@@ -25473,7 +25473,7 @@ paths:
   /system/status:
     get:
       description: |-
-        Retrieve Portainer status
+        Retrieve Vessel HQ status
         **Access policy**: public
       operationId: systemStatus
       produces:
@@ -25483,7 +25483,7 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/system.status'
-      summary: Check Portainer status
+      summary: Check Vessel HQ status
       tags:
       - system
   /system/upgrade:
@@ -26962,7 +26962,7 @@ paths:
   /websocket/logs:
     get:
       description: |-
-        Streams container, service, or task logs through the existing access-controlled Docker proxy.
+        Streams Docker container, service, or task logs, or Kubernetes pod logs, through the existing access-controlled environment proxy.
         **Access policy**: authenticated
       parameters:
       - description: Environment identifier
@@ -26970,19 +26970,28 @@ paths:
         name: endpointId
         required: true
         type: integer
-      - description: Docker resource type
+      - description: Runtime resource type
         enum:
         - containers
         - services
         - tasks
+        - pods
         in: query
         name: resource
         required: true
         type: string
-      - description: Docker resource identifier
+      - description: Runtime resource identifier
         in: query
         name: id
         required: true
+        type: string
+      - description: Kubernetes namespace (required for pods)
+        in: query
+        name: namespace
+        type: string
+      - description: Kubernetes container name (required for pods)
+        in: query
+        name: container
         type: string
       - description: Swarm node name
         in: query
@@ -27016,7 +27025,7 @@ paths:
       security:
       - ApiKeyAuth: []
       - jwt: []
-      summary: Stream Docker logs over a websocket
+      summary: Stream runtime logs over a websocket
       tags:
       - websocket
   /websocket/pod:

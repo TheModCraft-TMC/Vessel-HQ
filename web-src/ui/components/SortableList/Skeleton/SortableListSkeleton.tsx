@@ -21,10 +21,10 @@ export function SortableListSkeleton({ rows = 5 }: { rows?: number }) {
             className="flex items-center gap-4 border-b border-solid border-gray-3 px-5 py-3 th-dark:border-gray-8"
           >
             <div
-              className={`h-4 rounded bg-gray-3 ${primary} th-dark:bg-gray-8`}
+              className={`h-4 rounded-sm bg-gray-3 ${primary} th-dark:bg-gray-8`}
             />
             <div
-              className={`h-4 rounded bg-gray-2 ${secondary} th-dark:bg-gray-9`}
+              className={`h-4 rounded-sm bg-gray-2 ${secondary} th-dark:bg-gray-9`}
             />
           </div>
         );

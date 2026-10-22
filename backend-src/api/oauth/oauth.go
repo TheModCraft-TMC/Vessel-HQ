@@ -53,12 +53,14 @@ func (Service) Authenticate(ctx context.Context, code string, configuration *por
 		return nil, err
 	}
 
-	// Authorization claims must come from the authenticated UserInfo/resource
-	// response. The ID token is parsed without signature validation for legacy
-	// username compatibility and must not be trusted for team synchronization.
+	// Preserve the existing contracts: authorization claims come only from
+	// UserInfo/resource, while backchannel ID-token claims take precedence for
+	// username extraction. Do not change identity or group sources implicitly.
 	trustedClaims := maps.Clone(resource)
+	if resource == nil {
+		resource = make(map[string]any)
+	}
 	maps.Copy(resource, idToken)
-
 	username, err := GetUsername(resource, configuration.UserIdentifier)
 	if err != nil {
 		log.Error().Err(err).Msg("failed retrieving username")
@@ -75,20 +77,29 @@ func GetOAuthToken(ctx context.Context, code string, configuration *portainer.OA
 	return config.Exchange(ctx, code)
 }
 
-// GetIdToken retrieves parsed id_token from the OAuth token response.
-// This is necessary for OAuth providers like Azure
-// that do not provide information about user groups on the user resource endpoint.
+// GetIdToken decodes legacy identity claims from a direct OAuth code-exchange
+// response. It is NOT a JWT verifier and must never accept browser-supplied tokens
+// or supply authorization claims. The configured token endpoint's backchannel
+// transport is the trust boundary (see SECURITY_REVIEWS.md #211).
 func GetIdToken(token *oauth2.Token) (map[string]any, error) {
 	tokenData := make(map[string]any)
+
+	if token == nil {
+		return tokenData, errors.New("missing oauth token response")
+	}
 
 	idToken := token.Extra("id_token")
 	if idToken == nil {
 		return tokenData, nil
 	}
 
-	jwtParser := jwt.NewParser(jwt.WithoutClaimsValidation())
+	encodedToken, ok := idToken.(string)
+	if !ok {
+		return tokenData, errors.New("id_token must be a string")
+	}
 
-	t, _, err := jwtParser.ParseUnverified(idToken.(string), jwt.MapClaims{})
+	jwtParser := jwt.NewParser()
+	t, _, err := jwtParser.ParseUnverified(encodedToken, jwt.MapClaims{}) // NOSONAR S5659: decoding a direct token-endpoint response, not verifying a JWT; see SECURITY_REVIEWS.md #211.
 	if err != nil {
 		return tokenData, errors.Wrap(err, "failed to parse id_token")
 	}

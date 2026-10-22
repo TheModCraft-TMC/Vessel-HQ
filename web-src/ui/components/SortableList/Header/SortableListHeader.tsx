@@ -63,9 +63,9 @@ export function SortableListHeader<TSortKey extends string>({
           className={clsx(
             'rounded-md border border-solid border-gray-4',
             'bg-white py-2 pl-9 pr-3 text-sm text-gray-10 placeholder-gray-6',
-            'focus:border-blue-6 focus:outline-none',
+            'focus:border-blue-6 focus:outline-hidden',
             'th-dark:border-gray-7 th-dark:bg-gray-iron-10 th-dark:text-white th-dark:placeholder-gray-7',
-            'th-highcontrast:border-white th-highcontrast:bg-black th-highcontrast:text-white th-highcontrast:placeholder-gray-4 th-highcontrast:focus:border-blue-8'
+            'th-highcontrast:border-white th-highcontrast:bg-black th-highcontrast:text-white th-highcontrast:placeholder-gray-4 focus:th-highcontrast:border-blue-8'
           )}
         />
         {actionButton}

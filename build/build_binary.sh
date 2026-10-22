@@ -4,7 +4,7 @@ set -euo pipefail
 BUILD_SOURCESDIRECTORY=${BUILD_SOURCESDIRECTORY:-$(pwd)}
 RELEASE_VERSION_FILE="$BUILD_SOURCESDIRECTORY/RELEASE_VERSION"
 
-if [ ! -f "$RELEASE_VERSION_FILE" ]; then
+if [[ ! -f "$RELEASE_VERSION_FILE" ]]; then
   echo "Missing release version file: $RELEASE_VERSION_FILE" >&2
   exit 1
 fi
@@ -29,8 +29,8 @@ GO_VERSION=${GO_VERSION:-$(go version | awk '{print $3}')}
 GIT_COMMIT_HASH=${GIT_COMMIT_HASH:-$(git rev-parse --short HEAD)}
 
 # populate dependencies versions
-DOCKER_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/docker/docker)
-COMPOSE_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/docker/compose/v2)
+DOCKER_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/moby/moby/client)
+COMPOSE_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' github.com/docker/compose/v5)
 # Kubernetes SDK uses v0.x.y versioning, but official kubectl releases use v1.x.y
 # We need to transform the version (e.g., v0.33.2 -> v1.33.2)
 KUBECTL_VERSION=$(go -C "$BUILD_SOURCESDIRECTORY/backend-src" list -m -f '{{.Version}}' k8s.io/kubectl | sed 's/^v0\./v1./' | sed 's/^0\./1./')
@@ -45,7 +45,7 @@ cd backend-src/api || exit 1
 # Conditionally run go get based on the SKIP_GO_GET environment variable
 # This process adds a bit of time to the build
 # This is useful in the CI/CD pipeline to ensure that all dependencies are available
-if [ "${SKIP_GO_GET:-false}" = false ]; then
+if [[ "${SKIP_GO_GET:-false}" = false ]]; then
   echo "Running go get -t -v ./..."
   go get -t -v ./...
 fi
@@ -73,12 +73,12 @@ echo "$ldflags"
 PLATFORM=${1:-$(go env GOOS)}
 ARCH=${2:-$(go env GOARCH)}
 # if the default platform is darwin, set it to linux to allow it to run in the portainer/base image (which doesn't support darwin)
-if [ "$PLATFORM" = "darwin" ]; then
+if [[ "$PLATFORM" = "darwin" ]]; then
   PLATFORM="linux"
 fi
 
 BINARY_NAME="portainer"
-if [ "$PLATFORM" = "windows" ]; then
+if [[ "$PLATFORM" = "windows" ]]; then
   BINARY_NAME="portainer.exe"
 fi
 

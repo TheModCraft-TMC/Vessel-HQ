@@ -73,7 +73,7 @@ export const handlers = [
     if (!params.groupId || params.groupId instanceof Array) {
       throw new Error('should be string');
     }
-    const id = parseInt(params.groupId, 10);
+    const id = Number.parseInt(params.groupId, 10);
     const group: Partial<EnvironmentGroup> = {
       Id: id,
       Name: `group${id}`,

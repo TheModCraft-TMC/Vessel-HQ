@@ -43,7 +43,7 @@ export function EnvironmentTypeSelectView({
                     You can onboard different types of environments, select all
                     that apply.
                   </p>
-                  <p className="control-label !mb-2">
+                  <p className="control-label mb-2!">
                     Connect to existing environments
                   </p>
                   <EnvironmentSelector
@@ -51,7 +51,7 @@ export function EnvironmentTypeSelectView({
                     onChange={setTypes}
                     options={existingEnvironmentTypes}
                   />
-                  <p className="control-label !mb-2">Set up new environments</p>
+                  <p className="control-label mb-2!">Set up new environments</p>
                   <EnvironmentSelector
                     value={types}
                     onChange={setTypes}
@@ -67,7 +67,7 @@ export function EnvironmentTypeSelectView({
                 disabled={types.length === 0}
                 data-cy="start-wizard-button"
                 onClick={() => startWizard()}
-                className="!ml-0"
+                className="ml-0!"
               >
                 Start Wizard
               </Button>

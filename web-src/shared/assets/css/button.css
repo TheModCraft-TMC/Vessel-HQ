@@ -1,5 +1,7 @@
+@reference './tailwind.css';
+
 .btn {
-  @apply !outline-none;
+  @apply outline-hidden!;
   @apply border border-solid border-transparent;
 
   border-radius: 8px;
@@ -25,7 +27,7 @@ fieldset[disabled] .btn {
 }
 
 .btn-icon {
-  @apply !border-none !bg-transparent p-0;
+  @apply border-none! bg-transparent! p-0;
 }
 
 .btn.btn-primary {

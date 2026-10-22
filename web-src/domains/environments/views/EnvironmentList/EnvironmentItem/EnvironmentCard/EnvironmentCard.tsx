@@ -54,7 +54,7 @@ export function EnvironmentCard({
     >
       <BlocklistItem
         as={hasDashboardRoute ? Link : 'button'}
-        className="!m-0 flex flex-wrap gap-4 !border-none !pr-14"
+        className="m-0! flex flex-wrap gap-4 border-none! pr-14!"
         onClick={hasDashboardRoute ? onClickBrowse : undefined}
         aria-disabled={!hasDashboardRoute}
         to={dashboardRoute.to}
@@ -74,7 +74,7 @@ export function EnvironmentCard({
           <div className="flex min-w-0 flex-1 grow flex-col gap-1">
             {/* First row - title */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="break-words text-sm font-bold">
+              <span className="wrap-break-word text-sm font-bold">
                 {environment.Name}
               </span>
               <EnvironmentStatusBadge

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    branches:
+      - develop
   workflow_dispatch:
     inputs:
       version_tag:
@@ -22,19 +25,20 @@ env:
   DEFAULT_COMPOSE_UNPACKER_TAG: '2.39.3.2.3'
 
 concurrency:
-  group: linux-image-release
-  cancel-in-progress: false
+  # Keep untrusted PR checks isolated from the serialized publication queue.
+  group: linux-image-${{ github.event_name == 'pull_request' && github.ref || 'release' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-linux-image:
-    name: Validate, build, and publish Linux image
+    name: Validate and build Linux image
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Resolve release version
         id: image
@@ -54,7 +58,7 @@ jobs:
           echo "channel_tag=$channel_tag" >> "$GITHUB_OUTPUT"
 
       - name: Require an unused immutable tag
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
         env:
           VERSION_TAG: ${{ steps.image.outputs.version_tag }}
         run: |
@@ -67,18 +71,18 @@ jobs:
           fi
 
       - name: Set up pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 10.26.2
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24.21.0
           cache: pnpm
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version-file: backend-src/go.mod
           cache-dependency-path: backend-src/go.sum
@@ -89,10 +93,21 @@ jobs:
       - name: Validate release and frontend
         run: |
           bash scripts/check-release-version.test.sh
-          node --test build/next-entrypoint.test.cjs
+          node --test build/*.test.cjs scripts/*.test.mjs
+          pnpm check:npm-security
+          pnpm check:frontend-modernization
+          pnpm check:frontend-boundaries
+          pnpm check:app-router-compliance
+          pnpm check:css-module-classes
           pnpm typecheck
           pnpm lint:ci
           pnpm test
+          pnpm storybook:build --disable-telemetry
+
+      - name: Test integration harness safety
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/integration -p 'test_*.py'
+          node --check scripts/integration/oauth_browser.cjs
 
       - name: Test backend
         working-directory: backend-src
@@ -105,10 +120,10 @@ jobs:
         run: ./scripts/build-release-context.sh
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Execute-check both platform images
         env:
@@ -122,8 +137,8 @@ jobs:
           done
 
       - name: Login to Docker Hub
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
-        uses: docker/login-action@v3
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -133,9 +148,9 @@ jobs:
         run: echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
 
       - name: Publish immutable image
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
         id: publish
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: dist/release-context
           platforms: linux/amd64,linux/arm64
@@ -148,7 +163,7 @@ jobs:
             COMPOSE_UNPACKER_IMAGE=${{ env.UNPACKER_IMAGE_NAME }}:${{ steps.image.outputs.compose_unpacker_tag }}
 
       - name: Verify immutable image and promote channel
-        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
         env:
           VERSION_TAG: ${{ steps.image.outputs.version_tag }}
           IMAGE_DIGEST: ${{ steps.publish.outputs.digest }}

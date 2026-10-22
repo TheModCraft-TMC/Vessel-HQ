@@ -21,7 +21,7 @@ export function ListView() {
   });
   const deleteMutation = useDeleteTemplateMutation();
   const [selectedTemplateId] = useParamState<number>('template', (param) =>
-    param ? parseInt(param, 10) : 0
+    param ? Number.parseInt(param, 10) : 0
   );
 
   return (

@@ -75,17 +75,19 @@ const SheetOverlay = forwardRef<
 ));
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
+// Without preflight, Tailwind 3 border-{side} set only a width, so the
+// sheet edge never rendered; Tailwind 4 adds a solid currentColor style.
 const sheetVariants = cva(
   'fixed z-50 bg-widget-color p-5 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
   {
     variants: {
       side: {
-        top: 'inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
+        top: 'inset-x-0 top-0 [border-bottom-width:1px] data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top',
         bottom:
-          'inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
-        left: 'inset-y-0 left-0 h-full w-[70vw] lg:w-[50vw] border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left max-w-2xl',
+          'inset-x-0 bottom-0 [border-top-width:1px] data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom',
+        left: 'inset-y-0 left-0 h-full w-[70vw] lg:w-[50vw] [border-right-width:1px] data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left max-w-2xl',
         right:
-          'inset-y-0 right-0 h-full w-[70vw] lg:w-[50vw] border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right max-w-2xl',
+          'inset-y-0 right-0 h-full w-[70vw] lg:w-[50vw] [border-left-width:1px] data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right max-w-2xl',
       },
     },
     defaultVariants: {

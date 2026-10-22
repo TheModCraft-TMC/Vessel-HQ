@@ -22,7 +22,7 @@ export function EnvironmentActions({ environment }: Props) {
         <Link
           to="/:environmentId/docker/containers"
           params={{ environmentId: environment.Id, edgeStackId }}
-          className="hover:!no-underline"
+          className="hover:no-underline!"
           data-cy="browse-snapshot-link"
         >
           <Button

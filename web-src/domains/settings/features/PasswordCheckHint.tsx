@@ -24,7 +24,7 @@ export function PasswordCheckHint({
           'An administrator has changed your password requirements, '}
         The password must be at least {minPasswordLength} characters long.
         {passwordValid && (
-          <Icon icon={Check} className="!ml-1" mode="success" />
+          <Icon icon={Check} className="ml-1!" mode="success" />
         )}
       </p>
     </div>

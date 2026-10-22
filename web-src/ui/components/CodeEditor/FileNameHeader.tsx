@@ -26,7 +26,7 @@ export function FileNameHeaderRow({
   return (
     <div
       className={clsx(
-        'text-muted flex w-full overflow-auto border-0 border-b border-solid border-b-gray-5 bg-gray-2 text-sm [scrollbar-gutter:stable] th-highcontrast:border-b-gray-2 th-highcontrast:bg-black th-dark:border-b-gray-7 th-dark:bg-gray-10',
+        'text-muted flex w-full overflow-auto border-0 border-b border-solid border-b-gray-5 bg-gray-2 text-sm scrollbar-gutter-stable th-highcontrast:border-b-gray-2 th-highcontrast:bg-black th-dark:border-b-gray-7 th-dark:bg-gray-10',
         className
       )}
       style={style}
@@ -60,7 +60,7 @@ export function FileNameHeader({
         data-cy={dataCy}
         copyText={copyText}
         color="link"
-        className="!pr-0 !text-sm !font-medium hover:no-underline focus:no-underline"
+        className="pr-0! text-sm! font-medium! hover:no-underline focus:no-underline"
         indicatorPosition="left"
       >
         Copy

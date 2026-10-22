@@ -76,7 +76,7 @@ export function NodeDetailsPanel({
         <Widget>
           <WidgetTitle title="Node Details" icon="code" />
           <WidgetBody className="no-padding">
-            <DetailsTable dataCy="node-details" className="!mb-0">
+            <DetailsTable dataCy="node-details" className="mb-0!">
               {node.Spec?.Name && (
                 <tr>
                   <td>Node name</td>

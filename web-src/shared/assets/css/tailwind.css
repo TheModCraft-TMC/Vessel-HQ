@@ -1,0 +1,5 @@
+/* No preflight: Bootstrap and Vessel own element defaults. Utilities remain
+ * unlayered, preserving their cascade precedence over Bootstrap like v3. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css';
+@config '../../../tailwind.config.js';

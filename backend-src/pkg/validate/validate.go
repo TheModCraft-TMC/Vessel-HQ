@@ -24,7 +24,7 @@ func IsURL(urlString string) bool {
 	if !strings.Contains(urlString, "://") {
 		// support no indicated urlscheme
 		// http:// is appended so url.Parse will succeed
-		strTemp = "http://" + urlString
+		strTemp = "http://" + urlString // NOSONAR S5332: parsing placeholder only; no request is made; see SECURITY_REVIEWS.md #175.
 	}
 
 	u, err := url.Parse(strTemp)

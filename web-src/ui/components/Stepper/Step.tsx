@@ -90,8 +90,8 @@ function getButtonClasses({ isActive, isCompleted, isClickable }: StepState) {
     isClickable
       ? clsx(
           'cursor-pointer hover:border-blue-6 hover:bg-blue-3',
-          'th-dark:hover:border-blue-5 th-dark:hover:bg-blue-9/30',
-          'th-highcontrast:hover:border-blue-4 th-highcontrast:hover:bg-blue-9/40'
+          'hover:th-dark:border-blue-5 hover:th-dark:bg-blue-9/30',
+          'hover:th-highcontrast:border-blue-4 hover:th-highcontrast:bg-blue-9/40'
         )
       : 'cursor-default'
   );

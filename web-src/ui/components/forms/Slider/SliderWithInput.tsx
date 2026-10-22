@@ -23,7 +23,7 @@ export function SliderWithInput({
 }) {
   return (
     <div className="flex items-center gap-6">
-      {max && (
+      {max > 0 && (
         <div className="mr-2 flex-1">
           <Slider
             onChange={(value) =>

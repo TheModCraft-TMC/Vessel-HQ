@@ -12,8 +12,7 @@ import (
 	"github.com/portainer/portainer/api/internal/authorization"
 	"github.com/portainer/portainer/api/logs"
 
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/segmentio/encoding/json"
 )
 
@@ -106,7 +105,8 @@ func anyClusterNodeHasBindMountVolume(ctx context.Context, getClient func(nodeNa
 	}
 	defer logs.CloseAndLogErr(cli)
 
-	nodes, err := cli.NodeList(ctx, swarm.NodeListOptions{})
+	nodesResult, err := cli.NodeList(ctx, client.NodeListOptions{})
+	nodes := nodesResult.Items
 	if err != nil {
 		return false, err
 	}
@@ -139,7 +139,8 @@ func anyClusterNodeHasBindMountVolume(ctx context.Context, getClient func(nodeNa
 }
 
 func getInheritedResourceControlFromServiceLabels(dockerClient *client.Client, endpointID portainer.EndpointID, serviceID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	service, _, err := dockerClient.ServiceInspectWithRaw(context.Background(), serviceID, swarm.ServiceInspectOptions{})
+	serviceResult, err := dockerClient.ServiceInspect(context.Background(), serviceID, client.ServiceInspectOptions{})
+	service := serviceResult.Service
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +226,7 @@ func (transport *Transport) decorateServiceCreationOperation(request *http.Reque
 	}
 
 	getClient := func(nodeName string) (*client.Client, error) {
-		return transport.dockerClientFactory.CreateClient(transport.endpoint, nodeName, nil)
+		return transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, nodeName, nil)
 	}
 
 	if err := CheckServiceBodyRestrictions(request, securitySettings, getClient); err != nil {
@@ -258,7 +259,7 @@ func (transport *Transport) decorateServiceUpdateOperation(request *http.Request
 	}
 
 	getClient := func(nodeName string) (*client.Client, error) {
-		return transport.dockerClientFactory.CreateClient(transport.endpoint, nodeName, nil)
+		return transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, nodeName, nil)
 	}
 
 	if err := CheckServiceBodyRestrictions(request, securitySettings, getClient); err != nil {

@@ -10,7 +10,9 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-	t.Parallel()
+	// This test replaces the process-wide logger, so it must not run in parallel.
+	original := log.Logger
+	t.Cleanup(func() { log.Logger = original })
 	msg := "Testing HTTP logger"
 	buf := &bytes.Buffer{}
 

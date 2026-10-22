@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useMemo, useState } from 'react';
 
 import { UserContext } from '@/core/session/useUser';
@@ -31,9 +31,9 @@ function Example({ userRole }: Args) {
   const [users] = useState(createMockUsers(20, Role.Standard));
   const [roles] = useState(
     Object.fromEntries(
-      users.map((user) => [
+      users.map((user, index) => [
         user.Id,
-        Math.random() > 0.5 ? TeamRole.Leader : TeamRole.Member,
+        index % 2 === 0 ? TeamRole.Leader : TeamRole.Member,
       ])
     )
   );

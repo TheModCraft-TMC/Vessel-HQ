@@ -31,7 +31,7 @@ export function RadioGroup<T extends string | number = string>({
           key={option.value}
           className={
             itemClassName ??
-            'control-label cursor-pointer !p-0 text-left font-normal'
+            'control-label cursor-pointer p-0! text-left font-normal'
           }
         >
           <input

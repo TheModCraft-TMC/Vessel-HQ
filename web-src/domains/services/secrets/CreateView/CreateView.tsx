@@ -130,7 +130,7 @@ export function CreateSecretForm({
                 loadingText="Creating secret..."
                 isLoading={createMutation.isLoading}
                 disabled={!name || !data}
-                className="!ml-0"
+                className="ml-0!"
                 data-cy="createSecret-submitButton"
               >
                 Create the secret

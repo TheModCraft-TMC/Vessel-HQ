@@ -17,19 +17,19 @@ import (
 	"github.com/portainer/portainer/api/internal/snapshot"
 	"github.com/portainer/portainer/api/logs"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/segmentio/encoding/json"
 )
 
 const volumeObjectIdentifier = "ResourceID"
 
 func getInheritedResourceControlFromVolumeLabels(dockerClient *client.Client, endpointID portainer.EndpointID, volumeID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	volume, err := dockerClient.VolumeInspect(context.Background(), volumeID)
+	volume, err := dockerClient.VolumeInspect(context.Background(), volumeID, client.VolumeInspectOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	stackResourceID := getStackResourceIDFromLabels(volume.Labels, endpointID)
+	stackResourceID := getStackResourceIDFromLabels(volume.Volume.Labels, endpointID)
 	if stackResourceID != "" {
 		return authorization.GetResourceControlByResourceIDAndType(stackResourceID, portainer.StackResourceControl, resourceControls), nil
 	}
@@ -183,13 +183,13 @@ func (transport *Transport) decorateVolumeResourceCreationOperation(request *htt
 
 	if volumeID != "" {
 		agentTargetHeader := request.Header.Get(portainer.PortainerAgentTargetHeader)
-		cli, err := transport.dockerClientFactory.CreateClient(transport.endpoint, agentTargetHeader, nil)
+		cli, err := transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, agentTargetHeader, nil)
 		if err != nil {
 			return nil, err
 		}
 		defer logs.CloseAndLogErr(cli)
 
-		if _, err := cli.VolumeInspect(context.Background(), volumeID); err == nil {
+		if _, err := cli.VolumeInspect(context.Background(), volumeID, client.VolumeInspectOptions{}); err == nil {
 			return &http.Response{
 				StatusCode: http.StatusConflict,
 			}, errors.New("a volume with the same name already exists")
@@ -285,13 +285,14 @@ func (transport *Transport) getDockerID() (string, error) {
 	}
 
 	// Remote value
-	client, err := transport.dockerClientFactory.CreateClient(transport.endpoint, "", nil)
+	cli, err := transport.dockerClientFactory.CreateClient(transport.endpoint, "", nil)
 	if err != nil {
 		return "", err
 	}
-	defer logs.CloseAndLogErr(client)
+	defer logs.CloseAndLogErr(cli)
 
-	info, err := client.Info(context.Background())
+	infoResult, err := cli.Info(context.Background(), client.InfoOptions{})
+	info := infoResult.Info
 	if err != nil {
 		return "", err
 	}

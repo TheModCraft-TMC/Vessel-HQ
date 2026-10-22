@@ -39,7 +39,7 @@ export function BackupFileForm() {
                 data-cy="settings-downloadBackupLocalButton"
                 isLoading={isSubmitting}
                 disabled={!isValid}
-                className="!ml-0"
+                className="ml-0!"
                 icon={Download}
               >
                 Download backup

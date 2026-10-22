@@ -6,10 +6,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Terminal as TerminalIcon } from 'lucide-react';
 import { PageContent } from '@console/layout/PageContent';
 
-import {
-  ContainerDetailsResponse,
-  useContainer,
-} from '@/domains/containers';
+import { ContainerDetailsResponse, useContainer } from '@/domains/containers';
 import { CONSOLE_COMMANDS_LABEL_PREFIX } from '@/shared/constants';
 import { commandStringToArray } from '@/domains/containers/mappers/command';
 import { baseHref } from '@/shared/browser-path';
@@ -64,6 +61,18 @@ export function ContainerConsole({ mode }: { mode: Mode }) {
   const execMutation = useMutation(
     createExecRequest,
     withError('Unable to exec into container')
+  );
+
+  const resizeMutation = useMutation(
+    async ({ rows, cols }: TerminalDimensions) => {
+      const dimensions = { width: cols, height: rows };
+      if (mode === 'attach') {
+        await resizeContainerTTY(environmentId, containerId, dimensions);
+      } else if (execId) {
+        await dockerClient.resizeExec(environmentId, execId, dimensions);
+      }
+    },
+    withError('Unable to resize container console')
   );
 
   if (containerQuery.isLoading) {
@@ -271,18 +280,8 @@ export function ContainerConsole({ mode }: { mode: Mode }) {
     }
   }
 
-  function handleResize({ rows, cols }: TerminalDimensions) {
-    if (mode === 'attach') {
-      resizeContainerTTY(environmentId, containerId, {
-        width: cols,
-        height: rows,
-      });
-    } else if (execId) {
-      dockerClient.resizeExec(environmentId, execId, {
-        width: cols,
-        height: rows,
-      });
-    }
+  function handleResize(dimensions: TerminalDimensions) {
+    resizeMutation.mutate(dimensions);
   }
 }
 

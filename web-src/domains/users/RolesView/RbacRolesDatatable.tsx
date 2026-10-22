@@ -72,7 +72,7 @@ export function RbacRolesDatatable() {
             Object.keys(role.Authorizations || {})
           )
         )
-      ).sort(),
+      ).sort((a, b) => a.localeCompare(b)),
     [rolesQuery.data]
   );
 

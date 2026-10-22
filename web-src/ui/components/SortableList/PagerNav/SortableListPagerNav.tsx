@@ -95,17 +95,17 @@ function buildPageNumbers(
 }
 
 const btnBase = clsx(
-  'flex h-7 w-7 items-center justify-center rounded',
+  'flex h-7 w-7 items-center justify-center rounded-sm',
   'border border-solid border-gray-4 th-highcontrast:border-white th-dark:border-gray-7',
-  'text-sm text-gray-7 th-highcontrast:text-white th-highcontrast:hover:text-black th-dark:text-gray-4',
-  'transition-colors hover:bg-gray-3 th-highcontrast:bg-black th-highcontrast:hover:bg-white th-dark:hover:bg-gray-iron-9',
+  'text-sm text-gray-7 th-highcontrast:text-white hover:th-highcontrast:text-black th-dark:text-gray-4',
+  'transition-colors hover:bg-gray-3 th-highcontrast:bg-black hover:th-highcontrast:bg-white hover:th-dark:bg-gray-iron-9',
   'disabled:cursor-not-allowed disabled:opacity-40'
 );
 
 const btnActivePage = clsx(
-  'border-blue-7 bg-blue-7 text-white hover:!bg-blue-6',
+  'border-blue-7 bg-blue-7 text-white hover:bg-blue-6!',
   'th-dark:border-blue-7 th-dark:bg-blue-7 th-dark:text-white',
-  'th-highcontrast:bg-white th-highcontrast:!text-black hover:th-highcontrast:!bg-white'
+  'th-highcontrast:bg-white th-highcontrast:text-black! th-highcontrast:hover:bg-white!'
 );
 
 interface PagerButtonProps {

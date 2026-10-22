@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/docker/docker/api/types/volume"
+	"github.com/moby/moby/api/types/volume"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/docker/stats"

@@ -14,11 +14,11 @@ import (
 	"github.com/portainer/portainer/pkg/featureflags"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/system"
-	"github.com/docker/docker/api/types/volume"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/image"
+	"github.com/moby/moby/api/types/network"
+	"github.com/moby/moby/api/types/system"
+	"github.com/moby/moby/api/types/volume"
 	"github.com/segmentio/encoding/json"
 	"golang.org/x/oauth2"
 	appsv1 "k8s.io/api/apps/v1"
@@ -27,6 +27,15 @@ import (
 	"k8s.io/client-go/tools/remotecommand"
 	metricsv "k8s.io/metrics/pkg/client/clientset/versioned"
 )
+
+// DockerVersion preserves the snapshot/datastore wire format while the SDK
+// moves deprecated Engine fields into component details. The two legacy fields
+// must remain present even when empty (older datastore exports rely on this).
+type DockerVersion struct {
+	system.VersionResponse
+	GitCommit string
+	GoVersion string
+}
 
 type (
 	// AccessPolicy represent a policy that can be associated to a user or team
@@ -232,7 +241,7 @@ type (
 	// DockerContainerSnapshot is an extent of Docker's Container struct
 	// It contains some information of Docker's ContainerJSON struct
 	DockerContainerSnapshot struct {
-		types.Container
+		container.Summary
 		Env []string `json:"Env,omitempty"` // EE-5240
 	}
 
@@ -243,7 +252,7 @@ type (
 		Networks   []network.Summary         `json:"Networks,omitempty" swaggerignore:"true"`
 		Images     []image.Summary           `json:"Images,omitempty" swaggerignore:"true"`
 		Info       system.Info               `json:"Info" swaggerignore:"true"`
-		Version    types.Version             `json:"Version" swaggerignore:"true"`
+		Version    DockerVersion             `json:"Version" swaggerignore:"true"`
 	}
 
 	// EdgeGroup represents an Edge group

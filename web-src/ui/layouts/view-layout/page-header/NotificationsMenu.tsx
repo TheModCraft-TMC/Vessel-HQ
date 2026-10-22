@@ -47,7 +47,7 @@ export function NotificationsMenu() {
         <div
           className={clsx(
             headerStyles.menuIcon,
-            'icon-badge mr-1 !p-2 text-lg',
+            'icon-badge mr-1 p-2! text-lg',
             'text-gray-8',
             'th-dark:text-gray-warm-7'
           )}
@@ -195,7 +195,7 @@ function MenuLink({
 function formatTime(timeCreated: Date) {
   const timeStamp = new Date(timeCreated).valueOf().toString();
 
-  const diff = Math.floor((Date.now() - parseInt(timeStamp, 10)) / 1000);
+  const diff = Math.floor((Date.now() - Number.parseInt(timeStamp, 10)) / 1000);
 
   if (diff <= 86400) {
     let interval = Math.floor(diff / 3600);

@@ -7,24 +7,26 @@ import { Values } from './BaseForm';
 import { validationSchema as portsSchema } from './PortsMappingField.validation';
 import { nameValidation } from './NameField';
 
-export function validation(
-  {
-    isAdmin,
-    isDuplicating,
-    isDuplicatingPortainer,
-    isDockerhubRateLimited,
-  }: {
-    isAdmin: boolean;
-    isDuplicating: boolean | undefined;
-    isDuplicatingPortainer: boolean | undefined;
-    isDockerhubRateLimited: boolean;
-  } = {
-    isAdmin: false,
-    isDuplicating: false,
-    isDuplicatingPortainer: false,
-    isDockerhubRateLimited: false,
-  }
-): SchemaOf<Values> {
+interface ValidationOptions {
+  isAdmin: boolean;
+  isDuplicating: boolean | undefined;
+  isDuplicatingPortainer: boolean | undefined;
+  isDockerhubRateLimited: boolean;
+}
+
+const defaultValidationOptions: ValidationOptions = {
+  isAdmin: false,
+  isDuplicating: false,
+  isDuplicatingPortainer: false,
+  isDockerhubRateLimited: false,
+};
+
+export function validation({
+  isAdmin,
+  isDuplicating,
+  isDuplicatingPortainer,
+  isDockerhubRateLimited,
+}: ValidationOptions = defaultValidationOptions): SchemaOf<Values> {
   return object({
     name: nameValidation().test(
       'not-duplicate-portainer',

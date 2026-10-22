@@ -12,7 +12,7 @@ export function ItemsPerPageSelector({ value, onChange, showAll }: Props) {
   return (
     <span className="limitSelector">
       <label
-        className="space-right text-xs font-normal text-[--text-main-color]"
+        className="space-right text-xs font-normal text-(--text-main-color)"
         htmlFor={id}
       >
         Items per page

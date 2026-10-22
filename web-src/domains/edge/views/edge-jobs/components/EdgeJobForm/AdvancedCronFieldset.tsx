@@ -29,9 +29,14 @@ export function AdvancedCronFieldset() {
     </>
   );
 }
-/** https://regexr.com/573i2 */
-const cronRegex =
-  /(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ){4,6}((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*))/;
+/**
+ * Based on https://regexr.com/573i2. A field is a number, a list, a range or
+ * step, or `*`. The bounded lookbehind prevents restarting inside a digit
+ * run or a numeric list. A preceding digit-comma pair belongs to the same
+ * list, so scanning its suffix again would make malformed input quadratic.
+ */
+export const cronRegex =
+  /@(?:annually|yearly|monthly|weekly|daily|hourly|reboot)|@every (?:\d+(?:ns|us|µs|ms|s|m|h))+|(?:(?:(?<!\d|\d,)\d+(?:(?:,\d+)+|[/-]\d+)?|\*) ){4,6}(?:(?<!\d|\d,)\d+(?:(?:,\d+)+|[/-]\d+)?|\*)/;
 
 export function cronValidation() {
   return string()

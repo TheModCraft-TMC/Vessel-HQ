@@ -6,9 +6,7 @@ import (
 
 	portainer "github.com/portainer/portainer/api"
 
-	"github.com/docker/docker/api/types/network"
-
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 
 	"github.com/portainer/portainer/api/http/proxy/factory/utils"
 	"github.com/portainer/portainer/api/internal/authorization"
@@ -20,12 +18,12 @@ const (
 )
 
 func getInheritedResourceControlFromNetworkLabels(dockerClient *client.Client, endpointID portainer.EndpointID, networkID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	network, err := dockerClient.NetworkInspect(context.Background(), networkID, network.InspectOptions{})
+	network, err := dockerClient.NetworkInspect(context.Background(), networkID, client.NetworkInspectOptions{})
 	if err != nil {
 		return nil, err
 	}
 
-	stackResourceID := getStackResourceIDFromLabels(network.Labels, endpointID)
+	stackResourceID := getStackResourceIDFromLabels(network.Network.Labels, endpointID)
 	if stackResourceID != "" {
 		return authorization.GetResourceControlByResourceIDAndType(stackResourceID, portainer.StackResourceControl, resourceControls), nil
 	}

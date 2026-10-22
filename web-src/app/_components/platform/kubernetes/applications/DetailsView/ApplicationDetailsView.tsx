@@ -64,7 +64,7 @@ export function ApplicationDetailsContent({
           Placement
           {hasPlacementWarning && (
             <Badge type="warnSecondary">
-              <Icon icon={AlertTriangle} className="!mr-1" />1
+              <Icon icon={AlertTriangle} className="mr-1!" />1
             </Badge>
           )}
         </div>
@@ -86,7 +86,7 @@ export function ApplicationDetailsContent({
           Events
           {appEventWarningCount >= 1 && (
             <Badge type="warnSecondary">
-              <Icon icon={AlertTriangle} className="!mr-1" />
+              <Icon icon={AlertTriangle} className="mr-1!" />
               {appEventWarningCount}
             </Badge>
           )}

@@ -60,7 +60,7 @@ export function EnvironmentItem({
     <div className={`${styles.root} relative`}>
       <BlocklistItem
         as={dashboardRoute.to ? Link : 'button'}
-        className={clsx('!m-0 min-h-[110px] !pr-56', {
+        className={clsx('m-0! min-h-[110px] pr-56!', {
           'cursor-default': !dashboardRoute.to,
           'no-link': dashboardRoute.to,
         })}

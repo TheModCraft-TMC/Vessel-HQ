@@ -1,3 +1,5 @@
+@reference '../../../shared/assets/css/tailwind.css';
+
 .pagination-controls {
   margin-left: 10px;
 }

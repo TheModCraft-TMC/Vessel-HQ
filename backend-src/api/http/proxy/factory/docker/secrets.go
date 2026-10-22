@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/http/proxy/factory/utils"
@@ -16,7 +16,8 @@ const (
 )
 
 func getInheritedResourceControlFromSecretLabels(dockerClient *client.Client, endpointID portainer.EndpointID, secretID string, resourceControls []portainer.ResourceControl) (*portainer.ResourceControl, error) {
-	secret, _, err := dockerClient.SecretInspectWithRaw(context.Background(), secretID)
+	secretResult, err := dockerClient.SecretInspect(context.Background(), secretID, client.SecretInspectOptions{})
+	secret := secretResult.Secret
 	if err != nil {
 		return nil, err
 	}

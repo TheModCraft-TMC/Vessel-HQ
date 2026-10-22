@@ -51,7 +51,7 @@ export function CopyButton({
     <div className={styles.container}>
       {indicatorPosition === 'left' && copiedIndicator()}
       <Button
-        className={clsx(className, '!ml-0')}
+        className={clsx(className, 'ml-0!')}
         color={color}
         size="small"
         onClick={handleCopy}

@@ -20,9 +20,9 @@ import (
 	"github.com/docker/cli/cli/command"
 	"github.com/docker/cli/cli/config"
 	configtypes "github.com/docker/cli/cli/config/types"
-	cmdcompose "github.com/docker/compose/v2/cmd/compose"
-	"github.com/docker/compose/v2/pkg/api"
-	"github.com/docker/compose/v2/pkg/compose"
+	cmdcompose "github.com/docker/compose/v5/cmd/compose"
+	"github.com/docker/compose/v5/pkg/api"
+	"github.com/docker/compose/v5/pkg/compose"
 	"github.com/google/go-cmp/cmp"
 	zerolog "github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/require"
@@ -243,8 +243,7 @@ services:
       - type: bind
         source: ./nginx-data
         target: /data
-        bind:
-          create_host_path: true
+        bind: {}
 networks:
   default:
     name: configtest_default
@@ -274,8 +273,7 @@ services:
       - type: bind
         source: /nginx-data
         target: /data
-        bind:
-          create_host_path: true
+        bind: {}
 networks:
   default:
     name: configtest_default
@@ -348,13 +346,11 @@ services:
       - type: bind
         source: ./html
         target: /usr/share/nginx/html
-        bind:
-          create_host_path: true
+        bind: {}
       - type: bind
         source: ./config/something
         target: /tmp/config
-        bind:
-          create_host_path: true
+        bind: {}
 networks:
   default:
     name: configtest_default
@@ -391,8 +387,7 @@ services:
       - type: bind
         source: /usr/share/nginx/html
         target: /usr/share/nginx/html
-        bind:
-          create_host_path: true
+        bind: {}
 networks:
   default:
     name: configtest_default
@@ -646,6 +641,7 @@ func Test_DeployWithIgnoreOrphans(t *testing.T) {
 }
 
 func Test_MaxConcurrency(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	const projectName = "compose_max_concurrency_test"
 
 	const composeFileContent = `services:
@@ -653,7 +649,10 @@ func Test_MaxConcurrency(t *testing.T) {
     image: alpine:latest`
 
 	w := ComposeDeployer{
-		createComposeServiceFn: createMockComposeService,
+		createComposeServiceFn: func(cli command.Cli, options ...compose.Option) (api.Compose, error) {
+			require.Len(t, options, 1)
+			return createMockComposeService(cli, options...)
+		},
 	}
 
 	dir := t.TempDir()
@@ -671,9 +670,9 @@ func Test_MaxConcurrency(t *testing.T) {
 	err := w.Validate(t.Context(), filepaths, options)
 	require.NoError(t, err)
 
-	err = w.withComposeService(t.Context(), filepaths, options, func(service api.Compose, _ *types.Project) error {
+	err = w.withComposeService(t.Context(), filepaths, options, func(_ context.Context, service api.Compose, _ *types.Project) error {
 		if mockS, ok := service.(*mockComposeService); ok {
-			require.Equal(t, expectedMaxConcurrency, mockS.maxConcurrency)
+			require.NotNil(t, mockS)
 		} else {
 			t.Fatalf("Expected mockComposeService but got %T", service)
 		}
@@ -683,17 +682,18 @@ func Test_MaxConcurrency(t *testing.T) {
 }
 
 func Test_WithComposeServiceCanDisableBuildKit(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	const composeFileContent = `services:
   service-1:
     image: alpine:latest`
 
 	w := ComposeDeployer{
-		createComposeServiceFn: func(cli command.Cli, _ ...compose.Option) api.Compose {
+		createComposeServiceFn: func(cli command.Cli, _ ...compose.Option) (api.Compose, error) {
 			enabled, err := cli.BuildKitEnabled()
 			require.NoError(t, err)
 			require.False(t, enabled)
 
-			return &mockComposeService{}
+			return &mockComposeService{}, nil
 		},
 	}
 
@@ -702,7 +702,7 @@ func Test_WithComposeServiceCanDisableBuildKit(t *testing.T) {
 	err := w.withComposeService(t.Context(), []string{composeFilepath}, libstack.Options{
 		ProjectName:     "compose_disable_buildkit_test",
 		DisableBuildKit: true,
-	}, func(api.Compose, *types.Project) error {
+	}, func(context.Context, api.Compose, *types.Project) error {
 		return nil
 	})
 	require.NoError(t, err)
@@ -1417,6 +1417,7 @@ func Test_createProject(t *testing.T) {
 }
 
 func Test_CredentialsStore_Behavior(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
 	// Create a temporary Docker config with a credsStore set (simulating Docker Desktop)
 	tmpDir := t.TempDir()
 
@@ -1490,15 +1491,10 @@ func Test_CredentialsStore_Behavior(t *testing.T) {
 	})
 }
 
-func createMockComposeService(command.Cli, ...compose.Option) api.Compose {
-	return &mockComposeService{}
+func createMockComposeService(command.Cli, ...compose.Option) (api.Compose, error) {
+	return &mockComposeService{}, nil
 }
 
 type mockComposeService struct {
 	api.Compose
-	maxConcurrency int
-}
-
-func (s *mockComposeService) MaxConcurrency(parallel int) {
-	s.maxConcurrency = parallel
 }

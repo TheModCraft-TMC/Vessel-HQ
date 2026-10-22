@@ -72,7 +72,7 @@ export function ExperimentalFeaturesSettingsForm({ settings }: Props) {
                 loadingText="Saving settings..."
                 isLoading={mutation.isLoading}
                 disabled={!isValid || !dirty}
-                className="!ml-0"
+                className="ml-0!"
                 data-cy="settings-experimentalButton"
               >
                 Save experimental settings

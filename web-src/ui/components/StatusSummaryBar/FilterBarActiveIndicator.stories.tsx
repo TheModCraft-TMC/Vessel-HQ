@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 
 import { FilterBarActiveIndicator } from './FilterBarActiveIndicator';
 
@@ -14,7 +14,7 @@ export function Example() {
   if (!activeFilter) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="text-sm text-[var(--text-muted-color)]">
+        <p className="text-sm text-(--text-muted-color)">
           Filter cleared. Pick one to bring the indicator back.
         </p>
         <div className="flex gap-2">

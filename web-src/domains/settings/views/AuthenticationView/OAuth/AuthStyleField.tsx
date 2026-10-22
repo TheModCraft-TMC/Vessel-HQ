@@ -37,7 +37,7 @@ export function AuthStyleField({
       <Select
         value={value}
         onChange={(e) => {
-          onChange(parseInt(e.currentTarget.value, 10));
+          onChange(Number.parseInt(e.currentTarget.value, 10));
         }}
         options={authStyleOptions}
         disabled={readonly}

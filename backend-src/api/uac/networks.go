@@ -1,7 +1,7 @@
 package uac
 
 import (
-	"github.com/docker/docker/api/types/network"
+	"github.com/moby/moby/api/types/network"
 	portainer "github.com/portainer/portainer/api"
 )
 

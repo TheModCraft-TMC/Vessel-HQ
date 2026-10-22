@@ -101,15 +101,21 @@ export default function Page() {
                   <table className="table">
                     <tbody>
                       <tr>
-                        <td>Nodes</td>
+                        <th scope="row" className="text-left font-normal">
+                          Nodes
+                        </th>
                         <td>{nodesQuery.data?.length || 0}</td>
                       </tr>
                       <tr>
-                        <td>Services</td>
+                        <th scope="row" className="text-left font-normal">
+                          Services
+                        </th>
                         <td>{servicesQuery.data?.length || 0}</td>
                       </tr>
                       <tr>
-                        <td>Tasks</td>
+                        <th scope="row" className="text-left font-normal">
+                          Tasks
+                        </th>
                         <td>{tasksQuery.data?.length || 0}</td>
                       </tr>
                     </tbody>

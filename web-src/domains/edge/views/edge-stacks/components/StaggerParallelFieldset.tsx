@@ -51,7 +51,7 @@ export function StaggerParallelFieldset({ values, onChange, errors }: Props) {
           value={values.StaggerParallelOption?.toString()}
           onChange={(e) =>
             handleChange({
-              StaggerParallelOption: parseInt(e.currentTarget.value, 10),
+              StaggerParallelOption: Number.parseInt(e.currentTarget.value, 10),
             })
           }
           options={staggerParallelOptions}
@@ -111,7 +111,10 @@ export function StaggerParallelFieldset({ values, onChange, errors }: Props) {
               style={{ display: 'inline-block', width: '150px' }}
               onChange={(e) =>
                 handleChange({
-                  DeviceNumberIncrementBy: parseInt(e.currentTarget.value, 10),
+                  DeviceNumberIncrementBy: Number.parseInt(
+                    e.currentTarget.value,
+                    10
+                  ),
                 })
               }
               options={deviceNumberIncrementBy}

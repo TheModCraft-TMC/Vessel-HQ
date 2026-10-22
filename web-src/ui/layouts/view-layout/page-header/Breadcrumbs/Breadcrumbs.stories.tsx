@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { RouteParamsProvider } from '@console/routing/useRouteParams';
 
 import { Breadcrumbs } from './Breadcrumbs';

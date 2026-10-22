@@ -7,8 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/containerd/containerd/errdefs"
-	"github.com/docker/docker/api/types/container"
+	"github.com/containerd/errdefs"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/client"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -19,9 +20,9 @@ type MockDockerClient struct {
 	mock.Mock
 }
 
-func (m *MockDockerClient) ContainerInspect(ctx context.Context, containerID string) (container.InspectResponse, error) {
+func (m *MockDockerClient) ContainerInspect(ctx context.Context, containerID string, _ client.ContainerInspectOptions) (client.ContainerInspectResult, error) {
 	args := m.Called(ctx, containerID)
-	return args.Get(0).(container.InspectResponse), args.Error(1)
+	return client.ContainerInspectResult{Container: args.Get(0).(container.InspectResponse)}, args.Error(1)
 }
 
 func TestCalculateContainerStats(t *testing.T) {
@@ -46,7 +47,7 @@ func TestCalculateContainerStats(t *testing.T) {
 	// Setup mock expectations with different container states to test various scenarios
 	containerStates := []struct {
 		id       string
-		status   string
+		status   container.ContainerState
 		health   *container.Health
 		expected ContainerStats
 	}{
@@ -65,11 +66,9 @@ func TestCalculateContainerStats(t *testing.T) {
 	// Setup mock expectations for all containers with artificial delays to simulate real Docker calls
 	for _, state := range containerStates {
 		mockClient.On("ContainerInspect", mock.Anything, state.id).Return(container.InspectResponse{
-			ContainerJSONBase: &container.ContainerJSONBase{
-				State: &container.State{
-					Status: state.status,
-					Health: state.health,
-				},
+			State: &container.State{
+				Status: state.status,
+				Health: state.health,
 			},
 		}, nil).After(30 * time.Millisecond) // Simulate 30ms Docker API call
 	}

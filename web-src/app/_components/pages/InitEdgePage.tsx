@@ -182,7 +182,7 @@ function EdgeEnabledFields({
             icon={Network}
             onClick={onConnectivityOpen}
             data-cy="init-edge-test-connectivity-button"
-            className="!ml-0"
+            className="ml-0!"
           >
             Test connectivity
           </Button>

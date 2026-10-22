@@ -7,15 +7,6 @@
   font-size: 12px;
 }
 
-.versionInfo table {
-  width: 100%;
-  table-layout: fixed;
-}
-
-.versionInfo td {
-  padding-bottom: 10px;
-}
-
 .toolsList {
   width: max-content;
   max-width: 100%;

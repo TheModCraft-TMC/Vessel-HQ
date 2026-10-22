@@ -75,7 +75,7 @@ export function useApiVersion(environmentId?: EnvironmentId) {
     enabled: !!environmentId,
     select: (info: DockerSystemVersion) => info.ApiVersion,
   });
-  return query.data ? parseFloat(query.data) : 0;
+  return query.data ? Number.parseFloat(query.data) : 0;
 }
 
 export async function getSwarm(environmentId: EnvironmentId) {

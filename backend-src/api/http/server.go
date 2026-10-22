@@ -411,8 +411,10 @@ func shutdown(shutdownCtx context.Context, httpServer *http.Server) {
 	// Reading from Done blocks until another part of the program cancels the context.
 	<-shutdownCtx.Done()
 
+	// Shutdown starts after shutdownCtx is canceled: preserve values, but allow
+	// in-flight requests their own bounded grace period instead of canceling it.
 	log.Debug().Msg("shutting down the HTTP server")
-	shutdownTimeout, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	shutdownTimeout, cancel := context.WithTimeout(context.WithoutCancel(shutdownCtx), 30*time.Second)
 	defer cancel()
 
 	err := httpServer.Shutdown(shutdownTimeout)

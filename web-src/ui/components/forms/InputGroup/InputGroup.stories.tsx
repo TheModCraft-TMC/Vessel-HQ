@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useState } from 'react';
 
 import { InputGroup } from '.';
@@ -44,7 +44,7 @@ function BasicExample() {
           type="number"
           data-cy="input"
           value={valueNumber}
-          onChange={(e) => setValueNumber(parseInt(e.target.value, 10))}
+          onChange={(e) => setValueNumber(Number.parseInt(e.target.value, 10))}
           aria-label="Amount (to the nearest dollar)"
         />
         <InputGroup.Addon>.00</InputGroup.Addon>

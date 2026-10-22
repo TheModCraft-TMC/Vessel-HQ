@@ -142,7 +142,7 @@ export function AccessDatatable({
             return undefined;
           }
 
-          const id = parseInt(strId, 10);
+          const id = Number.parseInt(strId, 10);
           const entity = dataset?.find(
             (item) => item.Type === type && item.Id === id
           );

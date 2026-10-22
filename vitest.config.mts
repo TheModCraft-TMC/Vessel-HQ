@@ -85,7 +85,8 @@ export default defineConfig({
       enforce: 'pre',
       transform(code, id) {
         // Match production's compiler for the mutable TanStack Table boundary.
-        if (!id.includes('/ui/components/data-table/') || !id.endsWith('.tsx') || id.includes('.test.')) {
+        const isTableComponent = id.includes('/ui/components/data-table/') || id.includes('/images/views/ListView/ImagesDatatable/');
+        if (!isTableComponent || !id.endsWith('.tsx') || id.includes('.test.')) {
           return null;
         }
         return transformSync(code, {

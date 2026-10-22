@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from '@storybook/react-webpack5';
+import { Meta, StoryFn } from '@storybook/react';
 import { Check, Edit2, Layers, RefreshCw, Trash2, Users } from 'lucide-react';
 import { ReactNode } from 'react';
 
@@ -221,7 +221,7 @@ export const Overview: StoryFn = () => {
             </Card.Container>
           </div>
         </Row>
-        <Row label="With shadow">
+        <Row label="With shadow-sm">
           <div className="w-[600px]">
             <Card.Container shadow>
               <Card.Header

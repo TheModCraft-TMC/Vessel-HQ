@@ -715,6 +715,10 @@ export type EndpointsForceUpdateServicePayload = {
   ServiceID?: string;
 };
 
+export type EndpointsForceUpdateServiceResponse = {
+  Warnings?: Array<string> | null;
+};
+
 export type EndpointsGroupCount = {
   count?: number;
   groupID?: number;
@@ -5510,13 +5514,6 @@ export type StatsContainerStats = {
   stopped?: number;
   total?: number;
   unhealthy?: number;
-};
-
-export type SwarmServiceUpdateResponse = {
-  /**
-   * Optional warning messages
-   */
-  Warnings?: Array<string>;
 };
 
 export type SystemNodesCountResponse = {
@@ -15926,7 +15923,7 @@ export type EndpointForceUpdateServiceResponses = {
   /**
    * Success
    */
-  200: SwarmServiceUpdateResponse;
+  200: EndpointsForceUpdateServiceResponse;
 };
 
 export type EndpointForceUpdateServiceResponse =
@@ -25980,13 +25977,21 @@ export type GetWebsocketLogsData = {
      */
     endpointId: number;
     /**
-     * Docker resource type
+     * Runtime resource type
      */
-    resource: 'containers' | 'services' | 'tasks';
+    resource: 'containers' | 'services' | 'tasks' | 'pods';
     /**
-     * Docker resource identifier
+     * Runtime resource identifier
      */
     id: string;
+    /**
+     * Kubernetes namespace (required for pods)
+     */
+    namespace?: string;
+    /**
+     * Kubernetes container name (required for pods)
+     */
+    container?: string;
     /**
      * Swarm node name
      */

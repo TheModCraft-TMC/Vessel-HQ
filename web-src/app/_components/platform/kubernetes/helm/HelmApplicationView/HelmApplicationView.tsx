@@ -43,7 +43,7 @@ export function HelmApplicationContent({
   const earlistRevision =
     helmHistoryQuery.data?.[helmHistoryQuery.data.length - 1]?.version;
   // when loading the page fresh, the revision is undefined, so use the latest revision
-  const selectedRevision = revision ? parseInt(revision, 10) : latestRevision;
+  const selectedRevision = revision ? Number.parseInt(revision, 10) : latestRevision;
 
   const helmReleaseQuery = useHelmRelease(environmentId, name, namespace, {
     showResources: true,
@@ -111,7 +111,7 @@ export function HelmApplicationContent({
                     </div>
                   </WidgetTitle>
                 )}
-                <WidgetBody className="!pt-2.5">
+                <WidgetBody className="pt-2.5!">
                   <HelmDetails
                     isLoading={helmReleaseQuery.isInitialLoading}
                     isError={helmReleaseQuery.isError}
@@ -120,7 +120,7 @@ export function HelmApplicationContent({
                   />
                 </WidgetBody>
               </div>
-              <div className="hidden w-80 2xl:!block">
+              <div className="hidden w-80 2xl:block!">
                 <HelmRevisionList
                   currentRevision={helmReleaseQuery.data?.version}
                   history={helmHistoryQuery.data}
@@ -164,7 +164,7 @@ function HelmDetails({
   return (
     <>
       <HelmSummary release={release} />
-      <div className="my-6 h-[1px] w-full bg-gray-5 th-highcontrast:bg-white th-dark:bg-gray-7" />
+      <div className="my-6 h-px w-full bg-gray-5 th-highcontrast:bg-white th-dark:bg-gray-7" />
       <Card.Container variant="default">
         <Card.Body>
           <ReleaseTabs release={release} selectedRevision={selectedRevision} />

@@ -36,7 +36,7 @@ export function CreateStackInnerForm({
 
   const dockerComposeSchema = schemaQuery.data;
   const composeSyntaxMaxVersion = environment?.ComposeSyntaxMaxVersion
-    ? parseInt(environment.ComposeSyntaxMaxVersion, 10)
+    ? Number.parseInt(environment.ComposeSyntaxMaxVersion, 10)
     : undefined;
 
   return (
@@ -81,7 +81,7 @@ export function CreateStackInnerForm({
           loadingText="Deployment in progress..."
           isLoading={isDeploying}
           disabled={!isValid}
-          className="!ml-0"
+          className="ml-0!"
           data-cy="create-stack-submit-btn"
         >
           Deploy the stack

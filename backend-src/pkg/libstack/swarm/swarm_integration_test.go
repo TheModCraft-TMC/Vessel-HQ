@@ -6,9 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/api/types/swarm"
+	"github.com/moby/moby/client"
 	"github.com/portainer/portainer/api/filesystem"
 	"github.com/portainer/portainer/pkg/libstack"
 	"github.com/stretchr/testify/require"
@@ -25,17 +24,21 @@ func ensureSwarmMode(t *testing.T) *client.Client {
 	require.NoError(t, err)
 	t.Cleanup(func() { require.NoError(t, apiClient.Close()) })
 
-	info, err := apiClient.Info(t.Context())
+	infoResult, err := apiClient.Info(t.Context(), client.InfoOptions{})
+	info := infoResult.Info
 	require.NoError(t, err)
 
 	switch info.Swarm.LocalNodeState {
 	case swarm.LocalNodeStateInactive:
-		_, err = apiClient.SwarmInit(t.Context(), swarm.InitRequest{
+		_, err = apiClient.SwarmInit(t.Context(), client.SwarmInitOptions{
 			ListenAddr:    "0.0.0.0:2377",
 			AdvertiseAddr: "127.0.0.1",
 		})
 		require.NoError(t, err)
-		t.Cleanup(func() { require.NoError(t, apiClient.SwarmLeave(context.Background(), true)) })
+		t.Cleanup(func() {
+			_, err := apiClient.SwarmLeave(context.Background(), client.SwarmLeaveOptions{Force: true})
+			require.NoError(t, err)
+		})
 	case swarm.LocalNodeStateActive:
 		if !info.Swarm.ControlAvailable {
 			t.Fatal("docker daemon is a swarm worker, not a manager: cannot run swarm stack tests")
@@ -52,9 +55,10 @@ func ensureSwarmMode(t *testing.T) *client.Client {
 func serviceExists(t *testing.T, apiClient client.APIClient, stackName, serviceName string) bool {
 	fullName := stackName + "_" + serviceName
 
-	services, err := apiClient.ServiceList(t.Context(), swarm.ServiceListOptions{
-		Filters: filters.NewArgs(filters.KeyValuePair{Key: "name", Value: fullName}),
+	servicesResult, err := apiClient.ServiceList(t.Context(), client.ServiceListOptions{
+		Filters: make(client.Filters).Add("name", fullName),
 	})
+	services := servicesResult.Items
 	require.NoError(t, err)
 
 	for _, svc := range services {
@@ -116,7 +120,7 @@ services:
 	})
 
 	ctx, cancel := context.WithTimeout(t.Context(), time.Minute)
-	t.Cleanup(func() { cancel() })
+	defer cancel()
 
 	result := deployer.WaitForStatus(ctx, projectName, Options{}, libstack.StatusRunning)
 	require.Empty(t, result.ErrorMsg)
@@ -170,7 +174,7 @@ services:
 	})
 
 	ctx, cancel := context.WithTimeout(t.Context(), time.Minute)
-	t.Cleanup(func() { cancel() })
+	defer cancel()
 
 	result := deployer.WaitForStatus(ctx, projectName, Options{}, libstack.StatusRunning)
 	require.Empty(t, result.ErrorMsg)

@@ -71,7 +71,7 @@ function useAppTemplateParams() {
       return undefined;
     }
 
-    const typeNum = parseInt(type, 10);
+    const typeNum = Number.parseInt(type, 10);
 
     if (
       [
@@ -87,7 +87,7 @@ function useAppTemplateParams() {
   }
 
   function getTemplateId(appTemplateId: string): number | undefined {
-    const id = parseInt(appTemplateId, 10);
+    const id = Number.parseInt(appTemplateId, 10);
 
     return Number.isNaN(id) ? undefined : id;
   }

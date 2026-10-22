@@ -22,6 +22,7 @@ type stubBuilder struct {
 	savedStack *portainer.Stack
 	saveErr    error
 	deployErr  error
+	deployFn   func(context.Context) error
 	hookCalled atomic.Bool
 }
 
@@ -49,7 +50,10 @@ func (s *stubBuilder) saveStack() (*portainer.Stack, error) {
 	return s.savedStack, s.store.Stack().Create(s.savedStack)
 }
 
-func (s *stubBuilder) deploy(_ context.Context, _ *portainer.Endpoint) error {
+func (s *stubBuilder) deploy(ctx context.Context, _ *portainer.Endpoint) error {
+	if s.deployFn != nil {
+		return s.deployFn(ctx)
+	}
 	return s.deployErr
 }
 
@@ -222,4 +226,27 @@ func TestBuildAndDeploy_PostDeployHook_NotCalledOnDeployFailure(t *testing.T) {
 	require.NotNil(t, herr)
 
 	assert.False(t, builder.hookCalled.Load(), "post-deploy hook should not be called after a failed deployment")
+}
+
+func TestBuildAndDeploy_DetachesCancellationButPreservesContextValues(t *testing.T) {
+	t.Parallel()
+	type contextKey struct{}
+	ctx, cancel := context.WithCancel(context.WithValue(t.Context(), contextKey{}, "deployment"))
+	defer cancel()
+	cancel()
+
+	_, store := datastore.MustNewTestStore(t, true, false)
+	builder := &stubBuilder{store: store, savedStack: &portainer.Stack{ID: 1}}
+	builder.deployFn = func(deployCtx context.Context) error {
+		require.NoError(t, deployCtx.Err(), "client disconnect must not orphan deployed resources")
+		require.Equal(t, "deployment", deployCtx.Value(contextKey{}))
+		deadline, ok := deployCtx.Deadline()
+		require.True(t, ok, "detached deployment must still have a bounded lifetime")
+		require.True(t, deadline.After(time.Now()))
+		return nil
+	}
+
+	_, herr := BuildAndDeploy(ctx, store, builder, &StackPayload{}, &portainer.Endpoint{}, 0)
+	require.Nil(t, herr)
+	require.True(t, builder.hookCalled.Load())
 }

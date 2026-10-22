@@ -104,7 +104,7 @@ function CachedImagesCell({
         color="link"
         onClick={() => setIsModalOpen(true)}
         icon={Layers}
-        className="!px-0"
+        className="px-0!"
         data-cy={`node-cached-images-${nodeName}`}
       >
         {images.length}

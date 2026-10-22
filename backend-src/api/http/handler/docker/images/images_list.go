@@ -6,15 +6,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/portainer/portainer/api/docker/client"
+	"github.com/moby/moby/client"
+
+	dockerclient "github.com/portainer/portainer/api/docker/client"
 	"github.com/portainer/portainer/api/http/handler/docker/utils"
 	"github.com/portainer/portainer/api/set"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 	"github.com/portainer/portainer/pkg/libhttp/request"
 	"github.com/portainer/portainer/pkg/libhttp/response"
-
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/image"
 )
 
 type ImageResponse struct {
@@ -51,9 +50,10 @@ func (handler *Handler) imagesList(w http.ResponseWriter, r *http.Request) *http
 	nodeNames := make(map[string]string)
 
 	// Pass the node names map to the context so the custom NodeNameTransport can use it
-	ctx := context.WithValue(r.Context(), client.NodeNamesCtxKey{}, nodeNames)
+	ctx := context.WithValue(r.Context(), dockerclient.NodeNamesCtxKey{}, nodeNames)
 
-	images, err := cli.ImageList(ctx, image.ListOptions{})
+	imagesResult, err := cli.ImageList(ctx, client.ImageListOptions{})
+	images := imagesResult.Items
 	if err != nil {
 		return httperror.InternalServerError("Unable to retrieve Docker images", err)
 	}
@@ -65,9 +65,10 @@ func (handler *Handler) imagesList(w http.ResponseWriter, r *http.Request) *http
 
 	imageUsageSet := set.Set[string]{}
 	if withUsage {
-		containers, err := cli.ContainerList(r.Context(), container.ListOptions{
+		containersResult, err := cli.ContainerList(r.Context(), client.ContainerListOptions{
 			All: true,
 		})
+		containers := containersResult.Items
 		if err != nil {
 			return httperror.InternalServerError("Unable to retrieve Docker containers", err)
 		}

@@ -118,7 +118,7 @@ export function InitEdgeView() {
                               icon={Network}
                               onClick={() => setIsConnectivityModalOpen(true)}
                               data-cy="init-edge-test-connectivity-button"
-                              className="!ml-0"
+                              className="ml-0!"
                             >
                               Test connectivity
                             </Button>

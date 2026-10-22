@@ -25,7 +25,7 @@ export function KubectlShellView() {
     isVersionSmaller(RESIZE_LAST_UNSUPPORTED_AGENT_VERSION, agentVersion);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 top-0 z-[10000] bg-black text-white">
+    <div className="fixed bottom-0 left-0 right-0 top-0 z-10000 bg-black text-white">
       {shellState === 'connecting' && (
         <div className="px-4 pt-2">Loading Terminal...</div>
       )}

@@ -1,4 +1,7 @@
-import { notifySuccess } from '@/ui/components/toast/notifications';
+import {
+  notifyError,
+  notifySuccess,
+} from '@/ui/components/toast/notifications';
 import { EnvironmentId } from '@/domains/environments';
 import { LoadingButton } from '@/ui/components/buttons';
 import { confirmUpdate } from '@/ui/components/dialog/confirm';
@@ -27,7 +30,7 @@ export function ToggleSystemNamespaceButton({
   return (
     <LoadingButton
       onClick={markUnmarkAsSystem}
-      className="!ml-0"
+      className="ml-0!"
       data-cy="mark-as-system-button"
       color="default"
       type="button"
@@ -41,13 +44,17 @@ export function ToggleSystemNamespaceButton({
   );
 
   async function markUnmarkAsSystem() {
-    const confirmed = await confirmMarkUnmarkAsSystem(isSystemNamespace);
-    if (confirmed) {
-      toggleSystemNamespaceMutation.mutate(!isSystemNamespace, {
-        onSuccess: () => {
-          notifySuccess('Success', 'Namespace updated');
-        },
-      });
+    try {
+      const confirmed = await confirmMarkUnmarkAsSystem(isSystemNamespace);
+      if (confirmed) {
+        toggleSystemNamespaceMutation.mutate(!isSystemNamespace, {
+          onSuccess: () => {
+            notifySuccess('Success', 'Namespace updated');
+          },
+        });
+      }
+    } catch (error) {
+      notifyError('Unable to confirm namespace update', error);
     }
   }
 }
@@ -57,7 +64,7 @@ async function confirmMarkUnmarkAsSystem(isSystemNamespace: boolean) {
     ? 'Unmarking this namespace as system will allow non administrator users to manage it and the resources in contains depending on the access control settings. Are you sure?'
     : 'Marking this namespace as a system namespace will prevent non administrator users from managing it and the resources it contains. Are you sure?';
 
-  return new Promise((resolve) => {
-    confirmUpdate(message, resolve);
+  return new Promise((resolve, reject) => {
+    confirmUpdate(message, resolve).catch(reject);
   });
 }

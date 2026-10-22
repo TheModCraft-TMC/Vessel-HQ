@@ -19,7 +19,7 @@ export function UpdateBadge() {
         'th-highcontrast:border-white th-highcontrast:bg-transparent th-highcontrast:text-white'
       )}
     >
-      <span className="hidden text-sm 2xl:!inline">
+      <span className="hidden text-sm 2xl:inline!">
         Update Available: Edge Agent {version}
       </span>
       <Link
@@ -27,8 +27,8 @@ export function UpdateBadge() {
         className={clsx(
           'badge border border-solid border-transparent font-normal',
           'bg-blue-8 text-blue-3',
-          'th-dark:bg-blue-3 th-dark:text-blue-8 th-dark:hover:bg-blue-5 th-dark:hover:text-blue-8',
-          'th-highcontrast:border-white th-highcontrast:bg-transparent th-highcontrast:text-white th-highcontrast:hover:bg-gray-warm-7 th-highcontrast:hover:text-white'
+          'th-dark:bg-blue-3 th-dark:text-blue-8 hover:th-dark:bg-blue-5 hover:th-dark:text-blue-8',
+          'th-highcontrast:border-white th-highcontrast:bg-transparent th-highcontrast:text-white hover:th-highcontrast:bg-gray-warm-7 hover:th-highcontrast:text-white'
         )}
         data-cy="home-schedule-update-link"
       >

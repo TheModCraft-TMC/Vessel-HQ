@@ -216,7 +216,7 @@ function ResourceEditorForm({
                     saveMutation.isLoading ||
                     (!config.isCreate && value === initialValue)
                   }
-                  className="!ml-0"
+                  className="ml-0!"
                   data-cy="resource-save-button"
                 >
                   {config.isCreate ? `Create ${config.kind}` : 'Apply changes'}

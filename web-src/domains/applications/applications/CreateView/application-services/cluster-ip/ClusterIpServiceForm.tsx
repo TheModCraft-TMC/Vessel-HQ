@@ -52,7 +52,7 @@ export function ClusterIpServiceForm({
             icon={Trash2}
             data-cy={`remove-service_${serviceIndex}`}
             color="dangerlight"
-            className="!ml-0"
+            className="ml-0!"
             onClick={() => {
               // remove the service at index in an immutable way
               const newServices = [
@@ -65,7 +65,7 @@ export function ClusterIpServiceForm({
             Remove service
           </Button>
         </div>
-        <div className="control-label !mb-2 !pt-0 text-left">Ports</div>
+        <div className="control-label mb-2! pt-0! text-left">Ports</div>
         <div className="flex flex-col gap-3">
           {servicePorts.map((servicePort, portIndex) => {
             const error = errors?.[portIndex];
@@ -81,8 +81,8 @@ export function ClusterIpServiceForm({
             return (
               <Card.Container key={portIndex} variant="filled">
                 <Card.Body className="flex flex-col gap-y-3">
-                  <div className="flex flex-grow flex-wrap justify-between gap-x-4 gap-y-1">
-                    <div className="inline-flex min-w-min flex-grow basis-3/4 flex-wrap gap-x-4 gap-y-1">
+                  <div className="flex grow flex-wrap justify-between gap-x-4 gap-y-1">
+                    <div className="inline-flex min-w-min grow basis-3/4 flex-wrap gap-x-4 gap-y-1">
                       <div className="flex min-w-min basis-1/3 flex-col">
                         <ContainerPortInput
                           serviceIndex={serviceIndex}
@@ -138,7 +138,7 @@ export function ClusterIpServiceForm({
                     <Button
                       disabled={servicePorts.length === 1}
                       size="small"
-                      className="!ml-0 h-[30px]"
+                      className="ml-0! h-[30px]"
                       color="dangerlight"
                       type="button"
                       onClick={() => {
@@ -181,7 +181,7 @@ export function ClusterIpServiceForm({
               icon={Plus}
               data-cy={`add-port_${serviceIndex}`}
               color="default"
-              className="!ml-0"
+              className="ml-0!"
               onClick={() => {
                 const newServicesPorts = [...servicePorts, newClusterIpPort];
                 onChangePort(newServicesPorts);

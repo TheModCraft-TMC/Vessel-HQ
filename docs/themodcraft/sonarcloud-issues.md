@@ -9,9 +9,14 @@ the next sync. This workflow reads existing analyses; it does not run a scanner.
 
 No additional service, dependencies, AI calls, or SonarCloud token are required
 while the project is publicly readable. GitHub provides a short-lived workflow
-token with `issues: write`. An optional `SONAR_TOKEN` Actions secret supports
-SonarCloud authenticated reads if required later. An API authentication failure
-fails the run rather than treating findings as resolved.
+token with `issues: write`. Normal sync deliberately does **not** receive the
+`SONAR_TOKEN` Actions secret; adding that secret does not change sync reads.
+The token is available only to the explicitly requested manual
+[root-review job](../security/sonar-root-review.md), with its own authenticated
+preflight and preview/apply controls. The standalone sync script can still use an
+operator-provided `SONAR_TOKEN` environment variable for authenticated reads;
+the normal workflow does not provide one. An API authentication failure fails
+the run rather than treating findings as resolved.
 
 Each finding gets a `sonarcloud` label, rule, file/line, impact, SonarCloud link,
 and hidden project/branch/issue-key marker. Security findings are included as

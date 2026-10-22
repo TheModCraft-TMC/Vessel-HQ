@@ -80,7 +80,7 @@ export function AppIngressPathsForm({
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="!mb-0 flex w-full flex-wrap items-center gap-x-4 gap-y-2">
+      <div className="mb-0! flex w-full flex-wrap items-center gap-x-4 gap-y-2">
         <SwitchField
           fieldClass="w-max gap-x-8"
           label="Expose via ingress"
@@ -151,7 +151,7 @@ export function AppIngressPathsForm({
           <Button
             icon={Plus}
             data-cy={`applicationCreate-addIngressPath-${serviceIndex}-${portIndex}`}
-            className="!ml-0"
+            className="ml-0!"
             size="small"
             color="default"
             onClick={() => {

@@ -17,13 +17,13 @@ export function ServiceTabLabel({
   return (
     <div className="inline-flex items-center">
       {serviceTypeLabel}
-      {serviceTypeCount && (
+      {serviceTypeCount > 0 && (
         <Badge
           className="ml-2 flex-none"
           type={serviceTypeHasErrors ? 'warn' : 'info'}
         >
           {serviceTypeHasErrors && (
-            <Icon icon={AlertTriangle} className="!mr-1" />
+            <Icon icon={AlertTriangle} className="mr-1!" />
           )}
           {serviceTypeCount}
         </Badge>

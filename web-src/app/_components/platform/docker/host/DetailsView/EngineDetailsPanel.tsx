@@ -21,7 +21,7 @@ export function EngineDetailsPanel({ engine }: { engine: EngineDetails }) {
         <Widget>
           <WidgetTitle title="Engine Details" icon="code" />
           <WidgetBody className="no-padding">
-            <DetailsTable dataCy="engine-details" className="!mb-0">
+            <DetailsTable dataCy="engine-details" className="mb-0!">
               <tr>
                 <td>Version</td>
                 <td>

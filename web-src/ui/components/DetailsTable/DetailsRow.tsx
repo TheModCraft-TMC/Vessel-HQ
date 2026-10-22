@@ -22,7 +22,7 @@ export function DetailsRow({
   const labelString = typeof label === 'string' ? label : ariaLabel;
   return (
     <tr className={className} aria-label={labelString}>
-      <td className={clsx(colClassName, '!break-normal')}>{label}</td>
+      <td className={clsx(colClassName, 'break-normal!')}>{label}</td>
       <td
         className={colClassName}
         data-cy={`detailsTable-${slugify(labelString || 'unlabelled')}Value`}

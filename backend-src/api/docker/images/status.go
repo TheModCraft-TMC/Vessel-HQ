@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/filters"
+	"github.com/moby/moby/client"
+
+	"github.com/moby/moby/api/types/container"
 	portainer "github.com/portainer/portainer/api"
 	consts "github.com/portainer/portainer/api/docker/consts"
 
@@ -43,8 +43,8 @@ var (
 // Status holds Docker image  analysis
 type Status string
 
-func (c *DigestClient) ContainersImageStatus(ctx context.Context, containers []types.Container, endpoint *portainer.Endpoint) Status {
-	cli, err := c.clientFactory.CreateClient(endpoint, "", nil)
+func (c *DigestClient) ContainersImageStatus(ctx context.Context, containers []container.Summary, endpoint *portainer.Endpoint) Status {
+	cli, err := c.clientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create docker client")
 
@@ -56,13 +56,14 @@ func (c *DigestClient) ContainersImageStatus(ctx context.Context, containers []t
 	g, ctx := errgroup.WithContext(ctx)
 	g.SetLimit(maxConcurrentStatusChecks)
 
-	containerStatus := func(ct types.Container) Status {
+	containerStatus := func(ct container.Summary) Status {
 		var nodeName string
 		if swarmNodeId := ct.Labels[consts.SwarmNodeIDLabel]; swarmNodeId != "" {
 			if swarmNodeName, ok := swarmID2NameCache.Get(swarmNodeId); ok {
 				nodeName, _ = swarmNodeName.(string)
 			} else {
-				node, _, err := cli.NodeInspectWithRaw(ctx, swarmNodeId)
+				nodeResult, err := cli.NodeInspect(ctx, swarmNodeId, client.NodeInspectOptions{})
+				node := nodeResult.Node
 				if err != nil {
 					return Error
 				}
@@ -114,12 +115,14 @@ func AggregateImageStatus(statuses []Status) Status {
 }
 
 func (c *DigestClient) ContainerImageStatus(ctx context.Context, containerID string, endpoint *portainer.Endpoint, nodeName string) (Status, error) {
-	cli, err := c.clientFactory.CreateClient(endpoint, nodeName, nil)
+	cli, err := c.clientFactory.CreateClientWithContext(ctx, endpoint, nodeName, nil)
 	if err != nil {
-		log.Warn().Str("swarmNodeId", nodeName).Msg("Cannot create new docker client.")
+		log.Warn().Err(err).Str("swarmNodeId", nodeName).Msg("Cannot create new docker client.")
+		return Error, err
 	}
 
-	container, err := cli.ContainerInspect(ctx, containerID)
+	containerResult, err := cli.ContainerInspect(ctx, containerID, client.ContainerInspectOptions{})
+	container := containerResult.Container
 	if err != nil {
 		log.Warn().Err(err).Str("containerID", containerID).Msg("Inspect container error.")
 		return Skipped, nil
@@ -140,7 +143,8 @@ func (c *DigestClient) ContainerImageStatus(ctx context.Context, containerID str
 		images = append(images, &i)
 	}
 
-	imageInspect, _, err := cli.ImageInspectWithRaw(ctx, imageID)
+	imageInspectResult, err := cli.ImageInspect(ctx, imageID)
+	imageInspect := imageInspectResult.InspectResponse
 	if err != nil {
 		log.Debug().Str("imageID", imageID).Msg("inspect failed")
 		return Error, err
@@ -166,21 +170,22 @@ func (c *DigestClient) ContainerImageStatus(ctx context.Context, containerID str
 }
 
 func (c *DigestClient) ServiceImageStatus(ctx context.Context, serviceID string, endpoint *portainer.Endpoint) (Status, error) {
-	cli, err := c.clientFactory.CreateClient(endpoint, "", nil)
+	cli, err := c.clientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
 	if err != nil {
-		return Error, nil
+		return Error, err
 	}
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{
+	containersResult, err := cli.ContainerList(ctx, client.ContainerListOptions{
 		All:     true,
-		Filters: filters.NewArgs(filters.Arg("label", consts.SwarmServiceIDLabel+"="+serviceID)),
+		Filters: make(client.Filters).Add("label", consts.SwarmServiceIDLabel+"="+serviceID),
 	})
+	containers := containersResult.Items
 	if err != nil {
 		log.Warn().Err(err).Str("serviceID", serviceID).Msg("cannot list container for the service")
 		return Error, err
 	}
 
-	nonExistedOrStoppedContainers := make([]types.Container, 0)
+	nonExistedOrStoppedContainers := make([]container.Summary, 0)
 	for _, container := range containers {
 		if container.State == "exited" || container.State == "stopped" {
 			continue
@@ -237,14 +242,14 @@ func (c *DigestClient) checkStatus(ctx context.Context, images []*Image, digests
 		}
 		remoteDigestCache.Set(img.FullName(), remoteDigest, 0)
 
-		log.Debug().Str("image", img.FullName()).Stringer("remote_digest", remoteDigest).
+		log.Debug().Str("image", img.FullName()).
+			Stringer("remote_digest", remoteDigest).
 			Int("local_digest_size", len(digests)).
 			Msg("Digests")
 
 		// final locals vs remote one
 		for _, dig := range digests {
-			log.Debug().
-				Str("image", img.FullName()).
+			log.Debug().Str("image", img.FullName()).
 				Stringer("remote_digest", remoteDigest).
 				Stringer("local_digest", dig).
 				Msg("Comparing")

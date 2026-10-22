@@ -26,11 +26,13 @@ export function CollapseExpandButton({
       aria-label={isExpanded ? 'Collapse' : 'Expand'}
       aria-expanded={isExpanded}
       type="button"
-      className="group !ml-0 flex flex-none items-center border-none bg-transparent p-0"
+      className="group ml-0! flex flex-none items-center border-none bg-transparent p-0"
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
-      <div className="flex items-center rounded-full p-[3px] transition ease-in-out group-hover:bg-blue-5 group-hover:bg-opacity-10 be:group-hover:bg-gray-5 be:group-hover:bg-opacity-10 group-hover:th-dark:bg-gray-true-7">
+      {/* Tailwind 4 removes bg-opacity utilities; keep the existing
+          translucent hover background in every edition/theme with color alpha. */}
+      <div className="group-hover:bg-blue-5/10 group-hover:be:bg-gray-5/10 th-dark:group-hover:bg-gray-true-7/10 flex items-center rounded-full p-[3px] transition ease-in-out">
         <Icon
           icon={ChevronDown}
           size="md"

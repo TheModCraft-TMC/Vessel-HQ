@@ -21,7 +21,7 @@ export function KubectlShellButton({ environmentId }: Props) {
       size="small"
       data-cy="k8sSidebar-shellButton"
       onClick={() => handleOpen()}
-      className={clsx('sidebar', !isSidebarOpen && '!p-1')}
+      className={clsx('sidebar', !isSidebarOpen && 'p-1!')}
       icon={Terminal}
     >
       {isSidebarOpen ? 'kubectl shell' : ''}

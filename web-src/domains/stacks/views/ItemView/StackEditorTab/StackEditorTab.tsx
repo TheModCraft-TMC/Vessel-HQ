@@ -52,7 +52,7 @@ export function StackEditorTab({
   }
 
   const envType = envQuery.data?.Type;
-  const composeSyntaxMaxVersion = parseFloat(
+  const composeSyntaxMaxVersion = Number.parseFloat(
     envQuery.data?.ComposeSyntaxMaxVersion
   );
 

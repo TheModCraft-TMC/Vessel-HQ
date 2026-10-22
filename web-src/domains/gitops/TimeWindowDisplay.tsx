@@ -67,8 +67,8 @@ function parseTime(originalTime: string) {
 
   const time = new Date();
 
-  time.setHours(parseInt(startHour, 10));
-  time.setMinutes(parseInt(startMin, 10));
+  time.setHours(Number.parseInt(startHour, 10));
+  time.setMinutes(Number.parseInt(startMin, 10));
 
   return time;
 }

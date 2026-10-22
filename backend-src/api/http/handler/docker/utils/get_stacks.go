@@ -3,8 +3,8 @@ package utils
 import (
 	"fmt"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/swarm"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/swarm"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	dockerconsts "github.com/portainer/portainer/api/docker/consts"
@@ -23,7 +23,7 @@ type StackViewModel struct {
 }
 
 // GetDockerStacks retrieves all the stacks associated to a specific environment filtered by the user's access.
-func GetDockerStacks(tx dataservices.DataStoreTx, securityContext *security.RestrictedRequestContext, environmentID portainer.EndpointID, containers []types.Container, services []swarm.Service) ([]StackViewModel, error) {
+func GetDockerStacks(tx dataservices.DataStoreTx, securityContext *security.RestrictedRequestContext, environmentID portainer.EndpointID, containers []container.Summary, services []swarm.Service) ([]StackViewModel, error) {
 	stacks, err := tx.Stack().ReadAll()
 	if err != nil {
 		return nil, fmt.Errorf("Unable to retrieve stacks: %w", err)

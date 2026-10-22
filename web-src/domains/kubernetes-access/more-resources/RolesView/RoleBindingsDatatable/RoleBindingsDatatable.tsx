@@ -98,7 +98,7 @@ function renderRow(row: Row<RoleBinding>, highlightedItemId?: string) {
   return (
     <Table.Row<RoleBinding>
       cells={row.getVisibleCells()}
-      className={clsx('[&>td]:!py-4 [&>td]:!align-top', {
+      className={clsx('[&>td]:py-4! [&>td]:align-top!', {
         active: highlightedItemId === row.id,
       })}
     />

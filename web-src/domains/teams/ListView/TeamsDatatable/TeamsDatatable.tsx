@@ -75,7 +75,7 @@ function useRemoveMutation() {
 
   return { handleRemove };
 
-  async function handleRemove(teams: TeamId[]) {
+  function handleRemove(teams: TeamId[]) {
     deleteMutation.mutate(teams, {
       onSuccess: () => {
         notifySuccess('Teams successfully removed', '');

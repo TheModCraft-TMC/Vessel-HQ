@@ -14,7 +14,9 @@ export function NamespaceDetailsWidget() {
             <table className="table">
               <tbody>
                 <tr>
-                  <td>Name</td>
+                  <th scope="row" className="font-normal">
+                    Name
+                  </th>
                   <td>{namespaceName}</td>
                 </tr>
               </tbody>

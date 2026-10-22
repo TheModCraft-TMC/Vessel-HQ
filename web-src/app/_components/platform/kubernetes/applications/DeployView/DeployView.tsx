@@ -398,7 +398,7 @@ export function KubernetesDeployContent({
                     loadingText="Deployment in progress..."
                     isLoading={createStackMutation.isLoading}
                     disabled={deployDisabled}
-                    className="!ml-0"
+                    className="ml-0!"
                     data-cy="k8sAppDeploy-deployButton"
                   >
                     Deploy

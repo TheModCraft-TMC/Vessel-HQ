@@ -5,7 +5,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { StatusDot, type StatusDotColor } from '@/ui/components/primitives/StatusDot';
 
 const containerVariants = cva(
-  'flex min-w-[6rem] flex-col gap-1 rounded-md border border-solid px-3 py-2',
+  'flex min-w-24 flex-col gap-1 rounded-md border border-solid px-3 py-2',
   {
     variants: {
       status: {

@@ -1,3 +1,4 @@
+import { splitTimestampPrefix } from './splitTimestampPrefix';
 import {
   formatCaller,
   formatKeyValuePair,
@@ -6,21 +7,17 @@ import {
   formatStackTrace,
   formatTime,
 } from './formatters';
-import {
-  FormattedLine,
-  JSONStackTrace,
-  Level,
-  Span,
-  TIMESTAMP_LENGTH,
-} from './types';
+import { FormattedLine, JSONStackTrace, Level, Span } from './types';
 
-const dateRegex = /(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}[AP]M) /; // "2022/02/01 04:30AM "
-const levelRegex = /(\w{3}) /; // "INF " or "ERR "
-const callerRegex = /(.+?.go:\d+) /; // "path/to/file.go:line "
+const dateRegex = /^(\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}[AP]M) /; // "2022/02/01 04:30AM "
+const levelRegex = /(\w{3})/; // "INF " or "ERR "
+// The leading space delimits the caller token, avoiding retries within a long token.
+const callerRegex = / (\S+\.go:\d+) /; // "path/to/file.go:line "
 const chevRegex = /> /; // "> "
 const messageAndPairsRegex = /(.*)/; // include the rest of the string in a separate group
 
-const keyRegex = /(\S+=)/g; // ""
+// Tokenize once, then find the last equals sign in each token (linear time).
+const pairTokenRegex = /\S+/g;
 
 export const ZerologRegex = concatRegex(
   dateRegex,
@@ -53,12 +50,14 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
   const lines: FormattedLine[] = [];
   let line = '';
 
-  const text = withTimestamps ? rawText.substring(TIMESTAMP_LENGTH) : rawText;
+  const timestamp = withTimestamps ? splitTimestampPrefix(rawText) : undefined;
+  if (withTimestamps && !timestamp) {
+    return [{ line: rawText, spans: [{ text: rawText }] }];
+  }
+  const text = timestamp ? timestamp.text : rawText;
 
-  if (withTimestamps) {
-    const timestamp = rawText.substring(0, TIMESTAMP_LENGTH);
-    spans.push({ text: timestamp });
-    line += `${timestamp} `;
+  if (timestamp) {
+    spans.push({ text: timestamp.prefix });
   }
 
   const [, date, level, caller, messageAndPairs] =
@@ -66,10 +65,10 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
 
   const [message, pairs] = extractPairs(messageAndPairs);
 
-  line += formatTime(date, spans, line);
-  line += formatLevel(level as Level, spans, line);
-  line += formatCaller(caller, spans, line);
-  line += formatMessage(message, spans, line, !!pairs.length);
+  line = formatTime(date, spans, line);
+  line = formatLevel(level as Level, spans, line);
+  line = formatCaller(caller, spans, line);
+  line = formatMessage(message, spans, line, !!pairs.length);
 
   let stackTrace: JSONStackTrace | undefined;
   const stackTraceIndex = pairs.findIndex((p) => p.key === 'stack_trace');
@@ -80,7 +79,7 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
   }
 
   pairs.forEach(({ key, value }, idx) => {
-    line += formatKeyValuePair(
+    line = formatKeyValuePair(
       key,
       value,
       spans,
@@ -88,7 +87,8 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
       idx === pairs.length - 1
     );
   });
-  lines.push({ line, spans });
+  // Add the original prefix once, outside the body formatters.
+  lines.push({ line: `${timestamp?.prefix ?? ''}${line}`, spans });
 
   formatStackTrace(stackTrace, lines);
 
@@ -97,16 +97,28 @@ export function formatZerologLogs(rawText: string, withTimestamps?: boolean) {
 
 function extractPairs(messageAndPairs: string): [string, Pair[]] {
   const pairs: Pair[] = [];
+  const hasPipe = messageAndPairs.includes('|');
   let [message, rawPairs] = messageAndPairs.split('|');
 
-  if (!messageAndPairs.includes('|') && !rawPairs) {
+  if (!hasPipe) {
     rawPairs = message;
     message = '';
   }
   message = message.trim();
   rawPairs = rawPairs.trim();
 
-  const matches = [...rawPairs.matchAll(keyRegex)];
+  const matches = [...rawPairs.matchAll(pairTokenRegex)].flatMap((match) => {
+    const equalsIndex = match[0].lastIndexOf('=');
+    return equalsIndex === -1
+      ? []
+      : [{ 0: match[0].slice(0, equalsIndex + 1), index: match.index }];
+  });
+
+  if (!hasPipe) {
+    // Unseparated zerolog output can contain a message before its first field,
+    // or a message alone. Preserve that prefix instead of silently dropping it.
+    message = rawPairs.slice(0, matches[0]?.index ?? rawPairs.length).trim();
+  }
 
   matches.forEach((m, idx) => {
     const rawKey = m[0];

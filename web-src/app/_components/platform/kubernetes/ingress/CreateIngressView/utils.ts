@@ -61,7 +61,7 @@ export function prepareRuleHostsFromIngress(ing: Ingress) {
           ServiceName: path.ServiceName,
           ServicePort: path.Port,
           PathType: path.PathType,
-          Key: Math.random().toString(),
+          Key: uuidv4(),
         });
       }
     });

@@ -91,7 +91,7 @@ export function LoadBalancerServicesForm({
                   icon={RefreshCw}
                   data-cy="k8sAppCreate-refreshLoadBalancerButton"
                   color="default"
-                  className="!ml-0"
+                  className="ml-0!"
                   onClick={() => loadBalancerEnabledQuery.refetch()}
                 >
                   Refresh
@@ -126,7 +126,7 @@ export function LoadBalancerServicesForm({
           <div className="flex">
             <Button
               color="secondary"
-              className="!ml-0"
+              className="ml-0!"
               icon={Plus}
               size="small"
               onClick={() => {

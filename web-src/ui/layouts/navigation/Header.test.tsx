@@ -87,13 +87,13 @@ describe('Header', () => {
     renderComponent({}, { isOpen: false, toggle: vi.fn() });
 
     const logo = screen.getByAltText('Logo');
-    expect(logo).toHaveClass('!max-h-[27px]');
+    expect(logo).toHaveClass('max-h-[27px]!');
   });
 
   it('should not apply max-height class to logo when sidebar is open', () => {
     renderComponent();
 
     const logo = screen.getByAltText('Logo');
-    expect(logo).not.toHaveClass('!max-h-[27px]');
+    expect(logo).not.toHaveClass('max-h-[27px]!');
   });
 });

@@ -57,7 +57,7 @@ export function YAMLInspector({
           icon={expanded ? Minus : Plus}
           data-cy={`expand-collapse-yaml-${identifier}`}
           color="default"
-          className="!ml-0"
+          className="ml-0!"
           onClick={() => setExpanded(!expanded)}
         >
           {expanded ? 'Collapse' : 'Expand'}

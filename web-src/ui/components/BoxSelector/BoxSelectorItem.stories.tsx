@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { Boxes as Docker, Briefcase } from 'lucide-react';
 
 import { init as initFeatureService } from '@/shared/feature-flags/feature-flags.service';
@@ -9,6 +9,12 @@ import { BoxSelectorItem } from './BoxSelectorItem';
 import { BoxSelectorOption } from './types';
 
 const meta: Meta = {
+  loaders: [
+    async () => {
+      await initFeatureService(Edition.CE);
+      return {};
+    },
+  ],
   title: 'Components/BoxSelector/Item',
   args: {
     selected: false,
@@ -67,14 +73,10 @@ SelectedItem.args = {
 };
 
 export function LimitedFeatureItem() {
-  initFeatureService(Edition.CE);
-
   return <Template feature={FeatureId.ACTIVITY_AUDIT} />;
 }
 
 export function SelectedLimitedFeatureItem() {
-  initFeatureService(Edition.CE);
-
   return <Template feature={FeatureId.ACTIVITY_AUDIT} selected />;
 }
 

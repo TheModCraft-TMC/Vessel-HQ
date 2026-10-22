@@ -10,15 +10,15 @@ export function FilterBarActiveIndicator({ label, onClear }: Props) {
       className="flex items-center gap-4 whitespace-nowrap bg-gray-2 px-5 th-highcontrast:bg-transparent th-dark:bg-gray-iron-10"
       data-cy="active-filter-indicator"
     >
-      <span className="text-sm text-[var(--text-muted-color)]">
+      <span className="text-sm text-(--text-muted-color)">
         Showing:{' '}
-        <span className="font-semibold text-[var(--text-summary-color)]">
+        <span className="font-semibold text-(--text-summary-color)">
           {label}
         </span>
       </span>
       <button
         type="button"
-        className="cursor-pointer border-0 bg-transparent p-0 text-xl font-bold leading-none text-[var(--button-close-color)] opacity-[var(--button-opacity)] hover:opacity-[var(--button-opacity-hover)]"
+        className="cursor-pointer border-0 bg-transparent p-0 text-xl font-bold leading-none text-(--button-close-color) opacity-(--button-opacity) hover:opacity-(--button-opacity-hover)"
         onClick={onClear}
         aria-label="Clear filter"
         data-cy="clear-filter-button"

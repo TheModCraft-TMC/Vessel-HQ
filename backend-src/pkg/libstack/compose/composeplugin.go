@@ -18,10 +18,9 @@ import (
 	"github.com/compose-spec/compose-go/v2/cli"
 	"github.com/compose-spec/compose-go/v2/types"
 	"github.com/docker/cli/cli/command"
-	cmdcompose "github.com/docker/compose/v2/cmd/compose"
-	"github.com/docker/compose/v2/pkg/api"
-	"github.com/docker/compose/v2/pkg/compose"
-	"github.com/docker/compose/v2/pkg/utils"
+	cmdcompose "github.com/docker/compose/v5/cmd/compose"
+	"github.com/docker/compose/v5/pkg/api"
+	"github.com/docker/compose/v5/pkg/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/sirupsen/logrus"
 )
@@ -39,9 +38,21 @@ func (c *ComposeDeployer) withComposeService(
 	ctx context.Context,
 	filePaths []string,
 	options libstack.Options,
-	composeFn func(api.Compose, *types.Project) error,
+	composeFn func(context.Context, api.Compose, *types.Project) error,
 ) error {
-	return libstack.WithCli(ctx,
+	return c.withComposeServiceUsing(ctx, filePaths, options, composeFn, libstack.WithCli)
+}
+
+// withComposeServiceUsing keeps ordinary stack operations detached, but lets
+// read-only status polling retain cancellation during initial negotiation too.
+func (c *ComposeDeployer) withComposeServiceUsing(
+	ctx context.Context,
+	filePaths []string,
+	options libstack.Options,
+	composeFn func(context.Context, api.Compose, *types.Project) error,
+	withCli func(context.Context, libstack.DockerCliOptions, func(context.Context, *command.DockerCli) error) error,
+) error {
+	return withCli(ctx,
 		libstack.DockerCliOptions{Host: options.Host, TLSConfig: options.TLSConfig, Registries: options.Registries},
 		func(ctx context.Context, cli *command.DockerCli) error {
 			var composeCli command.Cli = cli
@@ -49,36 +60,21 @@ func (c *ComposeDeployer) withComposeService(
 				composeCli = buildKitDisabledCli{Cli: composeCli}
 			}
 
-			composeService := c.createComposeServiceFn(composeCli)
-
-			if len(filePaths) == 0 {
-				return composeFn(composeService, nil)
-			}
-
-			project, err := createProject(ctx, filePaths, options)
+			project, serviceOptions, err := configuredProject(ctx, filePaths, options)
 			if err != nil {
-				return fmt.Errorf("failed to create compose project: %w", err)
+				return err
 			}
-
-			parallel := 0
-			if v, ok := project.Environment[cmdcompose.ComposeParallelLimit]; ok {
-				i, err := strconv.Atoi(v)
-				if err != nil {
-					return fmt.Errorf("%s must be an integer (found: %q)", cmdcompose.ComposeParallelLimit, v)
-				}
-				parallel = i
+			composeService, err := c.createComposeServiceFn(composeCli, serviceOptions...)
+			if err != nil {
+				return fmt.Errorf("failed to create compose service: %w", err)
 			}
-			if parallel > 0 {
-				composeService.MaxConcurrency(parallel)
-			}
-
-			return composeFn(composeService, project)
+			return composeFn(ctx, composeService, project)
 		})
 }
 
 // Deploy creates and starts containers
 func (c *ComposeDeployer) Deploy(ctx context.Context, filePaths []string, options libstack.DeployOptions) error {
-	return c.withComposeService(ctx, filePaths, options.Options, func(composeService api.Compose, project *types.Project) error {
+	return c.withComposeService(ctx, filePaths, options.Options, func(ctx context.Context, composeService api.Compose, project *types.Project) error {
 		addServiceLabels(project, false, options.EdgeStackID)
 
 		project = project.WithoutUnnecessaryResources()
@@ -120,7 +116,7 @@ func (c *ComposeDeployer) Deploy(ctx context.Context, filePaths []string, option
 
 // Run runs the given service just once, without considering dependencies
 func (c *ComposeDeployer) Run(ctx context.Context, filePaths []string, serviceName string, options libstack.RunOptions) error {
-	return c.withComposeService(ctx, filePaths, options.Options, func(composeService api.Compose, project *types.Project) error {
+	return c.withComposeService(ctx, filePaths, options.Options, func(ctx context.Context, composeService api.Compose, project *types.Project) error {
 		addServiceLabels(project, true, 0)
 
 		for name, service := range project.Services {
@@ -160,7 +156,10 @@ func (c *ComposeDeployer) Remove(ctx context.Context, projectName string, filePa
 	if err := libstack.WithCli(ctx,
 		libstack.DockerCliOptions{Host: options.Host, TLSConfig: options.TLSConfig, Registries: options.Registries},
 		func(ctx context.Context, cli *command.DockerCli) error {
-			composeService := compose.NewComposeService(cli)
+			composeService, err := c.createComposeServiceFn(cli)
+			if err != nil {
+				return fmt.Errorf("failed to create compose service: %w", err)
+			}
 
 			return composeService.Down(ctx, projectName, api.DownOptions{RemoveOrphans: true, Volumes: options.Volumes})
 		}); err != nil {
@@ -174,7 +173,7 @@ func (c *ComposeDeployer) Remove(ctx context.Context, projectName string, filePa
 
 // Pull pulls images
 func (c *ComposeDeployer) Pull(ctx context.Context, filePaths []string, options libstack.Options) error {
-	if err := c.withComposeService(ctx, filePaths, options, func(composeService api.Compose, project *types.Project) error {
+	if err := c.withComposeService(ctx, filePaths, options, func(ctx context.Context, composeService api.Compose, project *types.Project) error {
 		return composeService.Pull(ctx, project, api.PullOptions{})
 	}); err != nil {
 		return fmt.Errorf("compose pull operation failed: %w", err)
@@ -187,34 +186,29 @@ func (c *ComposeDeployer) Pull(ctx context.Context, filePaths []string, options 
 
 // Validate validates stack file
 func (c *ComposeDeployer) Validate(ctx context.Context, filePaths []string, options libstack.Options) error {
-	return c.withComposeService(ctx, filePaths, options, func(composeService api.Compose, project *types.Project) error {
-		return nil
-	})
+	// Parsing configuration never required a live engine. Retain the existing
+	// detached loading context without constructing or probing a Docker client.
+	_, _, err := configuredProject(context.WithoutCancel(ctx), filePaths, options)
+	return err
 }
 
 // Config returns the compose file with the paths resolved
 func (c *ComposeDeployer) Config(ctx context.Context, filePaths []string, options libstack.Options) ([]byte, error) {
-	var payload []byte
-
-	if err := c.withComposeService(ctx, filePaths, options, func(composeService api.Compose, project *types.Project) error {
-		var err error
-		payload, err = project.MarshalYAML()
-		if err != nil {
-			return fmt.Errorf("unable to marshal as YAML: %w", err)
-		}
-
-		return nil
-	}); err != nil {
+	project, _, err := configuredProject(context.WithoutCancel(ctx), filePaths, options)
+	if err != nil {
 		return nil, fmt.Errorf("compose config operation failed: %w", err)
 	}
-
+	payload, err := project.MarshalYAML()
+	if err != nil {
+		return nil, fmt.Errorf("compose config operation failed: unable to marshal as YAML: %w", err)
+	}
 	return payload, nil
 }
 
 func (c *ComposeDeployer) GetExistingEdgeStacks(ctx context.Context) ([]libstack.EdgeStack, error) {
 	m := make(map[int]libstack.EdgeStack)
 
-	if err := c.withComposeService(ctx, nil, libstack.Options{}, func(composeService api.Compose, project *types.Project) error {
+	if err := c.withComposeService(ctx, nil, libstack.Options{}, func(ctx context.Context, composeService api.Compose, project *types.Project) error {
 		stacks, err := composeService.List(ctx, api.ListOptions{
 			All: true,
 		})

@@ -97,7 +97,7 @@ export function ContainerStats({
           <span> / {actualTotal}</span>
         </div>
         <progress
-          className="h-[4px] w-auto rounded bg-gray-4 th-dark:bg-white/10"
+          className="h-[4px] w-auto rounded-sm bg-gray-4 th-dark:bg-white/10"
           value={safeRunning}
           max={Math.max(actualTotal, 1)}
           aria-label={`${safeRunning} of ${actualTotal} containers running`}

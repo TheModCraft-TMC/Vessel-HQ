@@ -1,115 +1,64 @@
-// This file has been automatically migrated to valid ESM format by Storybook.
-import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
-import path, { dirname } from 'path';
-
-import { StorybookConfig } from '@storybook/react-webpack5';
-
-import { Configuration } from 'webpack';
-import postcss from 'postcss';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = createRequire(import.meta.url);
+import path from 'node:path';
+import type { StorybookConfig } from '@storybook/nextjs-vite';
+import svgr from 'vite-plugin-svgr';
 
 const config: StorybookConfig = {
-  stories: ['../web-src/legacy/**/*.stories.@(ts|tsx)'],
+  stories: ['../web-src/**/*.stories.@(ts|tsx)'],
   addons: [
     '@storybook/addon-links',
-    '@storybook/addon-webpack5-compiler-swc',
     '@chromatic-com/storybook',
-    {
-      name: '@storybook/addon-styling-webpack',
-
-      options: {
-        rules: [
-          {
-            test: /\.css$/,
-            sideEffects: true,
-            use: [
-              require.resolve('style-loader'),
-              {
-                loader: require.resolve('css-loader'),
-                options: {
-                  importLoaders: 1,
-                  modules: {
-                    localIdentName: '[path][name]__[local]',
-                    auto: true,
-                    exportLocalsConvention: 'camelCaseOnly',
-                  },
-                },
-              },
-              {
-                loader: require.resolve('postcss-loader'),
-                options: {
-                  implementation: postcss,
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
     '@storybook/addon-docs',
   ],
-  webpackFinal: (config) => {
-    const rules = config?.module?.rules || [];
-
-    const imageRule = rules.find((rule) => {
-      const test = (rule as { test: RegExp }).test;
-
-      if (!test) {
-        return false;
-      }
-
-      return test.test('.svg');
-    }) as { [key: string]: any };
-
-    imageRule.exclude = /\.svg$/;
-
-    rules.unshift({
-      test: /\.svg$/i,
-      type: 'asset',
-      resourceQuery: {
-        not: [/c/],
-      }, // exclude react component if *.svg?url
-    });
-
-    rules.unshift({
-      test: /\.svg$/i,
-      issuer: /\.(js|ts)(x)?$/,
-      resourceQuery: /c/,
-      // *.svg?c
-      use: [
-        {
-          loader: '@svgr/webpack',
-          options: {
-            icon: true,
-          },
-        },
-      ],
-    });
-    return {
-      ...config,
-      resolve: {
-        ...config.resolve,
-        tsconfig: path.resolve(__dirname, '..', 'web-src', 'tsconfig.json'),
-      },
-      module: {
-        ...config.module,
-        rules,
-      },
-    } satisfies Configuration;
-  },
-  staticDirs: ['./public'],
-  typescript: {
-    reactDocgen: 'react-docgen',
-  },
   framework: {
-    name: '@storybook/react-webpack5',
-    options: {},
+    name: '@storybook/nextjs-vite',
+    options: {
+      nextConfigPath: path.resolve(
+        import.meta.dirname,
+        '../web-src/next.config.ts'
+      ),
+      // SVG imports are URLs or explicit ?c React components, not next/image DTOs.
+      image: { excludeFiles: ['**/*.svg'] },
+    },
   },
-  docs: {},
+  staticDirs: ['./public', '../web-src/public'],
+  typescript: {
+    reactDocgen: 'react-docgen-typescript',
+    reactDocgenTypescriptOptions: {
+      tsconfigPath: path.resolve(
+        import.meta.dirname,
+        '../web-src/tsconfig.json'
+      ),
+    },
+  },
+  async viteFinal(config) {
+    const { mergeConfig } = await import('vite');
+    return mergeConfig(config, {
+      plugins: [svgr({ include: /\?c$/ })],
+      resolve: {
+        alias: {
+          '@': path.resolve(import.meta.dirname, '../web-src'),
+          '@console': path.resolve(
+            import.meta.dirname,
+            '../web-src/core/console'
+          ),
+          '@app': path.resolve(import.meta.dirname, '../web-src/app'),
+          '@api': path.resolve(
+            import.meta.dirname,
+            '../web-src/core/generated-api/portainer'
+          ),
+          'yaml-schema': path.resolve(
+            import.meta.dirname,
+            '../node_modules/codemirror-json-schema/dist/yaml'
+          ),
+        },
+      },
+      css: {
+        postcss: path.resolve(import.meta.dirname, '../web-src'),
+        modules: { localsConvention: 'camelCaseOnly' },
+      },
+      define: { 'process.env.PORTAINER_EDITION': JSON.stringify('CE') },
+    });
+  },
 };
 
 export default config;

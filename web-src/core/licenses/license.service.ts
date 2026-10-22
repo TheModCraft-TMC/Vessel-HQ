@@ -45,7 +45,7 @@ export async function attachLicense(licenseKeys: string[]) {
     }
 
     store.invalidated = true;
-    getLicenseInfo();
+    await getLicenseInfo();
     return data;
   } catch (e) {
     const axiosError = e as AxiosError;
@@ -73,7 +73,7 @@ export async function removeLicense(licenseKeys: string[]) {
     }
 
     store.invalidated = true;
-    getLicenseInfo();
+    await getLicenseInfo();
     return data;
   } catch (e) {
     throw parseAxiosError(e);

@@ -225,18 +225,18 @@ function DeployedVersionCell({
   if (!value || value === '0') {
     return (
       <div>
-        <Icon icon={UpdatesAvailable} className="!mr-2" />
+        <Icon icon={UpdatesAvailable} className="mr-2!" />
       </div>
     );
   }
 
-  let statusIcon = <Icon icon={UpToDate} className="!mr-2" />;
+  let statusIcon = <Icon icon={UpToDate} className="mr-2!" />;
   if (
     (row.original.TargetCommitHash &&
       row.original.TargetCommitHash.slice(0, 7) !== value) ||
     (!row.original.TargetCommitHash && row.original.TargetFileVersion !== value)
   ) {
-    statusIcon = <Icon icon={UpdatesAvailable} className="!mr-2" />;
+    statusIcon = <Icon icon={UpdatesAvailable} className="mr-2!" />;
   }
 
   return (

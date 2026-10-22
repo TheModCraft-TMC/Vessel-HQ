@@ -35,8 +35,8 @@ export function DashboardItem({
       className={clsx(
         'relative rounded-lg border border-solid p-3',
         'border-gray-5 bg-gray-2 hover:border-blue-7 hover:bg-blue-2',
-        'th-dark:border-gray-neutral-8 th-dark:bg-gray-iron-10 th-dark:hover:border-blue-8 th-dark:hover:bg-gray-10',
-        'th-highcontrast:border-white th-highcontrast:bg-black th-highcontrast:hover:border-blue-8 th-highcontrast:hover:bg-gray-11'
+        'th-dark:border-gray-neutral-8 th-dark:bg-gray-iron-10 hover:th-dark:border-blue-8 hover:th-dark:bg-gray-10',
+        'th-highcontrast:border-white th-highcontrast:bg-black hover:th-highcontrast:border-blue-8 hover:th-highcontrast:bg-gray-11'
       )}
       data-cy={dataCy}
     >
@@ -61,7 +61,7 @@ export function DashboardItem({
       <div className="flex items-center" aria-label={type}>
         <div
           className={clsx(
-            'icon-badge mr-4 !p-2 text-2xl',
+            'icon-badge mr-4 p-2! text-2xl',
             'bg-blue-3 text-blue-8',
             'th-dark:bg-blue-3 th-dark:text-blue-8',
             'th-highcontrast:bg-blue-3 th-highcontrast:text-blue-8'
@@ -104,7 +104,7 @@ export function DashboardItem({
     return (
       <Link
         to={to}
-        className="!no-underline"
+        className="no-underline!"
         params={params}
         data-cy={`${dataCy}-link`}
       >

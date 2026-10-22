@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { Download } from 'lucide-react';
 
 import { LoadingButton } from './LoadingButton';

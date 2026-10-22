@@ -1,8 +1,10 @@
 package crypto
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"encoding/base64"
 	"io"
 	"math/rand"
 	"os"
@@ -446,4 +448,17 @@ func Test_hasEncryptedHeader(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestDecryptHistoricalBackupVector(t *testing.T) {
+	t.Parallel()
+	// Fixed pre-GCM format vector: changing legacy scrypt parameters, salt or IV
+	// must not silently make already-created user backups unrestorable.
+	ciphertext, err := base64.StdEncoding.DecodeString("Efrpq2y4wifTINDnRGjRDLNqNkL5Sm2fjg3kpGbr4s9Myk8BDEC3LPuDcA==")
+	require.NoError(t, err)
+	reader, err := aesDecrypt(bytes.NewReader(ciphertext), []byte("legacy-test-passphrase"), false)
+	require.NoError(t, err)
+	plaintext, err := io.ReadAll(reader)
+	require.NoError(t, err)
+	require.Equal(t, "Vessel legacy backup compatibility fixture\n", string(plaintext))
 }

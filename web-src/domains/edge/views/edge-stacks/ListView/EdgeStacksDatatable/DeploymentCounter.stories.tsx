@@ -1,4 +1,4 @@
-import { StoryObj, Meta } from '@storybook/react-webpack5';
+import { StoryObj, Meta } from '@storybook/react';
 
 import { StatusType } from '@/domains/edge/models/edge-stack';
 
@@ -20,7 +20,8 @@ export const Running: Story = {
   },
 };
 
-export const Error: Story = {
+export const ErrorStatus: Story = {
+  name: 'Error',
   args: {
     count: 3,
     total: 10,

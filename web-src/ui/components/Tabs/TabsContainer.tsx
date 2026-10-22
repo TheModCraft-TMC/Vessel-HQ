@@ -9,7 +9,7 @@ const tabsContainerOuter = cva('', {
       pill: 'flex flex-wrap gap-2.5',
       contained: [
         'inline-flex overflow-hidden',
-        'border border-solid border-[var(--border-widget)] bg-[var(--bg-widget-color)]',
+        'border border-solid border-(--border-widget) bg-(--bg-widget-color)',
       ],
     },
     size: {

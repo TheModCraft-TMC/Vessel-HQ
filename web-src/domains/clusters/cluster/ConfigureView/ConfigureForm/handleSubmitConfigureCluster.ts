@@ -46,21 +46,26 @@ export async function handleSubmitConfigureCluster(
   );
 
   // update the environment using a react query mutation
-  await configureClusterMutation.mutateAsync(
-    {
-      id: environment.Id,
-      updateEnvironmentPayload: updatedEnvironment,
-      initialIngressControllers: initialValues?.ingressClasses ?? [],
-      ingressControllers: values.ingressClasses,
-      storageClassPatches,
-    },
-    {
-      onSuccess: () => {
-        notifySuccess('Success', 'Configuration successfully applied');
-        resetForm();
+  try {
+    await configureClusterMutation.mutateAsync(
+      {
+        id: environment.Id,
+        updateEnvironmentPayload: updatedEnvironment,
+        initialIngressControllers: initialValues?.ingressClasses ?? [],
+        ingressControllers: values.ingressClasses,
+        storageClassPatches,
       },
-    }
-  );
+      {
+        onSuccess: () => {
+          notifySuccess('Success', 'Configuration successfully applied');
+          resetForm();
+        },
+      }
+    );
+  } catch {
+    // withError on the mutation already notifies the user; resolving here keeps
+    // the failure out of Formik's unhandled submit warning.
+  }
 }
 
 function createStorageClassPatches(

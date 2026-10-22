@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from '@storybook/react-webpack5';
+import { Meta, StoryFn } from '@storybook/react';
 
 import { StatusDot } from './StatusDot';
 import type { StatusDotColor, StatusDotSize } from './StatusDot';

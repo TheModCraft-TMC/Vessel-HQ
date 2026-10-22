@@ -49,7 +49,7 @@ export function Note({
             color="none"
             data-cy="k8sAppDetail-expandNoteButton"
             onClick={() => setIsNoteOpen(!isNoteOpen)}
-            className="!m-0 !p-0"
+            className="m-0! p-0!"
           >
             {isNoteOpen ? <ChevronUp /> : <ChevronRight />} <Edit />
             <span className={isRequired ? 'required' : ''}>Note</span>

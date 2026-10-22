@@ -62,7 +62,7 @@ export function createStorageClassesColumns(
         >
           <Button
             color="light"
-            className="!ml-0"
+            className="ml-0!"
             disabled={original.isDefault}
             data-cy={`k8s-storage-class-set-default-${slugify(original.name)}`}
             onClick={() => onSetDefault(original)}

@@ -86,7 +86,7 @@ export function CreateAccessInnerForm({
             isLoading={isSubmitting}
             loadingText="Creating access..."
             icon={Plus}
-            className="!ml-0"
+            className="ml-0!"
           >
             Create access
           </LoadingButton>
@@ -122,7 +122,7 @@ function useAvailableTeamOrUserOptions(
     const uniqueUserIds = new Set(Object.keys(userAccessPolicies));
     const userAccessOptions: EnvironmentAccess[] = Array.from(uniqueUserIds)
       .map((id) => {
-        const userId = parseInt(id, 10);
+        const userId = Number.parseInt(id, 10);
         const user = users?.find((u) => u.Id === userId);
         if (!user) {
           return null;
@@ -152,7 +152,7 @@ function useAvailableTeamOrUserOptions(
     const uniqueTeamIds = new Set(Object.keys(teamAccessPolicies));
     const teamAccessOptions: EnvironmentAccess[] = Array.from(uniqueTeamIds)
       .map((id) => {
-        const teamId = parseInt(id, 10);
+        const teamId = Number.parseInt(id, 10);
         const team = teams?.find((t) => t.Id === teamId);
         if (!team) {
           return null;

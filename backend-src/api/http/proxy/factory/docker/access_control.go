@@ -11,7 +11,7 @@ import (
 	"github.com/portainer/portainer/api/slicesx"
 	"github.com/portainer/portainer/api/stacks/stackutils"
 
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	"github.com/rs/zerolog/log"
 )
 

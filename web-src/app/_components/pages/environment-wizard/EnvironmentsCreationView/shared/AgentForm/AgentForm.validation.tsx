@@ -36,10 +36,10 @@ export function validateAddress(address: string | undefined) {
 
   if (
     host.length === 0 ||
-    Number.isNaN(parseInt(port, 10)) ||
+    Number.isNaN(Number.parseInt(port, 10)) ||
     port.match(/^[0-9]+$/) == null ||
-    parseInt(port, 10) < 1 ||
-    parseInt(port, 10) > 65535
+    Number.parseInt(port, 10) < 1 ||
+    Number.parseInt(port, 10) > 65535
   ) {
     return false;
   }

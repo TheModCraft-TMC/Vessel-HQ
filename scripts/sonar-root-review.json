@@ -1,0 +1,104 @@
+{
+  "project": "TheModCraft-TMC_Vessel-HQ",
+  "rule": "docker:S6471",
+  "cases": [
+    {
+      "key": "AaFI-OLnL6mSFxVklHVC",
+      "github_issue": 146,
+      "scope": {
+        "branch": "develop"
+      },
+      "reviewed_revision": "5b175344be4a37e01a3adb2d859cf05a1d54c4e8",
+      "sources": [
+        {
+          "path": "build/release-context.Dockerfile",
+          "sha256": "2474c5544ee6e126a89a5cefa7ca2b483923307ac557d71126439b97d763b37d"
+        }
+      ],
+      "rationale": "Root startup preserves access to existing data directories and Docker/Podman host sockets. A fixed nonroot default breaks supported installations; this accepts that explicit privileged deployment boundary, not general root usage."
+    },
+    {
+      "key": "AaFI-OMJL6mSFxVklHVJ",
+      "github_issue": 156,
+      "scope": {
+        "branch": "develop"
+      },
+      "reviewed_revision": "5b175344be4a37e01a3adb2d859cf05a1d54c4e8",
+      "sources": [
+        {
+          "path": "Dockerfile",
+          "sha256": "e5763e1d8200aaec81087d482f77c27be182c5f847efc698aa9e75d32a375c20"
+        }
+      ],
+      "rationale": "Root startup preserves access to existing data directories and Docker/Podman host sockets. A fixed nonroot default breaks supported installations; this accepts that explicit privileged deployment boundary, not general root usage."
+    },
+    {
+      "key": "AaFI-OLfL6mSFxVklHVB",
+      "github_issue": 165,
+      "scope": {
+        "branch": "develop"
+      },
+      "reviewed_revision": "5b175344be4a37e01a3adb2d859cf05a1d54c4e8",
+      "sources": [
+        {
+          "path": "build/linux/Dockerfile",
+          "sha256": "74f9a54738b5d3fd8af7c83520555531ef73d2298d3b841cf51469f98f0b6cd3"
+        }
+      ],
+      "rationale": "Root startup preserves access to existing data directories and Docker/Podman host sockets. A fixed nonroot default breaks supported installations; this accepts that explicit privileged deployment boundary, not general root usage."
+    },
+    {
+      "key": "AaFI-OKkL6mSFxVklHVA",
+      "github_issue": 166,
+      "scope": {
+        "branch": "develop"
+      },
+      "reviewed_revision": "5b175344be4a37e01a3adb2d859cf05a1d54c4e8",
+      "sources": [
+        {
+          "path": "build/linux/alpine.Dockerfile",
+          "sha256": "7d917ffaf1c3bc834a61246a9a296a277618a9868f80cfce7769bfd5b8654d79"
+        }
+      ],
+      "rationale": "Root startup preserves access to existing data directories and Docker/Podman host sockets. A fixed nonroot default breaks supported installations; this accepts that explicit privileged deployment boundary, not general root usage."
+    },
+    {
+      "key": "AaFI-OJvL6mSFxVklHU2",
+      "github_issue": 221,
+      "scope": {
+        "branch": "develop"
+      },
+      "reviewed_revision": "5b175344be4a37e01a3adb2d859cf05a1d54c4e8",
+      "sources": [
+        {
+          "path": "build/linux/dev-toolkit/toolkit.Dockerfile",
+          "sha256": "6867fe694b83d8e5cb72eaef6ee8e6ab0fb43baacaefb7f4b5d5b4c1cf963fd1"
+        },
+        {
+          "path": "build/linux/dev-toolkit/run.sh",
+          "sha256": "b0b081c220536d4bd3dab249691c948f409fc6a1fb39ed07858f22ac56ce9426"
+        }
+      ],
+      "rationale": "Root is required for host UID/GID and Docker socket-group setup in run.sh, which then drops to PUSER using su. A fixed nonroot startup identity breaks supported bind-mount setup."
+    },
+    {
+      "key": "AaFgfrDLBmL4uU2_jom2",
+      "github_issue": 221,
+      "scope": {
+        "pullRequest": "234"
+      },
+      "reviewed_revision": "e1461d732828099065677a1813965ed7ef09bb7b",
+      "sources": [
+        {
+          "path": "build/linux/dev-toolkit/toolkit.Dockerfile",
+          "sha256": "d421ddf26eed9da14cec1577d20de94e538975f38194f024341072f70dca63f6"
+        },
+        {
+          "path": "build/linux/dev-toolkit/run.sh",
+          "sha256": "b0b081c220536d4bd3dab249691c948f409fc6a1fb39ed07858f22ac56ce9426"
+        }
+      ],
+      "rationale": "Root is required for host UID/GID and Docker socket-group setup in run.sh, which then drops to PUSER using su. A fixed nonroot startup identity breaks supported bind-mount setup."
+    }
+  ]
+}

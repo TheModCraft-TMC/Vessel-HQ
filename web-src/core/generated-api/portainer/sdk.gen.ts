@@ -10843,9 +10843,9 @@ export const systemNodesCount = <ThrowOnError extends boolean = true>(
   });
 
 /**
- * Check Portainer status
+ * Check Vessel HQ status
  *
- * Retrieve Portainer status
+ * Retrieve Vessel HQ status
  * **Access policy**: public
  */
 export const systemStatus = <ThrowOnError extends boolean = true>(
@@ -12490,9 +12490,9 @@ export const getWebsocketKubernetesShell = <
   });
 
 /**
- * Stream Docker logs over a websocket
+ * Stream runtime logs over a websocket
  *
- * Streams container, service, or task logs through the existing access-controlled Docker proxy.
+ * Streams Docker container, service, or task logs, or Kubernetes pod logs, through the existing access-controlled environment proxy.
  * **Access policy**: authenticated
  */
 export const getWebsocketLogs = <ThrowOnError extends boolean = true>(

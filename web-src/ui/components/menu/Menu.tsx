@@ -3,6 +3,7 @@
 /* eslint-disable react/jsx-props-no-spreading -- these adapters preserve the previous polymorphic menu API while delegating behavior to Radix. */
 
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import clsx from 'clsx';
 import {
   type ComponentPropsWithoutRef,
   createContext,
@@ -14,6 +15,8 @@ import {
   useEffect,
   useState,
 } from 'react';
+
+import styles from './Menu.module.css';
 
 type MenuRenderState = { isExpanded: boolean };
 const MenuStateContext = createContext<{
@@ -38,7 +41,9 @@ export function Menu({
       const target = event.target;
       if (
         target instanceof Element &&
-        target.closest('[data-console-menu-trigger], [data-console-menu-content]')
+        target.closest(
+          '[data-console-menu-trigger], [data-console-menu-content]'
+        )
       ) {
         return;
       }
@@ -101,7 +106,7 @@ export function MenuList({
       <DropdownMenu.Content
         {...props}
         data-console-menu-content=""
-        className={className}
+        className={clsx(styles.root, className)}
         sideOffset={sideOffset}
         collisionPadding={8}
       />
@@ -120,6 +125,9 @@ export function MenuPopover({
 }
 
 export const MenuItem = DropdownMenu.Item;
+// Register filter choices with Radix's roving-focus collection so
+// keyboard users can reach and toggle them, not just open an empty menu.
+export const MenuCheckboxItem = DropdownMenu.CheckboxItem;
 
 export function MenuLink({
   children,

@@ -7,6 +7,8 @@ import { Select } from '@/ui/components/forms/ReactSelect';
 import { SwitchField } from '@/ui/components/forms/SwitchField';
 import { Card } from '@/ui/components/primitives/Card';
 
+import { VAULT_INTERNAL_ADDRESS_PLACEHOLDER } from '../../../vault-address';
+
 import { SettingsFormValues } from './types';
 
 const kvVersionOptions = [
@@ -70,7 +72,7 @@ export function EditConnectionDetailsWidget() {
                 id="internalAddress"
                 name="internalAddress"
                 value={values.internalAddress}
-                placeholder="http://vault:8200"
+                placeholder={VAULT_INTERNAL_ADDRESS_PLACEHOLDER}
                 onChange={(e) =>
                   setFieldValue('internalAddress', e.target.value)
                 }

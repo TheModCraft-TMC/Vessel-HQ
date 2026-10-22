@@ -30,7 +30,9 @@ export function Details({ team, memberships, isAdmin }: Props) {
             <table className="table">
               <tbody>
                 <tr>
-                  <td>Name</td>
+                  <th scope="row" className="font-normal">
+                    Name
+                  </th>
                   <td>
                     <div className="flex gap-2">
                       {team.Name}
@@ -48,11 +50,15 @@ export function Details({ team, memberships, isAdmin }: Props) {
                   </td>
                 </tr>
                 <tr>
-                  <td>Leaders</td>
+                  <th scope="row" className="font-normal">
+                    Leaders
+                  </th>
                   <td>{leaderCount}</td>
                 </tr>
                 <tr>
-                  <td>Total users in team</td>
+                  <th scope="row" className="font-normal">
+                    Total users in team
+                  </th>
                   <td>{memberships.length}</td>
                 </tr>
               </tbody>

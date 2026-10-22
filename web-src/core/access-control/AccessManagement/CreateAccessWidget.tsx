@@ -87,7 +87,7 @@ export function CreateAccessWidget({
             <div className="col-sm-12">
               <LoadingButton
                 type="submit"
-                className="!ml-0"
+                className="ml-0!"
                 disabled={selectedUsersAndTeams.length === 0}
                 isLoading={isUpdating}
                 loadingText="Creating access..."

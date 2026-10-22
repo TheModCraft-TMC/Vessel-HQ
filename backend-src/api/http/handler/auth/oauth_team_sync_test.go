@@ -1,11 +1,17 @@
 package auth
 
 import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/datastore"
+	"github.com/portainer/portainer/api/oauth"
 
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -89,4 +95,49 @@ func TestSyncOAuthTeamMemberships(t *testing.T) {
 		3: portainer.TeamMember,
 		9: portainer.TeamMember,
 	}, rolesByTeam)
+}
+
+func TestOAuthAuthentikResourceGroupsReachTeamSync(t *testing.T) {
+	t.Parallel()
+	// Exercise the actual service -> OAuthIdentity.Claims -> team-sync path,
+	// including a custom Authentik claim name and conflicting ID-token groups.
+	idToken, err := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
+		"preferred_username": "legacy-id-token-user",
+		"authentik_groups":   []string{"id-token-only"},
+	}).SignedString(jwt.UnsafeAllowNoneSignatureType)
+	require.NoError(t, err)
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		if r.URL.Path == "/token" {
+			assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+				"access_token": "test-token", "token_type": "Bearer", "id_token": idToken,
+			}))
+			return
+		}
+		assert.Equal(t, "Bearer test-token", r.Header.Get("Authorization"))
+		_, _ = w.Write([]byte(`{"preferred_username":"userinfo-user","authentik_groups":["vessel-operators"]}`))
+	}))
+	defer srv.Close()
+	settings := &portainer.OAuthSettings{
+		AccessTokenURI: srv.URL + "/token", ResourceURI: srv.URL + "/userinfo",
+		UserIdentifier: "preferred_username", OAuthAutoMapTeamMemberships: true,
+		TeamMemberships: portainer.OAuthTeamMembershipSettings{
+			OAuthClaimName: "authentik_groups",
+			OAuthClaimMappings: []portainer.OAuthClaimMapping{
+				{ClaimValRegex: `^vessel-operators$`, Team: 1},
+				{ClaimValRegex: `^id-token-only$`, Team: 2},
+			},
+		},
+	}
+	identity, err := oauth.NewService().Authenticate(t.Context(), "code", settings)
+	require.NoError(t, err)
+	require.Equal(t, "legacy-id-token-user", identity.Username, "preserve the base ID-token-first identity precedence")
+
+	_, store := datastore.MustNewTestStore(t, true, false)
+	handler := &Handler{DataStore: store}
+	require.NoError(t, handler.syncOAuthTeamMemberships(7, settings, identity.Claims))
+	memberships, err := store.TeamMembership().TeamMembershipsByUserID(7)
+	require.NoError(t, err)
+	require.Len(t, memberships, 1)
+	require.Equal(t, portainer.TeamID(1), memberships[0].TeamID)
 }

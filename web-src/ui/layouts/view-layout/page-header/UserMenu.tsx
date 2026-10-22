@@ -25,22 +25,24 @@ export function UserMenu() {
       <MenuButton
         className={clsx(
           'ml-auto flex items-center gap-1 self-start',
-          styles.menuButton
+          styles.menuButton,
+          styles.userMenuButton
         )}
         data-cy="userMenu-button"
         aria-label="User menu toggle"
+        title={user?.Username}
       >
         <div
           className={clsx(
             styles.menuIcon,
-            'icon-badge mr-1 !p-2 text-lg',
+            'icon-badge mr-1 p-2! text-lg',
             'text-gray-8',
             'th-dark:text-gray-warm-7'
           )}
         >
           <UserIcon className="lucide" />
         </div>
-        {user && <span>{user.Username}</span>}
+        {user && <span className={styles.username}>{user.Username}</span>}
         <ChevronDown className={styles.arrowDown} />
       </MenuButton>
 

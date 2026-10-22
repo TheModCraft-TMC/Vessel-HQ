@@ -1,6 +1,7 @@
 package oauth
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -8,6 +9,7 @@ import (
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/oauth/oauthtest"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
@@ -192,4 +194,63 @@ func Test_Authenticate(t *testing.T) {
 		assert.Equal(t, "testing", identity.Claims["groups"])
 	})
 
+}
+
+func TestGetIdTokenRejectsMalformedProviderResponses(t *testing.T) {
+	t.Parallel()
+	for _, value := range []any{true, 42, map[string]any{"username": "admin"}, "", "not-a-jwt"} {
+		token := (&oauth2.Token{}).WithExtra(map[string]any{"id_token": value})
+		claims, err := GetIdToken(token)
+		require.Error(t, err)
+		require.Empty(t, claims)
+	}
+	_, err := GetIdToken(nil)
+	require.Error(t, err)
+}
+
+func TestAuthenticateBackchannelIdentityCompatibility(t *testing.T) {
+	t.Parallel()
+	// This deliberately has no signature: it is decoded only after a direct
+	// code exchange with the configured provider, never accepted from a browser.
+	idToken, err := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
+		"username": "id-token-user", "groups": []string{"administrators"},
+	}).SignedString(jwt.UnsafeAllowNoneSignatureType)
+	require.NoError(t, err)
+
+	for _, tc := range []struct {
+		name, resource, wantUsername string
+		providerToken                any
+	}{
+		{"legacy_id_token_identity_has_priority", `{"username":"resource-user","groups":"users"}`, "id-token-user", idToken},
+		{"legacy_username_only_in_id_token", `{"groups":"users"}`, "id-token-user", idToken},
+		{"resource_identity_without_id_token", `{"username":"resource-user","groups":"users"}`, "resource-user", nil},
+		{"malformed_provider_token_does_not_panic", `{"username":"resource-user","groups":"users"}`, "resource-user", true},
+		{"null_resource_does_not_panic", `null`, "id-token-user", idToken},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set("Content-Type", "application/json")
+				if r.URL.Path == "/token" {
+					assert.NoError(t, json.NewEncoder(w).Encode(map[string]any{
+						"access_token": "backchannel-token", "token_type": "Bearer", "id_token": tc.providerToken,
+					}))
+					return
+				}
+				assert.Equal(t, "Bearer backchannel-token", r.Header.Get("Authorization"))
+				_, _ = w.Write([]byte(tc.resource))
+			}))
+			defer srv.Close()
+
+			identity, err := NewService().Authenticate(t.Context(), "code", &portainer.OAuthSettings{
+				AccessTokenURI: srv.URL + "/token", ResourceURI: srv.URL + "/user", UserIdentifier: "username",
+			})
+			require.NoError(t, err)
+			require.Equal(t, tc.wantUsername, identity.Username)
+			if tc.resource == "null" {
+				require.Empty(t, identity.Claims)
+			} else {
+				require.Equal(t, "users", identity.Claims["groups"], "preserve the base resource-only group-sync contract")
+			}
+		})
+	}
 }

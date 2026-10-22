@@ -46,7 +46,7 @@ export function RedeployApplicationButton({
         type="button"
         size="small"
         color="light"
-        className="!ml-0"
+        className="ml-0!"
         disabled={redeployAppMutation.isLoading || !app}
         onClick={() => redeployApplication()}
         data-cy="k8sAppDetail-redeployButton"

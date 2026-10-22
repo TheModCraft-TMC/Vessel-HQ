@@ -1,4 +1,5 @@
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { CopyButton } from './CopyButton';
 
@@ -38,6 +39,6 @@ test('CopyButton should copy text to clipboard', async () => {
   const button = await findByText(children);
   expect(button).toBeTruthy();
 
-  fireEvent.click(button);
+  await userEvent.click(button);
   expect(writeText).toHaveBeenCalledWith(copyText);
 });

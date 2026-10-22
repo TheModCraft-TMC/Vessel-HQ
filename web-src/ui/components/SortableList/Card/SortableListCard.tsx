@@ -15,8 +15,8 @@ export function SortableListCard({
   className,
 }: PropsWithChildren<Props>) {
   return (
-    <Widget className={clsx(styles.root, className, 'th-dark:!border-gray-8')}>
-      <WidgetBody className="overflow-hidden !p-0">{children}</WidgetBody>
+    <Widget className={clsx(styles.root, className, 'th-dark:border-gray-8!')}>
+      <WidgetBody className="overflow-hidden p-0!">{children}</WidgetBody>
     </Widget>
   );
 }

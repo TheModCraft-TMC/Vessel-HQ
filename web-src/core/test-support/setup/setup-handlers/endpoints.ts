@@ -4,7 +4,7 @@ export const endpointsHandlers = [
   http.get('/api/endpoints', () => HttpResponse.json([])),
   http.get('/api/endpoints/agent_versions', () => HttpResponse.json([])),
   http.get('/api/endpoints/:endpointId', ({ params }) =>
-    HttpResponse.json(createEnvironment(parseInt(params.endpointId as string, 10)))
+    HttpResponse.json(createEnvironment(Number.parseInt(params.endpointId as string, 10)))
   ),
   http.get('/api/endpoints/:endpointId/registries', () =>
     HttpResponse.json([])

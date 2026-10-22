@@ -374,9 +374,10 @@ func aesDecryptGCMFIPS(input io.Reader, passphrase []byte) (io.Reader, error) {
 // passphrase is used to generate an encryption key.
 // note: This function used to decrypt files that were encrypted without a header i.e. old archives
 func aesDecryptOFB(input io.Reader, passphrase []byte) (io.Reader, error) {
-	// making a 32 bytes key that would correspond to AES-256
-	// don't necessarily need a salt, so just kept in empty
-	key, err := scrypt.Key(passphrase, nil, 32768, 8, 1, 32)
+	// Historical archives used these exact unsalted scrypt parameters and a
+	// zero IV. Retain them only to restore existing archives, never for new
+	// encryption (AesEncrypt uses salted Argon2id/PBKDF2 and AES-GCM).
+	key, err := scrypt.Key(passphrase, nil, 32768, 8, 1, 32) // NOSONAR S5344: decrypt-only legacy format; parameters cannot change; see SECURITY_REVIEWS.md #172.
 	if err != nil {
 		return nil, err
 	}
@@ -386,7 +387,8 @@ func aesDecryptOFB(input io.Reader, passphrase []byte) (io.Reader, error) {
 		return nil, err
 	}
 
-	// If the key is unique for each ciphertext, then it's ok to use a zero IV.
+	// The zero IV is also fixed by the historical format, not a safe choice
+	// for new archives derived from reusable passphrases.
 	var iv [aes.BlockSize]byte
 	stream := cipher.NewOFB(block, iv[:])
 	reader := &cipher.StreamReader{S: stream, R: input}

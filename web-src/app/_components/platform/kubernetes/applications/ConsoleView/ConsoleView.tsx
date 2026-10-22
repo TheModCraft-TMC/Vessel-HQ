@@ -101,7 +101,7 @@ export function ApplicationConsoleContent({
               </div>
               <div className="row mt-4">
                 <Button
-                  className="btn btn-primary !ml-0"
+                  className="btn btn-primary ml-0!"
                   data-cy="connect-console-button"
                   onClick={connect ? handleDisconnect : handleConnect}
                   disabled={shellState === 'connecting'}

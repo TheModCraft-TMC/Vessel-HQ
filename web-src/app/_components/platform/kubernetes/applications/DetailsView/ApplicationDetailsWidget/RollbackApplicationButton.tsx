@@ -73,7 +73,7 @@ export function RollbackApplicationButton({
       type="button"
       color="light"
       size="small"
-      className="!ml-0"
+      className="ml-0!"
       disabled={isRollbackNotAvailable}
       onClick={() => rollbackApplication()}
       data-cy="k8sAppDetail-rollbackButton"

@@ -45,14 +45,14 @@ export function EnvironmentSidebar() {
   }
 
   return (
-    <div className={clsx(styles.root, 'rounded py-2')}>
+    <div className={clsx(styles.root, 'rounded-sm py-2')}>
       {environment ? (
         <Content environment={environment} onClear={clearEnvironment} />
       ) : (
         <SidebarSectionTitle>
           <div className="flex items-center gap-1">
             <span>Environment:</span>
-            <Icon icon={Slash} className="text-xl !text-gray-6" />
+            <Icon icon={Slash} className="text-xl text-gray-6!" />
             <span className="text-sm text-gray-6">None selected</span>
           </div>
         </SidebarSectionTitle>
@@ -136,7 +136,7 @@ function Title({
         onClick={onClear}
         className={clsx(
           styles.closeBtn,
-          'ml-auto mr-2 flex h-5 w-5 items-center justify-center rounded border-0 p-1 text-sm text-white transition-colors duration-200'
+          'ml-auto mr-2 flex h-5 w-5 items-center justify-center rounded-sm border-0 p-1 text-sm text-white transition-colors duration-200'
         )}
       >
         <X aria-hidden="true" />

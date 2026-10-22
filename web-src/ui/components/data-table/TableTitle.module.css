@@ -1,6 +1,16 @@
+.titleRow {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .controls {
   display: flex;
   min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
@@ -11,8 +21,20 @@
   box-shadow: var(--vessel-shadow-recessed-control);
 }
 
+.controls > * {
+  min-width: 0;
+  max-width: 100%;
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
+}
+
 .controls :global(.searchBar) {
+  flex-wrap: nowrap;
   margin-right: 0 !important;
+}
+
+.controls :global(.searchInput) {
+  min-width: 0;
 }
 
 .controls :global(.settings) {

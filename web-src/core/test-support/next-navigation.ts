@@ -32,7 +32,8 @@ const router = {
   refresh: vi.fn(),
   replace(url: string, options?: { scroll?: boolean }) {
     replaceObserver?.(url, options);
-    const parsed = new URL(url, 'http://test.local');
+    // Security review (S5332): synthetic URL base for parsing in-memory navigation; no HTTP request is sent.
+    const parsed = new URL(url, 'http://test.local'); // NOSONAR
     pathname = parsed.pathname;
     search = parsed.searchParams.toString();
     emitChange();

@@ -32,7 +32,7 @@ export default withLimitToBE(ItemView);
 function ItemView() {
   const { id: idParam } = useRouteParams();
 
-  const id = parseInt(idParam, 10);
+  const id = Number.parseInt(idParam, 10);
   const edgeGroupsQuery = useEdgeGroups();
 
   if (!idParam || Number.isNaN(id)) {

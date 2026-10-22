@@ -7,13 +7,14 @@ import (
 	"io"
 	"time"
 
+	"github.com/moby/moby/client"
+
 	"github.com/portainer/portainer/api/logs"
 	"github.com/portainer/portainer/pkg/libstack"
 
 	"github.com/compose-spec/compose-go/v2/types"
 	"github.com/docker/cli/cli/command"
-	"github.com/docker/compose/v2/pkg/api"
-	"github.com/docker/docker/api/types/container"
+	"github.com/docker/compose/v5/pkg/api"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 )
@@ -93,8 +94,9 @@ func getServiceStatus(ctx context.Context, service service) (libstack.Status, st
 func getContainerLogsTail(ctx context.Context, service service) (string, error) {
 	var combinedOutput bytes.Buffer
 
-	if err := libstack.WithCli(ctx, libstack.DockerCliOptions{}, func(ctx context.Context, cli *command.DockerCli) error {
-		out, err := cli.Client().ContainerLogs(ctx, service.Name, container.LogsOptions{
+	// Log collection is read-only status polling, not detached stack teardown.
+	if err := libstack.WithCliContext(ctx, libstack.DockerCliOptions{}, func(ctx context.Context, cli *command.DockerCli) error {
+		out, err := cli.Client().ContainerLogs(ctx, service.Name, client.ContainerLogsOptions{
 			ShowStdout: true,
 			ShowStderr: true,
 			Timestamps: true,
@@ -155,25 +157,27 @@ func (c *ComposeDeployer) WaitForStatus(ctx context.Context, name string, status
 	waitResult := libstack.WaitResult{Status: status}
 
 	for {
-		if ctx.Err() != nil {
+		select {
+		case <-ctx.Done():
 			waitResult.ErrorMsg = "failed to wait for status: " + ctx.Err().Error()
 
 			return waitResult
+		case <-time.After(time.Second):
 		}
-
-		time.Sleep(1 * time.Second)
 
 		var containerSummaries []api.ContainerSummary
 
-		if err := c.withComposeService(ctx, nil, libstack.Options{ProjectName: name}, func(composeService api.Compose, project *types.Project) error {
+		if err := c.withComposeServiceUsing(ctx, nil, libstack.Options{ProjectName: name}, func(_ context.Context, composeService api.Compose, _ *types.Project) error {
 			var err error
 
-			psCtx, cancelFunc := context.WithTimeout(context.Background(), time.Minute)
+			// WithCli intentionally detaches stack operations. Status polling is
+			// not teardown: retain the original caller's cancellation and values.
+			psCtx, cancelFunc := context.WithTimeout(ctx, time.Minute)
 			defer cancelFunc()
 			containerSummaries, err = composeService.Ps(psCtx, name, api.PsOptions{All: true})
 
 			return err
-		}); err != nil {
+		}, libstack.WithCliContext); err != nil {
 			log.Debug().
 				Str("project_name", name).
 				Err(err).
@@ -236,9 +240,9 @@ func serviceListFromContainerSummary(containerSummaries []api.ContainerSummary) 
 			Project:    cs.Project,
 			Service:    cs.Service,
 			Created:    cs.Created,
-			State:      cs.State,
+			State:      string(cs.State),
 			Status:     cs.Status,
-			Health:     cs.Health,
+			Health:     string(cs.Health),
 			ExitCode:   cs.ExitCode,
 			Publishers: publishers,
 		})

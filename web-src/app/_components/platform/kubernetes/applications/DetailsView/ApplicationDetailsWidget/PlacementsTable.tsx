@@ -16,7 +16,7 @@ export function PlacementsTable({ app }: Props) {
   return (
     <>
       <div className="text-muted mb-4 mt-6 flex items-center">
-        <Icon icon={Minimize2} className="!mr-2" />
+        <Icon icon={Minimize2} className="mr-2!" />
         Placement preferences and constraints
       </div>
       {!formPlacements.length && (

@@ -53,7 +53,7 @@ export function SwitchField({
   return (
     <div className={clsx(styles.root, fieldClass)}>
       <label
-        className={clsx('space-right control-label !p-0 text-left', labelClass)}
+        className={clsx('space-right control-label p-0! text-left', labelClass)}
         htmlFor={toggleId}
       >
         {label}

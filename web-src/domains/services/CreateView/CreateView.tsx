@@ -202,7 +202,7 @@ export function CreateServiceForm({
                 isLoading={createMutation.isLoading}
                 loadingText="Creating service..."
                 disabled={!name || !image.image || createMutation.isLoading}
-                className="!ml-0"
+                className="ml-0!"
                 data-cy="service-create-button"
               >
                 Create service

@@ -37,7 +37,7 @@ export function NameRow({
           <Button
             size="xsmall"
             color="none"
-            className="!ml-1 !p-0 hover:no-underline"
+            className="ml-1! p-0! hover:no-underline"
             onClick={handleEdit}
             data-cy="container-edit-name-button"
             title="Edit container name"

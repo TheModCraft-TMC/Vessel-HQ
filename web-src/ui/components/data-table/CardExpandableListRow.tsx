@@ -41,16 +41,16 @@ export function CardExpandableListRow<D extends DefaultType>({
   return (
     <div
       className={clsx(
-        'flex flex-col overflow-hidden rounded-lg border border-solid border-[color:var(--border-widget)] bg-[color:var(--bg-card-color)] transition-colors',
+        'flex flex-col overflow-hidden rounded-lg border border-solid border-(--border-widget) bg-(--bg-card-color) transition-colors',
         {
-          'hover:border-[color:var(--ui-blue-3,#338ddd)]': !isExpanded,
+          'hover:border-(--ui-blue-3,#338ddd)': !isExpanded,
         }
       )}
     >
       <div
         className={clsx('flex flex-col gap-2 px-4 py-3', {
           'cursor-pointer': isCardClickable,
-          'border-b border-solid border-[color:var(--border-widget)]':
+          'border-b border-solid border-(--border-widget)':
             isExpanded,
         })}
         onClick={isCardClickable ? handleCardClick : undefined}
@@ -79,7 +79,7 @@ export function CardExpandableListRow<D extends DefaultType>({
           {canExpand && (
             <button
               type="button"
-              className="inline-flex items-center justify-center rounded-full border-none bg-transparent p-1 text-[color:var(--text-main-color)] hover:bg-[color:var(--bg-hover-table-color,rgba(51,141,221,0.1))]"
+              className="inline-flex items-center justify-center rounded-full border-none bg-transparent p-1 text-(--text-main-color) hover:bg-(--bg-hover-table-color,rgba(51,141,221,0.1))"
               onClick={(e) => {
                 e.stopPropagation();
                 row.toggleExpanded();
@@ -97,7 +97,7 @@ export function CardExpandableListRow<D extends DefaultType>({
             </button>
           )}
           {titleCell && (
-            <div className="flex min-w-0 flex-auto items-center gap-2 font-medium text-[color:var(--text-main-color)]">
+            <div className="flex min-w-0 flex-auto items-center gap-2 font-medium text-(--text-main-color)">
               {flexRender(
                 titleCell.column.columnDef.cell,
                 titleCell.getContext()
@@ -118,7 +118,7 @@ export function CardExpandableListRow<D extends DefaultType>({
           )}
         </div>
         {metaCells.length > 0 && (
-          <div className="flex flex-wrap gap-x-6 gap-y-2 pl-9 text-xs text-[color:var(--text-summary-color,var(--text-main-color))]">
+          <div className="flex flex-wrap gap-x-6 gap-y-2 pl-9 text-xs text-(--text-summary-color,var(--text-main-color))">
             {metaCells.map((cell) => {
               const label = getColumnHeaderText(cell);
               return (
@@ -127,7 +127,7 @@ export function CardExpandableListRow<D extends DefaultType>({
                   className="inline-flex items-center gap-1.5 whitespace-nowrap"
                 >
                   {label && <span className="opacity-70">{label}</span>}
-                  <span className="inline-flex items-center gap-1 text-[color:var(--text-main-color)]">
+                  <span className="inline-flex items-center gap-1 text-(--text-main-color)">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </span>
                 </div>
@@ -137,7 +137,7 @@ export function CardExpandableListRow<D extends DefaultType>({
         )}
       </div>
       {isExpanded && (
-        <div className="bg-[color:var(--bg-card-color)] py-3">
+        <div className="bg-(--bg-card-color) py-3">
           {renderSubRow(row)}
         </div>
       )}

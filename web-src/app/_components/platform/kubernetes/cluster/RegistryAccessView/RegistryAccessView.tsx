@@ -126,7 +126,7 @@ export function RegistryAccessContent({
                 isLoading={mutation.isLoading}
                 loadingText="Creating access..."
                 disabled={!selectedNamespaces.length || mutation.isLoading}
-                className="!ml-0"
+                className="ml-0!"
                 data-cy="create-registry-access-button"
               >
                 Create access

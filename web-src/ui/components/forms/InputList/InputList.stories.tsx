@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useState } from 'react';
 
 import { Input, Select } from '../Input';
@@ -98,7 +98,7 @@ function SelectAndInputItem({
         type="number"
         value={item.value}
         onChange={(e) =>
-          onChange({ ...item, value: parseInt(e.target.value, 10) })
+          onChange({ ...item, value: Number.parseInt(e.target.value, 10) })
         }
         data-cy="input"
       />

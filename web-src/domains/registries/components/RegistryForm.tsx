@@ -255,7 +255,7 @@ export function RegistryForm({
               isEdit ? 'Updating registry...' : 'Creating registry...'
             }
             disabled={!isValid || isLoading}
-            className="!ml-0"
+            className="ml-0!"
             data-cy="registry-submit-button"
           >
             {isEdit ? 'Update registry' : 'Create registry'}

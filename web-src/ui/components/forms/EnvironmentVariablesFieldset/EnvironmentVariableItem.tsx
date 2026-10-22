@@ -32,7 +32,7 @@ export function EnvironmentVariableItem({
           />
           {error && (
             <div>
-              <FormError className="!mb-0 mt-1">
+              <FormError className="mb-0! mt-1">
                 {Object.values(error)[0]}
               </FormError>
             </div>

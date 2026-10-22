@@ -24,7 +24,7 @@ export function PlatformField({
         required
         options={platformOptions}
         value={value}
-        onChange={(e) => onChange(parseInt(e.target.value, 10))}
+        onChange={(e) => onChange(Number.parseInt(e.target.value, 10))}
       />
     </FormControl>
   );

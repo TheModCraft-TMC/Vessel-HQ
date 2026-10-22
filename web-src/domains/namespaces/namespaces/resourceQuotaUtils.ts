@@ -31,7 +31,7 @@ export function convertBase2ToMiB(value: string | number) {
     return value;
   }
 
-  const numericValue = parseFloat(match[1]);
+  const numericValue = Number.parseFloat(match[1]);
   const suffix = match[2];
 
   switch (suffix) {

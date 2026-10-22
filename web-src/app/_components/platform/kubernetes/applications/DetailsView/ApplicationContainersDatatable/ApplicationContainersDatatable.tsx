@@ -114,7 +114,7 @@ export function ApplicationContainersDatatable() {
           data-cy="k8s-application-containers-datatable"
           getRowCanExpand={(row) => row.original.containers.length > 0}
           renderSubRow={(row) => (
-            <div className="-m-2 overflow-hidden rounded-sm bg-[color:var(--bg-card-color)] pl-6">
+            <div className="-m-2 overflow-hidden rounded-xs bg-(--bg-card-color) pl-6">
               <NestedDatatable<ContainerRowData>
                 dataset={row.original.containers}
                 columns={containerColumns}

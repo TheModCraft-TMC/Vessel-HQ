@@ -57,7 +57,7 @@ export function FilePicker({
               <Button
                 key={`example-${index}`}
                 color="none"
-                className="!th-highcontrast:bg-gray-9 !th-highcontrast:text-gray-3 !th-dark:bg-gray-9 !th-dark:text-gray-3 !bg-gray-3 !p-2 font-mono !text-gray-9"
+                className="!th-highcontrast:bg-gray-9 !th-highcontrast:text-gray-3 !th-dark:bg-gray-9 !th-dark:text-gray-3 bg-gray-3! p-2! font-mono text-gray-9!"
                 onClick={() => {
                   setFilter(pattern);
                   commandPaletteRef.current?.focus();
@@ -155,7 +155,7 @@ export function FilePicker({
     onChange(
       Array.from(next)
         .map((f) => `/${f}`)
-        .sort()
+        .sort((a, b) => a.localeCompare(b))
     );
   }
 

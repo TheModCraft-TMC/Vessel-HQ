@@ -5,11 +5,11 @@ import { Button } from '@/ui/components/buttons';
 // use enum so that the tailwind classes aren't interpolated
 type MaxLines = 2 | 5 | 10 | 20 | 50;
 const lineClampClasses: Record<MaxLines, string> = {
-  2: 'line-clamp-[2]',
-  5: 'line-clamp-[5]',
-  10: 'line-clamp-[10]',
-  20: 'line-clamp-[20]',
-  50: 'line-clamp-[50]',
+  2: 'line-clamp-2',
+  5: 'line-clamp-5',
+  10: 'line-clamp-10',
+  20: 'line-clamp-20',
+  50: 'line-clamp-50',
 };
 
 interface LineBasedProps {
@@ -54,7 +54,7 @@ export function ExpandableMessageByLines({
     <div className="flex flex-col items-start">
       <div
         ref={contentRef}
-        className={`overflow-hidden whitespace-pre-wrap break-words ${
+        className={`overflow-hidden whitespace-pre-wrap wrap-break-word ${
           isExpanded ? '' : lineClampClasses[maxLines]
         }`}
       >
@@ -65,7 +65,7 @@ export function ExpandableMessageByLines({
           color="link"
           size="xsmall"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="!ml-0 mt-1 !p-0"
+          className="ml-0! mt-1 p-0!"
           data-cy="expandable-message-lines-button"
         >
           {isExpanded ? 'Show less' : 'Show more'}

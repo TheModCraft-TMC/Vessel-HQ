@@ -16,7 +16,7 @@ function parseTemplateId(param?: string) {
     return undefined;
   }
 
-  return parseInt(param, 10);
+  return Number.parseInt(param, 10);
 }
 
 function parseTemplateType(param?: string): 'app' | 'custom' | undefined {

@@ -203,7 +203,7 @@ function LinkedServiceAccountsContent({
                 to="/:endpointId/kubernetes/moreResources/serviceAccounts/:namespace/:name"
                 params={{ namespace, name: saName }}
                 data-cy={`linked-service-account-link-${saName}`}
-                className="!text-inherit"
+                className="text-inherit!"
               >
                 {saName}
               </Link>

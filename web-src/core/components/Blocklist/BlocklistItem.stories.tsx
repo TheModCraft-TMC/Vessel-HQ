@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import { localizeDate } from '@/shared/dates';
 import { Badge } from '@/ui/components/status/Badge';

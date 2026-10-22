@@ -61,6 +61,14 @@ describe('parseDN', () => {
     expect(result).toEqual([]);
   });
 
+  it('parses a long attribute-free input without backtracking', () => {
+    const start = performance.now();
+    const result = parseDN('a'.repeat(50_000), '');
+
+    expect(result).toEqual([]);
+    expect(performance.now() - start).toBeLessThan(500);
+  });
+
   it('should handle values with spaces', () => {
     const result = parseDN(
       'ou=Sales Team,ou=Department,dc=example,dc=com',

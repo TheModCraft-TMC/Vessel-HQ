@@ -19,7 +19,7 @@ export function AppTemplatesView() {
   ]);
   const [selectedTemplateId, setSelectedTemplateId] = useParamState<number>(
     'template',
-    (param) => (param ? parseInt(param, 10) : 0)
+    (param) => (param ? Number.parseInt(param, 10) : 0)
   );
   const templatesQuery = useAppTemplates({ environmentId: envId });
   const selectedTemplate = selectedTemplateId

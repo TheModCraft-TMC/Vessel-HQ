@@ -3,8 +3,8 @@ package utils
 import (
 	"testing"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/swarm"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/swarm"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/datastore"
@@ -26,7 +26,7 @@ func TestHandler_getDockerStacks(t *testing.T) {
 		},
 	}
 
-	containers := []types.Container{
+	containers := []container.Summary{
 		{
 			Labels: map[string]string{
 				consts.ComposeStackNameLabel: "stack1",

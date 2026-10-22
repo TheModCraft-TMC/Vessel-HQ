@@ -1,3 +1,5 @@
+@reference '../../../../shared/assets/css/tailwind.css';
+
 .root {
   padding-top: 50px;
 }

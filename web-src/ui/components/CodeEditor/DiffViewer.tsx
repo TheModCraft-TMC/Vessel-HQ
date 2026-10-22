@@ -72,14 +72,14 @@ export function DiffViewer({
             height,
           } as React.CSSProperties
         }
-        className="h-full overflow-y-scroll [scrollbar-gutter:stable]"
+        className="h-full overflow-y-scroll scrollbar-gutter-stable"
       >
         <CodeMirrorMerge
           theme={theme}
           className={clsx(
             styles.root,
             // to give similar sizing to CodeEditor
-            '[&_.cm-content]:!min-h-[var(--editor-min-height)] [&_.cm-editor>.cm-scroller]:!min-h-[var(--editor-min-height)] [&_.cm-gutters]:!min-h-[var(--editor-min-height)]'
+            '[&_.cm-content]:min-h-(--editor-min-height)! [&_.cm-editor>.cm-scroller]:min-h-(--editor-min-height)! [&_.cm-gutters]:min-h-(--editor-min-height)!'
           )}
           id={id}
           data-cy={dataCy}

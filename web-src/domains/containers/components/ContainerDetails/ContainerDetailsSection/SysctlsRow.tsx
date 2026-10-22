@@ -11,7 +11,7 @@ export function SysctlsRow({ sysctls }: SysctlsRowProps) {
 
   return (
     <DetailsTable.Row label="Sysctls">
-      <table className="table-bordered table-condensed !m-0 table">
+      <table className="table-bordered table-condensed m-0! table">
         <tbody>
           {Object.entries(sysctls).map(([key, value]) => (
             <tr key={key}>

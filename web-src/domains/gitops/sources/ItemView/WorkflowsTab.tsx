@@ -104,7 +104,7 @@ function WorkflowCard({ item }: { item: SourceWorkflow }) {
 
   return (
     <Link
-      className="group flex items-center gap-3 p-4 text-inherit hover:bg-cyan-4/10 hover:text-current hover:!no-underline"
+      className="group flex items-center gap-3 p-4 text-inherit hover:bg-cyan-4/10 hover:text-current hover:no-underline!"
       to={to}
       params={params}
       data-cy="workflow-item"

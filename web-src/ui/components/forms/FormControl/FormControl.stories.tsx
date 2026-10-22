@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useState } from 'react';
 
 import { Input, Select } from '../Input';
@@ -82,7 +82,7 @@ function SelectField({
         className="form-control"
         data-cy="select"
         value={value}
-        onChange={(e) => setValue(parseInt(e.target.value, 10))}
+        onChange={(e) => setValue(Number.parseInt(e.target.value, 10))}
         options={options}
       />
     </FormControl>

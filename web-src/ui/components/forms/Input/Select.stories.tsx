@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from '@storybook/react-webpack5';
+import { Meta, StoryFn } from '@storybook/react';
 import { useState } from 'react';
 
 import { Select } from './Select';
@@ -24,7 +24,7 @@ export function Example({ disabled }: Args) {
     <Select
       value={value}
       data-cy="select"
-      onChange={(e) => setValue(parseInt(e.target.value, 10))}
+      onChange={(e) => setValue(Number.parseInt(e.target.value, 10))}
       disabled={disabled}
       options={options}
     />

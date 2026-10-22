@@ -114,7 +114,7 @@ export function CodeEditor({
                   fadeDelay={2500}
                   copyText={value}
                   color="link"
-                  className="!pr-0 !text-sm !font-medium hover:no-underline focus:no-underline"
+                  className="pr-0! text-sm! font-medium! hover:no-underline focus:no-underline"
                   indicatorPosition="left"
                 >
                   Copy

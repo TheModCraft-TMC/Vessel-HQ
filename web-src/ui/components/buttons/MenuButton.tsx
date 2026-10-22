@@ -60,8 +60,8 @@ export function MenuButton({
 
       <MenuList
         className={clsx(
-          'dropdown-menu relative rounded-lg !p-1',
-          'border !border-solid border-gray-6 shadow-[0_6px_12px_rgba(0,0,0,0.18)] th-highcontrast:border-gray-2 th-dark:border-gray-warm-8',
+          'dropdown-menu relative rounded-lg p-1!',
+          'border border-solid! border-gray-6 shadow-[0_6px_12px_rgba(0,0,0,0.18)] th-highcontrast:border-gray-2 th-dark:border-gray-warm-8',
           {
             'right-0 origin-top-right': dropdownPosition === 'right',
             'left-0 origin-top-left': dropdownPosition === 'left',
@@ -93,7 +93,7 @@ export function MenuButtonLink({
     <ReachMenuLink
       href={href}
       className={clsx(
-        'decoration-none hover:decoration-none whitespace-nowrap rounded-md px-5 py-1 text-sm leading-5 text-[var(--text-dropdown-menu-color)] hover:bg-[var(--bg-dropdown-hover)] hover:text-[var(--text-dropdown-menu-color)] hover:no-underline focus:bg-[var(--bg-dropdown-hover)] focus:text-[var(--text-dropdown-menu-color)] focus-visible:outline-none focus-visible:ring-0 th-highcontrast:text-[var(--text-dropdown-menu-color)] th-highcontrast:hover:text-[var(--text-dropdown-menu-color)] th-highcontrast:focus:text-[var(--text-dropdown-menu-color)] th-dark:text-[var(--text-dropdown-menu-color)] th-dark:hover:text-[var(--text-dropdown-menu-color)] th-dark:focus:text-[var(--text-dropdown-menu-color)]'
+        'decoration-none hover:decoration-none whitespace-nowrap rounded-md px-5 py-1 text-sm leading-5 text-(--text-dropdown-menu-color) hover:bg-(--bg-dropdown-hover) hover:text-(--text-dropdown-menu-color) hover:no-underline focus:bg-(--bg-dropdown-hover) focus:text-(--text-dropdown-menu-color) focus-visible:outline-hidden focus-visible:ring-0 th-highcontrast:text-(--text-dropdown-menu-color) hover:th-highcontrast:text-(--text-dropdown-menu-color) focus:th-highcontrast:text-(--text-dropdown-menu-color) th-dark:text-(--text-dropdown-menu-color) hover:th-dark:text-(--text-dropdown-menu-color) focus:th-dark:text-(--text-dropdown-menu-color)'
       )}
       aria-label={label}
       data-cy={dataCy}

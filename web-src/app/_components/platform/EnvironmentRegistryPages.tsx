@@ -150,16 +150,20 @@ function RegistrySummary({
     <PageContent>
       <Widget>
         <WidgetTitle icon={Radio} title="Registry" />
-        <WidgetBody loading={isLoading} className="!p-0">
+        <WidgetBody loading={isLoading} className="p-0!">
           {registry && (
             <table className="mb-0 table">
               <tbody>
                 <tr>
-                  <td>Name</td>
+                  <th scope="row" className="text-left font-normal">
+                    Name
+                  </th>
                   <td>{registry.Name}</td>
                 </tr>
                 <tr>
-                  <td>URL</td>
+                  <th scope="row" className="text-left font-normal">
+                    URL
+                  </th>
                   <td>{registry.URL}</td>
                 </tr>
               </tbody>

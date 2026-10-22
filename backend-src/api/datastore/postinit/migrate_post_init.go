@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/client"
+	"github.com/moby/moby/client"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	dockerClient "github.com/portainer/portainer/api/docker/client"
@@ -287,7 +286,8 @@ func (migrator *PostInitMigrator) MigrateGPUs(e portainer.Endpoint, dockerClient
 			Msg("migrating GPUs for environment")
 
 		// Get all containers
-		containers, err := dockerClient.ContainerList(context.Background(), container.ListOptions{All: true})
+		containersResult, err := dockerClient.ContainerList(context.Background(), client.ContainerListOptions{All: true})
+		containers := containersResult.Items
 		if err != nil {
 			log.Error().
 				Err(err).
@@ -301,7 +301,8 @@ func (migrator *PostInitMigrator) MigrateGPUs(e portainer.Endpoint, dockerClient
 	containersLoop:
 		for _, container := range containers {
 			// https://www.sobyte.net/post/2022-10/go-docker/ has nice documentation on the docker client with GPUs
-			containerDetails, err := dockerClient.ContainerInspect(context.Background(), container.ID)
+			containerDetailsResult, err := dockerClient.ContainerInspect(context.Background(), container.ID, client.ContainerInspectOptions{})
+			containerDetails := containerDetailsResult.Container
 			if err != nil {
 				log.Error().Err(err).Msg("failed to inspect container")
 

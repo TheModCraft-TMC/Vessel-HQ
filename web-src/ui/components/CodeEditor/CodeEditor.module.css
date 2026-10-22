@@ -1,3 +1,5 @@
+@reference '../../../shared/assets/css/tailwind.css';
+
 .root {
   --text-cm-default-color: var(--blue-1);
   --text-cm-meta-color: var(--black-color);
@@ -66,12 +68,12 @@
 /* code mirror merge side-by-side editor */
 .root :global(.cm-merge-a),
 .root :global(.cm-merge-a .cm-scroller) {
-  @apply !rounded-r-none;
+  @apply rounded-r-none!;
 }
 
 .root :global(.cm-merge-b),
 .root :global(.cm-merge-b .cm-scroller) {
-  @apply !rounded-l-none;
+  @apply rounded-l-none!;
 }
 
 /*  Search Panel  */
@@ -166,7 +168,7 @@
 
 /* Tooltip styles for all themes */
 .root :global(.cm-tooltip) {
-  @apply h-min rounded border border-solid border-gray-5 bg-white text-xs shadow-md;
+  @apply h-min rounded-sm border border-solid border-gray-5 bg-white text-xs shadow-md;
   @apply th-dark:border-gray-7 th-dark:bg-gray-9 th-dark:text-white;
   @apply th-highcontrast:border-gray-7 th-highcontrast:bg-black th-highcontrast:text-white;
 }

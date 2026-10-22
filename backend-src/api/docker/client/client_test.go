@@ -2,6 +2,7 @@ package client
 
 import (
 	"testing"
+	"time"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/pkg/fips"
@@ -10,9 +11,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func init() {
+	// All factory/TLS tests may run in parallel. Initialize process-wide FIPS
+	// state before any of them reads it, not inside one parallel test.
+	fips.InitFIPS(false)
+}
+
 func TestHttpClient(t *testing.T) {
 	t.Parallel()
-	fips.InitFIPS(false)
 
 	// Valid TLS configuration
 	endpoint := &portainer.Endpoint{}
@@ -88,4 +94,14 @@ func TestAgentClientHeaders_SignatureFailurePropagatesOutsideFIPSMode(t *testing
 	headers, err := agentClientHeaders(testhelpers.NewFailingSignatureService(), "", false)
 	require.Error(t, err)
 	require.Nil(t, headers)
+}
+
+func TestDockerRequestTimeout(t *testing.T) {
+	t.Parallel()
+	// The same helper is used for local/TCP/agent negotiation and HTTP clients.
+	// A nil timeout must not give eager local construction an unlimited wait.
+	require.Equal(t, 60*time.Second, dockerRequestTimeout(nil))
+	for _, timeout := range []time.Duration{0, 30 * time.Millisecond, 20 * time.Second} {
+		require.Equal(t, timeout, dockerRequestTimeout(&timeout))
+	}
 }

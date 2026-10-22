@@ -44,7 +44,7 @@ export function ImageConfigFieldset({
               size="small"
               color="link"
               icon={Globe}
-              className="!ml-0 p-0 hover:no-underline"
+              className="ml-0! p-0 hover:no-underline"
               onClick={() => setFieldValue('useRegistry', false)}
               data-cy="image-config-advanced-button"
             >
@@ -55,7 +55,7 @@ export function ImageConfigFieldset({
               size="small"
               color="link"
               icon={Database}
-              className="!ml-0 p-0 hover:no-underline"
+              className="ml-0! p-0 hover:no-underline"
               onClick={() => setFieldValue('useRegistry', true)}
               data-cy="image-config-simple-button"
             >

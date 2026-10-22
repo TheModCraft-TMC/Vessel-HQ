@@ -1,10 +1,22 @@
 import { useEffect } from 'react';
-import '../web-src/legacy/assets/css';
-import { pushStateLocationPlugin, UIRouter } from '@uirouter/react';
+import '../web-src/app/next-globals.css';
+import '../web-src/shared/assets/vendor/bootstrap-3/bootstrap.css';
+import 'toastr/build/toastr.css';
+import 'spinkit/spinkit.min.css';
+import '../web-src/shared/assets/css/rdash.css';
+import '../web-src/shared/assets/css/app.css';
+import '../web-src/shared/assets/css/theme.css';
+import '../web-src/ui/tokens/tokens.css';
+import '../web-src/shared/assets/css/vendor-override.css';
+import '../web-src/shared/assets/css/bootstrap-override.css';
+import '../web-src/shared/assets/css/icon.css';
+import '../web-src/shared/assets/css/button.css';
+import '../web-src/shared/assets/css/react-datetime-picker-override.css';
+import { withTestRouter } from '../web-src/core/test-support/withRouter';
 import { initialize as initMSW, mswLoader } from 'msw-storybook-addon';
-import { handlers } from '../web-src/legacy/setup-tests/server-handlers';
+import { handlers } from '../web-src/core/test-support/setup/server-handlers';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Preview } from '@storybook/react-webpack5';
+import { Preview } from '@storybook/react';
 
 initMSW(
   {
@@ -29,7 +41,7 @@ const testQueryClient = new QueryClient({
 const preview: Preview = {
   globalTypes: {
     theme: {
-      description: 'Portainer color theme',
+      description: 'Vessel color theme',
       toolbar: {
         title: 'Theme',
         icon: 'paintbrush',
@@ -56,16 +68,17 @@ const preview: Preview = {
       }
     }, [theme]);
 
+    const StoryWithProviders = withTestRouter(Story);
+
     return (
       <QueryClientProvider client={testQueryClient}>
-        <UIRouter plugins={[pushStateLocationPlugin]}>
-          <Story />
-        </UIRouter>
+        <StoryWithProviders />
       </QueryClientProvider>
     );
   },
   loaders: [mswLoader],
   parameters: {
+    nextjs: { appDirectory: true },
     options: {
       storySort: {
         order: ['Design System', 'Components', '*'],

@@ -77,7 +77,7 @@ function Item({
             placeholder="e.g. 80"
             value={item.host}
             onChange={(e) =>
-              handleChange('host', parseInt(e.target.value || '0', 10))
+              handleChange('host', Number.parseInt(e.target.value || '0', 10))
             }
             disabled={disabled}
             readOnly={readOnly}
@@ -96,7 +96,10 @@ function Item({
             placeholder="e.g. 80"
             value={item.container}
             onChange={(e) =>
-              handleChange('container', parseInt(e.target.value || '0', 10))
+              handleChange(
+                'container',
+                Number.parseInt(e.target.value || '0', 10)
+              )
             }
             disabled={disabled}
             readOnly={readOnly}

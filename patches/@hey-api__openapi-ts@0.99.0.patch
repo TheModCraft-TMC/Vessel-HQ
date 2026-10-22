@@ -1,0 +1,16 @@
+diff --git a/dist/clients/core/serverSentEvents.ts b/dist/clients/core/serverSentEvents.ts
+index 16c6fbb780a3a399ac7d882e405bd24c82e57c7d..deff150fade99d23a37df97668039ed5baa7441c 100644
+--- a/dist/clients/core/serverSentEvents.ts
++++ b/dist/clients/core/serverSentEvents.ts
+@@ -141,7 +141,6 @@
+         const abortHandler = () => {
+-          try {
+-            reader.cancel();
+-          } catch {
+-            // noop
+-          }
++          // Cancellation may reject when the stream has already failed or closed.
++          void reader.cancel().catch(() => {
++            // The stream read path reports failures; abort cleanup is best effort.
++          });
+         };

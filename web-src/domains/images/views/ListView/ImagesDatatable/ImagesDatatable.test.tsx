@@ -1,4 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
@@ -100,6 +101,53 @@ describe('ImagesDatatable', () => {
       await waitFor(() => {
         expect(screen.getByText(/No items available./i)).toBeInTheDocument();
       });
+    });
+  });
+
+  describe('Usage filtering', () => {
+    it('filters used and unused images and supports clearing the filter', async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get('/api/docker/:envId/images', ({ request }) => {
+          expect(new URL(request.url).searchParams.get('withUsage')).toBe(
+            'true'
+          );
+          return HttpResponse.json([
+            createMockImage({
+              id: 'sha256:used',
+              tags: ['used:latest'],
+              used: true,
+            }),
+            createMockImage({
+              id: 'sha256:unused',
+              tags: ['unused:latest'],
+              used: false,
+            }),
+          ]);
+        })
+      );
+      renderComponent({ isHostColumnVisible: false });
+      await screen.findByText('used:latest');
+      const idHeader = screen
+        .getAllByRole('columnheader')
+        .find((header) => header.textContent?.startsWith('Id'))!;
+      await user.click(
+        within(idHeader).getByRole('button', { name: 'Filter' })
+      );
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Unused$/ }));
+      await waitFor(() =>
+        expect(screen.queryByText('used:latest')).not.toBeInTheDocument()
+      );
+      expect(screen.getByText('unused:latest')).toBeVisible();
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Used$/ }));
+      expect(await screen.findByText('used:latest')).toBeVisible();
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Unused$/ }));
+      await waitFor(() =>
+        expect(screen.queryByText('unused:latest')).not.toBeInTheDocument()
+      );
+      expect(screen.getByText('used:latest')).toBeVisible();
+      await user.click(screen.getByRole('menuitemcheckbox', { name: /^Used$/ }));
+      expect(await screen.findByText('unused:latest')).toBeVisible();
     });
   });
 

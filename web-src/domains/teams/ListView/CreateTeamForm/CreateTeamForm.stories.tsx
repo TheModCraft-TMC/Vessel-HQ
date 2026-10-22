@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 
 import { CreateTeamForm } from './CreateTeamForm';
 import { mockExampleData } from './CreateTeamForm.mocks';

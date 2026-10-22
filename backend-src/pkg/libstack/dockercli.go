@@ -12,9 +12,17 @@ import (
 	"github.com/docker/cli/cli/command"
 	configtypes "github.com/docker/cli/cli/config/types"
 	"github.com/docker/cli/cli/flags"
-	"github.com/docker/docker/registry"
+
 	"github.com/docker/go-connections/tlsconfig"
+	"github.com/moby/moby/client"
 	"github.com/rs/zerolog/log"
+)
+
+// Docker Hub uses its historical v1 URL as the credential-store key, even for
+// v2 API requests. Keep this wire convention independent of the daemon module.
+const (
+	DockerHubRegistryDomain = "docker.io"
+	DockerHubAuthKey        = "https://index.docker.io/v1/"
 )
 
 // DockerCliOptions holds the settings required to initialise a DockerCli.
@@ -33,13 +41,26 @@ var mu sync.Mutex
 // WithCli creates and initialises a DockerCli, injects registry credentials,
 // and calls cliFn with the ready client. The client is closed after cliFn returns.
 func WithCli(
-	ctx context.Context, //nolint:staticcheck
+	ctx context.Context,
 	options DockerCliOptions,
 	cliFn func(context.Context, *command.DockerCli) error,
 ) error {
-	ctx = context.Background() //nolint:staticcheck
+	// Keep caller values but not cancellation. Stack stop/delete pass
+	// r.Context(), and the Next.js API rewrite aborts upstream requests after
+	// 30s; propagating that cancellation would interrupt compose down midway.
+	// The base behavior (context.Background) also ignored cancellation.
+	return WithCliContext(context.WithoutCancel(ctx), options, cliFn)
+}
 
-	cli, err := command.NewDockerCli(command.WithCombinedStreams(log.Logger))
+// WithCliContext creates a Docker CLI while retaining the caller's cancellation
+// for both negotiation and operations. Read-only polling uses this entry point;
+// stack teardown must continue to use the intentionally detached WithCli.
+func WithCliContext(
+	ctx context.Context,
+	options DockerCliOptions,
+	cliFn func(context.Context, *command.DockerCli) error,
+) error {
+	cli, err := command.NewDockerCli(command.WithCombinedStreams(log.Logger), command.WithBaseContext(ctx))
 	if err != nil {
 		return fmt.Errorf("unable to create a Docker client: %w", err)
 	}
@@ -57,8 +78,7 @@ func WithCli(
 	}
 	mu.Unlock()
 
-	// Inject custom headers before the first Client() call, which is where the
-	// Docker client is lazily created and reads ConfigFile().HTTPHeaders.
+	// Inject custom headers before constructing/probing the API client.
 	if len(options.Headers) > 0 {
 		cfg := cli.ConfigFile()
 		if cfg.HTTPHeaders == nil {
@@ -67,11 +87,18 @@ func WithCli(
 		maps.Copy(cfg.HTTPHeaders, options.Headers)
 	}
 
+	// Inject through the public CLI factory option before any lazy CLI client
+	// initialization. No SDK constructor option is applied to a live client.
+	if err := command.WithInitializeClient(func(cli *command.DockerCli) (client.APIClient, error) {
+		return newDockerCLIClient(ctx, cli)
+	})(cli); err != nil {
+		return fmt.Errorf("unable to initialize the Docker API client: %w", err)
+	}
 	defer logs.CloseAndLogErr(cli.Client())
 
 	for _, r := range options.Registries {
-		if r.ServerAddress == "" || r.ServerAddress == registry.DefaultNamespace {
-			r.ServerAddress = registry.IndexServer
+		if r.ServerAddress == "" || r.ServerAddress == DockerHubRegistryDomain {
+			r.ServerAddress = DockerHubAuthKey
 		}
 
 		cli.ConfigFile().AuthConfigs[r.ServerAddress] = r

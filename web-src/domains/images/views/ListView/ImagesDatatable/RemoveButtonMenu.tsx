@@ -37,7 +37,9 @@ export function RemoveButtonMenu({
           disabled={selectedItems.length === 0}
           data-cy="image-removeImageButton"
           onClick={() => {
-            handleRemove(false);
+            void handleRemove(false).catch((error: unknown) => {
+              notifyError('Unable to confirm image removal', error);
+            });
           }}
         >
           Remove
@@ -57,7 +59,9 @@ export function RemoveButtonMenu({
             <div className="mt-3 bg-white th-highcontrast:bg-black th-dark:bg-black">
               <MenuItem
                 onSelect={() => {
-                  handleRemove(true);
+                  void handleRemove(true).catch((error: unknown) => {
+                    notifyError('Unable to confirm image removal', error);
+                  });
                 }}
               >
                 Force Remove

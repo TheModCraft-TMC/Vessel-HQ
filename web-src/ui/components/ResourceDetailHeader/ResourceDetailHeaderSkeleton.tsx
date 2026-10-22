@@ -17,9 +17,9 @@ export function ResourceDetailHeaderSkeleton({
         <div className="h-14 w-14 shrink-0 rounded-lg bg-gray-3 th-dark:bg-gray-8" />
 
         <div className="flex flex-1 flex-col gap-2">
-          <div className="h-3 w-24 rounded bg-gray-3 th-dark:bg-gray-8" />
-          <div className="h-5 w-48 rounded bg-gray-3 th-dark:bg-gray-8" />
-          <div className="h-3 w-64 rounded bg-gray-2 th-dark:bg-gray-9" />
+          <div className="h-3 w-24 rounded-sm bg-gray-3 th-dark:bg-gray-8" />
+          <div className="h-5 w-48 rounded-sm bg-gray-3 th-dark:bg-gray-8" />
+          <div className="h-3 w-64 rounded-sm bg-gray-2 th-dark:bg-gray-9" />
         </div>
 
         {statBlockCount > 0 && (
@@ -27,10 +27,10 @@ export function ResourceDetailHeaderSkeleton({
             {Array.from({ length: statBlockCount }).map((_, i) => (
               <div
                 key={i}
-                className="flex min-w-[6rem] flex-col gap-2 rounded-md border border-solid border-gray-3 px-3 py-2 th-dark:border-gray-8"
+                className="flex min-w-24 flex-col gap-2 rounded-md border border-solid border-gray-3 px-3 py-2 th-dark:border-gray-8"
               >
-                <div className="h-3 w-12 rounded bg-gray-3 th-dark:bg-gray-8" />
-                <div className="h-4 w-8 rounded bg-gray-2 th-dark:bg-gray-9" />
+                <div className="h-3 w-12 rounded-sm bg-gray-3 th-dark:bg-gray-8" />
+                <div className="h-4 w-8 rounded-sm bg-gray-2 th-dark:bg-gray-9" />
               </div>
             ))}
           </div>
@@ -40,8 +40,8 @@ export function ResourceDetailHeaderSkeleton({
       {hasActionBar && (
         <ActionBarShell>
           <div className="flex gap-2">
-            <div className="h-8 w-28 rounded bg-gray-3 th-dark:bg-gray-8" />
-            <div className="h-8 w-20 rounded bg-gray-3 th-dark:bg-gray-8" />
+            <div className="h-8 w-28 rounded-sm bg-gray-3 th-dark:bg-gray-8" />
+            <div className="h-8 w-20 rounded-sm bg-gray-3 th-dark:bg-gray-8" />
           </div>
         </ActionBarShell>
       )}

@@ -9,7 +9,7 @@ export function PublishingExplaination() {
           src={ingressDiagram}
           alt="ingress explaination"
           width={646}
-          className="flex w-full max-w-2xl basis-1/2 flex-col rounded border border-solid border-gray-5 object-contain lg:w-1/2"
+          className="flex w-full max-w-2xl basis-1/2 flex-col rounded-sm border border-solid border-gray-5 object-contain lg:w-1/2"
         />
         <div className="text-muted ml-8 basis-1/2 text-xs">
           Expose the application workload via{' '}

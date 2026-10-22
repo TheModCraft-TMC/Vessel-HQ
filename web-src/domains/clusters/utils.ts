@@ -15,7 +15,7 @@ export function parseCPU(cpu: string) {
     return 0;
   }
 
-  let res = parseInt(cpu, 10);
+  let res = Number.parseInt(cpu, 10);
   if (cpu.endsWith('m')) {
     res /= 1000;
   } else if (cpu.endsWith('u')) {
@@ -39,13 +39,15 @@ export function parseCPU(cpu: string) {
  * @param options - Options for formatting (defaults to IEC standard)
  * @returns Human-readable memory size (e.g., "100 MiB")
  */
+const defaultMemoryFormatOptions: FileSizeOptions = {
+  output: 'string',
+  // IEC is used by default, because it's the most common standard for memory units in Kubernetes.
+  standard: 'iec',
+};
+
 export function bytesToReadableFormat(
   memoryBytes: number,
-  options: FileSizeOptions = {
-    output: 'string',
-    // IEC is used by default, because it's the most common standard for memory units in Kubernetes.
-    standard: 'iec',
-  }
+  options: FileSizeOptions = defaultMemoryFormatOptions
 ) {
   return filesize(memoryBytes, options);
 }

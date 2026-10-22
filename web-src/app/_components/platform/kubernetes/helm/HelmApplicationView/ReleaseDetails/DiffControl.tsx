@@ -77,7 +77,7 @@ export function DiffControl({
           name="diffControl"
           onOptionChange={setDiffViewMode}
           groupClassName="inline-flex flex-wrap gap-x-16 gap-y-1"
-          itemClassName="control-label !p-0 text-left font-normal"
+          itemClassName="control-label p-0! text-left font-normal"
         />
       )}
       {!!showUserSuppliedCheckbox && !!setIsUserSupplied && (

@@ -40,7 +40,7 @@ export function EnvironmentGroupRow({ group, tags }: Props) {
         'group flex items-center gap-5 border-0 border-t border-solid border-gray-4 px-5 py-4 transition-colors',
         ungoverned
           ? 'cursor-default bg-gray-2 th-highcontrast:bg-gray-10 th-dark:bg-gray-10'
-          : 'cursor-pointer hover:bg-gray-2 th-dark:hover:bg-gray-9',
+          : 'cursor-pointer hover:bg-gray-2 hover:th-dark:bg-gray-9',
         'th-dark:border-gray-8'
       )}
       data-cy={`environment-group-row-${group.Name}`}
@@ -62,7 +62,7 @@ export function EnvironmentGroupRow({ group, tags }: Props) {
           <Columns3Cog
             className={clsx(
               'h-6 w-6',
-              '!text-warning-4 th-dark:text-warning-3'
+              'text-warning-4! th-dark:text-warning-3'
             )}
           />
         ) : (
@@ -105,7 +105,7 @@ export function EnvironmentGroupRow({ group, tags }: Props) {
             'mt-1 flex items-center gap-4 text-xs',
             ungoverned
               ? 'text-warning-7 th-dark:text-warning-4'
-              : 'text-gray-7 th-highcontrast:text-white group-hover:th-highcontrast:text-gray-11 th-dark:text-gray-5'
+              : 'text-gray-7 th-highcontrast:text-white th-highcontrast:group-hover:text-gray-11 th-dark:text-gray-5'
           )}
         >
           <EnvironmentTypeBreakdown group={group} />

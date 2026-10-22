@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/api/types/image"
+	"github.com/moby/moby/client"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/filesystem"
 
@@ -87,17 +87,18 @@ func (service *service) upgradeDocker(environment *portainer.Endpoint, licenseKe
 }
 
 func (service *service) checkImageForDocker(ctx context.Context, environment *portainer.Endpoint, imageName string, skipPullImage bool) error {
-	cli, err := service.dockerClientFactory.CreateClient(environment, "", nil)
+	cli, err := service.dockerClientFactory.CreateClientWithContext(ctx, environment, "", nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to create docker client")
 	}
 
 	if skipPullImage {
-		filters := filters.NewArgs()
+		filters := make(client.Filters)
 		filters.Add("reference", imageName)
-		images, err := cli.ImageList(ctx, image.ListOptions{
+		imagesResult, err := cli.ImageList(ctx, client.ImageListOptions{
 			Filters: filters,
 		})
+		images := imagesResult.Items
 		if err != nil {
 			return errors.Wrap(err, "failed to list images")
 		}
@@ -109,7 +110,7 @@ func (service *service) checkImageForDocker(ctx context.Context, environment *po
 		return nil
 	} else {
 		// check if available on registry
-		_, err := cli.DistributionInspect(ctx, imageName, "")
+		_, err := cli.DistributionInspect(ctx, imageName, client.DistributionInspectOptions{})
 		if err != nil {
 			return errors.Errorf("image %s not found on registry", imageName)
 		}

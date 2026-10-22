@@ -2,8 +2,11 @@ package endpoints
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strings"
+
+	"github.com/moby/moby/client"
 
 	portaineree "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/docker/consts"
@@ -13,10 +16,6 @@ import (
 	"github.com/portainer/portainer/pkg/libhttp/request"
 	"github.com/portainer/portainer/pkg/libhttp/response"
 	"github.com/rs/zerolog/log"
-
-	dockertypes "github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/filters"
 )
 
 type forceUpdateServicePayload struct {
@@ -27,7 +26,16 @@ type forceUpdateServicePayload struct {
 }
 
 func (payload *forceUpdateServicePayload) Validate(r *http.Request) error {
+	if strings.TrimSpace(payload.ServiceID) == "" {
+		return errors.New("ServiceID is required")
+	}
 	return nil
+}
+
+// forceUpdateServiceResponse is the endpoint's wire contract. The SDK result
+// also serializes nil warnings as null; describe that explicitly for clients.
+type forceUpdateServiceResponse struct {
+	Warnings []string `json:"Warnings" extensions:"x-nullable"`
 }
 
 // @id endpointForceUpdateService
@@ -41,7 +49,7 @@ func (payload *forceUpdateServicePayload) Validate(r *http.Request) error {
 // @produce json
 // @param id path int true "endpoint identifier"
 // @param body body forceUpdateServicePayload true "details"
-// @success 200 {object} swarm.ServiceUpdateResponse "Success"
+// @success 200 {object} forceUpdateServiceResponse "Success"
 // @failure 400 "Invalid request"
 // @failure 403 "Permission denied"
 // @failure 404 "endpoint not found"
@@ -71,7 +79,7 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		return httperror.Forbidden("Permission denied to force update service", err)
 	}
 
-	dockerClient, err := handler.DockerClientFactory.CreateClient(endpoint, "", nil)
+	dockerClient, err := handler.DockerClientFactory.CreateClientWithContext(r.Context(), endpoint, "", nil)
 	if err != nil {
 		return httperror.InternalServerError("Error creating docker client", err)
 	}
@@ -82,7 +90,8 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		}
 	}()
 
-	service, _, err := dockerClient.ServiceInspectWithRaw(context.Background(), payload.ServiceID, dockertypes.ServiceInspectOptions{InsertDefaults: true})
+	serviceResult, err := dockerClient.ServiceInspect(context.Background(), payload.ServiceID, client.ServiceInspectOptions{InsertDefaults: true})
+	service := serviceResult.Service
 	if err != nil {
 		return httperror.InternalServerError("Error looking up service", err)
 	}
@@ -93,7 +102,7 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		service.Spec.TaskTemplate.ContainerSpec.Image = strings.Split(service.Spec.TaskTemplate.ContainerSpec.Image, "@sha")[0]
 	}
 
-	newService, err := dockerClient.ServiceUpdate(context.Background(), payload.ServiceID, service.Version, service.Spec, dockertypes.ServiceUpdateOptions{QueryRegistry: true})
+	newService, err := dockerClient.ServiceUpdate(context.Background(), payload.ServiceID, client.ServiceUpdateOptions{Version: service.Version, Spec: service.Spec, QueryRegistry: true})
 	if err != nil {
 		return httperror.InternalServerError("Error force update service", err)
 	}
@@ -108,10 +117,11 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		images.EvictImageStatus(service.Spec.Labels[consts.SwarmStackNameLabel])
 
 		// ignore errors from this cleanup function, log them instead
-		containers, err := dockerClient.ContainerList(context.TODO(), container.ListOptions{
+		containersResult, err := dockerClient.ContainerList(context.TODO(), client.ContainerListOptions{
 			All:     true,
-			Filters: filters.NewArgs(filters.Arg("label", consts.SwarmServiceIDLabel+"="+payload.ServiceID)),
+			Filters: make(client.Filters).Add("label", consts.SwarmServiceIDLabel+"="+payload.ServiceID),
 		})
+		containers := containersResult.Items
 		if err != nil {
 			log.Warn().Err(err).Str("Environment", endpoint.Name).Msg("Error listing containers")
 		}
@@ -121,5 +131,5 @@ func (handler *Handler) endpointForceUpdateService(w http.ResponseWriter, r *htt
 		}
 	}()
 
-	return response.JSON(w, newService)
+	return response.JSON(w, forceUpdateServiceResponse{Warnings: newService.Warnings})
 }

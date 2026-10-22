@@ -23,7 +23,7 @@ export function GitPullButton({ stack }: { stack: Stack }) {
         type="button"
         size="small"
         color="light"
-        className="!ml-0"
+        className="ml-0!"
         disabled={mutation.isLoading}
         onClick={handleClick}
         data-cy="git-pull-button"

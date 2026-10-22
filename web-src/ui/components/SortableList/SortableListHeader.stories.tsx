@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-webpack5';
+import { Meta } from '@storybook/react';
 import { useState } from 'react';
 import { Server, Cloud } from 'lucide-react';
 
@@ -112,7 +112,7 @@ export function WithActionButton() {
       actionButton={
         <button
           type="button"
-          className="rounded bg-blue-8 px-3 py-1.5 text-sm text-white"
+          className="rounded-sm bg-blue-8 px-3 py-1.5 text-sm text-white"
         >
           Add environment
         </button>

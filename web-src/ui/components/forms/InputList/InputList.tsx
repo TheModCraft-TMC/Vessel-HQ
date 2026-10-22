@@ -185,7 +185,7 @@ export function InputList<T = DefaultType>({
               disabled={disabled}
               type="button"
               color="default"
-              className="!ml-0"
+              className="ml-0!"
               size="small"
               icon={Plus}
               data-cy={`${dataCy}AddButton`}
@@ -218,7 +218,7 @@ function DefaultItem({
       <Input
         value={item.value}
         onChange={(e) => onChange({ value: e.target.value })}
-        className={clsx('!w-full', item.needsDeletion && 'striked')}
+        className={clsx('w-full!', item.needsDeletion && 'striked')}
         disabled={disabled || item.needsDeletion}
         readOnly={readOnly}
         data-cy={`${dataCy}RemoveButton_${index}`}

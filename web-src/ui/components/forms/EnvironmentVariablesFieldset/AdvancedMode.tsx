@@ -25,7 +25,7 @@ export function AdvancedMode({
         size="small"
         color="link"
         icon={List}
-        className="!ml-0 p-0 hover:no-underline"
+        className="ml-0! p-0 hover:no-underline"
         onClick={onSimpleModeClick}
         data-cy="env-simple-mode-button"
       >
@@ -42,7 +42,7 @@ export function AdvancedMode({
         value={editorValue}
         onChange={(event) => handleEditorChange(event.target.value)}
         placeholder="e.g. key=value"
-        className="min-h-64 w-full rounded border border-solid border-gray-5 p-2 font-mono"
+        className="min-h-64 w-full rounded-sm border border-solid border-gray-5 p-2 font-mono"
         data-cy={dataCy}
       />
     </>

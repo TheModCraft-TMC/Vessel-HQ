@@ -1,7 +1,7 @@
 // This story demonstrates how StatusSummaryBar and SortableList integrate:
 // the summary bar filter and the group-sort dimension filter share state so
 // that selecting a status from either control keeps both in sync.
-import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within, expect } from 'storybook/test';
 import { useState } from 'react';
 

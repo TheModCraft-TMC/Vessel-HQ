@@ -5,7 +5,7 @@ import type { AutomationTestingProps } from '@/shared/types';
 import { Icon, IconProps } from '@/ui/components/icons/Icon';
 
 const badge = cva(
-  'inline-flex w-fit items-center gap-1 font-medium [&>a]:hover:text-inherit [&>a]:text-inherit',
+  'inline-flex w-fit items-center gap-1 font-medium hover:[&>a]:text-inherit [&>a]:text-inherit',
   {
     variants: {
       type: {
@@ -32,14 +32,14 @@ const badge = cva(
       },
       shape: {
         pill: 'rounded-full',
-        rect: 'rounded',
+        rect: 'rounded-sm',
       },
       size: {
         sm: 'px-1.5 py-px text-[10px]',
-        md: '!text-xs px-2 py-0.5',
+        md: 'text-xs! px-2 py-0.5',
       },
       bordered: {
-        true: '!border border-solid th-highcontrast:border-white',
+        true: 'border! border-solid th-highcontrast:border-white',
       },
     },
     compoundVariants: [

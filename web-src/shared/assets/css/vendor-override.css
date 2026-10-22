@@ -1,3 +1,5 @@
+@reference './tailwind.css';
+
 /* Overide Vendor CSS */
 .form-control {
   border: 1px solid var(--border-form-control-color);

@@ -49,7 +49,9 @@ export function parseDN(
   dn: string | undefined,
   domainSuffix: string
 ): DnEntry[] {
-  const regex = /(\w+)=([^,]*),?/;
+  // `(?<!\w)` starts each attempt at the beginning of a word, so a long run of
+  // word characters without `=` is scanned once instead of once per offset.
+  const regex = /(?<!\w)(\w+)=([^,]*),?/;
   const ouValues: DnEntry[] = [];
   let left = dn || '';
   let match = left.match(regex);

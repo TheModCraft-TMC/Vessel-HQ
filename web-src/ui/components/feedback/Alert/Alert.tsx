@@ -94,7 +94,7 @@ export function Alert({
           className={clsx(body, 'flex items-start gap-2')}
           hasTitle={!!title}
         >
-          <Icon icon={icon} className="!mt-0.5 flex-none" /> {children}
+          <Icon icon={icon} className="mt-0.5! flex-none" /> {children}
         </AlertBody>
       )}
     </AlertContainer>
@@ -128,7 +128,7 @@ function AlertHeader({
     <h4
       className={clsx(
         'text-base',
-        '!m-0 mb-2 flex items-center gap-2',
+        'm-0! mb-2 flex items-center gap-2',
         className
       )}
     >

@@ -75,7 +75,7 @@ export function PlacementFormSection({ values, onChange, errors }: Props) {
         <FormSection
           title="Placement policy"
           titleSize="sm"
-          titleClassName="control-label !text-[0.9em]"
+          titleClassName="control-label text-[0.9em]!"
         >
           <TextTip color="blue">
             Specify the policy associated to the placement rules.

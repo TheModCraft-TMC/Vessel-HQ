@@ -43,7 +43,7 @@ See the [feature catalog](./docs/recent-features/README.md) and [customization g
 
 ## Local development
 
-Prerequisites: Docker, Go 1.26.6, Node.js 24.21.0 or newer in the 24.x line, and pnpm 10.26.2. Keep Docker running for the local backend.
+Prerequisites: Docker, Go 1.26.10, Node.js 24.21.0 or newer in the 24.x line, and pnpm 10.26.2. Keep Docker running for the local backend.
 
 ```sh
 make deps

@@ -104,7 +104,7 @@ export function CreateTeamForm({ users, teams }: Props) {
                         isLoading={isSubmitting || addTeamMutation.isLoading}
                         loadingText="Creating team..."
                         icon={Plus}
-                        className="!ml-0"
+                        className="ml-0!"
                       >
                         Create team
                       </LoadingButton>

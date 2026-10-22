@@ -200,6 +200,10 @@ export const zEndpointsForceUpdateServicePayload = z.object({
   ServiceID: z.string().optional(),
 });
 
+export const zEndpointsForceUpdateServiceResponse = z.object({
+  Warnings: z.array(z.string()).nullish(),
+});
+
 export const zEndpointsGroupCount = z.object({
   count: z.int().optional(),
   groupID: z.int().optional(),
@@ -2516,10 +2520,6 @@ export const zDockerDashboardResponse = z.object({
   services: z.int().optional(),
   stacks: z.int().optional(),
   volumes: z.int().optional(),
-});
-
-export const zSwarmServiceUpdateResponse = z.object({
-  Warnings: z.array(z.string()).optional(),
 });
 
 export const zSystemNodesCountResponse = z.object({
@@ -5377,7 +5377,8 @@ export const zEndpointForceUpdateServicePath = z.object({
 /**
  * Success
  */
-export const zEndpointForceUpdateServiceResponse = zSwarmServiceUpdateResponse;
+export const zEndpointForceUpdateServiceResponse =
+  zEndpointsForceUpdateServiceResponse;
 
 export const zHelmListPath = z.object({
   id: z.int(),
@@ -8134,8 +8135,10 @@ export const zGetWebsocketKubernetesShellQuery = z.object({
 
 export const zGetWebsocketLogsQuery = z.object({
   endpointId: z.int(),
-  resource: z.enum(['containers', 'services', 'tasks']),
+  resource: z.enum(['containers', 'services', 'tasks', 'pods']),
   id: z.string(),
+  namespace: z.string().optional(),
+  container: z.string().optional(),
   nodeName: z.string().optional(),
   timestamps: z.boolean().optional(),
   since: z.int().optional(),

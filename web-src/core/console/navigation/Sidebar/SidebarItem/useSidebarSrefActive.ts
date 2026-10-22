@@ -10,7 +10,7 @@ export function useSidebarSrefActive(
   to: string,
   activeClassName = 'bg-graphite-500',
   params: object = {},
-  pathOptions: PathOptions = { ignorePaths: [], includePaths: [] }
+  pathOptions?: PathOptions
 ) {
   const pathname = usePathname();
   const href = buildHref(to, params, pathname);
@@ -24,7 +24,7 @@ export function useSidebarSrefActive(
   };
 
   if (
-    pathOptions.ignorePaths?.some((path) =>
+    pathOptions?.ignorePaths?.some((path) =>
       isRouteActive(pathname, path, params)
     )
   ) {
@@ -32,7 +32,7 @@ export function useSidebarSrefActive(
   }
 
   if (
-    pathOptions.includePaths?.some((path) =>
+    pathOptions?.includePaths?.some((path) =>
       isRouteActive(pathname, path, params)
     )
   ) {
@@ -42,11 +42,7 @@ export function useSidebarSrefActive(
   return anchorProps;
 }
 
-function isRouteActive(
-  pathname: string,
-  route: string,
-  params: object
-) {
+function isRouteActive(pathname: string, route: string, params: object) {
   const target = buildHref(route, params, pathname).split('?')[0];
   return pathname === target || pathname.startsWith(`${target}/`);
 }

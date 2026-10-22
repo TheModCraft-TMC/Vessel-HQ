@@ -41,7 +41,7 @@ export const columns = _.compact([
         />
       ),
       meta: {
-        className: '[&>*]:justify-center',
+        className: '*:justify-center',
       },
     }
   ),
@@ -67,7 +67,7 @@ export const columns = _.compact([
         enableSorting: false,
         enableHiding: false,
         meta: {
-          className: '[&>*]:justify-center',
+          className: '*:justify-center',
         },
       }
     ),
@@ -87,7 +87,7 @@ export const columns = _.compact([
       enableSorting: false,
       enableHiding: false,
       meta: {
-        className: '[&>*]:justify-center',
+        className: '*:justify-center',
       },
     }
   ),
@@ -127,7 +127,7 @@ export const columns = _.compact([
       enableSorting: false,
       enableHiding: false,
       meta: {
-        className: '[&>*]:justify-center',
+        className: '*:justify-center',
       },
     }
   ),
@@ -141,7 +141,7 @@ export const columns = _.compact([
     enableSorting: false,
     enableHiding: false,
     meta: {
-      className: '[&>*]:justify-center',
+      className: '*:justify-center',
     },
   }),
   columnHelper.accessor('CreationDate', {
@@ -171,7 +171,7 @@ export const columns = _.compact([
           return <div className="text-center">{item.StackFileVersion}</div>;
         },
         meta: {
-          className: '[&>*]:justify-center',
+          className: '*:justify-center',
         },
       }
     ),

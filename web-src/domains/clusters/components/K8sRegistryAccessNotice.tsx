@@ -170,7 +170,7 @@ export function K8sRegistryAccessNotice({
     <TextTip color="blue" inline={false}>
       <TooltipWithChildren
         message={
-          <ul className="list-disk mb-0 !pl-4">
+          <ul className="list-disk mb-0 pl-4!">
             {nsRegistries.map((r) => (
               <li key={r.Id}>
                 {r.Name}: {r.URL}

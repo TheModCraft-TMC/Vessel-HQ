@@ -15,10 +15,7 @@ import {
 import { type TagId } from '@/domains/tags';
 import { UserId } from '@/domains/users';
 import { TeamId } from '@/domains/teams';
-import {
-  EdgeStack,
-  StatusType as EdgeStackStatusType,
-} from '@/domains/edge';
+import { EdgeStack, StatusType as EdgeStackStatusType } from '@/domains/edge';
 import { getPublicSettings } from '@/domains/settings';
 
 import { SortType } from '../queries/useEnvironmentList';
@@ -72,14 +69,13 @@ export interface GetEnvironmentsOptions {
   query?: EnvironmentsQueryParams;
 }
 
-export async function getEnvironments(
-  {
+export async function getEnvironments(options?: GetEnvironmentsOptions) {
+  const {
     start,
     limit,
     sort = { by: undefined, order: 'asc' },
     query = {},
-  }: GetEnvironmentsOptions = { query: {} }
-) {
+  } = options ?? {};
   if (
     (query.tagIds && query.tagIds.length === 0) ||
     (query.endpointIds && query.endpointIds.length === 0)
@@ -109,9 +105,9 @@ export async function getEnvironments(
   const updateAvailable = response.headers['x-update-available'] === 'true';
 
   return {
-    totalCount: parseInt(totalCount, 10),
+    totalCount: Number.parseInt(totalCount, 10),
     value: (response.data ?? []).map(toEnvironment),
-    totalAvailable: parseInt(totalAvailable, 10),
+    totalAvailable: Number.parseInt(totalAvailable, 10),
     updateAvailable,
   };
 }

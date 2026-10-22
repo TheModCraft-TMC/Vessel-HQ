@@ -83,7 +83,7 @@ export function InitAdminView() {
               <>
                 <img
                   src={fullLogo}
-                  className="simple-box-logo hidden th-highcontrast:!block th-dark:!block"
+                  className="simple-box-logo hidden th-highcontrast:block! th-dark:block!"
                   alt="Vessel HQ"
                 />
                 <img
@@ -138,7 +138,7 @@ export function InitAdminView() {
                     autoComplete="new-password"
                     data-cy="init-confirmPassword"
                   />
-                  <span className="input-group-addon !rounded-r-[5px]">
+                  <span className="input-group-addon rounded-r-[5px]!">
                     <Icon
                       icon={passwordsMatch ? Check : X}
                       mode={passwordsMatch ? 'success' : 'danger'}
@@ -163,7 +163,7 @@ export function InitAdminView() {
               </TextTip>
               <LoadingButton
                 type="submit"
-                className="!ml-0"
+                className="ml-0!"
                 disabled={
                   !username ||
                   password.length < requiredPasswordLength ||
@@ -232,7 +232,7 @@ export function InitAdminView() {
               </p>
               <LoadingButton
                 type="submit"
-                className="!ml-0"
+                className="ml-0!"
                 disabled={!backupFile || (requiresSetupToken && !setupToken)}
                 isLoading={restoring}
                 loadingText="Restoring Vessel HQ..."

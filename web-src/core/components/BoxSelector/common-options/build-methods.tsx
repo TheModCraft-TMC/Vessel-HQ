@@ -50,7 +50,7 @@ export const helm: BoxSelectorOption<'helm'> = {
   icon: Helm,
   label: 'Helm chart',
   value: 'helm',
-  iconClass: '!text-[#0f1689] th-dark:!text-white th-highcontrast:!text-white',
+  iconClass: 'text-[#0f1689]! th-dark:text-white! th-highcontrast:text-white!',
 };
 
 export const url: BoxSelectorOption<'url'> = {

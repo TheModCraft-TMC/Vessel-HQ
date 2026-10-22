@@ -6,8 +6,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/containerd/containerd/errdefs"
-	"github.com/docker/docker/api/types/container"
+	"github.com/containerd/errdefs"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/client"
 )
 
 type ContainerStats struct {
@@ -24,7 +25,7 @@ type ContainerStats struct {
 type ContainerStatsCache map[string]ContainerStats
 
 type DockerClient interface {
-	ContainerInspect(ctx context.Context, containerID string) (container.InspectResponse, error)
+	ContainerInspect(ctx context.Context, containerID string, options client.ContainerInspectOptions) (client.ContainerInspectResult, error)
 }
 
 func CalculateContainerStats(ctx context.Context, cli DockerClient, isSwarm bool, containers []container.Summary) (ContainerStats, error) {
@@ -54,7 +55,8 @@ func InspectContainerStats(ctx context.Context, cli DockerClient, containers []c
 		wg.Go(func() {
 			defer func() { <-semaphore }()
 
-			containerInspection, err := cli.ContainerInspect(ctx, id)
+			containerInspectionResult, err := cli.ContainerInspect(ctx, id, client.ContainerInspectOptions{})
+			containerInspection := containerInspectionResult.Container
 			stat := ContainerStats{}
 			if err != nil {
 				if errdefs.IsNotFound(err) {

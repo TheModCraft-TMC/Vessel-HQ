@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Mirror open main-branch SonarCloud findings into GitHub Issues (stdlib only)."""
 import argparse
+from datetime import timezone
+from email.utils import parsedate_to_datetime
 import json
 import os
 import re
@@ -17,6 +19,20 @@ END = "<!-- sonarcloud-sync:end -->"
 ACTIVE = {"OPEN", "CONFIRMED", "REOPENED"}
 TERMINAL = {"FIXED", "FALSE_POSITIVE", "ACCEPTED", "CLOSED"}
 MARKER = re.compile(r"<!-- sonarcloud:([^:]+):([^:]+):([^\s]+) -->")
+
+
+def retry_delay(value):
+    try:
+        delay = int(value)
+    except (TypeError, ValueError):
+        try:
+            retry_at = parsedate_to_datetime(value)
+            if retry_at.tzinfo is None:
+                retry_at = retry_at.replace(tzinfo=timezone.utc)
+            delay = retry_at.timestamp() - time.time()
+        except (TypeError, ValueError, OverflowError):
+            delay = 60
+    return max(60, delay)
 
 
 class Api:
@@ -41,12 +57,16 @@ class Api:
                     raw = response.read()
                     return json.loads(raw) if raw else None
             except HTTPError as error:
-                # Do not retry ambiguous writes: the next run deduplicates any committed creation.
-                retry = error.code == 429 or (error.code == 403 and error.headers.get("Retry-After"))
-                retry = retry or (method == "GET" and error.code >= 500)
+                # Never retry writes after sleeping: the live-head guard
+                # belongs to sync(), and a push during backoff makes its plan stale.
+                # The next run rechecks freshness and deduplicates committed creations.
+                retry = method == "GET" and (
+                    error.code == 429 or (error.code == 403 and error.headers.get("Retry-After"))
+                    or error.code >= 500
+                )
                 if not retry or attempt == 3:
                     raise RuntimeError(f"{service} {method} failed: HTTP {error.code}") from None
-                time.sleep(max(60, int(error.headers.get("Retry-After", "60"))))
+                time.sleep(retry_delay(error.headers.get("Retry-After")))
         raise RuntimeError("API retry limit exceeded")
 
     def sonar(self, **params):
@@ -109,7 +129,40 @@ def fetch_active(api):
     raise RuntimeError("SonarCloud pagination limit reached")
 
 
+def branch_head(api, repo):
+    # Resolve the live source branch, never the workflow checkout or GITHUB_SHA.
+    data = api.request("github", f"/repos/{repo}/commits/{BRANCH}")
+    sha = data.get("sha")
+    return sha if isinstance(sha, str) and sha.strip() else None
+
+
+def fresh_revision(api, repo):
+    head = branch_head(api, repo)
+    data = api.request("sonar", "/api/project_analyses/search?" + urlencode({
+        "project": PROJECT, "branch": BRANCH, "ps": 1,
+    }))
+    analyses = data.get("analyses") or []
+    revision = analyses[0].get("revision") if analyses else None
+    # Sandwich the analysis read between head reads: a push during the read is stale too.
+    current_head = branch_head(api, repo)
+    return head if head and head == revision == current_head else None
+
+
+def wait_for_fresh_analysis(api, repo, timeout=600, poll_interval=30):
+    deadline = time.monotonic() + timeout
+    while True:
+        revision = fresh_revision(api, repo)
+        if revision:
+            return revision
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise RuntimeError("SonarCloud analysis is missing a revision or behind the live branch; no issues changed")
+        print("Waiting for SonarCloud analysis of the live branch (read-only)", flush=True)
+        time.sleep(min(poll_interval, remaining))
+
+
 def sync(api, repo, dry_run=False):
+    revision = wait_for_fresh_analysis(api, repo)
     findings = fetch_active(api)
     existing = {}
     for page in range(1, 1001):
@@ -163,16 +216,28 @@ def sync(api, repo, dry_run=False):
             "state_reason": "completed" if status(finding) in {"FIXED", "CLOSED"} else "not_planned",
         }))
 
+    # Never apply a plan from an older snapshot, even if a newer analysis is now fresh.
+    if fresh_revision(api, repo) != revision:
+        raise RuntimeError("Branch or SonarCloud analysis changed during planning; no issues changed")
+
+    def guard_write():
+        # Long batches must stop as soon as a new push makes this plan obsolete.
+        # Analysis was checked after planning; only head reads are needed per write.
+        if branch_head(api, repo) != revision:
+            raise RuntimeError("Branch changed during sync; stopped before the next GitHub mutation")
+
     summary = {"open_findings": len(findings), "create": sum(m == "POST" for m, _, _ in changes),
                "update_or_close": sum(m == "PATCH" for m, _, _ in changes), "dry_run": dry_run}
     print(json.dumps(summary), flush=True)
     if not dry_run and changes:
         labels = api.request("github", f"/repos/{repo}/labels?per_page=100")
         if LABEL not in {label["name"] for label in labels}:
+            guard_write()
             api.request("github", f"/repos/{repo}/labels", "POST", {
                 "name": LABEL, "color": "F3702A", "description": "Automatically synchronized SonarCloud finding"})
             time.sleep(1.1)
         for method, path, data in changes:
+            guard_write()
             result = api.request("github", path, method, data)
             print(f"Synced GitHub issue #{result['number']}", flush=True)
             time.sleep(1.1)  # Stay below GitHub's secondary content-creation limits.

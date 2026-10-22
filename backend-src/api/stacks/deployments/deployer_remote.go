@@ -20,13 +20,11 @@ import (
 	"github.com/portainer/portainer/api/stacks/stackutils"
 	"github.com/portainer/portainer/pkg/librand"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/api/types/swarm"
-	"github.com/docker/docker/api/types/system"
-	dockerclient "github.com/docker/docker/client"
-	"github.com/docker/docker/pkg/stdcopy"
+	"github.com/moby/moby/api/pkg/stdcopy"
+	"github.com/moby/moby/api/types/container"
+	"github.com/moby/moby/api/types/swarm"
+	"github.com/moby/moby/api/types/system"
+	dockerclient "github.com/moby/moby/client"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/encoding/json"
@@ -268,14 +266,15 @@ func (d *stackDeployer) remoteStack(ctx context.Context, userID portainer.UserID
 	unpackerImg := getUnpackerImage()
 	log.Debug().Str("unpacker_image", unpackerImg).Msg("Resolved unpacker image")
 
-	reader, err := cli.ImagePull(ctx, unpackerImg, image.PullOptions{RegistryAuth: d.resolveUnpackerRegistryAuth(unpackerImg)})
+	reader, err := cli.ImagePull(ctx, unpackerImg, dockerclient.ImagePullOptions{RegistryAuth: d.resolveUnpackerRegistryAuth(unpackerImg)})
 	if err != nil {
 		return errors.Wrap(err, "unable to pull unpacker image")
 	}
 	defer logs.CloseAndLogErr(reader)
 	_, _ = io.Copy(io.Discard, reader)
 
-	info, err := cli.Info(ctx)
+	infoResult, err := cli.Info(ctx, dockerclient.InfoOptions{})
+	info := infoResult.Info
 	if err != nil {
 		return errors.Wrap(err, "unable to get agent info")
 	}
@@ -301,40 +300,40 @@ func (d *stackDeployer) remoteStack(ctx context.Context, userID portainer.UserID
 		Int("stack_id", int(stack.ID)).
 		Msg("running unpacker")
 
-	unpackerContainer, err := cli.ContainerCreate(ctx, &container.Config{
+	unpackerContainer, err := cli.ContainerCreate(ctx, dockerclient.ContainerCreateOptions{Config: &container.Config{
 		Image: unpackerImg,
 		Cmd:   cmd,
-	}, &container.HostConfig{
+	}, HostConfig: &container.HostConfig{
 		Binds: []string{
 			fmt.Sprintf("%s:%s", composeDestination, composeDestination),
 			fmt.Sprintf("%s:%s", targetSocketBindHost, targetSocketBindContainer),
 		},
-	}, nil, nil, fmt.Sprintf("portainer-unpacker-%d-%s-%d", stack.ID, stack.Name, librand.Intn(100)))
+	}, NetworkingConfig: nil, Platform: nil, Name: fmt.Sprintf("portainer-unpacker-%d-%s-%d", stack.ID, stack.Name, librand.Intn(100))})
 	if err != nil {
 		return errors.Wrap(err, "unable to create unpacker container")
 	}
 	defer func() {
-		if err := cli.ContainerRemove(ctx, unpackerContainer.ID, container.RemoveOptions{}); err != nil {
+		if _, err := cli.ContainerRemove(ctx, unpackerContainer.ID, dockerclient.ContainerRemoveOptions{}); err != nil {
 			log.Warn().Err(err).Msg("unable to remove unpacker container")
 		}
 	}()
 
-	if err := cli.ContainerStart(ctx, unpackerContainer.ID, container.StartOptions{}); err != nil {
+	if _, err := cli.ContainerStart(ctx, unpackerContainer.ID, dockerclient.ContainerStartOptions{}); err != nil {
 		return errors.Wrap(err, "start unpacker container error")
 	}
 
-	statusCh, errCh := cli.ContainerWait(ctx, unpackerContainer.ID, container.WaitConditionNotRunning)
+	waitResult := cli.ContainerWait(ctx, unpackerContainer.ID, dockerclient.ContainerWaitOptions{Condition: container.WaitConditionNotRunning})
 	select {
-	case err := <-errCh:
+	case err := <-waitResult.Error:
 		if err != nil {
 			return errors.Wrap(err, "An error occurred while waiting for the deployment of the stack.")
 		}
-	case <-statusCh:
+	case <-waitResult.Result:
 	}
 
 	stdErr := &bytes.Buffer{}
 
-	out, err := cli.ContainerLogs(ctx, unpackerContainer.ID, container.LogsOptions{ShowStdout: true, ShowStderr: true})
+	out, err := cli.ContainerLogs(ctx, unpackerContainer.ID, dockerclient.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
 	if err != nil {
 		log.Error().Err(err).Msg("unable to get logs from unpacker container")
 	} else {
@@ -347,7 +346,8 @@ func (d *stackDeployer) remoteStack(ctx context.Context, userID portainer.UserID
 		}
 	}
 
-	status, err := cli.ContainerInspect(ctx, unpackerContainer.ID)
+	statusResult, err := cli.ContainerInspect(ctx, unpackerContainer.ID, dockerclient.ContainerInspectOptions{})
+	status := statusResult.Container
 	if err != nil {
 		return errors.Wrap(err, "fetch container information error")
 	}
@@ -382,12 +382,13 @@ func (d *stackDeployer) remoteStack(ctx context.Context, userID portainer.UserID
 // Creates a docker client with 1 hour timeout
 func (d *stackDeployer) createDockerClient(ctx context.Context, endpoint *portainer.Endpoint) (*dockerclient.Client, error) {
 	timeout := 3600 * time.Second
-	cli, err := d.ClientFactory.CreateClient(endpoint, "", &timeout)
+	cli, err := d.ClientFactory.CreateClientWithContext(ctx, endpoint, "", &timeout)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create Docker client")
 	}
 
-	info, err := cli.Info(ctx)
+	infoResult, err := cli.Info(ctx, dockerclient.InfoOptions{})
+	info := infoResult.Info
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to get agent info")
 	}
@@ -397,7 +398,8 @@ func (d *stackDeployer) createDockerClient(ctx context.Context, endpoint *portai
 	}
 	defer logs.CloseAndLogErr(cli)
 
-	nodes, err := cli.NodeList(ctx, types.NodeListOptions{})
+	nodesResult, err := cli.NodeList(ctx, dockerclient.NodeListOptions{})
+	nodes := nodesResult.Items
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to list nodes")
 	}
@@ -418,7 +420,7 @@ func (d *stackDeployer) createDockerClient(ctx context.Context, endpoint *portai
 		return nil, errors.New("no leader node available")
 	}
 
-	return d.ClientFactory.CreateClient(endpoint, managerNode.Description.Hostname, &timeout)
+	return d.ClientFactory.CreateClientWithContext(ctx, endpoint, managerNode.Description.Hostname, &timeout)
 }
 
 func (d *stackDeployer) unpackerImageRegistryAuth(unpackerImg string) (string, error) {

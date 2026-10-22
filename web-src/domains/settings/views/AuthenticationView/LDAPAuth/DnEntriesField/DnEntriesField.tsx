@@ -52,7 +52,7 @@ export function DnEntriesField({
           size="xsmall"
           color="light"
           icon={Plus}
-          className="ml-2 !border-0"
+          className="ml-2 border-0!"
           data-cy="ldap-dn-builder-add-button"
           disabled={isLimited}
         >

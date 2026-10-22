@@ -184,7 +184,7 @@ export function BackupS3Form() {
                   type="button"
                   loadingText="Exporting..."
                   isLoading={isSubmitting}
-                  className={clsx('!ml-0', { 'limited-be': limitedToBE })}
+                  className={clsx('ml-0!', { 'limited-be': limitedToBE })}
                   disabled={!isValid || limitedToBE}
                   data-cy="settings-exportBackupS3Button"
                   icon={Upload}
@@ -201,7 +201,7 @@ export function BackupS3Form() {
                 <LoadingButton
                   loadingText="Saving settings..."
                   isLoading={isSubmitting}
-                  className={clsx('!ml-0', { 'limited-be': limitedToBE })}
+                  className={clsx('ml-0!', { 'limited-be': limitedToBE })}
                   disabled={!isValid || limitedToBE}
                   data-cy="settings-saveBackupSettingsButton"
                 >

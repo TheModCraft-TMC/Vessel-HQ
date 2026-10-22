@@ -57,13 +57,13 @@ export function useColumns() {
                 {item.UnhealthyEventCount > 0 && (
                   <span className="inline-flex">
                     <Badge type="warnSecondary">
-                      <Icon icon={AlertTriangle} className="!mr-1 h-3 w-3" />
+                      <Icon icon={AlertTriangle} className="mr-1! h-3 w-3" />
                       <Link
                         to="/:endpointId/kubernetes/namespaces/:id"
                         params={{ id: item.Name, tab: 'events' }}
                         data-cy={`namespace-warning-link-${item.Name}`}
                         // use the badge text and hover color
-                        className="!text-inherit hover:text-inherit"
+                        className="text-inherit! hover:text-inherit"
                         title="View events"
                       >
                         {item.UnhealthyEventCount}{' '}

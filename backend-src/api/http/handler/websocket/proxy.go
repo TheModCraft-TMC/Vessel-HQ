@@ -22,7 +22,7 @@ func (handler *Handler) proxyEdgeAgentWebsocketRequest(w http.ResponseWriter, r 
 		return err
 	}
 
-	agentURL, err := url.Parse("http://" + tunnelAddr)
+	agentURL, err := url.Parse("http://" + tunnelAddr) // NOSONAR S5332: loopback Edge tunnel; final ws/wss chosen below; see SECURITY_REVIEWS.md #181.
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (handler *Handler) proxyEdgeAgentWebsocketRequest(w http.ResponseWriter, r 
 func (handler *Handler) proxyAgentWebsocketRequest(w http.ResponseWriter, r *http.Request, params *webSocketRequestParams) error {
 	endpointURL := params.endpoint.URL
 	if params.endpoint.Type == portainer.AgentOnKubernetesEnvironment {
-		endpointURL = "http://" + params.endpoint.URL
+		endpointURL = "http://" + params.endpoint.URL // NOSONAR S5332: URL parsing only; final ws/wss follows endpoint TLS settings; see SECURITY_REVIEWS.md #177.
 	}
 
 	agentURL, err := url.Parse(endpointURL)

@@ -32,7 +32,7 @@ func (factory *ProxyFactory) NewAgentProxy(endpoint *portainer.Endpoint) (*Proxy
 			return nil, errors.Wrap(err, "failed starting tunnel")
 		}
 
-		urlString = "http://" + tunnelAddr
+		urlString = "http://" + tunnelAddr // NOSONAR S5332: loopback entry to encrypted Edge tunnel; see SECURITY_REVIEWS.md #182.
 	}
 
 	endpointURL, err := url.ParseURL(urlString)
@@ -82,7 +82,9 @@ func (factory *ProxyFactory) NewAgentProxy(endpoint *portainer.Endpoint) (*Proxy
 }
 
 func (proxy *ProxyServer) start() error {
-	listener, err := net.Listen("tcp", ":0")
+	// This signing proxy is only for local CLI clients. Exposing it on all
+	// interfaces would let remote callers send authenticated agent requests.
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
 		return err
 	}

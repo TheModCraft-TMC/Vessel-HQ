@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react-webpack5';
+import { Meta, StoryObj } from '@storybook/react';
 import { PropsWithChildren } from 'react';
 import { Plus, Edit, Download, Settings } from 'lucide-react';
 

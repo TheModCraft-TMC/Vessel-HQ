@@ -26,26 +26,26 @@ interface Props {
 }
 
 const menuListStyles =
-  'z-[1000] mt-1 overflow-hidden rounded-lg ' +
+  'z-1000 overflow-hidden rounded-lg ' +
   'shadow-[0_6px_12px_rgba(0,0,0,0.18)] ' +
-  '!border !border-solid !border-gray-5 th-dark:!border-gray-8 th-highcontrast:!border-gray-7 ' +
+  'border! border-solid! border-gray-5! th-dark:border-gray-8! th-highcontrast:border-gray-7! ' +
   'bg-white th-dark:bg-gray-iron-11 th-highcontrast:bg-black';
 
 const menuItemBase =
-  'flex items-center gap-2 w-full border-none px-3 py-1.5 text-left text-sm whitespace-nowrap bg-transparent cursor-pointer outline-none';
+  'flex items-center gap-2 w-full border-none px-3 py-1.5 text-left text-sm whitespace-nowrap bg-transparent cursor-pointer outline-hidden';
 
 const menuItemSelected =
-  '!bg-blue-2 text-blue-8 data-[highlighted]:!bg-blue-2 data-[highlighted]:!text-blue-8 ' +
-  'th-dark:!bg-blue-8 th-dark:text-blue-4 th-dark:data-[highlighted]:!bg-blue-8 th-dark:data-[highlighted]:!text-blue-4 ' +
-  'th-highcontrast:!bg-blue-8 th-highcontrast:!text-white th-highcontrast:data-[highlighted]:!bg-blue-8 th-highcontrast:data-[highlighted]:!text-white';
+  'bg-blue-2! text-blue-8 data-highlighted:bg-blue-2! data-highlighted:text-blue-8! ' +
+  'th-dark:bg-blue-8! th-dark:text-blue-4 data-highlighted:th-dark:bg-blue-8! data-highlighted:th-dark:text-blue-4! ' +
+  'th-highcontrast:bg-blue-8! th-highcontrast:text-white! data-highlighted:th-highcontrast:bg-blue-8! data-highlighted:th-highcontrast:text-white!';
 
 const menuItemUnselected =
-  'hover:bg-gray-3 data-[highlighted]:!bg-gray-3 data-[highlighted]:!text-gray-9 ' +
-  'th-dark:hover:bg-gray-8 th-dark:data-[highlighted]:!bg-gray-8 th-dark:data-[highlighted]:!text-white ' +
-  'th-highcontrast:text-white th-highcontrast:hover:bg-white th-highcontrast:hover:text-black th-highcontrast:data-[highlighted]:!bg-white th-highcontrast:data-[highlighted]:!text-black';
+  'hover:bg-gray-3 data-highlighted:bg-gray-3! data-highlighted:text-gray-9! ' +
+  'hover:th-dark:bg-gray-8 data-highlighted:th-dark:bg-gray-8! data-highlighted:th-dark:text-white! ' +
+  'th-highcontrast:text-white hover:th-highcontrast:bg-white hover:th-highcontrast:text-black data-highlighted:th-highcontrast:bg-white! data-highlighted:th-highcontrast:text-black!';
 
 const countBadge =
-  'inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full px-1 text-xs font-normal ' +
+  'inline-flex items-center justify-center min-w-5 h-5 rounded-full px-1 text-xs font-normal ' +
   'bg-gray-4 text-gray-9 th-dark:bg-gray-7 th-dark:text-gray-3 ' +
   'th-highcontrast:bg-blue-8 th-highcontrast:text-white';
 
@@ -79,7 +79,7 @@ export function DropdownMenu({
           aria-hidden="true"
         />
       </MenuButton>
-      <MenuList className={menuListStyles}>
+      <MenuList className={menuListStyles} sideOffset={10}>
         {typeof options === 'undefined' ? (
           <div className="flex items-center justify-center gap-2 px-3 py-3 text-sm text-gray-6">
             <Loader2 className="h-3.5 w-3.5 animate-spin" />

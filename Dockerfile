@@ -1,5 +1,8 @@
 FROM node:24.21.0-alpine AS node-runtime
 
+# Security review (docker:S6471): root is intentional for existing /data volumes
+# and local Docker/Podman sockets. A fixed non-root UID would break host socket
+# access and upgrades. Deploy only with trusted sockets; --user may override it.
 FROM portainer/base:latest AS production
 
 ARG TARGETARCH
