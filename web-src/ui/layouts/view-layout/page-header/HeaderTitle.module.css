@@ -9,6 +9,24 @@
   align-items: center;
 }
 
+.userMenuButton {
+  max-width: 12rem;
+}
+
+.username {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@container console-header (max-width: 720px) {
+  .userMenuButton .username,
+  .userMenuButton .arrowDown {
+    display: none;
+  }
+}
+
 .menuIcon {
   background: var(--user-menu-icon-color);
   position: relative;
@@ -88,6 +106,7 @@
 }
 
 .arrowDown {
+  flex-shrink: 0;
   width: 18px;
   height: 18px;
   margin-left: 10px;

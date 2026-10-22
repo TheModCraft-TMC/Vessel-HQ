@@ -219,9 +219,11 @@
   display: flex;
   box-sizing: border-box;
   grid-area: header;
+  container: console-header / inline-size;
   min-width: 0;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   border: 1px solid var(--shell-border);
   border-left: 0;
   border-radius: 0 var(--frame-radius) var(--frame-radius) 0;
@@ -263,7 +265,9 @@
 }
 
 .headerStart {
-  min-width: 0;
+  /* Breadcrumbs may shrink; the sidebar control must never lose its space. */
+  flex: 1 1 0;
+  min-width: 34px;
   gap: 10px;
   font-size: 14px;
 }
@@ -337,7 +341,12 @@
 }
 
 .headerActions {
+  flex: 0 0 auto;
   gap: 8px;
+}
+
+.headerActions > * {
+  flex-shrink: 0;
 }
 
 .headerActions button {
@@ -367,6 +376,15 @@
   width: auto;
   gap: 7px;
   padding: 0 11px;
+}
+
+@container console-header (max-width: 720px) {
+  .headerActions :global([aria-label='User menu toggle']) {
+    width: 34px;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+  }
 }
 
 .headerActions :global(.icon-badge) {

@@ -210,7 +210,8 @@
   }
 }
 
-@media (max-width: 720px) {
+/* Use space left by the sidebar, not just the viewport width. */
+@container console-header (max-width: 720px) {
   .trigger {
     width: 34px !important;
     padding: 0 !important;
@@ -221,7 +222,9 @@
   .trigger kbd {
     display: none;
   }
+}
 
+@media (max-width: 720px) {
   .dialog {
     top: 4.5rem;
   }
