@@ -44,7 +44,7 @@ var (
 type Status string
 
 func (c *DigestClient) ContainersImageStatus(ctx context.Context, containers []container.Summary, endpoint *portainer.Endpoint) Status {
-	cli, err := c.clientFactory.CreateClient(endpoint, "", nil)
+	cli, err := c.clientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
 	if err != nil {
 		log.Error().Err(err).Msg("cannot create docker client")
 
@@ -115,9 +115,10 @@ func AggregateImageStatus(statuses []Status) Status {
 }
 
 func (c *DigestClient) ContainerImageStatus(ctx context.Context, containerID string, endpoint *portainer.Endpoint, nodeName string) (Status, error) {
-	cli, err := c.clientFactory.CreateClient(endpoint, nodeName, nil)
+	cli, err := c.clientFactory.CreateClientWithContext(ctx, endpoint, nodeName, nil)
 	if err != nil {
-		log.Warn().Str("swarmNodeId", nodeName).Msg("Cannot create new docker client.")
+		log.Warn().Err(err).Str("swarmNodeId", nodeName).Msg("Cannot create new docker client.")
+		return Error, err
 	}
 
 	containerResult, err := cli.ContainerInspect(ctx, containerID, client.ContainerInspectOptions{})
@@ -169,7 +170,7 @@ func (c *DigestClient) ContainerImageStatus(ctx context.Context, containerID str
 }
 
 func (c *DigestClient) ServiceImageStatus(ctx context.Context, serviceID string, endpoint *portainer.Endpoint) (Status, error) {
-	cli, err := c.clientFactory.CreateClient(endpoint, "", nil)
+	cli, err := c.clientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
 	if err != nil {
 		return Error, nil
 	}

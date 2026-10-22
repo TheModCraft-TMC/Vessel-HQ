@@ -383,7 +383,7 @@ func (d *stackDeployer) remoteStack(ctx context.Context, userID portainer.UserID
 // Creates a docker client with 1 hour timeout
 func (d *stackDeployer) createDockerClient(ctx context.Context, endpoint *portainer.Endpoint) (*dockerclient.Client, error) {
 	timeout := 3600 * time.Second
-	cli, err := d.ClientFactory.CreateClient(endpoint, "", &timeout)
+	cli, err := d.ClientFactory.CreateClientWithContext(ctx, endpoint, "", &timeout)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create Docker client")
 	}
@@ -421,7 +421,7 @@ func (d *stackDeployer) createDockerClient(ctx context.Context, endpoint *portai
 		return nil, errors.New("no leader node available")
 	}
 
-	return d.ClientFactory.CreateClient(endpoint, managerNode.Description.Hostname, &timeout)
+	return d.ClientFactory.CreateClientWithContext(ctx, endpoint, managerNode.Description.Hostname, &timeout)
 }
 
 func (d *stackDeployer) unpackerImageRegistryAuth(unpackerImg string) (string, error) {

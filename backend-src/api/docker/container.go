@@ -70,7 +70,7 @@ func clearMacAddrs(n network.NetworkingConfig) network.NetworkingConfig {
 
 // Recreate a container
 func (c *ContainerService) Recreate(ctx context.Context, endpoint *portainer.Endpoint, containerId string, forcePullImage bool, imageTag, nodeName string) (*container.InspectResponse, error) {
-	cli, err := c.factory.CreateClient(endpoint, nodeName, nil)
+	cli, err := c.factory.CreateClientWithContext(ctx, endpoint, nodeName, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "create client error")
 	}

@@ -185,7 +185,7 @@ func (transport *Transport) decorateVolumeResourceCreationOperation(request *htt
 
 	if volumeID != "" {
 		agentTargetHeader := request.Header.Get(portainer.PortainerAgentTargetHeader)
-		cli, err := transport.dockerClientFactory.CreateClient(transport.endpoint, agentTargetHeader, nil)
+		cli, err := transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, agentTargetHeader, nil)
 		if err != nil {
 			return nil, err
 		}

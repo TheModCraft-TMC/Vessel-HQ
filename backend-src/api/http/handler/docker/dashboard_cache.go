@@ -148,7 +148,7 @@ func (h *Handler) fetchDashboardData(ctx context.Context, key dashboardCacheKey)
 		return nil, fmt.Errorf("unable to retrieve environment: %w", err)
 	}
 
-	cli, err := h.dockerClientFactory.CreateClient(endpoint, key.agentTarget, nil)
+	cli, err := h.dockerClientFactory.CreateClientWithContext(ctx, endpoint, key.agentTarget, nil)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to the Docker daemon: %w", err)
 	}

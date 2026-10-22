@@ -369,7 +369,7 @@ func (transport *Transport) proxyContainerRequest(request *http.Request, unversi
 func (transport *Transport) proxyExecRequest(request *http.Request, unversionedPath string) (*http.Response, error) {
 	execID := path.Base(path.Dir(unversionedPath))
 
-	client, err := transport.dockerClientFactory.CreateClient(transport.endpoint, request.Header.Get(portainer.PortainerAgentTargetHeader), nil)
+	client, err := transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, request.Header.Get(portainer.PortainerAgentTargetHeader), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -702,7 +702,7 @@ func (transport *Transport) restrictedResourceOperation(request *http.Request, r
 		return transport.executeDockerRequest(request)
 	}
 
-	client, err := transport.dockerClientFactory.CreateClient(transport.endpoint, request.Header.Get(portainer.PortainerAgentTargetHeader), nil)
+	client, err := transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, request.Header.Get(portainer.PortainerAgentTargetHeader), nil)
 	if err != nil {
 		return nil, err
 	}

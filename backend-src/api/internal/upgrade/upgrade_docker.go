@@ -87,7 +87,7 @@ func (service *service) upgradeDocker(environment *portainer.Endpoint, licenseKe
 }
 
 func (service *service) checkImageForDocker(ctx context.Context, environment *portainer.Endpoint, imageName string, skipPullImage bool) error {
-	cli, err := service.dockerClientFactory.CreateClient(environment, "", nil)
+	cli, err := service.dockerClientFactory.CreateClientWithContext(ctx, environment, "", nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to create docker client")
 	}

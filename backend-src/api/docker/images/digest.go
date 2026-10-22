@@ -20,7 +20,7 @@ const digestFetchTimeout = 5 * time.Second
 
 // ClientFactory creates Docker clients for a given environment.
 type ClientFactory interface {
-	CreateClient(endpoint *portainer.Endpoint, nodeName string, timeout *time.Duration) (*dockerclient.Client, error)
+	CreateClientWithContext(ctx context.Context, endpoint *portainer.Endpoint, nodeName string, timeout *time.Duration) (*dockerclient.Client, error)
 }
 
 // RegistryAuthProvider looks up registry credentials for an image.

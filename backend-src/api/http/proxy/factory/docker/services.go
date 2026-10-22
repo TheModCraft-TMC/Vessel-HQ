@@ -226,7 +226,7 @@ func (transport *Transport) decorateServiceCreationOperation(request *http.Reque
 	}
 
 	getClient := func(nodeName string) (*client.Client, error) {
-		return transport.dockerClientFactory.CreateClient(transport.endpoint, nodeName, nil)
+		return transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, nodeName, nil)
 	}
 
 	if err := CheckServiceBodyRestrictions(request, securitySettings, getClient); err != nil {
@@ -259,7 +259,7 @@ func (transport *Transport) decorateServiceUpdateOperation(request *http.Request
 	}
 
 	getClient := func(nodeName string) (*client.Client, error) {
-		return transport.dockerClientFactory.CreateClient(transport.endpoint, nodeName, nil)
+		return transport.dockerClientFactory.CreateClientWithContext(request.Context(), transport.endpoint, nodeName, nil)
 	}
 
 	if err := CheckServiceBodyRestrictions(request, securitySettings, getClient); err != nil {

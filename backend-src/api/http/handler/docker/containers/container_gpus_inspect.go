@@ -48,7 +48,7 @@ func (handler *Handler) containerGpusInspect(w http.ResponseWriter, r *http.Requ
 
 	agentTargetHeader := r.Header.Get(portainer.PortainerAgentTargetHeader)
 
-	cli, err := handler.dockerClientFactory.CreateClient(endpoint, agentTargetHeader, nil)
+	cli, err := handler.dockerClientFactory.CreateClientWithContext(r.Context(), endpoint, agentTargetHeader, nil)
 	if err != nil {
 		return httperror.InternalServerError("Unable to connect to the Docker daemon", err)
 	}

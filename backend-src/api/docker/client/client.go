@@ -28,7 +28,6 @@ var errUnsupportedEnvironmentType = errors.New("environment not supported")
 const (
 	defaultDockerRequestTimeout = 60 * time.Second
 	legacyNegotiationVersion    = "1.24"
-	negotiationProbeTimeout     = 5 * time.Second
 )
 
 type NodeNamesCtxKey struct{}
@@ -52,11 +51,19 @@ func NewClientFactory(signatureService portainer.DigitalSignatureService, revers
 // with an agent enabled environment(endpoint) to target a specific node in an agent cluster.
 // The underlying http client timeout may be specified, a default value is used otherwise.
 func (factory *ClientFactory) CreateClient(endpoint *portainer.Endpoint, nodeName string, timeout *time.Duration) (*client.Client, error) {
+	return factory.CreateClientWithContext(context.Background(), endpoint, nodeName, timeout)
+}
+
+// CreateClientWithContext negotiates before returning a client, so both legacy
+// and modern engines use their advertised API version. Unlike CreateClient, its
+// initial network I/O is cancelled with the caller. Connectivity errors are
+// returned here, never as a usable but incorrectly versioned client.
+func (factory *ClientFactory) CreateClientWithContext(ctx context.Context, endpoint *portainer.Endpoint, nodeName string, timeout *time.Duration) (*client.Client, error) {
 	switch endpoint.Type {
 	case portainer.AzureEnvironment:
 		return nil, errUnsupportedEnvironmentType
 	case portainer.AgentOnDockerEnvironment:
-		return createAgentClient(endpoint, endpoint.URL, factory.signatureService, nodeName, timeout)
+		return createAgentClient(ctx, endpoint, endpoint.URL, factory.signatureService, nodeName, timeout)
 	case portainer.EdgeAgentOnDockerEnvironment:
 		tunnelAddr, err := factory.reverseTunnelService.TunnelAddr(endpoint)
 		if err != nil {
@@ -65,24 +72,23 @@ func (factory *ClientFactory) CreateClient(endpoint *portainer.Endpoint, nodeNam
 
 		endpointURL := "http://" + tunnelAddr // NOSONAR S5332: loopback entry to encrypted Edge tunnel; see SECURITY_REVIEWS.md #180.
 
-		return createAgentClient(endpoint, endpointURL, factory.signatureService, nodeName, timeout)
+		return createAgentClient(ctx, endpoint, endpointURL, factory.signatureService, nodeName, timeout)
 	}
 
 	if strings.HasPrefix(endpoint.URL, "unix://") || strings.HasPrefix(endpoint.URL, "npipe://") {
-		return createLocalClient(endpoint)
+		return createLocalClient(ctx, endpoint)
 	}
 
-	return createTCPClient(endpoint, timeout)
+	return createTCPClient(ctx, endpoint, timeout)
 }
 
-func createLocalClient(endpoint *portainer.Endpoint) (*client.Client, error) {
-	return newCompatibleClient(nil, nil,
+func createLocalClient(ctx context.Context, endpoint *portainer.Endpoint) (*client.Client, error) {
+	return newCompatibleClient(ctx, nil,
 		client.WithHost(endpoint.URL),
-		client.WithAPIVersionNegotiation(),
 	)
 }
 
-func createTCPClient(endpoint *portainer.Endpoint, timeout *time.Duration) (*client.Client, error) {
+func createTCPClient(ctx context.Context, endpoint *portainer.Endpoint, timeout *time.Duration) (*client.Client, error) {
 	httpCli, err := httpClient(endpoint, timeout)
 	if err != nil {
 		return nil, err
@@ -90,14 +96,13 @@ func createTCPClient(endpoint *portainer.Endpoint, timeout *time.Duration) (*cli
 
 	opts := []client.Opt{
 		client.WithHost(endpoint.URL),
-		client.WithAPIVersionNegotiation(),
 	}
 
 	if endpoint.TLSConfig.TLS {
 		opts = append(opts, client.WithScheme("https"))
 	}
 
-	return newCompatibleClient(timeout, httpCli, opts...)
+	return newCompatibleClient(ctx, httpCli, opts...)
 }
 
 // agentClientHeaders builds the headers every request to an agent is decorated with.
@@ -123,7 +128,7 @@ func agentClientHeaders(signatureService portainer.DigitalSignatureService, node
 	return headers, nil
 }
 
-func createAgentClient(endpoint *portainer.Endpoint, endpointURL string, signatureService portainer.DigitalSignatureService, nodeName string, timeout *time.Duration) (*client.Client, error) {
+func createAgentClient(ctx context.Context, endpoint *portainer.Endpoint, endpointURL string, signatureService portainer.DigitalSignatureService, nodeName string, timeout *time.Duration) (*client.Client, error) {
 	httpCli, err := httpClient(endpoint, timeout)
 	if err != nil {
 		return nil, err
@@ -136,7 +141,6 @@ func createAgentClient(endpoint *portainer.Endpoint, endpointURL string, signatu
 
 	opts := []client.Opt{
 		client.WithHost(endpointURL),
-		client.WithAPIVersionNegotiation(),
 		client.WithHTTPHeaders(headers),
 	}
 
@@ -144,15 +148,21 @@ func createAgentClient(endpoint *portainer.Endpoint, endpointURL string, signatu
 		opts = append(opts, client.WithScheme("https"))
 	}
 
-	return newCompatibleClient(timeout, httpCli, opts...)
+	return newCompatibleClient(ctx, httpCli, opts...)
 }
 
-// newCompatibleClient probes before exposing the client to concurrent callers.
-// The split SDK's automatic negotiation rejects API <1.40, although its public
-// fixed-version option still supports those wire versions. Preserve the former
-// factory's negotiated range with that option rather than spoofing headers,
-// rewriting requests or mutating private SDK state.
-func newCompatibleClient(timeout *time.Duration, httpClient *http.Client, opts ...client.Opt) (*client.Client, error) {
+// newCompatibleClient completes negotiation before exposing the client to
+// concurrent callers. The split SDK's lazy negotiation has a hard API1.40
+// floor, but its public fixed-version option supports legacy wire versions.
+// Keep that compatibility without rewriting requests or private SDK state.
+//
+// A failed probe cannot safely return a client: an old engine would still hit
+// the SDK's lazy floor, or requests could use the unnegotiated default1.55.
+// Retry one failed Ping (itself HEAD with GET fallback) for a restarting engine,
+// then return the error. The entire probe shares the caller context and HTTP
+// timeout budget, not an unrelated short deadline. A zero HTTP timeout remains
+// unlimited, just as it is for subsequent operations.
+func newCompatibleClient(ctx context.Context, httpClient *http.Client, opts ...client.Opt) (*client.Client, error) {
 	create := func(extra ...client.Opt) (*client.Client, error) {
 		options := append(append([]client.Opt(nil), opts...), extra...)
 		if httpClient != nil {
@@ -167,35 +177,36 @@ func newCompatibleClient(timeout *time.Duration, httpClient *http.Client, opts .
 	if err != nil {
 		return nil, err
 	}
+	defer cli.Close()
 
-	probeTimeout := negotiationProbeTimeout
-	if timeout != nil && *timeout > 0 && *timeout < probeTimeout {
-		probeTimeout = *timeout
+	if httpClient != nil && httpClient.Timeout > 0 {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, httpClient.Timeout)
+		defer cancel()
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), probeTimeout)
-	defer cancel()
-	ping, pingErr := cli.Ping(ctx, client.PingOptions{NegotiateAPIVersion: true})
+	ping, err := cli.Ping(ctx, client.PingOptions{})
+	if err != nil && ctx.Err() == nil {
+		ping, err = cli.Ping(ctx, client.PingOptions{})
+	}
+	if err != nil {
+		return nil, fmt.Errorf("negotiate Docker API version: %w", err)
+	}
 	version := ping.APIVersion
 	if version == "" {
-		if pingErr != nil {
-			// Keep the old constructor contract on connectivity/auth failures:
-			// the operation reports the error using its own caller context.
-			return cli, nil
-		}
-		// This is the old SDK's fallback for pre-negotiation engines.
+		// Preserve the previous SDK's pre-negotiation-engine fallback.
 		version = legacyNegotiationVersion
 	}
-	if !versions.LessThan(version, client.MinAPIVersion) {
-		return cli, nil
-	}
-
-	legacy, err := create(client.WithAPIVersion(version))
+	// WithAPIVersion validates and normalizes the server value. Do that before
+	// comparing, so malformed versions cannot silently select the maximum.
+	negotiated, err := create(client.WithAPIVersion(version))
 	if err != nil {
-		_ = cli.Close()
 		return nil, err
 	}
-	_ = cli.Close()
-	return legacy, nil
+	if versions.GreaterThan(negotiated.ClientVersion(), client.MaxAPIVersion) {
+		_ = negotiated.Close()
+		return create(client.WithAPIVersion(client.MaxAPIVersion))
+	}
+	return negotiated, nil
 }
 
 type NodeNameTransport struct {

@@ -19,7 +19,7 @@ func GetClient(r *http.Request, dockerClientFactory *prclient.ClientFactory) (*d
 
 	agentTargetHeader := r.Header.Get(portainer.PortainerAgentTargetHeader)
 
-	cli, err := dockerClientFactory.CreateClient(endpoint, agentTargetHeader, nil)
+	cli, err := dockerClientFactory.CreateClientWithContext(r.Context(), endpoint, agentTargetHeader, nil)
 	if err != nil {
 		return nil, httperror.InternalServerError("Unable to connect to the Docker daemon", err)
 	}

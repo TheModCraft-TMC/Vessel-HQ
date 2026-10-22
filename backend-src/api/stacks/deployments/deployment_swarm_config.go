@@ -74,7 +74,7 @@ func (config *SwarmStackDeploymentConfig) Deploy(ctx context.Context) error {
 		if factory := config.StackDeployer.GetDockerClientFactory(); factory != nil {
 			var err error
 
-			dockerClient, err = factory.CreateClient(config.endpoint, "", nil)
+			dockerClient, err = factory.CreateClientWithContext(ctx, config.endpoint, "", nil)
 			if err != nil {
 				return err
 			}

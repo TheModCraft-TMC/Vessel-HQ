@@ -124,7 +124,7 @@ func TestFactoryPreservesLegacyAgentHeaders(t *testing.T) {
 	}
 }
 
-func TestFactoryProbeHonorsShortTimeoutWithoutChangingConstructorErrors(t *testing.T) {
+func TestFactoryProbeHonorsShortTimeout(t *testing.T) {
 	t.Parallel()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		<-r.Context().Done()
@@ -132,10 +132,42 @@ func TestFactoryProbeHonorsShortTimeoutWithoutChangingConstructorErrors(t *testi
 	defer srv.Close()
 	timeout := 30 * time.Millisecond
 	start := time.Now()
-	cli, err := NewClientFactory(nil, nil).CreateClient(&portainer.Endpoint{URL: "tcp://" + strings.TrimPrefix(srv.URL, "http://")}, "", &timeout)
-	require.NoError(t, err, "network errors must still be reported by the operation")
-	defer cli.Close()
+	cli, err := NewClientFactory(nil, nil).CreateClientWithContext(t.Context(), &portainer.Endpoint{URL: "tcp://" + strings.TrimPrefix(srv.URL, "http://")}, "", &timeout)
+	require.ErrorIs(t, err, context.DeadlineExceeded)
+	require.Nil(t, cli, "a failed negotiation must never expose a wrongly versioned client")
 	require.Less(t, time.Since(start), time.Second)
+}
+
+func TestFactoryProbeHonorsCallerCancellation(t *testing.T) {
+	t.Parallel()
+	started := make(chan struct{})
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		close(started)
+		<-r.Context().Done()
+	}))
+	defer srv.Close()
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	go func() {
+		<-started
+		cancel()
+	}()
+	// Zero disables HTTP timeouts, but must not disable caller cancellation.
+	timeout := time.Duration(0)
+	cli, err := NewClientFactory(nil, nil).CreateClientWithContext(ctx, &portainer.Endpoint{URL: "tcp://" + strings.TrimPrefix(srv.URL, "http://")}, "", &timeout)
+	require.ErrorIs(t, err, context.Canceled)
+	require.Nil(t, cli)
+}
+
+func TestFactoryOperationHonorsCancellationAfterNegotiation(t *testing.T) {
+	t.Parallel()
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("API-Version", "1.39")
+	}))
+	defer srv.Close()
+	cli, err := NewClientFactory(nil, nil).CreateClientWithContext(t.Context(), &portainer.Endpoint{URL: "tcp://" + strings.TrimPrefix(srv.URL, "http://")}, "", nil)
+	require.NoError(t, err)
+	defer cli.Close()
 	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 	_, err = cli.ContainerList(ctx, client.ContainerListOptions{})
