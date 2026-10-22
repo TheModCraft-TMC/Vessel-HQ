@@ -2,6 +2,8 @@ package compose
 
 import (
 	"context"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
@@ -71,6 +73,53 @@ func TestWaitForStatusCancelsInFlightPs(t *testing.T) {
 	}
 	if deadline, ok := psCtx.Deadline(); !ok || time.Until(deadline) > time.Minute {
 		t.Error("Compose.Ps must retain its one-minute upper bound")
+	}
+}
+
+func TestWaitForStatusCancelsInitialNegotiation(t *testing.T) {
+	useCLIProtocolEngine(t, "1.39")
+	started := make(chan struct{}, 1)
+	release := make(chan struct{})
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case started <- struct{}{}:
+		default:
+		}
+		select {
+		case <-r.Context().Done():
+		case <-release:
+			w.Header().Set("API-Version", "1.39")
+		}
+	}))
+	defer server.Close()
+	t.Setenv("DOCKER_HOST", "tcp"+strings.TrimPrefix(server.URL, "http"))
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	deployer := pollingDeployer(func(ctx context.Context, _ string, _ api.PsOptions) ([]api.ContainerSummary, error) {
+		return nil, ctx.Err()
+	})
+	done := make(chan libstack.WaitResult, 1)
+	go func() { done <- deployer.WaitForStatus(ctx, "negotiating-project", libstack.StatusRunning) }()
+	select {
+	case <-started:
+	case <-time.After(5 * time.Second):
+		close(release)
+		<-done
+		t.Fatal("initial negotiation did not start")
+	}
+	cancel()
+	select {
+	case result := <-done:
+		close(release)
+		if !strings.Contains(result.ErrorMsg, context.Canceled.Error()) {
+			t.Fatalf("expected caller cancellation, got %+v", result)
+		}
+	case <-time.After(3 * time.Second):
+		// The old CLI's metadata timeout was 2s. The new 60s compatibility
+		// budget must not extend cancelled polling initialization to 60s.
+		t.Error("caller cancellation did not interrupt initial CLI negotiation")
+		close(release)
+		<-done
 	}
 }
 
