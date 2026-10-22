@@ -146,7 +146,7 @@ python3 scripts/integration/platform_smoke.py \
 
 Exit codes: **0** all requested suites passed; **1** a test or cleanup failed;
 **2** all runnable suites passed but an explicitly requested suite has an external
-access gate. `aci` records a blocked status, never a simulated pass. It checks only
+access gate; **130** interrupted (Ctrl-C/SIGTERM, with cleanup attempted). `aci` records a blocked status, never a simulated pass. It checks only
 whether the normal Azure CLI is installed, Azure-related environment **names**,
 and (if installed) `az account show` state metadata. It never initiates a login or
 reads credential stores. Live ACI additionally needs an explicitly authorized
@@ -178,7 +178,7 @@ workflow and is not manufactured or modified here.
 - Cleanup uses only recorded exact owned names. There is no `prune`, shared-host
   `swarm init/leave`, kubeconfig/context switch, or global Docker/Podman setting
   change. Both kind creation **and deletion** explicitly use the private kubeconfig. Anonymous engine volumes are overridden with owned named volumes.
-- A failed test still attempts cleanup. Inspect `cleanup_failures` and the
+- A failed or interrupted (Ctrl-C/SIGTERM) test still attempts cleanup. Inspect `cleanup_failures` and the
   reported exact prefix after interruption. SIGKILL/host failure cannot guarantee
   cleanup: remove only those exact recorded resources, never a global prune.
 - Private temp data/config/passwords and owned subprocesses are removed/stopped.
@@ -234,7 +234,7 @@ node --check scripts/integration/oauth_browser.cjs
 git diff --check
 ```
 
-Seventeen safety/transport unit tests passed during implementation. These verify
+Eighteen safety/transport unit tests passed during implementation. These verify
 resource ownership/bounds/cleanup, artifact identity, transport behavior, transient
 startup retries, and explicit Azure access gates; they are not counted as live
 platform coverage.

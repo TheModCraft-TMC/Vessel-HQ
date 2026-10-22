@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import secrets
 import shutil
+import signal
 import socket
 import subprocess
 import sys
@@ -569,6 +570,9 @@ class Smoke:
                 try:
                     result = self.suite_engine(suite) if suite in ("docker", "swarm", "podman") else getattr(self, "suite_" + suite)()
                     self.results["suites"][suite] = {"status": "passed", "checks": result}
+                except KeyboardInterrupt:
+                    self.results["suites"][suite] = {"status": "interrupted"}
+                    raise
                 except ExternalGate as error:
                     self.results["suites"][suite] = {"status": "blocked", "gate": str(error)}
                     print(f"{suite}: BLOCKED: {error}", flush=True)
@@ -616,7 +620,16 @@ def main():
         parser.error("--suites must be a comma-separated subset of " + ",".join(SUITES))
     if not Path(args.binary).is_file():
         parser.error("--binary must point to an existing Linux Vessel executable")
-    return Smoke(args).execute()
+    previous = signal.getsignal(signal.SIGTERM)
+    def terminate(_signum, _frame):
+        raise KeyboardInterrupt
+    signal.signal(signal.SIGTERM, terminate)
+    try:
+        return Smoke(args).execute()
+    except KeyboardInterrupt:
+        return 130
+    finally:
+        signal.signal(signal.SIGTERM, previous)
 
 
 if __name__ == "__main__":

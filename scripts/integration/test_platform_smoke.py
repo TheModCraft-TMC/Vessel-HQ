@@ -173,6 +173,17 @@ class PlatformSmokeTests(unittest.TestCase):
         self.assertEqual(popen.call_args.kwargs["env"]["HOSTNAME"], "127.0.0.1")
         self.assertEqual(self.runner.results["frontend"]["build_id"], "test-build-id")
 
+    def test_interruption_still_cleans_resources_and_writes_an_interrupted_result(self):
+        self.args.suites = "docker"
+        self.args.output = str(Path(self.tmp.name) / "result.json")
+        with patch.object(self.runner, "suite_engine", side_effect=KeyboardInterrupt), patch.object(self.runner, "release_resources", return_value=[]) as release, contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(KeyboardInterrupt):
+                self.runner.execute()
+        release.assert_called_once()
+        result = json.loads(Path(self.args.output).read_text())
+        self.assertEqual(result["suites"]["docker"]["status"], "interrupted")
+        self.assertEqual(result["cleanup_failures"], [])
+
     def test_external_gate_is_recorded_as_blocked_with_distinct_exit_code(self):
         self.args.suites = "aci"
         self.args.output = str(Path(self.tmp.name) / "result.json")
