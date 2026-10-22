@@ -165,6 +165,9 @@ func createAgentClient(ctx context.Context, endpoint *portainer.Endpoint, endpoi
 func newCompatibleClient(ctx context.Context, timeout *time.Duration, httpClient *http.Client, opts ...client.Opt) (*client.Client, error) {
 	create := func(extra ...client.Opt) (*client.Client, error) {
 		options := append(append([]client.Opt(nil), opts...), extra...)
+		// A public response hook observes requested legacy /version metadata
+		// without replacing the SDK's TCP/TLS/Unix/npipe transports.
+		options = append(options, client.WithResponseHook(captureVersionMetadata))
 		if httpClient != nil {
 			// SDK construction wraps Transport for tracing. Give each instance
 			// its own client value rather than stacking wrappers on the same one.

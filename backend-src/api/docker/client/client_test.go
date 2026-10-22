@@ -11,9 +11,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func init() {
+	// All factory/TLS tests may run in parallel. Initialize process-wide FIPS
+	// state before any of them reads it, not inside one parallel test.
+	fips.InitFIPS(false)
+}
+
 func TestHttpClient(t *testing.T) {
 	t.Parallel()
-	fips.InitFIPS(false)
 
 	// Valid TLS configuration
 	endpoint := &portainer.Endpoint{}

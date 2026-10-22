@@ -32,6 +32,11 @@ func TestFactoryNegotiatesLegacyUnixSocket(t *testing.T) {
 			w.Header().Set("API-Version", "1.24")
 			return
 		}
+		if r.URL.Path == "/v1.24/version" {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(legacyVersionBody))
+			return
+		}
 		if r.URL.Path != "/v1.24/containers/json" {
 			http.Error(w, "unexpected API", http.StatusBadRequest)
 			return
@@ -49,6 +54,9 @@ func TestFactoryNegotiatesLegacyUnixSocket(t *testing.T) {
 	_, err = cli.ContainerList(t.Context(), client.ContainerListOptions{})
 	require.NoError(t, err)
 	require.Equal(t, "1.24", cli.ClientVersion())
+	version, err := ServerVersion(t.Context(), cli)
+	require.NoError(t, err)
+	requireLegacyVersion(t, version)
 }
 
 func TestFactoryLocalProbeTimeoutAndCancellation(t *testing.T) {

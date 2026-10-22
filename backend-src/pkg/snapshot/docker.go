@@ -9,6 +9,7 @@ import (
 	"time"
 
 	portainer "github.com/portainer/portainer/api"
+	dockerclient "github.com/portainer/portainer/api/docker/client"
 	"github.com/portainer/portainer/api/docker/consts"
 	"github.com/portainer/portainer/api/docker/stats"
 	"github.com/portainer/portainer/api/logs"
@@ -269,23 +270,14 @@ func dockerSnapshotNetworks(snapshot *portainer.DockerSnapshot, cli *client.Clie
 }
 
 func dockerSnapshotVersion(snapshot *portainer.DockerSnapshot, cli *client.Client) error {
-	version, err := cli.ServerVersion(context.Background(), client.ServerVersionOptions{})
+	version, err := dockerclient.ServerVersion(context.Background(), cli)
 	if err != nil {
 		return err
 	}
 
-	snapshot.SnapshotRaw.Version = portainer.DockerVersion{VersionResponse: system.VersionResponse{
-		Platform:      system.PlatformInfo{Name: version.Platform.Name},
-		Version:       version.Version,
-		APIVersion:    version.APIVersion,
-		MinAPIVersion: version.MinAPIVersion,
-		Os:            version.Os,
-		Arch:          version.Arch,
-		Experimental:  version.Experimental,
-		Components:    version.Components,
-	}}
-	// The split SDK exposes these deprecated fields only in Engine component
-	// details. Preserve the snapshot API/datastore fields for existing clients.
+	snapshot.SnapshotRaw.Version = version
+	// Retain modern Engine component diagnostics as well as the legacy
+	// top-level fields captured by the client for component-less daemons.
 	for _, c := range version.Components {
 		if c.Name == "Engine" {
 			v := &snapshot.SnapshotRaw.Version
