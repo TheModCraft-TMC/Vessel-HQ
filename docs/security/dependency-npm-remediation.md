@@ -115,3 +115,48 @@ The accompanying [machine-readable inventory](dependency-npm-alerts.json) preser
 ## Verification
 
 Results are recorded below after the final runs; these are frontend/dependency checks only. Live Docker/Swarm/Podman/Kubernetes/Azure backends and Sonar access belong to the parent task.
+
+Final local verification (Node 24.22.1, pnpm 10.26.2):
+
+| Check | Fresh result |
+| --- | --- |
+| `pnpm install --frozen-lockfile` | Pass |
+| `pnpm audit --json` | **0** vulnerabilities at every severity; baseline feed reported 74 |
+| `pnpm check:npm-security` | All **61/61** supplied vulnerable ranges absent across **1,452** resolved package-version records |
+| `pnpm test:dependency-security` | **12** Node regressions passed, including every original advisory version detected, invalid ranges rejected, all NO_PATCH entries handled, all 19 @apply stylesheets compiled, actual editor Markdown and validator compatibility |
+| `pnpm check:frontend-modernization` | Pass; no guard relaxations |
+| `pnpm check:frontend-boundaries` | Pass; 3,278 source files |
+| `pnpm check:app-router-compliance` | Pass; 166 pages |
+| `pnpm typecheck` | Pass |
+| `pnpm test --maxWorkers=2` | **355** files / **2,428** tests passed; 5 skipped and 11 todo unchanged; default test timeouts; final run 218.71 s |
+| `pnpm lint:ci --no-cache` | Pass; **0 errors**, 192 warnings; no warnings suppressed to pass |
+| `pnpm build` | Pass; Next 16.3.8 webpack production build and standalone packaging |
+| `pnpm storybook:build --disable-telemetry` | Pass; current source stories, not the deleted legacy directory; client-only directive/bundle warnings remain nonfatal |
+| `pnpm swagger-cli validate backend-src/api/docs/openapi.yaml` | Pass against the repository's real OpenAPI document |
+| `pnpm generate-api` then generated-directory diff check | Pass; **zero diff**, including maintained SSE runtime; generator stays 0.99.0 |
+| `git diff --check` | Pass |
+
+Browser verification used only new loopback fixture servers and an isolated
+Playwright context, not private development services:
+
+- The real built Storybook presentation fixture passed at **1280 px and 390 px**
+  in **light, dark and high-contrast** modes. Asserted Bootstrap desktop grid /
+  stacked mobile columns, 34 px form controls, local Inter/Glyphicon fonts,
+  screen-reader-only positioning, 16 px utility padding, 4 px radius, 1 px
+  borders, important utility precedence, theme colors, input editing and enabled /
+  disabled button behavior. No jQuery or Bootstrap JavaScript loaded. The story's
+  permanent `play` assertions also passed. Only the fixture server's missing
+  favicon produced an unrelated 404.
+- All five existing Recharts stories (CPU, memory, memory without cache, network
+  and disk) rendered their expected curve counts and handled chart hover with no
+  uncaught errors, exercising the now-upstream-supported Redux graph.
+- The real packaged production Next client rendered `/login` with every API
+  request intercepted by local fixtures. Verified normal form layout, 34 px
+  inputs, password visibility toggle, editable fields, login submission and
+  expected rejected-authentication UI. The only console errors were the
+  deliberately simulated unauthenticated/authentication 401 responses. No live
+  credentials or backend endpoints were used.
+
+These checks do not claim live Docker/Swarm/Podman/Kubernetes/Azure execution,
+Sonar authorization, remote Dependabot re-evaluation, or a GitHub alert state
+change. They establish the checked-in frontend graph and exercised client scope.
