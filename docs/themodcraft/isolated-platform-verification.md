@@ -214,9 +214,12 @@ and approval for potentially billable resources; the harness does not manufactur
 that authorization. On this machine the Azure CLI and Azure/ARM environment names
 were absent. No Azure resource was created.
 
-External Authentik-specific group synchronization remains separate from the Dex
-provider smoke. SonarCloud authorization is owned by the parent verification
-workflow and is not manufactured or modified here.
+Authentik-specific group synchronization remains separate from the Dex provider
+smoke. The [additional real local Authentik proof](../security/authentik-local-verification.md)
+now covers actual provider authorization-code/UserInfo/team synchronization with
+a companion callback, not the production frontend or external deployment policy.
+SonarCloud authorization is owned by the parent verification workflow and is not
+manufactured or modified here.
 
 ## Scoped PR #234 Sonar follow-up
 
@@ -530,5 +533,8 @@ Both whole-scope reviewers independently checked that input boundary. Same-strea
 ELF validation prevents accidental nonbinary selection but is not described as a
 path-confinement fix. Authorized review is still needed; no remote finding was
 accepted or dismissed. Five selected Go ranges and ACI/native Windows access
-limits remain explicit. Local Authentik provider verification is separate and is
-not claimed passing by this record.
+limits remain explicit. The separate [local Authentik provider record](../security/authentik-local-verification.md)
+passes all four real browser/code/UserInfo/membership phases on this same exact
+backend, with no OOM or cleanup failures. It uses a companion callback, not the
+production frontend; the Dex frontend result is not relabeled as Authentik
+frontend or external-policy coverage.

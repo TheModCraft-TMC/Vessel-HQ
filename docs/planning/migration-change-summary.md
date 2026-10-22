@@ -423,10 +423,22 @@ false positive. Reliability/maintainability are A, duplication **1.1%** and revi
 hotspots **100%**; its security gate is **not green**. The separate six-root-case
 manual manifest remains unchanged. No remote acceptance or blanket source
 exclusion was used.
-Fifth whole-scope review and refreshed hosted CI are the next same-PR steps; an
-additional real local Authentik group-sync fixture is being exercised, not yet
-claimed passing. Five selected Go ranges still require an approved maintained
-upstream/fork publication path; ACI/Sonar/native Windows access limits remain.
+The refreshed hosted Linux build **39763954427** and Sonar helper test run
+**39763954374** both pass on `cde139e4f`; publication, mutating sync and root review
+remain correctly skipped. This does not turn the separate Sonar security gate
+green. Fifth whole-scope review is in progress for the applied fixes.
+
+The additional [real local Authentik proof](../security/authentik-local-verification.md)
+now **passes all four fresh browser authorization-code/UserInfo/team-sync phases**
+on the exact `61c04c693` backend, without a product change. The custom group claim
+is absent from ID tokens and present in real UserInfo; regex mappings, preserved
+leader/unmanaged memberships, stale managed-group removal, changed-group addition,
+default-team fallback and standard-user admin denial all pass. No OOM or cleanup
+failure occurs; no owned resources remain and host Swarm stays inactive. This
+proves the actual backend Authentik path through a companion callback, not the
+production frontend or an external deployment's policies. Five selected Go
+ranges still require an approved maintained upstream/fork publication path;
+ACI/Sonar/native Windows access limits remain.
 
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
