@@ -156,20 +156,22 @@ func (c *ComposeDeployer) WaitForStatus(ctx context.Context, name string, status
 	waitResult := libstack.WaitResult{Status: status}
 
 	for {
-		if ctx.Err() != nil {
+		select {
+		case <-ctx.Done():
 			waitResult.ErrorMsg = "failed to wait for status: " + ctx.Err().Error()
 
 			return waitResult
+		case <-time.After(time.Second):
 		}
-
-		time.Sleep(1 * time.Second)
 
 		var containerSummaries []api.ContainerSummary
 
-		if err := c.withComposeService(ctx, nil, libstack.Options{ProjectName: name}, func(ctx context.Context, composeService api.Compose, project *types.Project) error {
+		if err := c.withComposeService(ctx, nil, libstack.Options{ProjectName: name}, func(_ context.Context, composeService api.Compose, _ *types.Project) error {
 			var err error
 
-			psCtx, cancelFunc := context.WithTimeout(context.Background(), time.Minute)
+			// WithCli intentionally detaches stack operations. Status polling is
+			// not teardown: retain the original caller's cancellation and values.
+			psCtx, cancelFunc := context.WithTimeout(ctx, time.Minute)
 			defer cancelFunc()
 			containerSummaries, err = composeService.Ps(psCtx, name, api.PsOptions{All: true})
 

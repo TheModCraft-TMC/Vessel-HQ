@@ -1,7 +1,8 @@
 # Backend Sonar finding dispositions
 
-Scope: the 30 backend findings in the combined GitHub issue inventory, based on
-`5b175344b`. These are source-level reviews, not a claim that a remote SonarCloud
+Scope: the original 30 backend findings in the combined GitHub issue inventory,
+based on `5b175344b`, plus the explicitly identified PR #234 polling follow-up
+below. These are source-level reviews, not a claim that a remote SonarCloud
 analysis or hotspot workflow has been updated. `NOSONAR` annotations are confined
 to the reviewed expressions below; no file-wide/rule-wide exclusion is used.
 They do not exempt new call sites or unrelated security rules from review.
@@ -14,13 +15,19 @@ They do not exempt new call sites or unrelated security rules from review.
 | #229 | godre:S8239 | Derive graceful-shutdown context from `context.WithoutCancel(shutdownCtx)` with a fresh 30-second deadline. Directly using the already-canceled shutdown context would abort graceful draining. |
 | #149 | godre:S8239 | Derive inline deployment context from `context.WithoutCancel(ctx)` with the existing deployment timeout. Retain values without abandoning a deployment on browser disconnect and orphaning cluster resources. |
 | #159 | godre:S8239 | Derive the `WithCli` context from the caller with `context.WithoutCancel`: values are preserved, while cancellation is detached as before so client disconnects or the 30s Next.js rewrite timeout cannot interrupt `compose down` during stack stop/delete. |
+| PR #234 follow-up (`AaFi6JCwpea8zfGF2Be7`) | godre:S8239 | `WaitForStatus` is polling, not teardown: derive each bounded (at most one-minute) Compose `Ps` context from the original caller, not `Background` or the intentionally detached `WithCli` callback context. Cancellation also interrupts the one-second polling delay. The detached deployment/teardown policy above remains unchanged. |
 | #168, #169, #170 | godre:S8188 | Defer scheduler test timeout cancellation immediately, including failure/unused-job paths. |
 | #160, #161 | godre:S8188 | Defer Swarm test timeout cancellation immediately. Existing `t.Cleanup(cancel)` was safe but less explicit to the analyzer. |
 | #147 | godre:S8188 | Defer pod-log test cancellation in addition to simulating client cancellation in the reader. |
 
 Tests exercise TLS 1.2 AEAD success, CBC/static-RSA refusal, TLS 1.3 success,
 shutdown draining, CLI caller values with the historical detached lifetime, and
-bounded detached deployment with preserved values. Integration-tag-independent Swarm tests do not imply live
+bounded detached deployment with preserved values. Polling regressions exercise
+actual `WaitForStatus`/`WithCli` execution with blocked Compose `Ps`, caller
+cancellation/deadline and metadata, the per-call upper bound, polling-delay
+cancellation, and removed/running/completed success paths. The new polling tests
+require no Docker daemon; existing detached-operation regressions still apply.
+Integration-tag-independent Swarm tests do not imply live
 Swarm deployment coverage.
 
 ## Intentionally retained behavior, reviewed at the expression
