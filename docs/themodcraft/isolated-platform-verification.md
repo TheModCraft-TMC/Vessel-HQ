@@ -581,3 +581,33 @@ full matrix's **raw exit2 solely for unavailable ACI**, after explicitly
 checking all six suites and completing AMD64, UI and Authentik verification.
 Native Windows/npipe and native AMD64 runtime remain unavailable; a successful
 Windows PE cross-compile is not relabeled as runtime execution.
+
+## Final frontend after sixth-review small corrections
+
+Final applied frontend/documentation source:
+`1ffe1bdaf5ed3ba23817c877087d289103109b02`.
+Production frontend build: **`BYV-rVbc7SZEyf4exaSeC`**.
+The standalone server-file hash remains the same and is still **not** an asset
+fingerprint. Git confirms every backend Go source and module file is unchanged
+from371, so these frontend repeats use the exact same
+`d9f0f007c27709c8807caa0e0669f3a94a704ce5202b25f6da72ffeef071c60f`
+ARM64 backend without mislabeling its source.
+
+- `/tmp/vessel-r6-final-ui.pzqb5z/runtime-result.json`: actual container
+  zerolog messages with/without a pipe and without fields render; timestamps
+  occur once. Images toolbar title and controls do not overlap at
+  **320/390/720/1280px**. Every action stays inside the row; enabled targets
+  pass natural hit testing. Search/clear works at390/1280. Pointer and keyboard
+  usage filtering,130-permission catalog, custom ID6, header menus and all six
+  drawer width/theme checks pass. No page errors or cleanup failures.
+- `/tmp/vessel-r6-final-oauth.json`: real Dex/production callback, invalid state,
+  ACL, cookie-session reload and1100/390px controls pass again, **raw exit0**.
+- Full final frontend checks pass:357 files /2,438 tests, architecture guards,
+  typecheck, zero lint errors (192 existing warnings),42 Node tests, production
+  and Storybook builds, all61 supplied npm ranges absent and fresh audit zero.
+
+The earlier exact371 six-platform/AMD64/Authentik results remain backend
+evidence; D160 is not substituted for this final frontend. Authentik still uses
+the documented companion callback. All final resources are cleaned up.
+ACI/native Windows/native AMD64 and credentialed Sonar/remaining Go gates are
+unchanged and not claimed verified or resolved.

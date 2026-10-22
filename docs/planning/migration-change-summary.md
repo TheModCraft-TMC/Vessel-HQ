@@ -646,3 +646,55 @@ historical, not certification of371; fresh final-head hosted CI must finish.
 Sonar's two known credentialed reviews, five Go ranges, ACI account/resource
 access and native Windows/AMD64 runtime limits remain explicit. No release,
 image, merge or dependency-fork publication occurred.
+
+## Sixth review applied: final local verification
+
+Both required models completed the sixth independent whole-work review of all
+715 paths at `2326f8234`, with real isolated runtime/browser checks. Neither
+found another core compatibility regression. The remaining clear small findings
+were corrected, not deferred: stale Sonar workflow-token documentation; mobile
+Images toolbar controls overlapping the title; and pre-existing zerolog message
+loss without a pipe separator. Storybook-only locale sorting and the helper's
+indirect-versus-direct test organization were not functional defects. This
+small-only round ends the review sequence within the ten-round maximum.
+
+Applied frontend/documentation source: **`1ffe1bdaf5ed3ba23817c877087d289103109b02`**.
+Shared title/control rows and the Images action group wrap intrinsically without
+clipping, forced clicks or hidden actions; search remains on one line and can
+shrink. Non-pipe log prefixes/messages survive while key-only, last-equals and
+single-timestamp behavior is retained. Four new failing-first cases plus the
+94-test focused log suite pass.
+
+Fresh final branch checks pass: **357 files /2,438 frontend tests** (five skipped,
+11 todo),42 Node tests, all architecture/routes/CSS guards, typecheck including
+post-build, uncached lint (zero errors /192 existing warnings), production and
+Storybook builds, original61-range npm inventory and a zero-vulnerability audit.
+Final production frontend: **`BYV-rVbc7SZEyf4exaSeC`**.
+
+The actual corrected branch build passes real no-pipe/message-only/container-log
+rendering with one timestamp; title/control nonoverlap, containment of every
+action and natural enabled targets at **320/390/720/1280px**; natural Search/clear
+at390/1280; pointer/keyboard image filtering;130 permissions/custom role ID6;
+header menus and all six drawer width/theme cases. No page errors or cleanup
+failures occur. Real Dex authorization-code/production callback, invalid state,
+ACL, cookie reload and1100/390px controls also pass again on this final frontend.
+
+Backend Go sources and `go.mod`/`go.sum` are byte-identical to371 (verified by
+Git), so the exact371 backend binaries and211-package/42-race, all-six-platform,
+AMD64 and real Authentik evidence remain correctly scoped backend evidence.
+Earlier D160 frontend checks are historical, not relabeled as the new build.
+
+Safe final evidence: `/tmp/vessel-r6-final-*` logs;
+`/tmp/vessel-r6-final-ui.pzqb5z/runtime-result.json` and UI-only screenshots;
+`/tmp/vessel-r6-final-oauth.json`. Failed preliminary toolbar attempts remain
+failed records; final geometry and real logs pass without weakening assertions.
+Owned-source whitespace checks pass. The raw whole-PR whitespace check still
+reports only preserved upstream Bootstrap LICENSE CRLF and SVG closing-line
+whitespace; byte-pinned provenance assets were not normalized or gate-suppressed.
+
+The original226 closing references, release/API/tool versions, dependency counts
+and external gates are unchanged. Fresh final-head hosted checks must complete
+after this local checkpoint; their result belongs to the PR's check record, not
+the historical `cde139e4f` success. Five selected Go ranges, authorized Sonar
+reviews, ACI access and unavailable native runtime coverage are **not done yet**.
+No merge, release/image publication or external dependency-fork publication occurs.
