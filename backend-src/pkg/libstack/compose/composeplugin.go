@@ -41,7 +41,19 @@ func (c *ComposeDeployer) withComposeService(
 	options libstack.Options,
 	composeFn func(context.Context, api.Compose, *types.Project) error,
 ) error {
-	return libstack.WithCli(ctx,
+	return c.withComposeServiceUsing(ctx, filePaths, options, composeFn, libstack.WithCli)
+}
+
+// withComposeServiceUsing keeps ordinary stack operations detached, but lets
+// read-only status polling retain cancellation during initial negotiation too.
+func (c *ComposeDeployer) withComposeServiceUsing(
+	ctx context.Context,
+	filePaths []string,
+	options libstack.Options,
+	composeFn func(context.Context, api.Compose, *types.Project) error,
+	withCli func(context.Context, libstack.DockerCliOptions, func(context.Context, *command.DockerCli) error) error,
+) error {
+	return withCli(ctx,
 		libstack.DockerCliOptions{Host: options.Host, TLSConfig: options.TLSConfig, Registries: options.Registries},
 		func(ctx context.Context, cli *command.DockerCli) error {
 			var composeCli command.Cli = cli

@@ -40,6 +40,17 @@ func TestWithCli_NoHeaders(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestWithCliContextRetainsCallerCancellation(t *testing.T) {
+	isolateCLIConfig(t)
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	err := WithCliContext(ctx, DockerCliOptions{Host: cliEngine(t, "1.39")}, func(context.Context, *command.DockerCli) error {
+		t.Fatal("cancelled negotiation must not publish a client")
+		return nil
+	})
+	require.ErrorIs(t, err, context.Canceled)
+}
+
 func TestWithCli_PreservesCallerValuesButNotCancellation(t *testing.T) {
 	isolateCLIConfig(t)
 	type contextKey struct{}

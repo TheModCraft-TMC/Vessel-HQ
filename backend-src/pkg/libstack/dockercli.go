@@ -49,8 +49,17 @@ func WithCli(
 	// r.Context(), and the Next.js API rewrite aborts upstream requests after
 	// 30s; propagating that cancellation would interrupt compose down midway.
 	// The base behavior (context.Background) also ignored cancellation.
-	ctx = context.WithoutCancel(ctx)
+	return WithCliContext(context.WithoutCancel(ctx), options, cliFn)
+}
 
+// WithCliContext creates a Docker CLI while retaining the caller's cancellation
+// for both negotiation and operations. Read-only polling uses this entry point;
+// stack teardown must continue to use the intentionally detached WithCli.
+func WithCliContext(
+	ctx context.Context,
+	options DockerCliOptions,
+	cliFn func(context.Context, *command.DockerCli) error,
+) error {
 	cli, err := command.NewDockerCli(command.WithCombinedStreams(log.Logger), command.WithBaseContext(ctx))
 	if err != nil {
 		return fmt.Errorf("unable to create a Docker client: %w", err)

@@ -166,7 +166,7 @@ func (c *ComposeDeployer) WaitForStatus(ctx context.Context, name string, status
 
 		var containerSummaries []api.ContainerSummary
 
-		if err := c.withComposeService(ctx, nil, libstack.Options{ProjectName: name}, func(_ context.Context, composeService api.Compose, _ *types.Project) error {
+		if err := c.withComposeServiceUsing(ctx, nil, libstack.Options{ProjectName: name}, func(_ context.Context, composeService api.Compose, _ *types.Project) error {
 			var err error
 
 			// WithCli intentionally detaches stack operations. Status polling is
@@ -176,7 +176,7 @@ func (c *ComposeDeployer) WaitForStatus(ctx context.Context, name string, status
 			containerSummaries, err = composeService.Ps(psCtx, name, api.PsOptions{All: true})
 
 			return err
-		}); err != nil {
+		}, libstack.WithCliContext); err != nil {
 			log.Debug().
 				Str("project_name", name).
 				Err(err).
