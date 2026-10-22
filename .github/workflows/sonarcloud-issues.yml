@@ -9,17 +9,31 @@ on:
         description: Preview changes without modifying issues
         type: boolean
         default: false
+      root_review:
+        description: Manually preflight the six pinned intentional root cases (no issue sync)
+        type: boolean
+        default: false
+      root_review_apply:
+        description: Record the six reviews after preflight (root_review required; otherwise dry-run)
+        type: boolean
+        default: false
   push:
     branches: [develop]
     paths:
       - '.github/workflows/sonarcloud-issues.yml'
       - 'scripts/sync-sonarcloud-issues.py'
       - 'scripts/test_sync_sonarcloud_issues.py'
+      - 'scripts/review-sonar-root.py'
+      - 'scripts/test_review_sonar_root.py'
+      - 'scripts/sonar-root-review.json'
   pull_request:
     paths:
       - '.github/workflows/sonarcloud-issues.yml'
       - 'scripts/sync-sonarcloud-issues.py'
       - 'scripts/test_sync_sonarcloud_issues.py'
+      - 'scripts/review-sonar-root.py'
+      - 'scripts/test_review_sonar_root.py'
+      - 'scripts/sonar-root-review.json'
 
 permissions:
   contents: read
@@ -34,11 +48,13 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - run: python3 -m unittest discover -s scripts -p test_sync_sonarcloud_issues.py
+      - run: |
+          python3 -m unittest discover -s scripts -p test_sync_sonarcloud_issues.py
+          python3 -m unittest discover -s scripts -p test_review_sonar_root.py
 
   sync:
     needs: test
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/develop'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' && !inputs.root_review
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -49,11 +65,32 @@ jobs:
       - name: Synchronize main-branch findings
         env:
           GH_TOKEN: ${{ github.token }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run || false }}
         run: |
           if [ "$DRY_RUN" = true ]; then
             python3 scripts/sync-sonarcloud-issues.py --dry-run
           else
             python3 scripts/sync-sonarcloud-issues.py
+          fi
+
+  root-review:
+    needs: test
+    if: github.event_name == 'workflow_dispatch' && inputs.root_review
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Preflight or record pinned manual SonarCloud reviews
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          APPLY: ${{ inputs.root_review_apply && !inputs.dry_run }}
+        run: |
+          if [ "$APPLY" = true ]; then
+            python3 scripts/review-sonar-root.py --apply
+          else
+            python3 scripts/review-sonar-root.py
           fi
