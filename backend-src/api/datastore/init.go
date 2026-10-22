@@ -4,6 +4,8 @@ import (
 	"os"
 
 	portainer "github.com/portainer/portainer/api"
+	"github.com/portainer/portainer/api/dataservices"
+	"github.com/portainer/portainer/api/internal/authorization"
 )
 
 // Init creates the default data set.
@@ -18,7 +20,40 @@ func (store *Store) Init() error {
 		return err
 	}
 
+	if err := store.checkOrCreateDefaultRoles(); err != nil {
+		return err
+	}
+
 	return store.checkOrCreateDefaultData()
+}
+
+// checkOrCreateDefaultRoles also repairs stores already at the current schema
+// version: fresh databases skip migrations, including the role restoration.
+// Unlike that migration, initialization must never replace an existing role.
+func (store *Store) checkOrCreateDefaultRoles() error {
+	return store.UpdateTx(func(tx dataservices.DataStoreTx) error {
+		settings, err := tx.Settings().Settings()
+		if err != nil {
+			return err
+		}
+
+		for _, role := range authorization.PredefinedRoles(settings.AllowVolumeBrowserForRegularUsers) {
+			_, err := tx.Role().Read(role.ID)
+			if err == nil {
+				continue
+			}
+			if !dataservices.IsErrObjectNotFound(err) {
+				return err
+			}
+
+			// Use the reserved ID, not the bucket sequence used by Create.
+			if err := tx.Role().Update(role.ID, role); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
 }
 
 func (store *Store) checkOrCreateDefaultSettings() error {
