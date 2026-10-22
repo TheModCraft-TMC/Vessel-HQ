@@ -56,6 +56,28 @@ test('Tailwind does not reintroduce preflight or put utilities below Bootstrap i
   assert.match(result.css, /\[theme=["']highcontrast["']\]/);
 });
 
+test('collapse controls preserve translucent hover colors across editions and dark theme', async () => {
+  // REVIEW: v4 silently ignores bg-opacity-10; compiling successfully is not
+  // sufficient unless the replacement color utilities actually retain alpha.
+  const file = path.resolve('web-src/shared/assets/css/tailwind.css');
+  const result = await postcss([tailwind()]).process(fs.readFileSync(file, 'utf8'), { from: file });
+  for (const candidate of [
+    'group-hover\\:bg-blue-5\\/10',
+    'group-hover\\:be\\:bg-gray-5\\/10',
+    'th-dark\\:group-hover\\:bg-gray-true-7\\/10',
+  ]) {
+    let background;
+    result.root.walkRules((rule) => {
+      if (rule.selector.startsWith(`.${candidate}:`)) {
+        rule.walkDecls('background-color', (declaration) => {
+          background = declaration.value;
+        });
+      }
+    });
+    assert.match(background || '', /10%, transparent\)/, candidate);
+  }
+});
+
 test('every stylesheet using @apply still compiles with its own explicit v4 reference', async () => {
   const files = fs.globSync('web-src/**/*.css').filter((file) => fs.readFileSync(file, 'utf8').includes('@apply'));
   assert.ok(files.length >= 19);

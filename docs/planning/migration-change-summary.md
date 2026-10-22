@@ -335,6 +335,39 @@ Dex does not establish external Authentik group-sync coverage, and Windows/npipe
 runtime execution is not available on this host. The manual Sonar path is preview
 by default, pins its reviewed sources, and has made no remote mutations.
 
+### Fourth-round independent review — October 22, 2026
+
+The independent review covered the full 692-path range from `5b175344b` to
+`e97911a8f`, not only the latest follow-ups. Correct one remaining Tailwind 4
+migration regression: removed `bg-opacity-10` utilities made collapse-button
+hover backgrounds opaque. Use color alpha for the existing light, BE and dark
+variants, with an actual-compiler regression verified failing before the fix.
+
+Fresh reviewer checks pass: frozen install, zero-vulnerability npm audit, all
+four frontend architecture/CSS guards, typecheck, uncached lint (zero errors,
+192 existing warnings), 41 Node tooling tests, 47 Sonar and 30 platform Python
+tests, the full frontend suite (357 files / 2,434 passed, five skipped, 11 todo),
+and race checks for 23 backend package paths (19 tested; four contain no tests).
+Frontend contract regeneration
+preserves all 16 generated files byte-for-byte. The real old/new SDK slow-probe
+reproduction succeeds in both cases after the same 5.2-second delay. An
+independent selected-module/range comparison confirms 21/26 Go ranges fixed or
+removed, with the same five legacy Docker/Distribution ranges unresolved.
+
+The corrected production webpack/standalone build passes. Hands-on Playwright
+uses this reviewer's frontend build `mEl8sjYQHVvbPFYROxOCx` with the exact ARM64
+backend artifact recorded above, not a newly rebuilt backend. Real disposable
+Docker images verify Used/Unused/both/clear, reload persistence, keyboard
+selection, menu positioning and Escape focus. Browser-computed hover alpha is
+0.1 in six theme/edition cases. At 390px, actual search, sidebar and user-menu
+interactions work without header overlap. Raw and structured container logs
+render correctly, and copied text exactly matches the rendered lines with each
+nanosecond timestamp once (clipboard-write spy only). Owned fixture cleanup has
+zero failures; no test configuration, credentials or browser output is committed.
+These are scoped Docker/UI checks, not new live Swarm/Podman/Kubernetes/Edge/OAuth,
+ACI, external Authentik group-sync or Windows/npipe coverage. Other reviewers'
+follow-ups and hosted CI remain separate; no remote finding was mutated.
+
 ## 1.3.1 dependency and CSS Module fix — October 21, 2026
 
 Separate from the 1.3.0 scope below. Dependabot PR #230 merged major updates
