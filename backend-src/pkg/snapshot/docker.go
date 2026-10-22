@@ -2,6 +2,7 @@ package snapshot
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"fmt"
 	"os"
@@ -281,10 +282,12 @@ func dockerSnapshotVersion(snapshot *portainer.DockerSnapshot, cli *client.Clien
 	for _, c := range version.Components {
 		if c.Name == "Engine" {
 			v := &snapshot.SnapshotRaw.Version
-			v.GitCommit = c.Details["GitCommit"]
-			v.GoVersion = c.Details["GoVersion"]
-			v.KernelVersion = c.Details["KernelVersion"]
-			v.BuildTime = c.Details["BuildTime"]
+			// Keep the legacy top-level values when both representations exist;
+			// missing or conflicting component details must not erase them.
+			v.GitCommit = cmp.Or(v.GitCommit, c.Details["GitCommit"])
+			v.GoVersion = cmp.Or(v.GoVersion, c.Details["GoVersion"])
+			v.KernelVersion = cmp.Or(v.KernelVersion, c.Details["KernelVersion"])
+			v.BuildTime = cmp.Or(v.BuildTime, c.Details["BuildTime"])
 		}
 	}
 	snapshot.IsPodman = isPodman(snapshot.SnapshotRaw.Version.VersionResponse)
