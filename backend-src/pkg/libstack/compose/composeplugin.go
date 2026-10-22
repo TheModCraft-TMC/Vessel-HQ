@@ -20,7 +20,6 @@ import (
 	"github.com/docker/cli/cli/command"
 	cmdcompose "github.com/docker/compose/v5/cmd/compose"
 	"github.com/docker/compose/v5/pkg/api"
-	"github.com/docker/compose/v5/pkg/compose"
 	"github.com/docker/compose/v5/pkg/utils"
 	"github.com/rs/zerolog/log"
 	"github.com/sirupsen/logrus"
@@ -61,23 +60,9 @@ func (c *ComposeDeployer) withComposeServiceUsing(
 				composeCli = buildKitDisabledCli{Cli: composeCli}
 			}
 
-			var project *types.Project
-			var serviceOptions []compose.Option
-			if len(filePaths) > 0 {
-				var err error
-				project, err = createProject(ctx, filePaths, options)
-				if err != nil {
-					return fmt.Errorf("failed to create compose project: %w", err)
-				}
-				if v, ok := project.Environment[cmdcompose.ComposeParallelLimit]; ok {
-					parallel, err := strconv.Atoi(v)
-					if err != nil {
-						return fmt.Errorf("%s must be an integer (found: %q)", cmdcompose.ComposeParallelLimit, v)
-					}
-					if parallel > 0 {
-						serviceOptions = append(serviceOptions, compose.WithMaxConcurrency(parallel))
-					}
-				}
+			project, serviceOptions, err := configuredProject(ctx, filePaths, options)
+			if err != nil {
+				return err
 			}
 			composeService, err := c.createComposeServiceFn(composeCli, serviceOptions...)
 			if err != nil {
@@ -201,27 +186,22 @@ func (c *ComposeDeployer) Pull(ctx context.Context, filePaths []string, options 
 
 // Validate validates stack file
 func (c *ComposeDeployer) Validate(ctx context.Context, filePaths []string, options libstack.Options) error {
-	return c.withComposeService(ctx, filePaths, options, func(ctx context.Context, composeService api.Compose, project *types.Project) error {
-		return nil
-	})
+	// Parsing configuration never required a live engine. Retain the existing
+	// detached loading context without constructing or probing a Docker client.
+	_, _, err := configuredProject(context.WithoutCancel(ctx), filePaths, options)
+	return err
 }
 
 // Config returns the compose file with the paths resolved
 func (c *ComposeDeployer) Config(ctx context.Context, filePaths []string, options libstack.Options) ([]byte, error) {
-	var payload []byte
-
-	if err := c.withComposeService(ctx, filePaths, options, func(ctx context.Context, composeService api.Compose, project *types.Project) error {
-		var err error
-		payload, err = project.MarshalYAML()
-		if err != nil {
-			return fmt.Errorf("unable to marshal as YAML: %w", err)
-		}
-
-		return nil
-	}); err != nil {
+	project, _, err := configuredProject(context.WithoutCancel(ctx), filePaths, options)
+	if err != nil {
 		return nil, fmt.Errorf("compose config operation failed: %w", err)
 	}
-
+	payload, err := project.MarshalYAML()
+	if err != nil {
+		return nil, fmt.Errorf("compose config operation failed: unable to marshal as YAML: %w", err)
+	}
 	return payload, nil
 }
 
