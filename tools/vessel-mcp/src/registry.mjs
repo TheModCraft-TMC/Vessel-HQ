@@ -111,7 +111,7 @@ export async function createRegistry(config, env = process.env) {
       throw new Error('Tool schema limit exceeded');
     const revision = fingerprint({
       origin: config.origin,
-      scope: [...config.scope].sort(),
+      scope: [...config.scope].sort((a, b) => a - b),
       identity: fingerprint(secrets),
       servers,
       schemas: entries.map(({ name, inputSchema, approval }) => ({ name, inputSchema, approval })),
@@ -143,7 +143,7 @@ export async function createRegistry(config, env = process.env) {
         if (Buffer.byteLength(JSON.stringify(result)) > 256 * 1024) throw new Error('Selected schemas exceed output limit');
         return redact(result, secrets);
       },
-      tags: () => [...new Set(entries.flatMap((tool) => tool.tags))].sort(),
+      tags: () => [...new Set(entries.flatMap((tool) => tool.tags))].sort((a, b) => a.localeCompare(b)),
       async call(name, args, signal, approvedName) {
         const tool = entries.find((entry) => entry.name === name);
         if (!tool || !args || typeof args !== 'object' || Array.isArray(args)) throw new Error('Unknown operation or invalid arguments');

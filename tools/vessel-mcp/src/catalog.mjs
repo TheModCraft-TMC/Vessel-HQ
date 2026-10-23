@@ -72,5 +72,5 @@ export function getSchemas(names) {
 }
 
 export function getTags() {
-  return [...new Set(catalog.flatMap((tool) => tool.tags))].sort();
+  return [...new Set(catalog.flatMap((tool) => tool.tags))].sort((a, b) => a.localeCompare(b));
 }

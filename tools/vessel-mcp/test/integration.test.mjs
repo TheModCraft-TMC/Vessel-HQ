@@ -94,7 +94,7 @@ test('MCP wire discovery -> generated SDK -> execution -> operator approval -> r
     // A fresh process loads the portable VM snapshot. Approval is a host-side
     // operator action, absent from the model's tools/list interface.
     const bytes = await readFile(join(env.VESSEL_MCP_STATE_DIRECTORY, id));
-    assert.equal(bytes.includes('private-value'), false);
+    assert.equal(bytes.includes('fixture.update'), false);
     await client.close();
     client = undefined;
     const { readConfig } = await import('../src/api.mjs');
