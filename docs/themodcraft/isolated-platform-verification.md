@@ -29,6 +29,8 @@ Use the project's supported Node 24.x and pnpm 10.26.2 environment for the
 optional browser/frontend tooling.
 
 ```sh
+# Authorize this build directory independently before accepting CLI arguments.
+export VESSEL_SMOKE_ARTIFACT_ROOT=/absolute/path/to/linux-arm64
 # Use the updated dependency artifact here, not a historical build.
 VESSEL_BINARY=/absolute/path/to/linux-arm64/portainer
 RUNTIME_IMAGE=vessel-issues-toolkit:arm64
