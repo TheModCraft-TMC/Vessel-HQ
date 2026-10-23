@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { StickyFooter } from '@/ui/components/StickyFooter/StickyFooter';
+import { Button } from '@/ui/components/buttons';
+
 import { TestLayoutProvider } from './LayoutContext';
 import { SideNavigation } from './SideNavigation';
 import { TestSidebarProvider } from './SidebarState';
@@ -33,6 +36,14 @@ export default {
                 Choose a route, press Escape, or tap outside to close the
                 navigation.
               </p>
+              <StickyFooter>
+                <Button
+                  color="primary"
+                  data-cy="mobile-navigation-preview-save"
+                >
+                  Save preview
+                </Button>
+              </StickyFooter>
             </main>
           </div>
         </TestSidebarProvider>

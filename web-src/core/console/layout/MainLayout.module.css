@@ -483,6 +483,7 @@
   }
 
   .sidebarRegion[role='dialog'] {
+    z-index: 70;
     transform: translateX(0);
   }
 
@@ -528,7 +529,7 @@
 
   .backdrop {
     position: fixed;
-    z-index: 30;
+    z-index: 60;
     display: block;
     border: 0;
     inset: 0;
