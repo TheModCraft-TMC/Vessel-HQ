@@ -20,7 +20,12 @@ numbers. New defects and new call sites remain subject to analysis.
 
 ## SonarCloud review access
 
-**Not done yet: remote acceptance of the five intentional root-bootstrap cases
+October 23 update: the five current root findings (#236–#240) are now Accepted
+in Sonar and closed as not planned on GitHub; see the [recorded dispositions](../security/sonar-root-review.md#october-23-2026--current-issue-dispositions).
+The following paragraph is the historical October 21 handoff, superseded for
+those five keys only.
+
+**Historical handoff: remote acceptance of the five intentional root-bootstrap cases
 requires SonarCloud issue-review access.** The source rationale is reviewed, but
 that does not change the remote finding's status.
 
@@ -275,3 +280,13 @@ service records an authorized review and the gate is rerun.
 | [#228](https://github.com/TheModCraft-TMC/Vessel-HQ/issues/228) | `docker:S6506` | Source fix | Remove unverified installer/archive downloads or verify the repository key before use. | [`build/linux/dev-toolkit/toolkit.Dockerfile`](../../build/linux/dev-toolkit/toolkit.Dockerfile) |
 | [#229](https://github.com/TheModCraft-TMC/Vessel-HQ/issues/229) | `godre:S8239` | Source fix | Derive from the caller context (values preserved) with `context.WithoutCancel`, keeping the historical detachment from request cancellation. | [`backend-src/api/http/server.go`](../../backend-src/api/http/server.go) |
 | [#233](https://github.com/TheModCraft-TMC/Vessel-HQ/issues/233) | `bug` | Source fix | Restore visible, compiler-safe image usage filtering and Vessel-specific issue reporting. | Image list and GitHub issue forms |
+
+## October 23 follow-up
+
+| Issue | Current work and evidence | Remaining boundary |
+| --- | --- | --- |
+| #235 | Artifact paths confined beneath an independently operator-configured root; descriptor traversal rejects escaping aliases, link swaps and nonregular files. 46 harness tests passed. | Remote reanalysis of the changed source still required. |
+| #236–#240 | Intentional privileged bootstrap reviewed; all five Sonar keys read back Accepted/WONTFIX and GitHub issues closed as not planned. | No claim that root execution was eliminated or the entire quality gate passed. |
+| #241 | Mobile modal navigation, focus containment/Escape/route dismissal; shared toolbar wrapping, footer/sidebar offsets and phone footer wrapping; account/activity/registry alignment and segmented-control fixes. | Full deployed-page audit is still incomplete; saved browser-origin permission currently denies Vessel access. |
+| #243 | New standalone [Code Mode adapter](../../tools/vessel-mcp/README.md): connected MCP discovery, schema-to-TypeScript compiler, async sandbox, encrypted approval continuations/resume, host-side authorization and measured benchmark. | No existing agent loop was present; adapter integration is explicit and not deployed by installation. |
+| #244 | [OpenTofu/Pulumi evaluation](iac-integration-evaluation.md) completed; OpenTofu-first isolated runners recommended, with engine-independent plan/apply approval. | Provisioning is evaluated future work, not enabled functionality. |

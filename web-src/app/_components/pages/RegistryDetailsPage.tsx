@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { PageContent } from '@console/layout/PageContent';
 
 import { withError } from '@/core/query';
 import {
@@ -78,7 +79,8 @@ function EditRegistry({
   );
 
   return (
-    <Widget>
+    <PageContent>
+      <Widget>
         <WidgetBody>
           <RegistryForm
             values={values}
@@ -91,5 +93,6 @@ function EditRegistry({
           />
         </WidgetBody>
       </Widget>
+    </PageContent>
   );
 }

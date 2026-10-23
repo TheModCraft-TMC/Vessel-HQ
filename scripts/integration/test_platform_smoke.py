@@ -22,6 +22,9 @@ class PlatformSmokeTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.binary = Path(self.tmp.name) / "binary"
         self.binary.write_bytes(smoke.ELF_MAGIC + b"test-artifact")
+        artifact_policy = patch.dict(os.environ, {"VESSEL_SMOKE_ARTIFACT_ROOT": self.tmp.name})
+        artifact_policy.start()
+        self.addCleanup(artifact_policy.stop)
         self.args = argparse.Namespace(binary=str(self.binary), runtime_image="test-runtime:local", kind="kind", expected_release="1.3.1", expected_datastore="2.45.0")
         self.runner = smoke.Smoke(self.args)
 
@@ -29,6 +32,33 @@ class PlatformSmokeTests(unittest.TestCase):
         # Tests mock the resource operations, so do not run real Docker cleanup.
         self.runner.tmp.cleanup()
         self.tmp.cleanup()
+
+    def test_artifact_policy_denies_traversal_and_escaping_builder_symlinks(self):
+        with tempfile.TemporaryDirectory() as outside:
+            artifact = Path(outside) / "binary"
+            artifact.write_bytes(smoke.ELF_MAGIC + b"outside")
+            alias = Path(self.tmp.name) / "escape"
+            alias.symlink_to(artifact)
+            traversal = Path(self.tmp.name) / ".." / Path(outside).name / "binary"
+            for path in (artifact, alias, traversal):
+                with self.subTest(path=path), self.assertRaisesRegex(ValueError, "within"):
+                    smoke.open_build_artifact(str(path))
+            self.assertEqual(artifact.read_bytes(), smoke.ELF_MAGIC + b"outside")
+
+    def test_artifact_policy_rejects_nonregular_and_racing_symlink(self):
+        fifo = Path(self.tmp.name) / "fifo"
+        os.mkfifo(fifo)
+        with self.assertRaisesRegex(ValueError, "regular"):
+            smoke.open_build_artifact(str(fifo))
+        real_open = os.open
+        def swap_on_open(path, flags, *args, **kwargs):
+            if path == "binary" and kwargs.get("dir_fd") is not None:
+                self.binary.unlink()
+                self.binary.symlink_to("/dev/null")
+            return real_open(path, flags, *args, **kwargs)
+        with patch.object(smoke.os, "open", side_effect=swap_on_open):
+            with self.assertRaises(OSError):
+                smoke.open_build_artifact(str(self.binary))
 
     def test_unique_owned_prefix_and_artifact_identity(self):
         self.assertTrue(self.runner.prefix.startswith(smoke.PREFIX))
@@ -40,8 +70,8 @@ class PlatformSmokeTests(unittest.TestCase):
             other.tmp.cleanup()
 
     def test_binary_cli_read_accepts_external_relative_and_symlink_artifacts_without_source_writes(self):
-        # Trusted build artifacts need not live under the repository. A link or
-        # '..' is valid input, not a write traversal into an artifact directory.
+        # External build directories remain supported through operator policy.
+        # Builder links and '..' must resolve inside the approved artifact root.
         alias = Path(self.tmp.name) / "artifact-link"
         alias.symlink_to(self.binary)
         child = Path(self.tmp.name) / "build"

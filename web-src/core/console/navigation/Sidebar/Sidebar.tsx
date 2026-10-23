@@ -22,7 +22,11 @@ const EdgeComputeSidebar = dynamic(() =>
   )
 );
 
-export function Sidebar() {
+export function Sidebar({
+  showCloseButton = true,
+}: {
+  showCloseButton?: boolean;
+}) {
   const { isPureAdmin, isAdmin, isTeamLeader, publicSettings } =
     useLayoutIdentity();
   const { isOpen } = useSidebarState();
@@ -37,18 +41,20 @@ export function Sidebar() {
       data-open={isOpen || undefined}
     >
       <nav
-        className={clsx(
-          styles.nav,
-          'flex min-h-0 flex-1 flex-col py-5 pl-5',
-          { 'overflow-hidden pr-5': isOpen, 'overflow-visible': !isOpen }
-        )}
+        className={clsx(styles.nav, 'flex min-h-0 flex-1 flex-col py-5 pl-5', {
+          'overflow-hidden pr-5': isOpen,
+          'overflow-visible': !isOpen,
+        })}
         aria-label="Main"
       >
-        <SidebarBrand logo={publicSettings.LogoURL} />
+        <SidebarBrand
+          logo={publicSettings.LogoURL}
+          showCloseButton={showCloseButton}
+        />
         <div
           className={clsx(
             styles.navListContainer,
-            'mt-6 min-h-0 flex-1 scheme-light be:scheme-dark th-highcontrast:scheme-dark th-dark:scheme-dark',
+            'be:scheme-dark th-highcontrast:scheme-dark th-dark:scheme-dark mt-6 min-h-0 flex-1 scheme-light',
             {
               '-mr-5 overflow-y-auto pr-5': isOpen,
               'overflow-visible': !isOpen,

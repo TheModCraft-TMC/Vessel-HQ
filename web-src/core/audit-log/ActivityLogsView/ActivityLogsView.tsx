@@ -43,16 +43,9 @@ export function ActivityLogsView() {
       />
 
       <PageContent>
-        <div className="row">
-          <div className="col-sm-12">
-            <FilterBar
-              value={range}
-              onChange={setRange}
-              onExport={handleExport}
-            />
-          </div>
-        </div>
+        <FilterBar value={range} onChange={setRange} onExport={handleExport} />
         <ActivityLogsTable
+          flush
           sort={tableState.sortBy}
           onChangeSort={(value) =>
             tableState.setSortBy(value?.id, value?.desc || false)

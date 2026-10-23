@@ -21,6 +21,21 @@ container and mounts the Docker socket.
 make deps
 ```
 
+If a frontend build reports a missing package that is already declared in
+`package.json` and `pnpm-lock.yaml` (for example, `@tailwindcss/postcss`), restore
+the installed dependencies before changing the build configuration:
+
+```sh
+node --version # Use 24.21.0 or newer in the 24.x line.
+pnpm install --frozen-lockfile
+pnpm build
+```
+
+If Node itself fails with a macOS `dyld` missing-library error, repair or replace
+that Node installation first. Run typechecking after the build finishes; Next.js
+regenerates `.next/types` during a build, so a concurrent typecheck can report
+temporarily missing generated files.
+
 ## Start the development environment
 
 ```sh

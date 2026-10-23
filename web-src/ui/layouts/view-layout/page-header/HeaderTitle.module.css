@@ -78,13 +78,13 @@
   padding: 4px;
 }
 
-.menuList :global([role='tablist']) {
+.menuList :global([role='radiogroup']) {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4px;
 }
 
-.menuList :global([role='tablist'] label) {
+.menuList :global([role='radiogroup'] label) {
   display: grid;
   min-width: 38px;
   height: 36px;
@@ -94,13 +94,13 @@
   cursor: pointer;
 }
 
-.menuList :global([role='tablist'] label:hover),
-.menuList :global([role='tablist'] label:has(input:checked)) {
+.menuList :global([role='radiogroup'] label:hover),
+.menuList :global([role='radiogroup'] label:has(input:checked)) {
   background: rgb(255 255 255 / 10%);
   color: var(--text);
 }
 
-.menuList :global([role='tablist'] svg) {
+.menuList :global([role='radiogroup'] svg) {
   width: 17px;
   height: 17px;
 }

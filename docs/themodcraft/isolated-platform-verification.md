@@ -39,16 +39,20 @@ python3 scripts/integration/platform_smoke.py \
   --output /tmp/vessel-rest-platform-engines.json
 ```
 
-`--artifact` is an alias for `--binary`. At construction, the harness opens the
-supplied executable once and copies its bytes into its private temporary directory
-(no symlink or hard link). The source is an **explicitly trusted local CLI input**
-from any directory, including an outside-repository `/tmp` build artifact or a
-builder's symlink; the source is opened read-only. A four-byte ELF-magic check on
-that same open stream rejects accidental `.env`/key/data-file selections before
-copying any payload. This is only format-mistake protection, not an authenticity
-check, architecture verifier, or traversal fix. This is not a repository-confined
-file API or a sandbox for LLM-supplied paths/executables. Do not expose the CLI as
-an untrusted remote execution service. It hashes and mounts that same snapshot for both Docker
+`--artifact` is an alias for `--binary`. The operator authorizes an artifact
+root independently of CLI arguments with `VESSEL_SMOKE_ARTIFACT_ROOT` (absolute
+path; default repository `dist/`). For external `/tmp` builds, set this to the
+specific build directory before launching the harness. Do not allow an agent
+or remote caller to choose this policy environment variable.
+
+At construction, the harness resolves builder symlinks and `..` within that root,
+then walks directory descriptors with `O_NOFOLLOW` and opens a regular file
+without following a replacement symlink. Paths outside the root, escaping
+aliases, device files and FIFOs are rejected. The supplied executable is opened
+once and copied into a private temporary directory (no symlink or hard link).
+A four-byte ELF-magic check on that same stream rejects accidental `.env`/key/data
+selections before copying payload; magic is not an authenticity check or an
+execution sandbox. The binary must still be explicitly trusted. It hashes and mounts that same snapshot for both Docker
 and kind. A later atomic replacement, in-place rewrite, or removal of the builder's
 source path therefore cannot change the mounted bytes or invalidate the recorded
 hash. Results contain that snapshot's binary SHA256,
@@ -611,3 +615,19 @@ evidence; D160 is not substituted for this final frontend. Authentik still uses
 the documented companion callback. All final resources are cleaned up.
 ACI/native Windows/native AMD64 and credentialed Sonar/remaining Go gates are
 unchanged and not claimed verified or resolved.
+
+## October 23 hardening — issue #235
+
+The earlier trusted-CLI disposition above describes the prior implementation.
+The current `AaFkHE4u7CqPgYBg2OM_` finding now has a source-level confinement
+change: `open_build_artifact()` accepts CLI paths only under an independently
+operator-configured artifact root, using a descriptor walk that rejects symlink
+replacement and nonregular files. External builder directories remain supported
+through `VESSEL_SMOKE_ARTIFACT_ROOT`; the root is not another untrusted CLI flag.
+
+Fresh harness unit checks: 46 passed on October 23, including traversal outside
+the root, escaping aliases, a link swap after path resolution, FIFO rejection,
+ELF checks, stable private copies and existing cleanup/transport cases. No new
+Docker/provider smoke run or remote Sonar reanalysis is implied by these tests.
+The older false-positive review request is superseded for this new key; wait for
+analysis of the changed source rather than dismissing the new finding.

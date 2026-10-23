@@ -24,7 +24,10 @@ function MockSidebarProvider({
   children,
   isOpen = true,
 }: PropsWithChildren<{ isOpen?: boolean }>) {
-  const state = useMemo(() => ({ isOpen, toggle: vi.fn() }), [isOpen]);
+  const state = useMemo(
+    () => ({ isOpen, toggle: vi.fn(), setOpen: vi.fn() }),
+    [isOpen]
+  );
 
   return <Context.Provider value={state}>{children}</Context.Provider>;
 }

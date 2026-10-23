@@ -206,6 +206,26 @@
   background: rgb(255 255 255 / 10%);
 }
 
+.mobileDismiss {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 50;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--frame);
+  color: #f8fafc;
+}
+
+.mobileDismiss svg {
+  width: 20px;
+  height: 20px;
+}
+
 .sidebarToggle:focus-visible {
   outline: 2px solid var(--blue-7);
   outline-offset: 2px;
@@ -460,6 +480,10 @@
     width: min(var(--vessel-size-sidebar-expanded), 85vw);
     transform: translateX(-101%);
     transition: transform 180ms ease;
+  }
+
+  .sidebarRegion[role='dialog'] {
+    transform: translateX(0);
   }
 
   .shell[data-sidebar-open] .sidebarRegion {

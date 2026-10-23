@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import { PageContent } from '@console/layout/PageContent';
 
 import { withError } from '@/core/query';
 import {
@@ -41,7 +42,8 @@ export function RegistryCreateContent() {
   );
 
   return (
-    <Widget>
+    <PageContent>
+      <Widget>
         <WidgetBody>
           <RegistryProviderSelector values={values} onChange={setValues} />
           <RegistryForm
@@ -56,6 +58,7 @@ export function RegistryCreateContent() {
           />
         </WidgetBody>
       </Widget>
+    </PageContent>
   );
 }
 
