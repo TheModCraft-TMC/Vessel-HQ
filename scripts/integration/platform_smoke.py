@@ -15,6 +15,7 @@ import secrets
 import shutil
 import signal
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -28,6 +29,41 @@ import uuid
 PREFIX = "vessel-rest-platform-"
 ELF_MAGIC = b"\x7fELF"
 SUITES = ("docker", "swarm", "podman", "kubernetes", "edge", "oauth", "aci")
+
+
+def open_build_artifact(binary):
+    """Read only below an operator-owned artifact root, independent of CLI input.
+
+    Resolve builder aliases first, then walk directory descriptors without
+    following links. A concurrent link replacement cannot escape the root.
+    """
+    configured = Path(os.environ.get("VESSEL_SMOKE_ARTIFACT_ROOT", str(Path(__file__).resolve().parents[2] / "dist")))
+    if not configured.is_absolute():
+        raise ValueError("VESSEL_SMOKE_ARTIFACT_ROOT must be absolute")
+    root = configured.resolve(strict=True)
+    try:
+        relative = Path(binary).resolve(strict=True).relative_to(root)
+    except (ValueError, OSError, RuntimeError) as error:
+        raise ValueError("--binary must resolve within VESSEL_SMOKE_ARTIFACT_ROOT") from error
+    if not relative.parts:
+        raise ValueError("--binary must be a regular build artifact")
+    directory = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        for part in relative.parts[:-1]:
+            child = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=directory)
+            os.close(directory)
+            directory = child
+        descriptor = os.open(relative.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=directory)
+        try:
+            if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+                raise ValueError("--binary must be a regular build artifact")
+            stream = os.fdopen(descriptor, "rb")
+        except BaseException:
+            os.close(descriptor)
+            raise
+        return stream
+    finally:
+        os.close(directory)
 
 
 class ExternalGate(RuntimeError):
@@ -114,12 +150,11 @@ class Smoke:
         # Open the supplied executable once: a builder can atomically replace its
         # source path later without changing the bytes hashed or mounted here.
         # Do not use hard links or preserve a source executable symlink.
-        # This is a trusted operator CLI read, not an HTTP path or a confined
-        # repository read. External build paths and source symlinks are valid;
-        # only this private copy is written/mounted. See the verification guide.
+        # The operator chooses an artifact root separately from CLI arguments.
+        # Builder aliases are allowed only when their target stays in that root.
         self.binary = self.root / "portainer"
         try:
-            with Path(args.binary).open("rb") as source, self.binary.open("xb") as destination:
+            with open_build_artifact(args.binary) as source, self.binary.open("xb") as destination:
                 # Catch accidental .env/key/data selections on the same open
                 # stream, before copying any payload. Magic is not authenticity
                 # validation: the executable must still be explicitly trusted.
@@ -728,7 +763,7 @@ def main():
         # Other suites intentionally still use assertions. Never certify a run
         # with those checks silently removed by -O or PYTHONOPTIMIZE.
         parser.error("Platform verification requires assertions enabled; do not use -O or PYTHONOPTIMIZE")
-    parser.add_argument("--binary", "--artifact", required=True, help="Trusted Linux Vessel binary from any directory, matching the Docker server architecture")
+    parser.add_argument("--binary", "--artifact", required=True, help="Trusted Linux Vessel binary within VESSEL_SMOKE_ARTIFACT_ROOT (default: repository dist/), matching the Docker server architecture")
     parser.add_argument("--expected-release", default=(Path(__file__).resolve().parents[2] / "RELEASE_VERSION").read_text().strip())
     parser.add_argument("--expected-datastore", default="2.45.0")
     parser.add_argument("--runtime-image", default="vessel-issues-toolkit:arm64", help="Local image containing the binary's runtime/tool dependencies; never built or published here")
@@ -748,8 +783,6 @@ def main():
     args = parser.parse_args()
     if any(suite not in SUITES for suite in args.suites.split(",")):
         parser.error("--suites must be a comma-separated subset of " + ",".join(SUITES))
-    if not Path(args.binary).is_file():
-        parser.error("--binary must point to an existing Linux Vessel executable")
     previous = signal.getsignal(signal.SIGTERM)
     def terminate(_signum, _frame):
         raise KeyboardInterrupt

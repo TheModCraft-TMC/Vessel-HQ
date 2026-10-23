@@ -9,9 +9,13 @@ import styles from './SidebarBrand.module.css';
 
 interface Props {
   logo?: string;
+  showCloseButton?: boolean;
 }
 
-export function SidebarBrand({ logo: customLogo }: Props) {
+export function SidebarBrand({
+  logo: customLogo,
+  showCloseButton = true,
+}: Props) {
   const { isOpen, toggle } = useSidebarState();
   const { logos } = useLayoutStaticValues();
   const logo = customLogo || (isOpen ? logos.full : logos.collapsed);
@@ -36,7 +40,7 @@ export function SidebarBrand({ logo: customLogo }: Props) {
           alt="Logo"
         />
       </Link>
-      {isOpen && (
+      {isOpen && showCloseButton && (
         <button
           type="button"
           className="border-0 bg-transparent p-1 text-white min-[721px]:hidden"

@@ -15,6 +15,7 @@ export function SidebarToggleButton() {
       className={styles.sidebarToggle}
       aria-label={label}
       aria-expanded={isOpen}
+      aria-controls="console-navigation"
       title={label}
       onClick={toggle}
     >

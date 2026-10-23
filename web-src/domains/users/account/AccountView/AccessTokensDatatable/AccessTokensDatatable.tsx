@@ -18,6 +18,7 @@ export function AccessTokensDatatable() {
 
   return (
     <Datatable
+      flush
       columns={columns}
       isLoading={query.isLoading}
       dataset={query.data || []}

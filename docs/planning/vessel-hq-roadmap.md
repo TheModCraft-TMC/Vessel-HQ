@@ -135,6 +135,11 @@ web-src/
 
 The repository-side audit is recorded in [UI component inventory](ui-component-inventory.md). No `@themodcraft` package is currently installed, so external candidate selection remains pending exact package names and versions.
 
+The [October 23 UI alignment audit](ui-alignment-audit-2026-10-23.md) tracks
+all 168 route files and the incomplete live review of deployed `1.3.1`.
+Finish desktop/mobile page, tab and dialog checks after browser access is
+restored; the local registry/footer/table fixes do not close mobile issue #241.
+
 ### Planned inputs
 
 - Run a Portainer 3.x instance as a workflow and information-architecture reference.
@@ -224,3 +229,11 @@ No implementation should be inferred from these open items. Record the decision 
 ### Independent extension SDK workspace follow-up (2026-10-16)
 
 SDK and simple demo authoring sources now live in the [separate SDK workspace](../extension-sdk-workspace.md); Vessel consumes the immutable published beta.1 module without a local replacement. The configured target Git origin is preserved, while Go import identity remains unchanged. Next publication work must explicitly select the new module/release identity and verify proxy/checksum discovery before bumping Vessel. Do not repoint existing beta.1 tags. The UniFi-style React Flow extension and host integration remain in Vessel; installed compiled payloads are separate from authoring examples. Managed runtime, infrastructure writes and production identity lifecycle remain future work.
+
+## Infrastructure as code evaluation (#244)
+
+The [OpenTofu/Pulumi evaluation](iac-integration-evaluation.md) recommends an
+optional infrastructure-project workflow with isolated runners, starting with
+OpenTofu and keeping Pulumi behind the same job contract. This is evaluated
+future work; no provisioning engine is enabled. Plan review, exact-plan apply
+approval, state recovery and exclusive resource ownership are prerequisites.

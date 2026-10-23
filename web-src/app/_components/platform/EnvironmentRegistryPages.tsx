@@ -150,7 +150,7 @@ function RegistrySummary({
     <PageContent>
       <Widget>
         <WidgetTitle icon={Radio} title="Registry" />
-        <WidgetBody loading={isLoading} className="p-0!">
+        <WidgetBody loading={isLoading} className="no-padding">
           {registry && (
             <table className="mb-0 table">
               <tbody>

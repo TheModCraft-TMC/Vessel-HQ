@@ -1,4 +1,7 @@
-# Manual SonarCloud root-bootstrap review (PR #234 only)
+# SonarCloud root-bootstrap review
+
+Current October 23 dispositions are recorded in the final section. The workflow
+and frozen manifest below document the earlier PR #234 review set.
 
 This is an operator path for recording **six specific, already-reviewed**
 `docker:S6471` findings, not an automatic risk-acceptance policy. It does not fix
@@ -157,3 +160,29 @@ stop, not a reason to fall back to issue-line hashes or skip source validation.
 No workflow was dispatched, no remote comment/transition was sent, and no
 credential was acquired. The authorized credential and live apply/gate
 verification remain operator-owned follow-up.
+
+## October 23, 2026 — current issue dispositions
+
+The historical six-case manifest above remains frozen. The current five GitHub
+findings were reviewed through the authenticated Sonar UI against their source
+and deployment boundary. Status readback through the public issues API confirmed
+all five as `issueStatus=ACCEPTED`, `resolution=WONTFIX`:
+
+| Current GitHub issue | Sonar key | Reviewed reason |
+| --- | --- | --- |
+| #236 | `AaFkHE5P7CqPgYBg2ONA` | Toolkit configures host UID/GID and socket group, then drops to PUSER. This is a new key; the old toolkit manifest key was not silently substituted. |
+| #237 | `AaFI-OLnL6mSFxVklHVC` | Existing data-directory and Docker/Podman socket compatibility. |
+| #238 | `AaFI-OMJL6mSFxVklHVJ` | Same production deployment boundary in the root Dockerfile. |
+| #239 | `AaFI-OLfL6mSFxVklHVB` | Same production deployment boundary in the Linux image. |
+| #240 | `AaFI-OKkL6mSFxVklHVA` | Same production deployment boundary in the Alpine image. |
+
+The corresponding GitHub issues were closed as **not planned**, rather than
+claiming that root execution was removed. No source exclusions, false-positive
+classifications, quality-gate configuration changes, comments, credentials or
+source-sharing submissions were added. API access through the GitHub connector
+was read-only; the authenticated GitHub CLI completed the issue-state updates.
+
+This is acceptance of an intentional privileged deployment boundary, not a
+proof that every container deployment is safe. It does not accept new findings,
+other rules, future changed images, the old PR counterpart or the entire quality
+gate. Issue #235 has a separate source fix and is not included in these reviews.
