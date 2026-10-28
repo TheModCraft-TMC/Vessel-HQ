@@ -144,9 +144,87 @@ class SyncTests(unittest.TestCase):
         self.assertEqual(api.writes, [])
 
     def test_duplicate_managed_tickets_abort(self):
-        api = FakeApi(tickets=[ticket(), ticket()])
-        with self.assertRaisesRegex(RuntimeError, "Duplicate"):
+        older, newer = ticket(), ticket()
+        older["number"], newer["number"] = 166, 240
+        api = FakeApi(tickets=[older, newer])
+        with self.assertRaisesRegex(RuntimeError, "Duplicate open.*#166.*#240"):
             self.run_sync(api)
+        self.assertEqual(api.writes, [])
+
+    def test_closed_duplicates_preserve_latest_not_planned_disposition(self):
+        # Production failure: #166 (completed) and #240 (not_planned) share
+        # one finding marker. Neither archived issue should be reopened.
+        older, newer = ticket(state="closed"), ticket(state="closed")
+        older.update(number=166, state_reason="completed")
+        newer.update(number=240, state_reason="not_planned")
+        for tickets in ([older, newer], [newer, older]):
+            with self.subTest(order=[t["number"] for t in tickets]):
+                api = FakeApi(active=[finding(), finding("new")], tickets=tickets)
+                summary = self.run_sync(api)
+                self.assertEqual(summary["create"], 1)
+                self.assertEqual(summary["update_or_close"], 0)
+                self.assertEqual(summary["preserved_not_planned"], [240])
+                self.assertEqual(summary["historical_duplicates"], [{"canonical": 240, "closed": [166]}])
+                self.assertEqual(len(api.writes), 1)
+                self.assertEqual(api.writes[0][0], "POST")
+                self.assertIn(sync.marker("new"), api.writes[0][2]["body"])
+
+    def test_closed_duplicates_reopen_latest_completed_issue_only(self):
+        older, newer = ticket(state="closed"), ticket(state="closed")
+        older.update(number=166, state_reason="completed")
+        newer.update(number=240, state_reason="completed")
+        for tickets in ([older, newer], [newer, older]):
+            with self.subTest(order=[t["number"] for t in tickets]):
+                api = FakeApi(active=[finding()], tickets=tickets)
+                self.run_sync(api)
+                self.assertEqual(len(api.writes), 1)
+                self.assertEqual(api.writes[0][1], f"/repos/{REPO}/issues/240")
+                self.assertEqual(api.writes[0][2]["state"], "open")
+
+    def test_single_open_issue_wins_over_closed_duplicates_and_keeps_notes(self):
+        current = ticket(notes="\n\nOpen issue's maintainer notes.")
+        current["number"] = 166
+        archived = ticket(state="closed")
+        archived.update(number=240, state_reason="completed")
+        changed = finding()
+        changed["line"] = 99
+        for tickets in ([current, archived], [archived, current]):
+            with self.subTest(order=[t["number"] for t in tickets]):
+                api = FakeApi(active=[changed], tickets=tickets)
+                self.run_sync(api)
+                self.assertEqual(len(api.writes), 1)
+                self.assertEqual(api.writes[0][1], f"/repos/{REPO}/issues/166")
+                self.assertTrue(api.writes[0][2]["body"].endswith("Open issue's maintainer notes."))
+
+    def test_duplicate_groups_are_resolved_after_all_github_pages_are_read(self):
+        older, newer = ticket(state="closed"), ticket(state="closed")
+        older.update(number=166, state_reason="completed")
+        newer.update(number=240, state_reason="not_planned")
+        api = FakeApi(active=[finding()])
+        original_request = api.request
+
+        def paginated_request(service, path, method="GET", data=None):
+            if service == "github" and "/issues?" in path:
+                if path.endswith("&page=1"):
+                    return [older] + [{"number": n, "body": "", "state": "closed"} for n in range(1000, 1099)]
+                return [newer]
+            return original_request(service, path, method, data)
+
+        api.request = paginated_request
+        summary = self.run_sync(api, dry_run=True)
+        self.assertEqual(summary["preserved_not_planned"], [240])
+        self.assertEqual(api.writes, [])
+
+    def test_single_not_planned_issue_is_preserved_without_duplicating_or_updating(self):
+        current = ticket(state="closed")
+        current["state_reason"] = "not_planned"
+        changed = finding()
+        changed["line"] = 99
+        api = FakeApi(active=[changed], tickets=[current])
+        summary = self.run_sync(api)
+        self.assertEqual(summary["preserved_not_planned"], [17])
+        self.assertEqual(summary["create"], 0)
+        self.assertEqual(summary["update_or_close"], 0)
         self.assertEqual(api.writes, [])
 
     def test_dry_run_never_writes(self):

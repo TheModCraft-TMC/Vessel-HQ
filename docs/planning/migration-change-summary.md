@@ -4,6 +4,30 @@ Status: development integration, updated October 22, 2026. `RELEASE_VERSION` rem
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
 
+## SonarCloud issue-sync recovery — October 28, 2026
+
+The scheduled sync failed on historical duplicates: closed issues #166 and #240
+carry the same Sonar finding marker. The sync now groups the complete GitHub
+inventory before choosing the single open conversation, or the newest issue
+when all matches are closed. Older closed copies remain unchanged. Multiple
+open copies still stop the run before any writes, with their issue numbers in
+the error. The summary lists historical duplicates and active Sonar findings
+whose canonical GitHub issue remains deliberately closed as `not_planned`.
+Maintainers can explicitly reopen those issues to resume synchronization;
+completed findings can still reopen automatically on a Sonar regression.
+
+Fresh local verification: 33 sync tests and 19 pinned-root-review tests pass,
+including failing-first reproductions of the closed-duplicate failure,
+pagination/order independence, preserved dispositions and maintainer notes.
+Existing revision guards, dry-run behavior and no-write-retry tests still pass.
+This changes issue synchronization, not source analysis or quality-gate policy.
+A live anonymous read-only dry run also passed the existing live-head/analysis
+revision guards and planned 29 creations for 30 active findings. It reported
+four closed duplicate groups, without modifying issues. This is a point-in-time
+plan, not an instruction to suppress newly identified findings. Hosted execution
+is pending the pull request; no Sonar finding disposition or security gate was
+changed.
+
 ## Develop integration — October 22, 2026
 
 - Merged the native extension prerelease branch into the current development

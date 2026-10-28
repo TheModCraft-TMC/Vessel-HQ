@@ -164,7 +164,7 @@ def wait_for_fresh_analysis(api, repo, timeout=600, poll_interval=30):
 def sync(api, repo, dry_run=False):
     revision = wait_for_fresh_analysis(api, repo)
     findings = fetch_active(api)
-    existing = {}
+    grouped = {}
     for page in range(1, 1001):
         batch = api.request("github", f"/repos/{repo}/issues?" + urlencode({"state": "all", "per_page": 100, "page": page}))
         for issue in batch:
@@ -173,13 +173,28 @@ def sync(api, repo, dry_run=False):
             match = MARKER.search(issue.get("body") or "")
             if match and match.group(1, 2) == (PROJECT, BRANCH):
                 key = match.group(3)
-                if key in existing:
-                    raise RuntimeError(f"Duplicate managed GitHub issues for {key}; resolve before syncing")
-                existing[key] = issue
+                grouped.setdefault(key, []).append(issue)
         if len(batch) < 100:
             break
     else:
         raise RuntimeError("GitHub pagination limit reached")
+
+    existing = {}
+    historical_duplicates = []
+    for key, tickets in grouped.items():
+        open_tickets = [ticket for ticket in tickets if ticket["state"] == "open"]
+        if len(open_tickets) > 1:
+            numbers = ", ".join(f"#{ticket['number']}" for ticket in sorted(open_tickets, key=lambda t: t["number"]))
+            raise RuntimeError(f"Duplicate open managed GitHub issues for {key}: {numbers}; resolve before syncing")
+        # Prefer the live conversation; otherwise the newest issue carries the
+        # most recent disposition. Closed history is retained, never rewritten.
+        current = open_tickets[0] if open_tickets else max(tickets, key=lambda t: t["number"])
+        existing[key] = current
+        if len(tickets) > 1:
+            historical_duplicates.append({
+                "canonical": current["number"],
+                "closed": sorted(ticket["number"] for ticket in tickets if ticket is not current),
+            })
 
     # Read explicit status for missing findings before any writes. Absence alone never closes an issue.
     active_keys = {i["key"] for i in findings}
@@ -192,11 +207,16 @@ def sync(api, repo, dry_run=False):
                 resolved[issue["key"]] = issue
 
     changes = []
+    preserved_not_planned = []
     for finding in findings:
         title, generated = content(finding)
         current = existing.get(finding["key"])
         if current is None:
             changes.append(("POST", f"/repos/{repo}/issues", {"title": title, "body": generated + "\n\n", "labels": [LABEL]}))
+        elif current["state"] == "closed" and current.get("state_reason") == "not_planned":
+            # A maintainer's explicit disposition is independent of Sonar's
+            # still-open status. Reopening requires a deliberate GitHub action.
+            preserved_not_planned.append(current["number"])
         else:
             body = replace_content(current.get("body") or "", generated)
             patch = {}
@@ -227,7 +247,9 @@ def sync(api, repo, dry_run=False):
             raise RuntimeError("Branch changed during sync; stopped before the next GitHub mutation")
 
     summary = {"open_findings": len(findings), "create": sum(m == "POST" for m, _, _ in changes),
-               "update_or_close": sum(m == "PATCH" for m, _, _ in changes), "dry_run": dry_run}
+               "update_or_close": sum(m == "PATCH" for m, _, _ in changes), "dry_run": dry_run,
+               "historical_duplicates": sorted(historical_duplicates, key=lambda group: group["canonical"]),
+               "preserved_not_planned": sorted(preserved_not_planned)}
     print(json.dumps(summary), flush=True)
     if not dry_run and changes:
         labels = api.request("github", f"/repos/{repo}/labels?per_page=100")
