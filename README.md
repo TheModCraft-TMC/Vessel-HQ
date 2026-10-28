@@ -9,7 +9,7 @@
   <a href="https://github.com/TheModCraft-TMC/Vessel-HQ/releases/latest"><img src="https://img.shields.io/github/v/release/TheModCraft-TMC/Vessel-HQ?color=44cc11&amp;label=release&amp;style=for-the-badge" alt="Vessel HQ release" /></a>
   <a href="https://github.com/portainer/portainer"><img src="https://img.shields.io/badge/Portainer-CE%20fork-13b8a6?style=for-the-badge" alt="Portainer CE fork" /></a>
   <img src="./docs/assets/turbopack-badge.svg" alt="Development bundler: Turbopack k" />
-  <img src="https://img.shields.io/badge/migration-GPT--5.6%20Sol%20only-10a37f?style=for-the-badge" alt="Migration built using GPT-5.6 Sol only" />
+  <img src="https://img.shields.io/badge/migration-GPT--5.6%20Sol%20only-10a37f?style=for-the-badge" alt="Migration built using GPT-5.6 Sol" />
 </p>
 
 ![Vessel HQ Docker overview](./docs/assets/docker-overview.jpg)
