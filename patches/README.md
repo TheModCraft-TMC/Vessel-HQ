@@ -24,3 +24,19 @@ pnpm exec vitest run web-src/core/query/generated-sse-client.test.ts
 ```
 
 This exercises both successful and rejected cancellation during an active read.
+
+## deepmerge 4.3.1
+
+`deepmerge@4.3.1.patch` mitigates
+[GHSA-gcqx-w48m-w2h4](https://github.com/advisories/GHSA-gcqx-w48m-w2h4).
+All object destination writes use `Object.defineProperty` with ordinary writable,
+enumerable, configurable data properties. This prevents own `__proto__` keys in
+an input or null-prototype source from invoking inherited destination setters,
+while retaining nested merges, symbols, arrays and custom mergers. The published
+CommonJS, UMD and source files are patched. No upstream fixed version is claimed;
+replace this patch when a compatible maintained upstream remedy is available.
+
+Run `node --test scripts/deepmerge-security.test.mjs` after frozen installation to
+exercise the actual transitive package, including malicious keys and normal
+merge behavior. Fresh npm advisory reports intentionally continue to show the
+low affected-version advisory. No advisory exclusion is configured.

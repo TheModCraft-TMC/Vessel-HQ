@@ -1,60 +1,41 @@
-# Security Policy
+# Security policy
 
-## Supported Versions
+Vessel HQ is maintained by TheModCraft, independently of Portainer. The
+upstream Portainer lifecycle and support commitments do not apply to this fork.
 
-Portainer maintains both Short-Term Support (STS) and Long-Term Support (LTS) versions in accordance with our official [Portainer Lifecycle Policy](https://docs.portainer.io/start/lifecycle).
+## Supported releases
 
-| Version Type             | Support Status                              |
-| ------------------------ | ------------------------------------------- |
-| LTS (Long-Term Support)  | Supported for critical security fixes       |
-| STS (Short-Term Support) | Supported until the next STS or LTS release |
-| Legacy / EOL             | Not supported                               |
+Security fixes target the latest stable Vessel HQ release published in this
+repository. Upgrade to that release before reporting a problem affecting an
+older version where possible. Older stable releases do not have a guaranteed
+backport window. Beta releases and development branches are experimental and
+receive fixes on a best-effort basis. The upstream API compatibility version is
+separate from the Vessel release version in `RELEASE_VERSION`.
 
-For a detailed breakdown of current versions and their specific End of Life (EOL) dates,
-please refer to the [Portainer Lifecycle Policy](https://docs.portainer.io/start/lifecycle).
+## Private reporting
 
-## Reporting a Vulnerability
+Use [GitHub private vulnerability reporting](https://github.com/TheModCraft-TMC/Vessel-HQ/security/advisories/new)
+for this repository. Private vulnerability reporting was confirmed enabled on
+October 29, 2026. The existing project contact is dev@themodcraft.net; prefer
+GitHub's private channel for confidential reports. Do not include credentials,
+production tokens or private infrastructure exports in a report.
 
-The Portainer team takes the security of our products seriously. If you believe you have found a security vulnerability in any Portainer-owned repository, please report it to us responsibly.
+Include the affected Vessel version, deployment platform, impact and a minimal
+reproduction. Please report suspected vulnerabilities privately rather than in
+public issues. Findings in upstream Portainer should also follow its
+[security policy](https://github.com/portainer/portainer/security/policy).
 
-**Please do not report security vulnerabilities via public GitHub issues.**
+TheModCraft maintainers triage reports, coordinate remediation and disclosure
+with the reporter, and publish fixes and advisories in this repository. Response
+and remediation dates depend on availability and severity; no response-time SLA,
+paid bounty or legal safe-harbor commitment is offered by this policy. Reporter
+credit is included with consent when a coordinated disclosure is published.
 
-### Disclosure Process
+## Dependency findings
 
-1. **Report**: You can report in one of two ways:
-   - **GitHub**: Use the **Report a vulnerability** button on the **Security** tab of this repository.
-
-   - **Email**: Send your findings to dev@themodcraft.net.
-
-2. **Details**: To help us verify the issue, please include:
-   - A description of the vulnerability and its potential impact.
-
-   - Step-by-step instructions to reproduce the issue (e.g. proof-of-concept code, scripts, or screenshots).
-
-   - The version of the software and the environment in which it was found.
-
-3. **Acknowledge**: We will acknowledge receipt of your report and provide an initial assessment.
-
-4. **Resolution**: We will work to resolve the issue as quickly as possible. We request that you do not disclose the vulnerability publicly until we have released a fix and notified affected users.
-
-## Our Commitment
-
-If you follow the responsible disclosure process, we will:
-
-- Respond to your report in a timely manner.
-
-- Provide an estimated timeline for remediation.
-
-- Notify you when the vulnerability has been patched.
-
-- Give credit for the discovery (if desired) once the fix is public.
-
-We will make every effort to promptly address any security weaknesses. Security advisories and fixes will be published through GitHub Security Advisories and other channels as needed.
-
-Portainer does not operate a paid bug bounty program and does not offer monetary rewards for vulnerability reports. Portainer will not pursue legal action against good-faith research conducted in line with this policy.
-
-Thank you for helping keep Portainer and our community secure.
-
-## Resources
-
-- [Contributing to Portainer](https://docs.portainer.io/contribute/contribute#contributing-to-the-portainer-ce-codebase)
+The [dependency inventory](backend-src/DEPENDENCY_SECURITY.md) records remaining
+Go advisory ranges. The npm release checks retain the historical regression
+snapshot and also query fresh advisories. Moderate, high and critical findings
+block validation; low findings remain in the retained audit report and require
+scoped remediation tracking. Failed or incomplete scans fail validation. A local
+mitigation does not remove an affected version from upstream advisory databases.

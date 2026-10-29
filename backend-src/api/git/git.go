@@ -47,10 +47,10 @@ func NewGitClient(preserveGitDir bool) *gitClient {
 	}
 }
 
-func (c *gitClient) Download(ctx context.Context, dst string, opt *git.CloneOptions) error {
+func (c *gitClient) Download(ctx context.Context, dst string, opt *git.CloneOptions) (string, error) {
 	resolved, err := filepath.EvalSymlinks(dst)
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		return errors.Wrap(err, "failed to resolve destination path")
+		return "", errors.Wrap(err, "failed to resolve destination path")
 	}
 	if err == nil {
 		dst = resolved
@@ -60,24 +60,30 @@ func (c *gitClient) Download(ctx context.Context, dst string, opt *git.CloneOpti
 	dot := osfs.New(filesystem.JoinPaths(dst, ".git"))
 	storer := gogitfs.NewStorage(dot, cache.NewObjectLRU(0))
 
-	_, err = git.CloneContext(ctx, storer, wt, opt)
+	repo, err := git.CloneContext(ctx, storer, wt, opt)
 	if err != nil {
 		if err.Error() == "authentication required" {
-			return gittypes.ErrAuthenticationFailure
+			return "", gittypes.ErrAuthenticationFailure
 		}
 
-		return errors.Wrap(err, "failed to clone git repository")
+		return "", errors.Wrap(err, "failed to clone git repository")
 	}
 
+	head, err := repo.Head()
+	if err != nil {
+		return "", errors.Wrap(err, "failed to read cloned commit")
+	}
+	commitID := head.Hash().String()
+
 	if c.preserveGitDirectory {
-		return nil
+		return commitID, nil
 	}
 
 	if err := os.RemoveAll(filesystem.JoinPaths(dst, ".git")); err != nil {
 		log.Error().Err(err).Msg("failed to remove .git directory")
 	}
 
-	return nil
+	return commitID, nil
 }
 
 func (c *gitClient) LatestCommitID(ctx context.Context, repositoryUrl, referenceName string, opt *git.ListOptions) (string, error) {
@@ -137,7 +143,7 @@ func (c *gitClient) ListRefs(ctx context.Context, repositoryUrl string, opt *git
 
 // listFiles list all filenames under the specific repository
 func (c *gitClient) ListFiles(ctx context.Context, dirOnly bool, opt *git.CloneOptions) ([]string, error) {
-	repo, err := git.Clone(memory.NewStorage(), nil, opt)
+	repo, err := git.CloneContext(ctx, memory.NewStorage(), nil, opt)
 	if err != nil {
 		return nil, checkGitError(err)
 	}

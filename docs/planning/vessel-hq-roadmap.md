@@ -237,3 +237,17 @@ optional infrastructure-project workflow with isolated runners, starting with
 OpenTofu and keeping Pulumi behind the same job contract. This is evaluated
 future work; no provisioning engine is enabled. Plan review, exact-plan apply
 approval, state recovery and exclusive resource ownership are prerequisites.
+
+
+## October 29 security follow-up
+
+[Issue #262](https://github.com/TheModCraft-TMC/Vessel-HQ/issues/262) remains the
+owner-visible tracker for the unresolved Docker/Distribution dependency graph.
+Choose maintained upstream releases or approved, maintained publication identities
+for the CLI/Compose, Kompose and container-image source migrations documented in
+[the dependency inventory](../../backend-src/DEPENDENCY_SECURITY.md#alternative-graph-proof--not-shipped-or-published).
+Then remove the real old imports/requirements and repeat registry auth/digest,
+Docker/Compose/Swarm/Podman/Kubernetes compatibility checks. No module identity
+aliases or advisory suppression substitutes for that work. The current
+[audit ledger](../security/audit-follow-up-2026-10-29.md) separates fresh results
+from historical proof experiments.

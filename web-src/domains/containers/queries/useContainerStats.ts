@@ -96,6 +96,7 @@ type MemoryStats = {
 };
 
 type MemoryStatsStats = {
+  total_inactive_file?: number;
   active_anon?: number;
   active_file?: number;
   anon?: number;

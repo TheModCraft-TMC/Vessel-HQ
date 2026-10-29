@@ -13,10 +13,10 @@ import (
 	"github.com/portainer/portainer/api/archive"
 	"github.com/portainer/portainer/api/crypto"
 	gittypes "github.com/portainer/portainer/api/git/types"
-	"github.com/portainer/portainer/api/logs"
 	"github.com/portainer/portainer/pkg/libhttp/ssrf"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/filemode"
 	githttp "github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/pkg/errors"
@@ -71,14 +71,21 @@ func newHttpClientForAzure(insecureSkipVerify bool) *http.Client {
 	}
 }
 
-func (a *azureClient) Download(ctx context.Context, destination string, opt *git.CloneOptions) error {
+func (a *azureClient) Download(ctx context.Context, destination string, opt *git.CloneOptions) (string, error) {
 	if opt == nil {
-		return errors.New("options cannot be nil")
+		return "", errors.New("options cannot be nil")
 	}
 
-	zipFilepath, err := a.downloadZipFromAzureDevOps(ctx, opt)
+	// Resolve once, then ask Azure for that immutable commit rather than a moving ref.
+	commitID, err := a.LatestCommitID(ctx, opt.URL, string(opt.ReferenceName), &git.ListOptions{Auth: opt.Auth, InsecureSkipTLS: opt.InsecureSkipTLS})
 	if err != nil {
-		return errors.Wrap(err, "failed to download a zip file from Azure DevOps")
+		return "", err
+	}
+	pinned := *opt
+	pinned.ReferenceName = plumbing.ReferenceName(commitID)
+	zipFilepath, err := a.downloadZipFromAzureDevOps(ctx, &pinned)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to download a zip file from Azure DevOps")
 	}
 	defer func() {
 		if err := os.Remove(zipFilepath); err != nil {
@@ -87,10 +94,10 @@ func (a *azureClient) Download(ctx context.Context, destination string, opt *git
 	}()
 
 	if err := archive.UnzipFile(zipFilepath, destination); err != nil {
-		return errors.Wrap(err, "failed to unzip file")
+		return "", errors.Wrap(err, "failed to unzip file")
 	}
 
-	return nil
+	return commitID, nil
 }
 
 func (a *azureClient) downloadZipFromAzureDevOps(ctx context.Context, opt *git.CloneOptions) (string, error) {
@@ -109,7 +116,13 @@ func (a *azureClient) downloadZipFromAzureDevOps(ctx context.Context, opt *git.C
 		return "", errors.WithMessage(err, "failed to create temp file")
 	}
 
-	defer logs.CloseAndLogErr(zipFile)
+	completed := false
+	defer func() {
+		if !completed {
+			_ = zipFile.Close()
+			_ = os.Remove(zipFile.Name())
+		}
+	}()
 
 	var basicAuth *githttp.BasicAuth
 	if opt.Auth != nil {
@@ -121,14 +134,13 @@ func (a *azureClient) downloadZipFromAzureDevOps(ctx context.Context, opt *git.C
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", downloadUrl, nil)
+	if err != nil {
+		return "", errors.WithMessage(err, "failed to create a new HTTP request")
+	}
 	if basicAuth != nil {
 		req.SetBasicAuth(basicAuth.Username, basicAuth.Password)
 	} else if config.username != "" || config.password != "" {
 		req.SetBasicAuth(config.username, config.password)
-	}
-
-	if err != nil {
-		return "", errors.WithMessage(err, "failed to create a new HTTP request")
 	}
 
 	client := newHttpClientForAzure(opt.InsecureSkipTLS)
@@ -153,6 +165,10 @@ func (a *azureClient) downloadZipFromAzureDevOps(ctx context.Context, opt *git.C
 		return "", errors.WithMessage(err, "failed to save HTTP response to a file")
 	}
 
+	if err := zipFile.Close(); err != nil {
+		return "", errors.WithMessage(err, "failed to close downloaded archive")
+	}
+	completed = true
 	return zipFile.Name(), nil
 }
 

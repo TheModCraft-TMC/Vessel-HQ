@@ -1,6 +1,9 @@
 package git
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 	"time"
@@ -279,7 +282,7 @@ func Test_Download_RejectsSymlink(t *testing.T) {
 	client := NewGitClient(false)
 	repoURL := createBareRepoWithSymlink(t)
 
-	err := client.Download(t.Context(), t.TempDir(), &git.CloneOptions{
+	_, err := client.Download(t.Context(), t.TempDir(), &git.CloneOptions{
 		URL:          repoURL,
 		Depth:        1,
 		SingleBranch: true,
@@ -502,5 +505,52 @@ func Test_listFilesPrivateRepository(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestListFilesHonorsCancellation(t *testing.T) {
+	requested := make(chan struct{})
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		close(requested)
+		<-r.Context().Done()
+	}))
+	defer server.Close()
+	ctx, cancel := context.WithCancel(t.Context())
+	defer cancel()
+	done := make(chan error, 1)
+	go func() {
+		_, err := NewService(ctx).ListFiles(ctx, server.URL, "", "", "", false, false, nil, false)
+		done <- err
+	}()
+	select {
+	case <-requested:
+	case <-time.After(5 * time.Second):
+		t.Fatal("clone did not start")
+	}
+	cancel()
+	select {
+	case err := <-done:
+		require.ErrorIs(t, err, context.Canceled)
+	case <-time.After(5 * time.Second):
+		t.Fatal("canceled clone did not stop")
+	}
+}
+
+func TestDownloadReturnsCheckedOutCommitWithoutGitDirectory(t *testing.T) {
+	service := Service{git: NewGitClient(false)}
+	repositoryURL := setup(t)
+	repo, err := git.PlainOpen(repositoryURL)
+	require.NoError(t, err)
+	require.NoError(t, repo.Storer.SetReference(plumbing.NewSymbolicReference(plumbing.HEAD, "refs/heads/main")))
+	_, err = repo.CreateTag("download-test", plumbing.NewHash("68dcaa7bd452494043c64252ab90db0f98ecf8d2"), nil)
+	require.NoError(t, err)
+	_, err = repo.CreateTag("annotated-download-test", plumbing.NewHash("68dcaa7bd452494043c64252ab90db0f98ecf8d2"), &git.CreateTagOptions{Tagger: &object.Signature{Name: "fixture", Email: "fixture@example.test", When: time.Now()}, Message: "download fixture"})
+	require.NoError(t, err)
+	for _, ref := range []string{"", "refs/heads/main", "refs/tags/download-test", "refs/tags/annotated-download-test"} {
+		destination := t.TempDir()
+		hash, err := service.CloneRepositoryWithCommit(t.Context(), destination, repositoryURL, ref, "", "", false)
+		require.NoError(t, err)
+		require.Equal(t, "68dcaa7bd452494043c64252ab90db0f98ecf8d2", hash)
+		require.NoDirExists(t, filesystem.JoinPaths(destination, ".git"))
 	}
 }

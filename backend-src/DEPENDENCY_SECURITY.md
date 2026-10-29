@@ -223,3 +223,28 @@ The separate experiment in `/tmp/vessel-dep-go-nextgraph` is **not** this releas
 An off-repository modfile with Compose5.6.1, Prometheus0.315.1, Kubernetes/kubectl0.37.1 and those two source forks tidies successfully and removes the old Docker monolith completely (four original raw alerts). It **does not remove Distributionv2**: Docker CLI29.9.2 still has the real legacy `internal/registryclient` implementation and manifest/store/types and command-test imports (12 source/test files in total), and Compose5.6.1 still requires Distribution2.8.3. Distributionv3 removed `registry/client`, so an import-path identity alias is not a source migration.
 
 Minimal remaining source work is to replace Docker CLI's legacy registry client with maintained OCI/Distributionv3-compatible functionality, migrate its dependent command/test helpers (manifest inspect/create/push and registry error/auth behavior), update CLI requirements and tidy, then update Compose to that migrated CLI and remove/tidy its old Distribution requirement and any remaining source/test imports. The image fork also needs to be consumed through a legitimate approved module publication, not an outside-path `replace`. Kompose needs a maintained/publicly consumable stable-HPA source release. These changes imply upstream contributions or explicitly maintained CLI/Compose/image/Kompose forks and approved publication/module identities; they are **not** safely accomplished by changing this repository's version pins. The maintainer must authorize that maintenance/publication path before shipping it. All five current-graph ranges remain honestly unresolved until an approved buildable graph actually removes them. Package/symbol reachability is separate evidence, not grounds to suppress the advisories.
+
+## October 29, 2026: refreshed graph and advisory scan
+
+A fresh full-source `govulncheck v1.9.0 -json ./...` initially reported 18 finding
+records across eight advisory IDs. Upgrading `golang.org/x/net` from v0.60.0 to
+v0.62.0 removes [GO-2026-6860](https://vuln.go.dev/ID/GO-2026-6860.json) and
+[GO-2026-6866](https://vuln.go.dev/ID/GO-2026-6866.json). Its required compatible
+Go submodules move to crypto v0.58.0, sync v0.24.0, sys v0.49.0, term v0.47.0,
+text v0.43.0 and tools v0.51.0. Go remains 1.26.10.
+
+The final full-source scan reports **14 records across six IDs**, not a clean
+scan: GO-2026-4883, GO-2026-4887, GO-2026-5617, GO-2026-5668, GO-2026-5746 and
+GO-2026-5932. The first five concern the selected Docker monolith;
+GO-2026-5932 flags the unmaintained x/crypto OpenPGP packages at module level,
+without an imported-package or symbol finding in this application scan. No
+advisory was suppressed or reclassified. Distribution v2.8.3 remains selected
+and its GitHub advisory remains unresolved even though it is absent from this
+Go database result. The original five unresolved supplied ranges are unchanged.
+
+`go list -m -json all` freshly confirms Docker v28.5.2+incompatible,
+Distribution v2.8.3+incompatible, x/net v0.62.0 and x/crypto v0.58.0.
+[Issue #262](https://github.com/TheModCraft-TMC/Vessel-HQ/issues/262) owns the
+remaining source/publication follow-up. The
+[current audit ledger](../docs/security/audit-follow-up-2026-10-29.md) records
+verification and separates these results from historical runtime experiments.

@@ -6355,13 +6355,6 @@ definitions:
       username:
         type: string
     type: object
-  sources.GitAuthenticationUpdatePayload:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    type: object
   sources.GitSourceCreatePayload:
     properties:
       administratorsOnly:
@@ -6390,19 +6383,6 @@ definitions:
         type: array
     required:
     - url
-    type: object
-  sources.GitSourceUpdatePayload:
-    properties:
-      authentication:
-        $ref: '#/definitions/sources.GitAuthenticationUpdatePayload'
-      interval:
-        type: string
-      name:
-        type: string
-      tlsSkipVerify:
-        type: boolean
-      url:
-        type: string
     type: object
   sources.Source:
     properties:
@@ -6460,6 +6440,17 @@ definitions:
           type: integer
         type: array
     type: object
+  sources.SourceAuthenticationUpdatePayload:
+    properties:
+      method:
+        type: string
+      password:
+        type: string
+      token:
+        type: string
+      username:
+        type: string
+    type: object
   sources.SourceDetail:
     properties:
       access:
@@ -6503,6 +6494,27 @@ definitions:
     - SourceTypeHelm
     - SourceTypeOCI
     - SourceTypeVault
+  sources.SourceUpdatePayload:
+    properties:
+      address:
+        type: string
+      authentication:
+        $ref: '#/definitions/sources.SourceAuthenticationUpdatePayload'
+      internalAddress:
+        type: string
+      interval:
+        type: string
+      kvVersion:
+        type: integer
+      name:
+        type: string
+      namespace:
+        type: string
+      tlsSkipVerify:
+        type: boolean
+      url:
+        type: string
+    type: object
   sources.Status:
     enum:
     - unknown
@@ -18332,7 +18344,7 @@ paths:
       consumes:
       - application/json
       description: |-
-        Updates an existing GitOps source backed by a Git repository.
+        Updates an existing Git or Vault source. The stored source type selects the applicable payload fields.
         **Access policy**: authenticated
       operationId: GitOpsSourcesUpdateGit
       parameters:
@@ -18346,7 +18358,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/sources.GitSourceUpdatePayload'
+          $ref: '#/definitions/sources.SourceUpdatePayload'
       produces:
       - application/json
       responses:
@@ -18367,7 +18379,7 @@ paths:
       security:
       - ApiKeyAuth: []
       - jwt: []
-      summary: Update a Git source
+      summary: Update a Git or Vault source
       tags:
       - gitops
   /gitops/sources/{id}/access:
@@ -18430,7 +18442,7 @@ paths:
         in: body
         name: body
         schema:
-          $ref: '#/definitions/sources.GitSourceUpdatePayload'
+          $ref: '#/definitions/sources.SourceUpdatePayload'
       produces:
       - application/json
       responses:

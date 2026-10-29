@@ -4851,11 +4851,6 @@ export type SourcesGitAuthenticationPayload = {
   username?: string;
 };
 
-export type SourcesGitAuthenticationUpdatePayload = {
-  password?: string;
-  username?: string;
-};
-
 export type SourcesGitSourceCreatePayload = {
   administratorsOnly?: boolean;
   authentication?: SourcesGitAuthenticationPayload;
@@ -4866,14 +4861,6 @@ export type SourcesGitSourceCreatePayload = {
   tlsSkipVerify?: boolean;
   url: string;
   userAccesses?: Array<number>;
-};
-
-export type SourcesGitSourceUpdatePayload = {
-  authentication?: SourcesGitAuthenticationUpdatePayload;
-  interval?: string;
-  name?: string;
-  tlsSkipVerify?: boolean;
-  url?: string;
 };
 
 export type SourcesSource = {
@@ -4899,6 +4886,13 @@ export type SourcesSourceAccessUpdatePayload = {
   public?: boolean;
   teams?: Array<number>;
   users?: Array<number>;
+};
+
+export type SourcesSourceAuthenticationUpdatePayload = {
+  method?: string;
+  password?: string;
+  token?: string;
+  username?: string;
 };
 
 export type SourcesSourceDetail = {
@@ -4935,6 +4929,18 @@ export const SourcesSourceType = {
 
 export type SourcesSourceType =
   (typeof SourcesSourceType)[keyof typeof SourcesSourceType];
+
+export type SourcesSourceUpdatePayload = {
+  address?: string;
+  authentication?: SourcesSourceAuthenticationUpdatePayload;
+  internalAddress?: string;
+  interval?: string;
+  kvVersion?: number;
+  name?: string;
+  namespace?: string;
+  tlsSkipVerify?: boolean;
+  url?: string;
+};
 
 export const SourcesStatus = {
   /**
@@ -16772,7 +16778,7 @@ export type GitOpsSourcesUpdateGitData = {
   /**
    * Git source details
    */
-  body: SourcesGitSourceUpdatePayload;
+  body: SourcesSourceUpdatePayload;
   path: {
     /**
      * Source identifier
@@ -16864,7 +16870,7 @@ export type GitOpsSourcesTestByIdData = {
   /**
    * Optional connection overrides; omitted fields fall back to stored values
    */
-  body?: SourcesGitSourceUpdatePayload;
+  body?: SourcesSourceUpdatePayload;
   path: {
     /**
      * Source identifier

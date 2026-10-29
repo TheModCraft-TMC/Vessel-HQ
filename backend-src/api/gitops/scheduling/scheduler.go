@@ -29,9 +29,10 @@ type dataStore interface {
 }
 
 type SourceScheduler struct {
-	scheduler *scheduler.Scheduler
-	dataStore dataStore
-	deployers Deployers
+	SourceChanged func(portainer.SourceID)
+	scheduler     *scheduler.Scheduler
+	dataStore     dataStore
+	deployers     Deployers
 
 	mu   sync.Mutex
 	jobs map[portainer.SourceID]jobEntry
@@ -78,6 +79,10 @@ func (s *SourceScheduler) ReconcileAll() error {
 func (s *SourceScheduler) Reconcile(sourceID portainer.SourceID) error {
 	if s == nil || sourceID == 0 {
 		return nil
+	}
+
+	if s.SourceChanged != nil {
+		s.SourceChanged(sourceID)
 	}
 
 	sysCtx := source.InsecureNewAdminContext()

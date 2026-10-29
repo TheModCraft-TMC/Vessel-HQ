@@ -146,6 +146,13 @@ export function Datatable<D extends DefaultType>({
           ...initialTableState.globalFilter,
         },
       },
+      ...(typeof page === 'number'
+        ? {
+            state: {
+              pagination: { pageIndex: page, pageSize: settings.pageSize },
+            },
+          }
+        : {}),
       defaultColumn: {
         enableColumnFilter: false,
         enableHiding: true,

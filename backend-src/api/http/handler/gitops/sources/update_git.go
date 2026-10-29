@@ -23,6 +23,7 @@ import (
 var (
 	ErrNotGitSource          = errors.New("source is not a Git source")
 	ErrUnsupportedSourceType = errors.New("unsupported source type")
+	ErrInvalidSourceUpdate   = errors.New("invalid source update")
 )
 
 // GitSourceUpdatePayload holds the parameters for updating a git-backed source
@@ -53,8 +54,8 @@ func (payload *GitSourceUpdatePayload) Validate(_ *http.Request) error {
 }
 
 // @id GitOpsSourcesUpdateGit
-// @summary Update a Git source
-// @description Updates an existing GitOps source backed by a Git repository.
+// @summary Update a Git or Vault source
+// @description Updates an existing Git or Vault source. The stored source type selects the applicable payload fields.
 // @description **Access policy**: authenticated
 // @tags gitops
 // @security ApiKeyAuth
@@ -62,7 +63,7 @@ func (payload *GitSourceUpdatePayload) Validate(_ *http.Request) error {
 // @accept json
 // @produce json
 // @param id path int true "Source identifier"
-// @param body body GitSourceUpdatePayload true "Git source details"
+// @param body body SourceUpdatePayload true "Git source details"
 // @success 200 {object} portainer.Source
 // @failure 400 "Invalid request payload"
 // @failure 403 "Access denied"
@@ -104,6 +105,9 @@ func (h *Handler) gitSourceUpdate(w http.ResponseWriter, r *http.Request) *httpe
 			if err := json.Unmarshal(body, &payload); err != nil {
 				return err
 			}
+			if err := payload.Validate(r); err != nil {
+				return errors.Join(ErrInvalidSourceUpdate, err)
+			}
 
 			if err := ApplyGitSourceChanges(src, payload); err != nil {
 				return err
@@ -129,6 +133,8 @@ func (h *Handler) gitSourceUpdate(w http.ResponseWriter, r *http.Request) *httpe
 		return httperror.NotFound("Unable to find a source with the specified identifier", err)
 	} else if isJSONDecodeError(err) {
 		return httperror.BadRequest("Invalid request payload", err)
+	} else if errors.Is(err, ErrInvalidSourceUpdate) {
+		return httperror.BadRequest("Invalid source update", err)
 	} else if errors.Is(err, ErrNotGitSource) {
 		return httperror.BadRequest("Source is not a Git source", err)
 	} else if errors.Is(err, ErrNotVaultSource) {

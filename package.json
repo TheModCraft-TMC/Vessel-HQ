@@ -108,7 +108,7 @@
     "moment": "^2.31.0",
     "moment-timezone": "^0.6.5",
     "mustache": "^4.2.0",
-    "next": "16.3.8",
+    "next": "16.4.1",
     "parse-duration": "^2.1.9",
     "qs": "^6.16.1",
     "rc-slider": "^10.6.2",
@@ -133,7 +133,7 @@
     "uuid": "^14.0.3",
     "yaml": "^1.10.3",
     "yup": "^0.32.11",
-    "zod": "4.3.6",
+    "zod": "4.6.6",
     "zustand": "4.1.1"
   },
   "devDependencies": {
@@ -245,7 +245,8 @@
     "patchedDependencies": {
       "@tippyjs/react@4.2.6": "patches/@tippyjs__react@4.2.6.patch",
       "babel-plugin-lodash@3.3.4": "patches/babel-plugin-lodash@3.3.4.patch",
-      "@hey-api/openapi-ts@0.99.0": "patches/@hey-api__openapi-ts@0.99.0.patch"
+      "@hey-api/openapi-ts@0.99.0": "patches/@hey-api__openapi-ts@0.99.0.patch",
+      "deepmerge@4.3.1": "patches/deepmerge@4.3.1.patch"
     }
   },
   "browserslist": "last 2 versions",

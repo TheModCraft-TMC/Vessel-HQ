@@ -29,7 +29,7 @@ import (
 // @accept json
 // @produce json
 // @param id path int true "Source identifier"
-// @param body body GitSourceUpdatePayload false "Optional connection overrides; omitted fields fall back to stored values"
+// @param body body SourceUpdatePayload false "Optional connection overrides; omitted fields fall back to stored values"
 // @success 200 {object} ConnectionTestResult "Connection test result"
 // @failure 400 "Invalid request payload"
 // @failure 403 "Access denied"

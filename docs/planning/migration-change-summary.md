@@ -1,8 +1,17 @@
 # Migration change summary and release commit message
 
-Status: development integration, updated October 23, 2026. `RELEASE_VERSION` remains `1.3.1`; the experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`.
+Status: development integration, updated October 29, 2026. `RELEASE_VERSION` remains `1.3.1`; the experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`.
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
+
+## Audit continuation — October 29, 2026
+
+The [current remediation and verification ledger](../security/audit-follow-up-2026-10-29.md)
+records local fixes for the October 28 audit, generated API changes, dependency
+updates, live npm advisory CI and the remaining Go maintenance decision. October
+23 PR #245 checks were read back as successful; they do not validate this new
+uncommitted scope. README and pre-existing Next environment-file edits are
+preserved. No release identity, upstream baseline or production resource changed.
 
 ## Current GitHub issue work — October 23, 2026
 

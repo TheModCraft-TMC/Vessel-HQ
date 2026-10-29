@@ -27,10 +27,10 @@ type mockRepoManager struct {
 	lastCloneOptions *git.CloneOptions
 }
 
-func (m *mockRepoManager) Download(_ context.Context, _ string, opts *git.CloneOptions) error {
+func (m *mockRepoManager) Download(_ context.Context, _ string, opts *git.CloneOptions) (string, error) {
 	m.downloadCalled++
 	m.lastCloneOptions = opts
-	return m.downloadErr
+	return m.commitID, m.downloadErr
 }
 
 func (m *mockRepoManager) LatestCommitID(_ context.Context, _, _ string, _ *git.ListOptions) (string, error) {

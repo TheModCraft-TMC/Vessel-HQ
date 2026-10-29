@@ -461,3 +461,7 @@ func builderWorkflowSourceID(t *testing.T, builder *GitMethodStackBuilder) porta
 	require.Len(t, wf.Artifacts[0].Files, 1)
 	return wf.Artifacts[0].Files[0].SourceID
 }
+
+func (g gitServiceWritingFiles) CloneRepositoryWithCommit(ctx context.Context, destination, url, ref, username, password string, skipTLS bool) (string, error) {
+	return g.commitHash, g.CloneRepository(ctx, destination, url, ref, username, password, skipTLS)
+}

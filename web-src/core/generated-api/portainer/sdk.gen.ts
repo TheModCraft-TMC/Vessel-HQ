@@ -4366,9 +4366,9 @@ export const gitOpsSourceGet = <ThrowOnError extends boolean = true>(
   });
 
 /**
- * Update a Git source
+ * Update a Git or Vault source
  *
- * Updates an existing GitOps source backed by a Git repository.
+ * Updates an existing Git or Vault source. The stored source type selects the applicable payload fields.
  * **Access policy**: authenticated
  */
 export const gitOpsSourcesUpdateGit = <ThrowOnError extends boolean = true>(

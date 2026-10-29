@@ -66,3 +66,7 @@ func (g *gitService) ListFiles(
 ) ([]string, error) {
 	return nil, nil
 }
+
+func (g *gitService) CloneRepositoryWithCommit(_ context.Context, _, _, _, _, _ string, _ bool) (string, error) {
+	return g.id, g.cloneErr
+}

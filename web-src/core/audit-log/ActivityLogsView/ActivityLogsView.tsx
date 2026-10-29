@@ -43,7 +43,14 @@ export function ActivityLogsView() {
       />
 
       <PageContent>
-        <FilterBar value={range} onChange={setRange} onExport={handleExport} />
+        <FilterBar
+          value={range}
+          onChange={(value) => {
+            setPage(0);
+            setRange(value);
+          }}
+          onExport={handleExport}
+        />
         <ActivityLogsTable
           flush
           sort={tableState.sortBy}
@@ -51,9 +58,15 @@ export function ActivityLogsView() {
             tableState.setSortBy(value?.id, value?.desc || false)
           }
           limit={tableState.pageSize}
-          onChangeLimit={tableState.setPageSize}
+          onChangeLimit={(value) => {
+            setPage(0);
+            tableState.setPageSize(value);
+          }}
           keyword={tableState.search}
-          onChangeKeyword={tableState.setSearch}
+          onChangeKeyword={(value) => {
+            setPage(0);
+            tableState.setSearch(value);
+          }}
           currentPage={page}
           onChangePage={setPage}
           totalItems={logsQuery.data?.totalCount || 0}

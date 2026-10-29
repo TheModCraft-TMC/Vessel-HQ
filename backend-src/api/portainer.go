@@ -1900,6 +1900,7 @@ type (
 
 	// GitService represents a service for managing Git
 	GitService interface {
+		CloneRepositoryWithCommit(ctx context.Context, destination, repositoryURL, referenceName, username, password string, tlsSkipVerify bool) (string, error)
 		CloneRepository(
 			ctx context.Context,
 			destination string,
