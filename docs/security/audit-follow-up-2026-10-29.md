@@ -44,15 +44,15 @@ must be read separately from the October 23 PR checks.
 - #263: project-owned security support/reporting policy. GitHub private reporting
   was read back as enabled; no private report or message was sent.
 
-## Remaining Go maintenance decision (#262)
+## Maintained Go forks (#262)
 
 The [existing module analysis](../../backend-src/DEPENDENCY_SECURITY.md#alternative-graph-proof--not-shipped-or-published)
 identifies required source migrations in Docker CLI/Compose, Kompose and the
 container image library. Pin changes or import-identity aliases do not remove
 these implementations. No external fork was published and no advisory was
-suppressed by this follow-up. TheModCraft must choose a maintained upstream
-release or explicitly maintained, published fork identities before that graph
-can ship. The issue remains open until those real requirements/imports are
+suppressed by this follow-up. The maintainer authorized maintained project forks and publication on October
+29. Migration and publication are now in progress; no replacement graph is
+claimed as shipped until its tagged modules resolve and compatibility checks pass. The issue remains open until those real requirements/imports are
 removed and the compatibility matrix is rerun. The fresh full-source scan reports 14 records across six advisory IDs after
 fixing two newer x/net advisories with v0.62.0. The original five raw advisory
 ranges remain selected. See the dependency inventory for exact counts, versions

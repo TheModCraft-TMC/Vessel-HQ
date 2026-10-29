@@ -103,7 +103,7 @@ jobs:
       - name: Check recorded npm security regressions
         run: pnpm check:npm-security
       - name: Check fresh npm advisories (moderate or higher blocks)
-        run: node scripts/audit-npm-fresh.mjs
+        run: pnpm check:npm-security:fresh
       - name: Retain fresh npm advisory report
         if: always()
         uses: actions/upload-artifact@v4
@@ -276,7 +276,7 @@ jobs:
       - name: Check recorded npm security regressions
         run: pnpm check:npm-security
       - name: Check fresh npm advisories (moderate or higher blocks)
-        run: node scripts/audit-npm-fresh.mjs
+        run: pnpm check:npm-security:fresh
       - name: Retain fresh npm advisory report
         if: always()
         uses: actions/upload-artifact@v4

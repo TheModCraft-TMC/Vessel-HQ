@@ -27,6 +27,7 @@ type UpdateHelmReleaseParams = {
 };
 
 type UpdateHelmReleaseOptions = {
+  signal?: AbortSignal;
   errorMessage?: string;
 };
 
@@ -42,6 +43,7 @@ export async function updateHelmRelease(
       payload,
       {
         params,
+        signal: options.signal,
       }
     );
     return data;

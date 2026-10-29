@@ -11,14 +11,25 @@ export function evaluateAudit(report) {
   return { counts, blocking: counts.moderate + counts.high + counts.critical };
 }
 
+export function validatePnpmEntry(entry) {
+  if (typeof entry !== 'string' || !path.isAbsolute(entry) || !['pnpm.cjs', 'pnpm.js', 'pnpm.mjs'].includes(path.basename(entry))) {
+    throw new Error('Run pnpm check:npm-security:fresh so pnpm supplies its absolute entry point');
+  }
+  return entry;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const output = 'dist/security/npm-audit.json';
   fs.mkdirSync(path.dirname(output), { recursive: true });
-  const result = spawnSync('pnpm', ['audit', '--json', '--audit-level=moderate'], {
-    encoding: 'utf8', timeout: 180_000, maxBuffer: 20 * 1024 * 1024,
-  });
-  fs.writeFileSync(output, result.stdout || JSON.stringify({ error: 'Audit process failed without a report' }));
+  fs.writeFileSync(output, JSON.stringify({ error: 'Advisory scan did not complete' }));
   try {
+    const entry = validatePnpmEntry(process.env.npm_execpath);
+    // Reuse the invoking, pinned package manager through this fixed Node binary.
+    // Do not search PATH for another executable after the scan has started.
+    const result = spawnSync(process.execPath, [entry, 'audit', '--json', '--audit-level=moderate'], {
+      encoding: 'utf8', timeout: 180_000, maxBuffer: 20 * 1024 * 1024,
+    });
+    if (result.stdout) fs.writeFileSync(output, result.stdout);
     if (result.error) throw result.error;
     const { counts, blocking } = evaluateAudit(JSON.parse(result.stdout));
     console.log(`Fresh npm advisory counts: ${JSON.stringify(counts)}; report: ${output}`);

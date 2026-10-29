@@ -72,7 +72,7 @@ Run `pnpm typecheck`, `pnpm lint:ci`, `pnpm test`, and `go test ./...` before bu
 ## Fresh npm advisory validation
 
 Run `pnpm check:npm-security` for the recorded regression snapshot, then
-`node scripts/audit-npm-fresh.mjs` for current advisory data against the lockfile.
+`pnpm check:npm-security:fresh` for current advisory data against the lockfile.
 The fresh check writes `dist/security/npm-audit.json`; moderate, high and critical
 findings block validation, while low findings remain visible for scoped tracking.
 Unavailable, malformed or incomplete results fail validation. CI retains reports

@@ -40,7 +40,8 @@
     "postgenerate-api": "prettier --log-level warn --write web-src/core/generated-api/portainer",
     "swagger-cli": "node scripts/validate-openapi.mjs",
     "check:npm-security": "node scripts/check-npm-security.mjs",
-    "test:dependency-security": "node --test scripts/check-npm-security.test.mjs scripts/check-dependency-styles.test.mjs scripts/check-markdown-security.test.mjs scripts/validate-openapi.test.mjs"
+    "test:dependency-security": "node --test scripts/check-npm-security.test.mjs scripts/check-dependency-styles.test.mjs scripts/check-markdown-security.test.mjs scripts/validate-openapi.test.mjs",
+    "check:npm-security:fresh": "node scripts/audit-npm-fresh.mjs"
   },
   "engines": {
     "node": "^24.21.0"
