@@ -50,6 +50,7 @@ const columns = [
 ];
 
 export function ActivityLogsTable({
+  flush = false,
   dataset,
   currentPage,
   keyword,
@@ -61,6 +62,7 @@ export function ActivityLogsTable({
   sort,
   totalItems,
 }: {
+  flush?: boolean;
   keyword: string;
   onChangeKeyword(keyword: string): void;
   sort: { id: string; desc: boolean } | undefined;
@@ -74,6 +76,7 @@ export function ActivityLogsTable({
 }) {
   return (
     <ExpandableDatatable<ActivityLog>
+      flush={flush}
       title="Activity logs"
       titleIcon={History}
       columns={columns}

@@ -44,6 +44,18 @@ jobs:
           cache-dependency-path: backend-src/go.sum
       - name: Install frontend dependencies
         run: pnpm install --frozen-lockfile
+      - name: Check recorded npm security regressions
+        run: pnpm check:npm-security
+      - name: Check fresh npm advisories (moderate or higher blocks)
+        run: pnpm check:npm-security:fresh
+      - name: Retain fresh npm advisory report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-advisory-report-${{ github.job }}
+          path: dist/security/npm-audit.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Validate frontend and extension tooling
         run: |
           pnpm check:frontend-modernization

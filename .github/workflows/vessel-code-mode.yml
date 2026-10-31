@@ -1,0 +1,32 @@
+name: Vessel Code Mode
+on:
+  pull_request:
+    paths: ['tools/vessel-mcp/**', '.github/workflows/vessel-code-mode.yml']
+  push:
+    branches: [develop]
+    paths: ['tools/vessel-mcp/**', '.github/workflows/vessel-code-mode.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: tools/vessel-mcp
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.26.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.21.0'
+          cache: pnpm
+          cache-dependency-path: tools/vessel-mcp/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm test
+      - run: pnpm benchmark

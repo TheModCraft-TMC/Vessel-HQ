@@ -33,7 +33,7 @@ export function StickyFooter({
     <div
       className={clsx(
         styles.actionBar,
-        'fixed bottom-0 right-0 z-40 h-16',
+        'fixed right-0 bottom-0 z-40 h-16',
         'flex items-center px-6',
         'border-t border-(--border-widget-color) bg-(--bg-widget-color)',
         'shadow-[0_-2px_5px_rgba(0,0,0,0.1)]',
@@ -51,7 +51,7 @@ export function StickyFooter({
  * `StickyFooter` inside a page or form.
  */
 function Container({ children }: PropsWithChildren<unknown>) {
-  return <div className="pb-20">{children}</div>;
+  return <div className={clsx(styles.container, 'pb-20')}>{children}</div>;
 }
 
 StickyFooter.Container = Container;

@@ -23,7 +23,7 @@ const (
 )
 
 type RepoManager interface {
-	Download(ctx context.Context, dst string, opt *git.CloneOptions) error
+	Download(ctx context.Context, dst string, opt *git.CloneOptions) (string, error)
 	LatestCommitID(ctx context.Context, repositoryUrl, referenceName string, opt *git.ListOptions) (string, error)
 	ListRefs(ctx context.Context, repositoryUrl string, opt *git.ListOptions) ([]string, error)
 	ListFiles(ctx context.Context, dirOnly bool, opt *git.CloneOptions) ([]string, error)
@@ -111,7 +111,17 @@ func (service *Service) CloneRepositoryWithAuth(
 		gitOptions.ReferenceName = plumbing.ReferenceName(referenceName)
 	}
 
-	return service.repoManager(repositoryURL).Download(ctx, destination, gitOptions)
+	_, err := service.repoManager(repositoryURL).Download(ctx, destination, gitOptions)
+	return err
+}
+
+// CloneRepositoryWithCommit returns the commit identifying the downloaded bytes.
+func (service *Service) CloneRepositoryWithCommit(ctx context.Context, destination, repositoryURL, referenceName, username, password string, tlsSkipVerify bool) (string, error) {
+	return service.repoManager(repositoryURL).Download(ctx, destination, &git.CloneOptions{
+		URL: repositoryURL, Depth: 1, InsecureSkipTLS: tlsSkipVerify,
+		Auth: GetBasicAuth(username, password), Tags: git.NoTags,
+		ReferenceName: plumbing.ReferenceName(referenceName),
+	})
 }
 
 func (service *Service) repoManager(repositoryURL string) RepoManager {
@@ -252,11 +262,18 @@ func (service *Service) ListFilesWithAuth(
 	tlsSkipVerify bool,
 	cacheKey string,
 ) ([]string, error) {
-	fs, err, _ := singleflightGroup.Do(cacheKey, func() (any, error) {
+	result := singleflightGroup.DoChan(cacheKey, func() (any, error) {
 		return service.listFilesWithAuth(ctx, repositoryURL, referenceName, dirOnly, hardRefresh, auth, tlsSkipVerify, cacheKey)
 	})
-
-	return filterFiles(fs.([]string), includedExts), err
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case fs := <-result:
+		if fs.Err != nil {
+			return nil, fs.Err
+		}
+		return filterFiles(fs.Val.([]string), includedExts), nil
+	}
 }
 
 func (service *Service) listFilesWithAuth(

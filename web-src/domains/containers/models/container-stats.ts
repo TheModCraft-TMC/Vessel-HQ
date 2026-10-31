@@ -63,12 +63,15 @@ export class ContainerStatsViewModel {
       this.MemoryUsage = 0;
       this.MemoryCache = 0;
     } else {
-      this.MemoryCache = 0;
-      if (data?.memory_stats?.stats?.cache !== undefined) {
-        // cgroups v1
-        this.MemoryCache = data.memory_stats.stats.cache;
-      }
-      this.MemoryUsage = data.memory_stats.usage - this.MemoryCache;
+      const stats = data.memory_stats.stats;
+      const cache =
+        stats.total_inactive_file ?? stats.inactive_file ?? stats.cache ?? 0;
+      this.MemoryCache =
+        cache >= 0 && cache < data.memory_stats.usage ? cache : 0;
+      this.MemoryUsage = Math.max(
+        0,
+        data.memory_stats.usage - this.MemoryCache
+      );
     }
     this.PreviousCPUTotalUsage =
       data?.precpu_stats?.cpu_usage?.total_usage || 0;
@@ -84,38 +87,12 @@ export class ContainerStatsViewModel {
 
     this.Networks = values(data.networks);
 
-    if (
-      data.blkio_stats !== undefined &&
-      data.blkio_stats.io_service_bytes_recursive !== null
-    ) {
-      // TODO: take care of multiple block devices
-      let readData = data?.blkio_stats?.io_service_bytes_recursive?.find(
-        (d) => d.op === 'Read'
-      );
-      if (readData === undefined) {
-        // try the cgroups v2 version
-        readData = data?.blkio_stats?.io_service_bytes_recursive?.find(
-          (d) => d.op === 'read'
-        );
-      }
-      if (readData !== undefined) {
-        this.BytesRead = readData.value;
-      }
-      let writeData = data?.blkio_stats?.io_service_bytes_recursive?.find(
-        (d) => d.op === 'Write'
-      );
-      if (writeData === undefined) {
-        // try the cgroups v2 version
-        writeData = data?.blkio_stats?.io_service_bytes_recursive?.find(
-          (d) => d.op === 'write'
-        );
-      }
-      if (writeData !== undefined) {
-        this.BytesWrite = writeData.value;
-      }
-    } else {
-      // no IO related data is available
-      this.noIOdata = true;
+    const counters = data.blkio_stats?.io_service_bytes_recursive;
+    this.noIOdata = !counters?.length;
+    for (const counter of counters ?? []) {
+      if (counter.op.toLowerCase() === 'read') this.BytesRead += counter.value;
+      if (counter.op.toLowerCase() === 'write')
+        this.BytesWrite += counter.value;
     }
   }
 }

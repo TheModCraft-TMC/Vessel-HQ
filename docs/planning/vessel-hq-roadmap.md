@@ -2,7 +2,7 @@
 
 Status: canonical frontend foundation established; experimental native extensions are in the `1.3.1-beta.1` preview. Future product and design items remain proposals, not implementation commitments.
 
-Last updated: October 21, 2026.
+Last updated: October 31, 2026.
 
 This document records why the fork exists, what has already changed, and the direction agreed for future work. It is deliberately explicit about status so that roadmap context is not mistaken for shipped behavior.
 
@@ -36,7 +36,9 @@ The React migration WIP was published from commit `0298e99dd56c08fdd4004fb995697
 ### Current release policy
 
 - Vessel images use `themodcrafttmc/vessel-hq`, mirrored to `ghcr.io/themodcraft-tmc/vessel-hq`; release automation, update discovery and UI links use the Vessel repository.
-- Stable release `1.3.0` is recorded in the [release notes](../releases/1.3.0.md). The current source version is `1.3.1`.
+- Previous stable work is recorded in the [1.3.1 release notes](../releases/1.3.1.md).
+  The next source version is `1.3.2`, in preparation; see its
+  [release notes and publication checklist](../releases/1.3.2.md).
 - The October 16 [publication record](migration-change-summary.md#2026-10-16-beta-publication-and-verified-docker-hub-mirror) verifies the Docker Hub beta image and its `beta` alias. Previews do not promote `latest`; stable releases use that channel.
 - Keep the existing `themodcrafttmc/portainer` repository and its published tags intact. The transitional references above are historical.
 
@@ -58,6 +60,15 @@ The migration established the baseline for future product work:
 The upstream API and datastore compatibility version remains `2.45.0`. That value is not the Vessel HQ image release number and must not be changed merely for branding.
 
 ## Dependency compatibility follow-up — planned, not started
+
+- Complete the maintained Go source migrations and module publications tracked
+  in #262 before claiming the Docker monolith/Distribution advisory ranges are
+  removed. Source preparation for 1.3.2 does not complete that work.
+- Finish authenticated production UI/mobile route coverage (#241); local
+  component fixtures and a successful build do not complete that audit.
+- The 1.3.2 preparation upgrades minimatch to its maintained nonrecursive
+  matcher and supplies a scoped CommonJS/glob 7 compatibility adapter. Remove
+  the adapter when legacy callable/parsed-segment consumers have migrated.
 
 - Replace the remaining Bootstrap 3 CSS/markup with maintained shared UI styles,
   then remove the end-of-life dependency. Do not load Bootstrap JavaScript in the
@@ -134,6 +145,11 @@ web-src/
 ## Design and component strategy
 
 The repository-side audit is recorded in [UI component inventory](ui-component-inventory.md). No `@themodcraft` package is currently installed, so external candidate selection remains pending exact package names and versions.
+
+The [October 23 UI alignment audit](ui-alignment-audit-2026-10-23.md) tracks
+all 168 route files and the incomplete live review of deployed `1.3.1`.
+Finish desktop/mobile page, tab and dialog checks after browser access is
+restored; the local registry/footer/table fixes do not close mobile issue #241.
 
 ### Planned inputs
 
@@ -224,3 +240,25 @@ No implementation should be inferred from these open items. Record the decision 
 ### Independent extension SDK workspace follow-up (2026-10-16)
 
 SDK and simple demo authoring sources now live in the [separate SDK workspace](../extension-sdk-workspace.md); Vessel consumes the immutable published beta.1 module without a local replacement. The configured target Git origin is preserved, while Go import identity remains unchanged. Next publication work must explicitly select the new module/release identity and verify proxy/checksum discovery before bumping Vessel. Do not repoint existing beta.1 tags. The UniFi-style React Flow extension and host integration remain in Vessel; installed compiled payloads are separate from authoring examples. Managed runtime, infrastructure writes and production identity lifecycle remain future work.
+
+## Infrastructure as code evaluation (#244)
+
+The [OpenTofu/Pulumi evaluation](iac-integration-evaluation.md) recommends an
+optional infrastructure-project workflow with isolated runners, starting with
+OpenTofu and keeping Pulumi behind the same job contract. This is evaluated
+future work; no provisioning engine is enabled. Plan review, exact-plan apply
+approval, state recovery and exclusive resource ownership are prerequisites.
+
+
+## October 29 security follow-up
+
+[Issue #262](https://github.com/TheModCraft-TMC/Vessel-HQ/issues/262) remains the
+owner-visible tracker for the unresolved Docker/Distribution dependency graph.
+Choose maintained upstream releases or approved, maintained publication identities
+for the CLI/Compose, Kompose and container-image source migrations documented in
+[the dependency inventory](../../backend-src/DEPENDENCY_SECURITY.md#alternative-graph-proof--not-shipped-or-published).
+Then remove the real old imports/requirements and repeat registry auth/digest,
+Docker/Compose/Swarm/Podman/Kubernetes compatibility checks. No module identity
+aliases or advisory suppression substitutes for that work. The current
+[audit ledger](../security/audit-follow-up-2026-10-29.md) separates fresh results
+from historical proof experiments.

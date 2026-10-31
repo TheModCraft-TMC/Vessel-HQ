@@ -11,10 +11,10 @@ export function useExportMutation() {
   });
 }
 
-async function exportActivityLogs(query: Omit<Query, 'limit'>) {
+async function exportActivityLogs(query: Omit<Query, 'limit' | 'offset'>) {
   try {
     const { data, headers } = await axios.get<Blob>('/useractivity/logs.csv', {
-      params: { ...query, limit: 0 },
+      params: { ...query, offset: 0, limit: 0 },
       responseType: 'blob',
       headers: {
         'Content-type': 'text/csv',

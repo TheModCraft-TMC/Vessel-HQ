@@ -2,6 +2,7 @@ package useractivity
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"net/http"
 	"sort"
@@ -18,8 +19,26 @@ type listResponse struct {
 	TotalCount int                     `json:"totalCount"`
 }
 
+var errInvalidPagination = errors.New("offset and limit must be nonnegative integers")
+
 func (handler *Handler) filtered(r *http.Request) ([]portainer.ActivityLog, int, error) {
+	return handler.queryLogs(r, true)
+}
+
+func (handler *Handler) queryLogs(r *http.Request, paginate bool) ([]portainer.ActivityLog, int, error) {
 	q := r.URL.Query()
+	offset, limit := 0, 0
+	if paginate {
+		for key, value := range map[string]*int{"offset": &offset, "limit": &limit} {
+			if q.Get(key) != "" {
+				parsed, err := strconv.Atoi(q.Get(key))
+				if err != nil || parsed < 0 {
+					return nil, 0, errInvalidPagination
+				}
+				*value = parsed
+			}
+		}
+	}
 	keyword := strings.ToLower(q.Get("keyword"))
 	after, _ := strconv.ParseInt(q.Get("after"), 10, 64)
 	before, _ := strconv.ParseInt(q.Get("before"), 10, 64)
@@ -64,8 +83,6 @@ func (handler *Handler) filtered(r *http.Request) ([]portainer.ActivityLog, int,
 	})
 
 	total := len(logs)
-	offset, _ := strconv.Atoi(q.Get("offset"))
-	limit, _ := strconv.Atoi(q.Get("limit"))
 	if offset > len(logs) {
 		offset = len(logs)
 	}
@@ -87,6 +104,9 @@ func (handler *Handler) filtered(r *http.Request) ([]portainer.ActivityLog, int,
 // @router /useractivity/logs [get]
 func (handler *Handler) list(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
 	logs, total, err := handler.filtered(r)
+	if errors.Is(err, errInvalidPagination) {
+		return httperror.BadRequest("Invalid pagination", err)
+	}
 	if err != nil {
 		return httperror.InternalServerError("Unable to retrieve user activity logs", err)
 	}
@@ -94,7 +114,7 @@ func (handler *Handler) list(w http.ResponseWriter, r *http.Request) *httperror.
 }
 
 func (handler *Handler) exportCSV(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
-	logs, _, err := handler.filtered(r)
+	logs, _, err := handler.queryLogs(r, false)
 	if err != nil {
 		return httperror.InternalServerError("Unable to retrieve user activity logs", err)
 	}

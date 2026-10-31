@@ -2242,11 +2242,6 @@ export const zSourcesGitAuthenticationPayload = z.object({
   username: z.string().optional(),
 });
 
-export const zSourcesGitAuthenticationUpdatePayload = z.object({
-  password: z.string().optional(),
-  username: z.string().optional(),
-});
-
 export const zSourcesGitSourceCreatePayload = z.object({
   administratorsOnly: z.boolean().optional(),
   authentication: zSourcesGitAuthenticationPayload.optional(),
@@ -2257,14 +2252,6 @@ export const zSourcesGitSourceCreatePayload = z.object({
   tlsSkipVerify: z.boolean().optional(),
   url: z.string(),
   userAccesses: z.array(z.int()).optional(),
-});
-
-export const zSourcesGitSourceUpdatePayload = z.object({
-  authentication: zSourcesGitAuthenticationUpdatePayload.optional(),
-  interval: z.string().optional(),
-  name: z.string().optional(),
-  tlsSkipVerify: z.boolean().optional(),
-  url: z.string().optional(),
 });
 
 export const zSourcesSourceAccess = z.object({
@@ -2279,7 +2266,26 @@ export const zSourcesSourceAccessUpdatePayload = z.object({
   users: z.array(z.int()).optional(),
 });
 
+export const zSourcesSourceAuthenticationUpdatePayload = z.object({
+  method: z.string().optional(),
+  password: z.string().optional(),
+  token: z.string().optional(),
+  username: z.string().optional(),
+});
+
 export const zSourcesSourceType = z.enum(['git', 'helm', 'oci', 'vault']);
+
+export const zSourcesSourceUpdatePayload = z.object({
+  address: z.string().optional(),
+  authentication: zSourcesSourceAuthenticationUpdatePayload.optional(),
+  internalAddress: z.string().optional(),
+  interval: z.string().optional(),
+  kvVersion: z.int().optional(),
+  name: z.string().optional(),
+  namespace: z.string().optional(),
+  tlsSkipVerify: z.boolean().optional(),
+  url: z.string().optional(),
+});
 
 export const zSourcesStatus = z.enum(['unknown', 'healthy', 'error']);
 
@@ -5614,7 +5620,7 @@ export const zGitOpsSourceGetResponse = zSourcesSourceDetail;
 /**
  * Git source details
  */
-export const zGitOpsSourcesUpdateGitBody = zSourcesGitSourceUpdatePayload;
+export const zGitOpsSourcesUpdateGitBody = zSourcesSourceUpdatePayload;
 
 export const zGitOpsSourcesUpdateGitPath = z.object({
   id: z.int(),
@@ -5642,7 +5648,7 @@ export const zGitOpsSourcesUpdateAccessResponse = zPortainerSource;
 /**
  * Optional connection overrides; omitted fields fall back to stored values
  */
-export const zGitOpsSourcesTestByIdBody = zSourcesGitSourceUpdatePayload;
+export const zGitOpsSourcesTestByIdBody = zSourcesSourceUpdatePayload;
 
 export const zGitOpsSourcesTestByIdPath = z.object({
   id: z.int(),

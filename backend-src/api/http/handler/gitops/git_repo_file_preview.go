@@ -1,7 +1,6 @@
 package gitops
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -118,8 +117,14 @@ func (handler *Handler) gitOperationRepoFilePreview(w http.ResponseWriter, r *ht
 		return httperror.InternalServerError("Unable to create temporary folder", err)
 	}
 
+	defer func() {
+		if err := handler.fileService.RemoveDirectory(projectPath); err != nil {
+			log.Warn().Err(err).Msg("failed to remove temporary project folder")
+		}
+	}()
+
 	err = handler.gitService.CloneRepository(
-		context.TODO(),
+		r.Context(),
 		projectPath,
 		repoURL,
 		payload.Reference,
@@ -135,12 +140,6 @@ func (handler *Handler) gitOperationRepoFilePreview(w http.ResponseWriter, r *ht
 		newErr := fmt.Errorf("unable to clone git repository, error: %w", err)
 		return httperror.InternalServerError(newErr.Error(), newErr)
 	}
-
-	defer func() {
-		if err := handler.fileService.RemoveDirectory(projectPath); err != nil {
-			log.Warn().Err(err).Msg("failed to remove temporary project folder")
-		}
-	}()
 
 	fileContent, err := handler.fileService.GetFileContent(projectPath, payload.TargetFile)
 	if err != nil {

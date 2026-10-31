@@ -6,18 +6,16 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useReducer,
+  useState,
   useRef,
 } from 'react';
 
-import {
-  SIDEBAR_MOBILE_BREAKPOINT,
-  sidebarStore,
-} from './sidebarStore';
+import { SIDEBAR_MOBILE_BREAKPOINT, sidebarStore } from './sidebarStore';
 
 interface State {
   isOpen: boolean;
   toggle(): void;
+  setOpen(value: boolean): void;
 }
 
 export const Context = createContext<State | null>(null);
@@ -69,16 +67,19 @@ export function SidebarProvider({ children }: PropsWithChildren<unknown>) {
     };
   }, [setOpen]);
 
-  const state = useMemo(() => ({ isOpen, toggle }), [isOpen, toggle]);
+  const state = useMemo(
+    () => ({ isOpen, toggle, setOpen }),
+    [isOpen, toggle, setOpen]
+  );
 
   return <Context.Provider value={state}>{children}</Context.Provider>;
 }
 
 export function TestSidebarProvider({ children }: PropsWithChildren<unknown>) {
-  const [isOpen, toggle] = useReducer((state) => !state, true);
+  const [isOpen, setOpen] = useState(true);
   const state = useMemo(
-    () => ({ isOpen, toggle: () => toggle() }),
-    [isOpen, toggle]
+    () => ({ isOpen, toggle: () => setOpen((open) => !open), setOpen }),
+    [isOpen]
   );
 
   return <Context.Provider value={state}>{children}</Context.Provider>;

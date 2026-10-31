@@ -28,7 +28,7 @@ export function DateRangePicker({
       label="Date range"
       errors={typeof error === 'string' ? error : undefined}
     >
-      <div className="w-1/2">
+      <div className="w-full md:w-1/2">
         <WojtekmajRangePicker
           format="y-MM-dd"
           className="form-control [&>div]:border-0"

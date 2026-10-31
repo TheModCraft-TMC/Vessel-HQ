@@ -67,3 +67,19 @@ docker buildx imagetools inspect themodcrafttmc/vessel-hq:<release-version>
 Execute-check both platform images before publishing and confirm that the immutable tag plus its channel alias (`beta` for prereleases, `latest` for stable releases) resolve to the same registry digest.
 
 Run `pnpm typecheck`, `pnpm lint:ci`, `pnpm test`, and `go test ./...` before building a release. Backend Compose integration tests require Docker. Kubernetes integration tests require a reachable cluster; if the local kubeconfig points to an inactive cluster, set `KUBECONFIG` to a nonexistent temporary path to run unit tests with the live-cluster tests skipped. Record that limitation in the release verification.
+
+
+## Fresh npm advisory validation
+
+Run `pnpm check:npm-security` for the recorded regression snapshot, then
+`pnpm check:npm-security:fresh` for current advisory data against the lockfile.
+The fresh check writes `dist/security/npm-audit.json`; moderate, high and critical
+findings block validation, while low findings remain visible for scoped tracking.
+Unavailable, malformed or incomplete results fail validation. CI retains reports
+for 30 days on normal PR/stable, manual frontend and beta validation paths.
+Run `node --test scripts/audit-npm-fresh.test.mjs scripts/deepmerge-security.test.mjs scripts/glob-compatibility.test.mjs`
+to verify the gate, installed local deepmerge mitigation and glob compatibility.
+pnpm 10 JSON mode exits 1 for any finding even with `--audit-level=moderate`;
+the wrapper applies the severity policy to complete reports and rejects
+unexpected process failures. The low deepmerge
+advisory remains visible because no upstream patched release is available.

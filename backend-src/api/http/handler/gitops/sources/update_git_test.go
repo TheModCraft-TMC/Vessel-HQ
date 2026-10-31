@@ -352,3 +352,28 @@ func TestGitSourceUpdate_NonNumericID(t *testing.T) {
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
 }
+
+func TestGitSourceUpdateValidatesIntervalBeforeSaving(t *testing.T) {
+	for _, interval := range []string{"not-a-duration", "-1m", "0s", "1s", "59s", "1m", ""} {
+		t.Run(interval, func(t *testing.T) {
+			_, store := datastore.MustNewTestStore(t, false, true)
+			src := &portainer.Source{Name: "original", Type: portainer.SourceTypeGit, Interval: "5m", Git: &gittypes.GitSource{URL: "https://github.com/org/repo"}}
+			require.NoError(t, store.Source().Create(adminUserContext, src))
+			require.NoError(t, store.User().Create(&portainer.User{ID: 1, Role: portainer.AdministratorRole}))
+			body, err := json.Marshal(GitSourceUpdatePayload{Interval: &interval, Name: new("changed")})
+			require.NoError(t, err)
+			rr := httptest.NewRecorder()
+			newTestHandler(t, store).ServeHTTP(rr, buildUpdateReq(t, 1, int(src.ID), body))
+			stored, err := store.Source().Read(adminUserContext, src.ID)
+			require.NoError(t, err)
+			if interval == "1m" || interval == "" {
+				require.Equal(t, http.StatusOK, rr.Code, rr.Body.String())
+				require.Equal(t, interval, stored.Interval)
+			} else {
+				require.Equal(t, http.StatusBadRequest, rr.Code, rr.Body.String())
+				require.Equal(t, "5m", stored.Interval)
+				require.Equal(t, "original", stored.Name)
+			}
+		})
+	}
+}

@@ -609,6 +609,7 @@ func buildServer(flags *portainer.CLIFlags, shutdownCtx context.Context, shutdow
 			return err == nil, err
 		},
 	})
+	sourceScheduler.SourceChanged = vaultTokenRenewer.NotifySourceChanged
 	if err := sourceScheduler.ReconcileAll(); err != nil {
 		log.Fatal().Err(err).Msg("failed to start source scheduler")
 	}
