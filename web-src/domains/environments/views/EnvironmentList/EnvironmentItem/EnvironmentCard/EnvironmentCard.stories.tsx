@@ -115,6 +115,36 @@ KubernetesWithStats.args = {
   environment: mockKubernetesEnvironmentWithStats(),
 };
 
+async function verifyStatsTextColor({
+  canvasElement,
+}: {
+  canvasElement: HTMLElement;
+}) {
+  await new Promise<void>((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  );
+  const expected = getComputedStyle(document.body).color;
+  const titles = [...canvasElement.querySelectorAll('span')].filter((element) =>
+    ['NODES', 'CPUS', 'MEMORY', 'CONTAINERS'].includes(
+      element.textContent || ''
+    )
+  );
+  if (titles.length < 3)
+    throw new Error('Environment statistics fixture missing');
+  for (const title of titles) {
+    const stat = title.parentElement?.parentElement;
+    if (!stat) throw new Error('Environment statistic missing');
+    for (const element of stat.querySelectorAll('span, svg')) {
+      if (getComputedStyle(element).color !== expected) {
+        throw new Error(`${title.textContent} inherited the card link color`);
+      }
+    }
+  }
+}
+
+DockerWithStats.play = verifyStatsTextColor;
+KubernetesWithStats.play = verifyStatsTextColor;
+
 function mockEnvironment(
   type: EnvironmentType,
   status: EnvironmentStatus = EnvironmentStatus.Up,

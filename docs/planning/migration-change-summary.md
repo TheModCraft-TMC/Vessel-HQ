@@ -4,6 +4,20 @@ Status: stable `1.3.2` published and production verified, updated October 31, 20
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
 
+## Same-tag UI repair — October 31, 2026
+
+- Replace sidebar margin-based icon spacing with flex gap; Tailwind 4's spacing
+  margins were overridden by the shared icon margin reset.
+- Give environment statistics the active body text color, preserving white
+  labels/icons/values in dark and high-contrast modes instead of inheriting the
+  environment card's blue link color. Dashboard palettes remain unchanged.
+- Add rendered Storybook regression checks for sidebar spacing and Docker/
+  Kubernetes environment-statistics color.
+- Keep `RELEASE_VERSION` at `1.3.2`. A narrowly scoped manual publication exception
+  archives the original index in both registries, refuses unexpected digests,
+  and retains the default immutable-version guard for ordinary releases.
+- Verification and publication results will be recorded after fresh checks.
+
 ## Stable publication and production verification — October 31, 2026
 
 - Merged PR #245 and tagged the release source as `v1.3.2` at `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`.

@@ -19,7 +19,7 @@ export function StatsItem({
   return (
     <div
       className={clsx(
-        'flex flex-col items-center',
+        'flex flex-col items-center text-[var(--text-body-color)]',
         'h-full gap-1 rounded-lg p-2',
         'bg-gray-2 th-highcontrast:bg-transparent th-dark:bg-gray-iron-10',
         'border border-solid border-gray-4 th-dark:border-gray-8'

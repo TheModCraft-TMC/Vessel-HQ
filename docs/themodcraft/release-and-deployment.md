@@ -30,6 +30,20 @@ again with the table rendering fix and deploying it to Node4. This additional
 exception applies only to that fix; preserve the existing beta archive and keep
 the previous Node4 container available for rollback.
 
+## Authorized 1.3.2 UI repair
+
+On October 31, 2026 the maintainer requested repairing sidebar icon spacing and
+white environment-statistics text while retaining `1.3.2`. The manual workflow's
+`reissue_ui_digest` input accepts only the original index
+`sha256:da06e29cafd61278ff86ef4a25b600199e5e914f085066e848ab2eee64999014`
+and version `1.3.2`. Before overwriting the version, it archives that index as
+`1.3.2-before-sidebar-stats-fix` in both maintained registries. It then verifies
+the replacement in both registries before the normal publisher moves `latest`.
+Unexpected current or archive digests fail closed. Ordinary releases still
+refuse existing version tags. Preserve the original Git source under
+`v1.3.2-before-sidebar-stats-fix` before aligning `v1.3.2` with the repaired source.
+Existing installations require an explicit pull and recreation.
+
 ## Build and publish
 
 The release source is `RELEASE_VERSION`. `scripts/build-release-context.sh` builds the frontend once and produces static Linux binaries for both AMD64 and ARM64 under `dist/release-context/`, with binary checksums in `SHA256SUMS`. Use Node 24.21.0 LTS, pnpm 10.26.2, and the Go version in `backend-src/go.mod`.
