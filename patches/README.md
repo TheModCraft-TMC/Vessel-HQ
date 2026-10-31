@@ -40,3 +40,18 @@ Run `node --test scripts/deepmerge-security.test.mjs` after frozen installation 
 exercise the actual transitive package, including malicious keys and normal
 merge behavior. Fresh npm advisory reports intentionally continue to show the
 low affected-version advisory. No advisory exclusion is configured.
+
+## minimatch 11.0.1
+
+The scoped dependency override removes vulnerable minimatch 3/10 resolutions.
+`minimatch@11.0.1.patch` retains the maintained nonrecursive matching engine
+while providing the callable CommonJS export used by older Babel/ESLint tools.
+Named exports remain attached and the dedicated ESM entry point is unchanged.
+Parsed segments also expose `_glob` and `Symbol.match` for glob 7, which reads
+that metadata and calls `String.match` while traversing directories. No legacy
+regular-expression matching implementation is restored. This adapter does not
+restore removed `makeRe` APIs; reassess callers when upgrading the toolchain.
+
+Run `node --test scripts/glob-compatibility.test.mjs` after a frozen install.
+The tests exercise callable/named/ESM imports, defaults, dotfiles, nested paths,
+brace patterns, glob 7 callback/sync traversal and modern async/cancelled glob.

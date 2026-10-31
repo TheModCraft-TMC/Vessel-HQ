@@ -1,0 +1,24 @@
+diff --git a/dist/commonjs/index.js b/dist/commonjs/index.js
+index ec1981d9a738ecf28d63190e27506ff0e600bf79..d635286d242b830696ac6cb1d5f3e6cbbd39ce0c 100644
+--- a/dist/commonjs/index.js
++++ b/dist/commonjs/index.js
+@@ -1403,6 +1403,11 @@ class Minimatch {
+             m = new nonrecursive_glob_match_1.Matcher(pattern, { nocase, noext, dot, normalize });
+             this.#matchers.set(pattern, m);
+         }
++        // glob 7 consumes parsed segments through String.match and _glob.
++        m._glob = pattern;
++        m[Symbol.match] = function (value) {
++            return this.test(value) ? [value] : null;
++        };
+         return m;
+     }
+     #slashSplit(p) {
+@@ -1509,4 +1514,7 @@ Object.defineProperty(exports, "unescape", { enumerable: true, get: function ()
+ exports.minimatch.Minimatch = Minimatch;
+ exports.minimatch.escape = escape_js_1.escape;
+ exports.minimatch.unescape = unescape_js_1.unescape;
++// Preserve the callable CommonJS API used by legacy Babel, ESLint and glob.
++// Named exports remain attached; ESM uses its unchanged dedicated entry point.
++module.exports = Object.assign(exports.minimatch, exports);
+ //# sourceMappingURL=index.js.map

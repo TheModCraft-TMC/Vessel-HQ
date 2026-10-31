@@ -77,6 +77,9 @@ The fresh check writes `dist/security/npm-audit.json`; moderate, high and critic
 findings block validation, while low findings remain visible for scoped tracking.
 Unavailable, malformed or incomplete results fail validation. CI retains reports
 for 30 days on normal PR/stable, manual frontend and beta validation paths.
-Run `node --test scripts/audit-npm-fresh.test.mjs scripts/deepmerge-security.test.mjs`
-to verify the gate and installed local deepmerge mitigation. The low deepmerge
+Run `node --test scripts/audit-npm-fresh.test.mjs scripts/deepmerge-security.test.mjs scripts/glob-compatibility.test.mjs`
+to verify the gate, installed local deepmerge mitigation and glob compatibility.
+pnpm 10 JSON mode exits 1 for any finding even with `--audit-level=moderate`;
+the wrapper applies the severity policy to complete reports and rejects
+unexpected process failures. The low deepmerge
 advisory remains visible because no upstream patched release is available.

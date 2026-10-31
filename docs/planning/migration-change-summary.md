@@ -1,8 +1,25 @@
 # Migration change summary and release commit message
 
-Status: development integration, updated October 29, 2026. `RELEASE_VERSION` remains `1.3.1`; the experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`.
+Status: preparing `1.3.2`, updated October 31, 2026. The experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`. No `1.3.2` publication or deployment is claimed.
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
+
+## Release preparation — October 31, 2026
+
+- Advance only `RELEASE_VERSION` to the next unused local patch, `1.3.2`;
+  preserve package/API/datastore compatibility version `2.45.0`.
+- Repair the live audit gate's interpretation of pnpm 10 JSON status 1. Complete
+  low-only reports pass; moderate/higher findings, incomplete reports, killed
+  scans and unexpected process failures still fail. Regression tests invoke
+  the actual wrapper and verify retained report contents.
+- The fresh scan exposed new follow-redirects, glob and minimatch advisories.
+  Resolve them to 1.16.2, 14.0.2 (modern glob consumers) and 11.0.1 respectively.
+  Keep glob 7's callback interface through the documented maintained-matcher
+  CommonJS adapter and parsed-segment bridge. No advisory is excluded.
+- Add [draft release notes](../releases/1.3.2.md) and the
+  [current verification record](../security/release-readiness-1.3.2.md).
+  This section describes the release-preparation patch; prior sections below
+  describe already committed work included in the release branch.
 
 ## Audit continuation — October 29, 2026
 
