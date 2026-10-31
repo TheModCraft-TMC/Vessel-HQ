@@ -1169,3 +1169,7 @@ func TestCustomTemplateCreate_FromRepository_WithSourceID_NonExistentSource(t *t
 	require.NotNil(t, herr)
 	require.Equal(t, http.StatusInternalServerError, herr.StatusCode)
 }
+
+func (g *gitServiceCreatingFile) CloneRepositoryWithCommit(ctx context.Context, destination, url, ref, username, password string, skipTLS bool) (string, error) {
+	return "deadbeef123", g.CloneRepository(ctx, destination, url, ref, username, password, skipTLS)
+}

@@ -1,13 +1,35 @@
 .actionBar {
-  /* Match the sidebar offset - uses the same CSS variable as the page-wrapper */
-  left: var(--sidebar-closed-width, 72px);
+  /* Inherit the active width from MainLayout, including its collapsed state. */
+  left: var(--active-sidebar-width, 64px);
 
-  /* Must match sidebar transition exactly: all 0.4s ease 0s */
-  transition: all 0.4s ease 0s;
+  transition: left 200ms ease;
   border-top: 1px solid var(--border-widget);
 }
 
-/* When sidebar is open, adjust the left position using global class */
-:global(#page-wrapper.open) .actionBar {
-  left: var(--sidebar-width, 300px);
+@media (max-width: 720px) {
+  .actionBar {
+    left: 0;
+    height: auto;
+    min-height: 64px;
+    max-height: 144px;
+    flex-wrap: wrap;
+    gap: 8px;
+    overflow: auto;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .actionBar > * {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .container {
+    padding-bottom: 160px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .actionBar {
+    transition: none;
+  }
 }

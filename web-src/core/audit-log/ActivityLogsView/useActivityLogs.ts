@@ -77,7 +77,10 @@ function safeAtob(value: string) {
     return value;
   }
   try {
-    return window.atob(value);
+    const bytes = Uint8Array.from(window.atob(value), (char) =>
+      char.charCodeAt(0)
+    );
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
   } catch (err) {
     // If the payload is not base64 encoded, return the original value
     return value;

@@ -13,9 +13,10 @@ import (
 )
 
 type mockGitSvc struct {
-	cloneErr  error
-	commitID  string
-	commitErr error
+	cloneErr    error
+	commitID    string
+	commitErr   error
+	latestCalls int
 }
 
 func (m *mockGitSvc) CloneRepository(_ context.Context, _, _, _, _, _ string, _ bool) error {
@@ -23,7 +24,8 @@ func (m *mockGitSvc) CloneRepository(_ context.Context, _, _, _, _, _ string, _ 
 }
 
 func (m *mockGitSvc) LatestCommitID(_ context.Context, _, _, _, _ string, _ bool) (string, error) {
-	return m.commitID, m.commitErr
+	m.latestCalls++
+	return "new-remote-commit", m.commitErr
 }
 
 func (m *mockGitSvc) ListRefs(_ context.Context, _, _, _ string, _ bool, _ bool) ([]string, error) {
@@ -48,6 +50,7 @@ func TestDownloadGitRepository_Success(t *testing.T) {
 	commitID, err := DownloadGitRepository(t.Context(), cfg, svc, func() string { return t.TempDir() })
 	require.NoError(t, err)
 	require.Equal(t, "abc123", commitID)
+	require.Zero(t, svc.latestCalls, "must record downloaded commit, not query a moving ref")
 }
 
 func TestDownloadGitRepository_NilAuthentication(t *testing.T) {
@@ -98,4 +101,11 @@ func TestDownloadGitRepository_LatestCommitIDError(t *testing.T) {
 	_, err := DownloadGitRepository(t.Context(), cfg, svc, func() string { return t.TempDir() })
 	require.Error(t, err)
 	require.ErrorIs(t, err, commitErr)
+}
+
+func (m *mockGitSvc) CloneRepositoryWithCommit(_ context.Context, _, _, _, _, _ string, _ bool) (string, error) {
+	if m.cloneErr != nil {
+		return "", m.cloneErr
+	}
+	return m.commitID, m.commitErr
 }

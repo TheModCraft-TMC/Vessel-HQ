@@ -138,8 +138,9 @@ export async function deleteManifest(params: {
   }
 }
 
-function sha256(string: string) {
+async function sha256(string: string) {
   const hash = new Sha256();
   hash.update(string);
-  return hash.digest();
+  const bytes = await hash.digest();
+  return `sha256:${Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')}`;
 }

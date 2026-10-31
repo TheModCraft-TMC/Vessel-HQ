@@ -206,6 +206,26 @@
   background: rgb(255 255 255 / 10%);
 }
 
+.mobileDismiss {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 50;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--frame);
+  color: #f8fafc;
+}
+
+.mobileDismiss svg {
+  width: 20px;
+  height: 20px;
+}
+
 .sidebarToggle:focus-visible {
   outline: 2px solid var(--blue-7);
   outline-offset: 2px;
@@ -462,6 +482,11 @@
     transition: transform 180ms ease;
   }
 
+  .sidebarRegion[role='dialog'] {
+    z-index: 70;
+    transform: translateX(0);
+  }
+
   .shell[data-sidebar-open] .sidebarRegion {
     transform: translateX(0);
   }
@@ -504,7 +529,7 @@
 
   .backdrop {
     position: fixed;
-    z-index: 30;
+    z-index: 60;
     display: block;
     border: 0;
     inset: 0;

@@ -36,16 +36,13 @@ export function ActivityLogsContent() {
 
   return (
     <PageContent>
-      <div className="row">
-        <div className="col-sm-12">
-          <FilterBar
-            value={range}
-            onChange={setRange}
-            onExport={() => exportLogs.mutate(query)}
-          />
-        </div>
-      </div>
+      <FilterBar
+        value={range}
+        onChange={setRange}
+        onExport={() => exportLogs.mutate(query)}
+      />
       <ActivityLogsTable
+        flush
         sort={tableState.sortBy}
         onChangeSort={(value) =>
           tableState.setSortBy(value?.id, value?.desc || false)

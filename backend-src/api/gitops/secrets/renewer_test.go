@@ -1,11 +1,14 @@
 package secrets
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
 	"testing"
+	"testing/synctest"
+	"time"
 
 	portainer "github.com/portainer/portainer/api"
 	sourceDS "github.com/portainer/portainer/api/dataservices/source"
@@ -59,4 +62,64 @@ func TestVaultTokenRenewerRunOnceRenewsStoredPeriodicTokens(t *testing.T) {
 	renewer.runOnce(t.Context())
 
 	require.EqualValues(t, 1, renewals.Load())
+}
+
+func TestVaultTokenRenewerSchedulesShortLeasesAndSourceChanges(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		renewer := NewVaultTokenRenewer(nil)
+		ctx, cancel := context.WithCancel(t.Context())
+		defer cancel()
+		now := time.Now()
+		expiry := now.Add(120 * time.Second)
+		checks, renewals := 0, 0
+		go renewer.run(ctx, func(context.Context) time.Duration {
+			checks++
+			ttl := int64(expiry.Sub(time.Now()) / time.Second)
+			require.Positive(t, ttl, "periodic token expired before the next check")
+			if ttl <= 60 {
+				renewals++
+				expiry = time.Now().Add(120 * time.Second)
+				ttl = 120
+			}
+			return renewalCheckDelay(VaultTokenRenewalResult{TTL: ttl, Period: 120})
+		})
+		time.Sleep(5 * time.Minute)
+		synctest.Wait()
+		require.Greater(t, renewals, 2)
+		before := checks
+		renewer.NotifySourceChanged(1)
+		synctest.Wait()
+		require.Equal(t, before+1, checks)
+		cancel()
+		synctest.Wait()
+		before = checks
+		time.Sleep(time.Hour)
+		require.Equal(t, before, checks)
+	})
+}
+
+func TestVaultTokenRenewalDelayLeavesSafetyMargin(t *testing.T) {
+	require.Less(t, renewalCheckDelay(VaultTokenRenewalResult{TTL: 61, Period: 120}), 61*time.Second)
+	require.Less(t, renewalCheckDelay(VaultTokenRenewalResult{TTL: 1, Period: 1}), time.Second)
+}
+
+func TestVaultTokenRenewerRetriesTransientCheckFailures(t *testing.T) {
+	synctest.Test(t, func(t *testing.T) {
+		renewer := NewVaultTokenRenewer(nil)
+		ctx, cancel := context.WithCancel(t.Context())
+		defer cancel()
+		checks := 0
+		go renewer.run(ctx, func(context.Context) time.Duration {
+			checks++
+			if checks <= 2 {
+				return time.Second
+			}
+			return time.Hour
+		})
+		time.Sleep(2 * time.Second)
+		synctest.Wait()
+		require.Equal(t, 3, checks)
+		cancel()
+		synctest.Wait()
+	})
 }

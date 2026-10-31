@@ -18,7 +18,7 @@ function renderComponent(
         logos: { full: 'vessel-hq-logo.svg', collapsed: 'vessel-hq-mark.svg' },
       }}
     >
-      <Context.Provider value={sidebarState}>
+      <Context.Provider value={{ setOpen: vi.fn(), ...sidebarState }}>
         <Wrapped {...props} />
       </Context.Provider>
     </TestLayoutProvider>

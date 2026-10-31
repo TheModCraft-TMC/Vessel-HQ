@@ -2,6 +2,8 @@ import clsx from 'clsx';
 import { ReactNode } from 'react';
 import { useId } from 'react';
 
+import styles from './SegmentedControl.module.css';
+
 export interface SegmentItem {
   id: string;
   label: ReactNode;
@@ -34,9 +36,15 @@ export function SegmentedControl({
   const groupName = useId();
 
   return (
-    <fieldset className={clsx('m-0 min-w-0 border-0 p-0', className)}>
+    <fieldset className={clsx(styles.root, className)}>
       <legend className="sr-only">{label}</legend>
-      <div role="tablist" data-variant={variant} data-size={size}>
+      <div
+        className={styles.options}
+        role="radiogroup"
+        aria-label={label}
+        data-variant={variant}
+        data-size={size}
+      >
         {items.map((item) => (
           <SegmentedControlItem
             key={item.id}
@@ -65,7 +73,12 @@ function SegmentedControlItem({
   onChange,
 }: ItemProps) {
   return (
-    <label title={item.title} className={clsx('m-0', { active: isActive })}>
+    <label
+      title={item.title}
+      className={styles.option}
+      data-active={isActive || undefined}
+      data-disabled={item.disabled || undefined}
+    >
       <input
         type="radio"
         name={groupName}

@@ -3243,8 +3243,10 @@ paths:
       tags:
         - gitops
     put:
-      description: |-
-        Updates an existing GitOps source backed by a Git repository.
+      description: >-
+        Updates an existing Git or Vault source. The stored source type selects
+        the applicable payload fields.
+
         **Access policy**: authenticated
       operationId: GitOpsSourcesUpdateGit
       parameters:
@@ -3258,7 +3260,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/sources.GitSourceUpdatePayload"
+              $ref: "#/components/schemas/sources.SourceUpdatePayload"
         description: Git source details
         required: true
       responses:
@@ -3281,7 +3283,7 @@ paths:
       security:
         - ApiKeyAuth: []
         - jwt: []
-      summary: Update a Git source
+      summary: Update a Git or Vault source
       tags:
         - gitops
   "/gitops/sources/{id}/access":
@@ -3344,7 +3346,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/sources.GitSourceUpdatePayload"
+              $ref: "#/components/schemas/sources.SourceUpdatePayload"
         description: Optional connection overrides; omitted fields fall back to stored
           values
       responses:
@@ -19180,13 +19182,6 @@ components:
         username:
           type: string
       type: object
-    sources.GitAuthenticationUpdatePayload:
-      properties:
-        password:
-          type: string
-        username:
-          type: string
-      type: object
     sources.GitSourceCreatePayload:
       properties:
         administratorsOnly:
@@ -19215,19 +19210,6 @@ components:
           type: array
       required:
         - url
-      type: object
-    sources.GitSourceUpdatePayload:
-      properties:
-        authentication:
-          $ref: "#/components/schemas/sources.GitAuthenticationUpdatePayload"
-        interval:
-          type: string
-        name:
-          type: string
-        tlsSkipVerify:
-          type: boolean
-        url:
-          type: string
       type: object
     sources.Source:
       properties:
@@ -19285,6 +19267,17 @@ components:
             type: integer
           type: array
       type: object
+    sources.SourceAuthenticationUpdatePayload:
+      properties:
+        method:
+          type: string
+        password:
+          type: string
+        token:
+          type: string
+        username:
+          type: string
+      type: object
     sources.SourceDetail:
       properties:
         access:
@@ -19328,6 +19321,27 @@ components:
         - SourceTypeHelm
         - SourceTypeOCI
         - SourceTypeVault
+    sources.SourceUpdatePayload:
+      properties:
+        address:
+          type: string
+        authentication:
+          $ref: "#/components/schemas/sources.SourceAuthenticationUpdatePayload"
+        internalAddress:
+          type: string
+        interval:
+          type: string
+        kvVersion:
+          type: integer
+        name:
+          type: string
+        namespace:
+          type: string
+        tlsSkipVerify:
+          type: boolean
+        url:
+          type: string
+      type: object
     sources.Status:
       enum:
         - unknown

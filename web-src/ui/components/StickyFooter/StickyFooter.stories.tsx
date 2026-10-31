@@ -18,7 +18,7 @@ export default {
           // adding eslint and ts ignore errors because style type doesn't support css variables
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
-          style={{ '--sidebar-closed-width': 0 }}
+          style={{ '--active-sidebar-width': '0px' }}
         >
           <p className="px-6">
             Scroll down to see the sticky action bar at the bottom of the

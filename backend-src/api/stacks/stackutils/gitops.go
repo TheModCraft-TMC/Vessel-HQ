@@ -26,7 +26,7 @@ func DownloadGitRepository(ctx context.Context, config gittypes.RepoConfig, gitS
 	}
 
 	projectPath := getProjectPath()
-	err := gitService.CloneRepository(
+	commitID, err := gitService.CloneRepositoryWithCommit(
 		ctx,
 		projectPath,
 		config.URL,
@@ -45,17 +45,5 @@ func DownloadGitRepository(ctx context.Context, config gittypes.RepoConfig, gitS
 		return "", newErr
 	}
 
-	commitID, err := gitService.LatestCommitID(
-		ctx,
-		config.URL,
-		config.ReferenceName,
-		username,
-		password,
-		config.TLSSkipVerify,
-	)
-	if err != nil {
-		newErr := fmt.Errorf("unable to fetch git repository id: %w", err)
-		return "", newErr
-	}
 	return commitID, nil
 }

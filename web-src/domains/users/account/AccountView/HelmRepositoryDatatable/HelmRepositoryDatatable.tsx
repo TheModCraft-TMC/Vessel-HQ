@@ -55,6 +55,7 @@ export function HelmRepositoryDatatable() {
 
   return (
     <Datatable
+      flush
       id="helm-repositories"
       getRowId={(row) => String(row.Id)}
       dataset={helmRepos}

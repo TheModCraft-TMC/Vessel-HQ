@@ -14,7 +14,7 @@ export function useHelmDryRun(
 ): UseQueryResult<HelmRelease, PortainerError> {
   return useQuery({
     queryKey: queryKeys.installDryRun(environmentId, payload),
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       // use updateHelmRelease as if it were a get request with dryRun. The payload is debounced to prevent too many requests.
       updateHelmRelease(
         environmentId,
@@ -22,6 +22,7 @@ export function useHelmDryRun(
         { dryRun: true },
         {
           errorMessage: 'Unable to get Helm manifest preview',
+          signal,
         }
       ),
     // don't display error toast, handle it within the component

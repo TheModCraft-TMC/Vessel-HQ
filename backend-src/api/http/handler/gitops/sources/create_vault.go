@@ -80,6 +80,10 @@ func (h *Handler) vaultSourceCreate(w http.ResponseWriter, r *http.Request) *htt
 		return httperror.InternalServerError("Unable to create source", err)
 	}
 
+	if h.sourceScheduler != nil && h.sourceScheduler.SourceChanged != nil {
+		h.sourceScheduler.SourceChanged(src.ID)
+	}
+
 	redactVaultSource(src)
 	return response.JSONWithStatus(w, src, http.StatusCreated)
 }

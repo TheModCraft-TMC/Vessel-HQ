@@ -337,3 +337,10 @@ func TestCustomTemplateGitFetch_EmptySourceIDsReturnsBadRequest(t *testing.T) {
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
 }
+
+func (g *TestGitService) CloneRepositoryWithCommit(ctx context.Context, destination, url, ref, username, password string, skipTLS bool) (string, error) {
+	return "", g.CloneRepository(ctx, destination, url, ref, username, password, skipTLS)
+}
+func (g *InvalidTestGitService) CloneRepositoryWithCommit(ctx context.Context, destination, url, ref, username, password string, skipTLS bool) (string, error) {
+	return "", g.CloneRepository(ctx, destination, url, ref, username, password, skipTLS)
+}

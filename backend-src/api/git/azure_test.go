@@ -2,9 +2,13 @@ package git
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/go-git/go-git/v5"
@@ -389,9 +393,9 @@ type testRepoManager struct {
 	called bool
 }
 
-func (t *testRepoManager) Download(_ context.Context, _ string, _ *git.CloneOptions) error {
+func (t *testRepoManager) Download(_ context.Context, _ string, _ *git.CloneOptions) (string, error) {
 	t.called = true
-	return nil
+	return "", nil
 }
 
 func (t *testRepoManager) LatestCommitID(_ context.Context, _, _ string, _ *git.ListOptions) (string, error) {
@@ -659,4 +663,53 @@ func Test_listFiles_azure(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestAzureFailedDownloadsRemoveTemporaryFiles(t *testing.T) {
+	fips.InitFIPS(false)
+	temp := t.TempDir()
+	t.Setenv("TMPDIR", temp)
+	for _, failure := range []string{"http", "partial", "canceled"} {
+		t.Run(failure, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if failure == "http" {
+					w.WriteHeader(http.StatusUnauthorized)
+					return
+				}
+				w.Header().Set("Content-Length", "1000")
+				_, _ = io.WriteString(w, "partial")
+			}))
+			defer server.Close()
+			ctx, cancel := context.WithCancel(t.Context())
+			defer cancel()
+			if failure == "canceled" {
+				cancel()
+			}
+			client := &azureClient{baseUrl: server.URL}
+			_, err := client.downloadZipFromAzureDevOps(ctx, &git.CloneOptions{URL: "https://dev.azure.com/org/project/_git/repo"})
+			require.Error(t, err)
+			files, err := os.ReadDir(temp)
+			require.NoError(t, err)
+			require.Empty(t, files)
+		})
+	}
+}
+
+func TestAzureDownloadPinsResolvedCommit(t *testing.T) {
+	fips.InitFIPS(false)
+	commit := strings.Repeat("a", 40)
+	var downloadRef string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Query().Get("download") != "true" {
+			_, _ = fmt.Fprintf(w, `{"value":[{"commitId":%q}]}`, commit)
+			return
+		}
+		downloadRef = r.URL.Query().Get("versionDescriptor.version")
+		require.Equal(t, "commit", r.URL.Query().Get("versionDescriptor.versionType"))
+		w.WriteHeader(http.StatusUnauthorized)
+	}))
+	defer server.Close()
+	_, err := (&azureClient{baseUrl: server.URL}).Download(t.Context(), t.TempDir(), &git.CloneOptions{URL: "https://dev.azure.com/org/project/_git/repo", ReferenceName: plumbing.ReferenceName("refs/heads/main")})
+	require.Error(t, err)
+	require.Equal(t, commit, downloadRef)
 }

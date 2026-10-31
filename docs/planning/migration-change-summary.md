@@ -1,8 +1,39 @@
 # Migration change summary and release commit message
 
-Status: development integration, updated October 22, 2026. `RELEASE_VERSION` remains `1.3.1`; the experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`.
+Status: preparing `1.3.2`, updated October 31, 2026. The experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`. No `1.3.2` publication or deployment is claimed.
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
+
+## Release preparation — October 31, 2026
+
+- Advance only `RELEASE_VERSION` to the next unused local patch, `1.3.2`;
+  preserve package/API/datastore compatibility version `2.45.0`.
+- Repair the live audit gate's interpretation of pnpm 10 JSON status 1. Complete
+  low-only reports pass; moderate/higher findings, incomplete reports, killed
+  scans and unexpected process failures still fail. Regression tests invoke
+  the actual wrapper and verify retained report contents.
+- The fresh scan exposed new follow-redirects, glob and minimatch advisories.
+  Resolve them to 1.16.2, 14.0.2 (modern glob consumers) and 11.0.1 respectively.
+  Keep glob 7's callback interface through the documented maintained-matcher
+  CommonJS adapter and parsed-segment bridge. No advisory is excluded.
+- Add [draft release notes](../releases/1.3.2.md) and the
+  [current verification record](../security/release-readiness-1.3.2.md).
+  This section describes the release-preparation patch; prior sections below
+  describe already committed work included in the release branch.
+- Replace the Helm login test's assumption about an external unavailable
+  hostname with a controlled local OCI authentication rejection and verify
+  credentials are sent. The repaired focused test and full local Go suite pass.
+  The first hosted run passed frontend validation but reproduced the old Helm
+  test failure; consult the final PR head for complete release CI results.
+
+## Audit continuation — October 29, 2026
+
+The [current remediation and verification ledger](../security/audit-follow-up-2026-10-29.md)
+records local fixes for the October 28 audit, generated API changes, dependency
+updates, live npm advisory CI and the remaining Go maintenance decision. October
+23 PR #245 checks were read back as successful; they do not validate this new
+uncommitted scope. README and pre-existing Next environment-file edits are
+preserved. No release identity, upstream baseline or production resource changed.
 
 ## SonarCloud issue-sync recovery — October 28, 2026
 
@@ -27,6 +58,91 @@ four closed duplicate groups, without modifying issues. This is a point-in-time
 plan, not an instruction to suppress newly identified findings. Hosted execution
 is pending the pull request; no Sonar finding disposition or security gate was
 changed.
+
+
+## Current GitHub issue work — October 23, 2026
+
+- #243: new standalone [Vessel Code Mode adapter](../../tools/vessel-mcp/README.md)
+  with connected MCP tool discovery, selected schema-to-TypeScript declarations,
+  async JS/TS execution, host-side authorization and credential isolation,
+  encrypted portable approval continuations, one-use resume, retained resource
+  budgets, agent instructions, CI and offline benchmarks. It is not deployed or
+  automatically enabled in Vessel. No pre-existing agent loop was found.
+- #244: [OpenTofu/Pulumi evaluation](iac-integration-evaluation.md) recommends
+  OpenTofu-first infrastructure projects using isolated runners and exact-plan
+  approval, with Pulumi behind a shared job contract. Provisioning remains future
+  work, not an enabled feature.
+- #235: the integration harness accepts artifacts only below an independently
+  operator-configured root, opens through directory descriptors without following
+  replacement links, rejects nonregular files and keeps the private ELF snapshot.
+  External build roots remain supported through `VESSEL_SMOKE_ARTIFACT_ROOT`.
+  All 46 harness tests passed; remote Sonar reanalysis is still required.
+- #236–#240: five intentional privileged bootstrap cases were reviewed against
+  their source/rationale and recorded Accepted/WONTFIX in Sonar. API readback
+  confirmed all five. Their GitHub issues were closed as not planned through the
+  existing authenticated CLI after the connector refused write access. Root
+  startup was preserved; no false-positive classifications, source exclusions,
+  quality-gate configuration changes or comments were added. See the
+  [review record](../security/sonar-root-review.md#october-23-2026--current-issue-dispositions).
+
+## UI alignment and mobile work — October 23, 2026
+
+- Visually inspected 22 route patterns on deployed `1.3.1` and inventoried all
+  168 page files. The [audit coverage](ui-alignment-audit-2026-10-23.md) records
+  remaining live inspections; this is not a completed all-page production audit.
+- Aligned registry cards using `PageContent`, removed account/activity double
+  insets, repaired environment/registry table padding, and styled the shared
+  SegmentedControl with accessible radiogroup semantics.
+- Corrected fixed footer offsets to the active 280px/64px sidebar and zero on
+  phones, added phone action wrapping and reserved content space, and wrapped
+  table toolbars at the shell breakpoint. Corrected the trailing data-cell
+  padding selector.
+- Mobile navigation now uses the existing Radix dialog primitive for modal
+  focus containment, outside dismissal, Escape/close, focus restoration and
+  route-selection dismissal. The desktop sidebar behavior is retained.
+- Actual shared-component browser checks: 320px/390px phones and 1440px desktop
+  footer geometry, a 320px datatable, long resource heading, themed radio
+  selection and a 320px mobile navigation drawer. Shift+Tab stayed inside the
+  drawer; Escape closed it and focused the expand control. Local fixtures are
+  not relabeled as authenticated production route coverage.
+- The browser extension explicitly denied the deployed Vessel origin through a
+  saved permission setting. The user was asked to enable site access; no
+  alternate surface or indirect script is used to bypass that denial. No
+  deployment, production form submission or production resource change occurred.
+- Fresh final checks passed with Node `24.21.0`: modernization, boundaries,
+  App Router compliance (168 pages), typecheck, all 368 frontend test files
+  (2,505 passed, 5 skipped, 11 todo), lint (0 errors, 194 existing warnings),
+  webpack production build and standalone packaging. The final full test run
+  used four workers after default concurrency caused heavy local contention.
+- Adapter verification: 17 Node tests passed, including actual MCP stdio
+  discovery/execution and externally approved restart/resume; source lint passed,
+  dependency audit found no known vulnerabilities, and 3/3 deterministic benchmark
+  workflows passed. See the [measured benchmark](code-mode-benchmark-2026-10-23.md)
+  for token counts, actual/synthetic scope and explicit latency limitations.
+- Documentation path checks passed for 430 local links and all 168 route-source
+  paths; whitespace checks passed. `RELEASE_VERSION` is `1.3.1`; the malformed
+  local prefix was repaired. The user's unrelated README edit is preserved.
+
+## Local build recovery — October 23, 2026
+
+- Reproduced a webpack failure caused by missing `@tailwindcss/postcss` in the
+  local installation, despite its existing manifest and lockfile entries.
+  Restored dependencies with `pnpm install --frozen-lockfile`; no dependency
+  versions or build configuration changed.
+- Used the official Node.js `24.21.0` macOS ARM64 archive after verifying its
+  SHA-256 against the published checksum. The shell defaults to Node `25.9.0`,
+  and Homebrew's Node 24 still cannot start because its simdjson library is
+  missing. The temporary runtime does not repair the Homebrew installation.
+- Fresh verification passed: modernization, architecture boundaries (3,316
+  source files), App Router compliance (168 pages), standalone typecheck, lint
+  (0 errors, 194 warnings), and the production webpack build with standalone
+  packaging. The packaged server returned HTTP 200 for `/login` on a temporary
+  localhost port. All 367 frontend test files passed: 2,502 tests passed,
+  5 skipped and 11 todo. No authenticated browser workflow, publication or
+  deployment was performed.
+- Next.js regenerated `next-env.d.ts` with production type paths during the
+  build. Run standalone typechecking after a build finishes to avoid racing
+  regeneration of `.next/types`.
 
 ## Develop integration — October 22, 2026
 
