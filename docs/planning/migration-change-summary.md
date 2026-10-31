@@ -1,8 +1,17 @@
 # Migration change summary and release commit message
 
-Status: preparing `1.3.2`, updated October 31, 2026. The experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`. No `1.3.2` publication or deployment is claimed.
+Status: stable `1.3.2` published and production verified, updated October 31, 2026. Experimental extensions originated in `1.3.1-beta.1`; the upstream API/datastore baseline remains `2.45.0`.
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
+
+## Stable publication and production verification — October 31, 2026
+
+- Merged PR #245 and tagged the release source as `v1.3.2` at `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`.
+- The [publication workflow](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/41206208431) passed validation, executed both platform images and published the immutable version plus `latest` in Docker Hub and GHCR. All four references share `sha256:da06e29cafd61278ff86ef4a25b600199e5e914f085066e848ab2eee64999014` and include Linux AMD64/ARM64.
+- Updated the live Docker Hub overview and retained its source in [docs/dockerhub-overview.md](../dockerhub-overview.md), correcting the namespace, asset links, incomplete code fence, release tags and upgrade guidance.
+- Production now runs the verified `themodcrafttmc/vessel-hq` digest. The datastore volume, socket, ports, network and restart policy were preserved. API/login returned HTTP 200; release identity was verified from the binary, image and startup logs, with zero restarts on follow-up.
+- A consistent, checksum-verified datastore backup and stopped prior container remain available for rollback. No Vault warning was observed during the deployment checks.
+- This publication-record follow-up changes documentation only. The released application source remains `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`; known Go dependency and authenticated UI audit follow-ups remain #262 and #241.
 
 ## Release preparation — October 31, 2026
 

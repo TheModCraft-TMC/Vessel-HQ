@@ -1,8 +1,6 @@
 # 1.3.2 release readiness — October 31, 2026
 
-Status: source prepared; final PR checks and the publication checklist remain
-required. This record does not claim a merged PR, tagged release, published
-image or deployment.
+Status: `1.3.2` released and deployed on October 31, 2026. Publication and runtime verification are recorded below; known follow-ups remain explicit.
 
 ## Fresh npm advisory remediation
 
@@ -40,7 +38,9 @@ local verification uses a temporary official runtime.
 | Production build | Local webpack build and Next.js standalone packaging passed |
 | Local standalone smoke | Packaged `/login` returned HTTP 200 with Vessel branding |
 | Go suite | Full `GOWORK=off go test -p 3 ./...` passed after the Helm fixture repair; Kubernetes used a nonexistent kubeconfig, so this is not live-cluster coverage |
-| Hosted release checks | All checks passed on `0a60c88cd`, including frontend/harness, Go, release context and execution of both amd64/arm64 images; both binaries reported `1.3.2` |
+| Hosted release checks | [Publication workflow](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/41206208431) passed on `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`, including frontend/harness, Go, release context and both platform image executions; both binaries reported `1.3.2` |
+| Registry publication | Docker Hub version/latest inspected independently; GHCR version/latest verified by authenticated CI; all share `sha256:da06e29cafd61278ff86ef4a25b600199e5e914f085066e848ab2eee64999014` |
+| Production deployment | Verified release `1.3.2`, preserved runtime/data volume, API/login HTTP 200, zero restarts, checksum-verified backup and stopped prior container retained |
 | Documentation | Changed-document local links and whitespace checked |
 | Develop CI-sync integration | 33 issue-sync and 19 pinned root-review unit tests passed after retaining both documentation sections |
 
@@ -51,22 +51,10 @@ fixture, checks that configured Basic credentials arrive and returns a
 controlled authentication rejection. The focused test and full Go rerun pass;
 production authentication behavior is unchanged.
 
-The subsequent develop integration brings in the Sonar issue-sync repair from
-PR #265. Only its CI scripts and the migration summary changed; the document
-conflict was resolved by retaining both the release and sync-recovery records.
-Application source is unchanged from the passing `0a60c88cd` run. Final combined
-head checks remain enforced on [PR #245](https://github.com/TheModCraft-TMC/Vessel-HQ/pull/245);
-use that head's results before merging or publishing. No publication steps ran.
+The develop integration retained the Sonar issue-sync repair from PR #265 and both documentation records. The combined PR passed before merge. The stable tag points to `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`; the publication workflow built and verified that exact source, published both registries, and promoted matching channel aliases.
 
-## Remaining release gates
+## Known follow-ups and future releases
 
-- Fresh remote CI must pass on the final committed release revision.
-- Go dependency source migrations/publications (#262) remain unresolved. Do
-  not describe the existing module graph as clean or shipped forks as complete.
-- Full authenticated production UI/mobile coverage (#241) remains outstanding.
-- Docker Desktop was started for validation. Cross-compilation does not
-  replace executing both image architectures or runtime smoke tests.
-- `v1.3.2` was absent from GitHub tags and Docker Hub returned HTTP 404 for
-  `1.3.2` on October 31. Recheck immutable tags at publication time.
-- Immutable tag availability, dual-registry digest/platform checks and runtime
-  verification are required at publication/deployment time.
+- Go dependency source migrations/publications (#262) remain unresolved. The selected Docker monolith/Distribution advisory ranges have not been removed; this is not a clean Go advisory scan claim.
+- Full authenticated production UI/mobile coverage (#241) remains outstanding. Deployment verification covered the public API/login, runtime configuration and release identity.
+- Future releases must repeat immutable-tag availability, image architecture execution, registry digest/channel checks and runtime verification. Never reuse the published `v1.3.2` or image version.
