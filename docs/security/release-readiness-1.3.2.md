@@ -33,13 +33,13 @@ local verification uses a temporary official runtime.
 | Architecture guards | Modernization, boundaries (3,324 source files) and App Router passed |
 | Node script tests | 51 passed; final focused audit/glob checks also passed after formatting |
 | Release version and mirror scripts | Passed, including failure/promotion cases |
-| Frontend tests | Full suite passed in hosted CI on `0a60c88cd`; local run timed out finding a PVC resize button, then all 11 PVC tests passed in isolation |
+| Frontend tests | UI repair validation and publication each passed 2,519 tests across 372 files (5 skipped, 11 todo); local timeout attempts and focused reruns are recorded below |
 | Lint | Passed locally: 0 errors, 192 warnings |
 | Production build | Local webpack build and Next.js standalone packaging passed |
 | Local standalone smoke | Packaged `/login` returned HTTP 200 with Vessel branding |
 | Go suite | Full `GOWORK=off go test -p 3 ./...` passed after the Helm fixture repair; Kubernetes used a nonexistent kubeconfig, so this is not live-cluster coverage |
-| Hosted release checks | [Publication workflow](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/41206208431) passed on `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`, including frontend/harness, Go, release context and both platform image executions; both binaries reported `1.3.2` |
-| Registry publication | Docker Hub version/latest inspected independently; GHCR version/latest verified by authenticated CI; all share `sha256:da06e29cafd61278ff86ef4a25b600199e5e914f085066e848ab2eee64999014` |
+| Hosted release checks | [Reissue workflow](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/41217104063) passed on `11647697c85d06c2d6897f652ac00723c0840a93`, including frontend/harness, Go, release context and both platform executions |
+| Registry publication | Docker Hub version/latest inspected independently; GHCR version/latest verified by authenticated CI; all share `sha256:1fff0b3daad298a6128bd1c9d95fe198efe8546e7e34bbe56bbcc2410d1b15cc`; original source/image archives retained |
 | Production deployment | Verified release `1.3.2`, preserved runtime/data volume, API/login HTTP 200, zero restarts, checksum-verified backup and stopped prior container retained |
 | Documentation | Changed-document local links and whitespace checked |
 | Develop CI-sync integration | 33 issue-sync and 19 pinned root-review unit tests passed after retaining both documentation sections |
@@ -51,10 +51,18 @@ fixture, checks that configured Basic credentials arrive and returns a
 controlled authentication rejection. The focused test and full Go rerun pass;
 production authentication behavior is unchanged.
 
-The develop integration retained the Sonar issue-sync repair from PR #265 and both documentation records. The combined PR passed before merge. The stable tag points to `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`; the publication workflow built and verified that exact source, published both registries, and promoted matching channel aliases.
+The develop integration retained the Sonar issue-sync repair from PR #265 and both documentation records. The combined PR passed before merge. At initial publication the stable tag pointed to `b4a82cf24e4ea6dc7aaab081f9a4edfeb7f97f46`; the initial workflow built and verified that exact source, published both registries, and promoted matching channel aliases.
 
 ## Known follow-ups and future releases
 
 - Go dependency source migrations/publications (#262) remain unresolved. The selected Docker monolith/Distribution advisory ranges have not been removed; this is not a clean Go advisory scan claim.
 - Full authenticated production UI/mobile coverage (#241) remains outstanding. Deployment verification covered the public API/login, runtime configuration and release identity.
-- Future releases must repeat immutable-tag availability, image architecture execution, registry digest/channel checks and runtime verification. Never reuse the published `v1.3.2` or image version.
+- Future releases must repeat immutable-tag availability, image architecture execution, registry digest/channel checks and runtime verification. The maintainer-authorized same-tag UI repair below is the sole exception for this version; future replacements require explicit authorization and preserved originals.
+
+## Same-tag UI repair verification — October 31, 2026
+
+[PR #295 validation](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/41215855616) passed 2,519 frontend tests (372 files), all architecture/type/lint checks, Storybook build, publisher regression tests, harness/Go tests, release packaging and both platform executions. Local guards/lint/build/typecheck and focused tests passed; two local full-suite attempts timed out in unchanged tests before the hosted suite passed.
+
+The [publication](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/41217104063) validated `11647697c85d06c2d6897f652ac00723c0840a93` again, archived the original index, and verified Docker Hub/GHCR version/latest at `sha256:1fff0b3daad298a6128bd1c9d95fe198efe8546e7e34bbe56bbcc2410d1b15cc` with both Linux architectures. Docker Hub refs and its original archive were independently inspected. Production verification confirmed the repaired digest, release identity, preserved runtime/data volume, HTTP 200 API/login, zero restarts, a checksum-verified backup and the stopped previous container. Vault warning observed: `false`.
+
+Fresh browser execution and post-deployment visual coverage remain pending because the requested Chrome extension host was unavailable after reconnecting. Known Go advisory follow-ups and the wider UI audit remain unchanged.
