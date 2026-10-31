@@ -2,8 +2,11 @@ package sdk
 
 import (
 	"errors"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	portainer "github.com/portainer/portainer/api"
@@ -271,19 +274,32 @@ func TestLoginToOCIRegistry(t *testing.T) {
 	})
 
 	t.Run("should attempt login for valid credentials", func(t *testing.T) {
+		var authenticated atomic.Bool
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if username, password, ok := r.BasicAuth(); ok && username == "user" && password == "pass" {
+				authenticated.Store(true)
+			}
+			w.Header().Set("WWW-Authenticate", `Basic realm="test registry"`)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte(`{"errors":[{"code":"UNAUTHORIZED","message":"authentication required"}]}`))
+		}))
+		t.Cleanup(server.Close)
 		registry := &portainer.Registry{
 			ID:             9877,
-			URL:            "my-registry.io",
+			Type:           portainer.CustomRegistry,
+			URL:            strings.TrimPrefix(server.URL, "http://"),
 			Authentication: true,
 			Username:       "user",
 			Password:       "pass",
 		}
-		// this will fail because it can't connect to the registry,
-		// but it proves that the loginToOCIRegistry function is calling the login function.
+		// A controlled authentication rejection proves login was attempted without
+		// depending on an external hostname remaining unavailable.
 		client, err := createOCIRegistryClient(registry)
 		require.Error(t, err)
 		is.Nil(client)
 		is.Contains(err.Error(), "failed to login to registry")
+		is.True(authenticated.Load(), "registry must receive the configured credentials")
 	})
 
 	t.Run("should attempt login for GitLab registry with valid credentials", func(t *testing.T) {

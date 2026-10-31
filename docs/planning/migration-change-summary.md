@@ -20,6 +20,11 @@ The October 16 records below cover beta application/SDK publication, Docker Hub 
   [current verification record](../security/release-readiness-1.3.2.md).
   This section describes the release-preparation patch; prior sections below
   describe already committed work included in the release branch.
+- Replace the Helm login test's assumption about an external unavailable
+  hostname with a controlled local OCI authentication rejection and verify
+  credentials are sent. The repaired focused test and full local Go suite pass.
+  The first hosted run passed frontend validation but reproduced the old Helm
+  test failure; consult the final PR head for complete release CI results.
 
 ## Audit continuation — October 29, 2026
 
