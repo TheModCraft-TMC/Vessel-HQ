@@ -35,12 +35,14 @@ local verification uses a temporary official runtime.
 | Architecture guards | Modernization, boundaries (3,324 source files) and App Router passed |
 | Node script tests | 51 passed; final focused audit/glob checks also passed after formatting |
 | Release version and mirror scripts | Passed, including failure/promotion cases |
-| Frontend tests | Full suite passed in hosted CI on `e0135f589`; local run timed out finding a PVC resize button, then all 11 PVC tests passed in isolation |
+| Frontend tests | Full suite passed in hosted CI on `0a60c88cd`; local run timed out finding a PVC resize button, then all 11 PVC tests passed in isolation |
 | Lint | Passed locally: 0 errors, 192 warnings |
 | Production build | Local webpack build and Next.js standalone packaging passed |
+| Local standalone smoke | Packaged `/login` returned HTTP 200 with Vessel branding |
 | Go suite | Full `GOWORK=off go test -p 3 ./...` passed after the Helm fixture repair; Kubernetes used a nonexistent kubeconfig, so this is not live-cluster coverage |
-| Hosted frontend/harness checks | Passed on `e0135f589`, including typecheck, Storybook and integration harness safety |
-| Documentation | 67 local links checked; whitespace check passed |
+| Hosted release checks | All checks passed on `0a60c88cd`, including frontend/harness, Go, release context and execution of both amd64/arm64 images; both binaries reported `1.3.2` |
+| Documentation | Changed-document local links and whitespace checked |
+| Develop CI-sync integration | 33 issue-sync and 19 pinned root-review unit tests passed after retaining both documentation sections |
 
 The Go run exposed a pre-existing test that expected `my-registry.io` to reject
 login. That external hostname now responds successfully, and both local and
@@ -49,11 +51,12 @@ fixture, checks that configured Basic credentials arrive and returns a
 controlled authentication rejection. The focused test and full Go rerun pass;
 production authentication behavior is unchanged.
 
-The subsequent change touches that test and verification documentation only.
-Final production packaging and both image architecture execution checks are
-enforced by the release job on [PR #245](https://github.com/TheModCraft-TMC/Vessel-HQ/pull/245).
-Use the final head's results before merging or publishing; the earlier failed
-run is not a successful release build.
+The subsequent develop integration brings in the Sonar issue-sync repair from
+PR #265. Only its CI scripts and the migration summary changed; the document
+conflict was resolved by retaining both the release and sync-recovery records.
+Application source is unchanged from the passing `0a60c88cd` run. Final combined
+head checks remain enforced on [PR #245](https://github.com/TheModCraft-TMC/Vessel-HQ/pull/245);
+use that head's results before merging or publishing. No publication steps ran.
 
 ## Remaining release gates
 
