@@ -50,7 +50,7 @@ make deps
 ./launch-dev.sh
 ```
 
-Default development URLs are `http://localhost:8999` for the frontend and `https://localhost:9443` for the backend. The development launcher can enable automatic login; use it only locally.
+Default development URLs are `http://localhost:8999` for the frontend and `https://localhost:19443` for the backend. The development launcher can enable automatic login; use it only locally.
 
 See [development setup](./docs/development-setup.md) for separate processes and configuration, and [release and deployment](./docs/themodcraft/release-and-deployment.md) and the [build guide](./docs/build-guide.md) for image builds and rollback.
 

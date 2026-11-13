@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { PageContent } from '@console/layout/PageContent';
 
 import { ServiceViewModel } from '@/domains/services';
 import {
@@ -72,11 +73,13 @@ export function ListView() {
   return (
     <>
       <PageHeader title="Volume list" breadcrumbs="Volumes" reload />
-      <VolumesDatatable
-        dataset={volumes}
-        onRemove={handleRemove}
-        isBrowseVisible={isBrowseVisible}
-      />
+      <PageContent>
+        <VolumesDatatable
+          dataset={volumes}
+          onRemove={handleRemove}
+          isBrowseVisible={isBrowseVisible}
+        />
+      </PageContent>
     </>
   );
 

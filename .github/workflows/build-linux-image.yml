@@ -115,7 +115,7 @@ jobs:
         run: pnpm check:npm-security:fresh
       - name: Retain fresh npm advisory report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: npm-advisory-report-${{ github.job }}
           path: dist/security/npm-audit.json
@@ -179,7 +179,7 @@ jobs:
 
       - name: Login to GHCR
         if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -242,7 +242,7 @@ jobs:
       actions: read
       packages: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
       - name: Check mirror failure handling
@@ -259,13 +259,13 @@ jobs:
           gh run list --repo TheModCraft-TMC/Vessel-HQ --workflow native-extension-prerelease.yml \
             --commit "$commit" --status success --json headBranch,event,conclusion \
             | jq -e --arg tag "v$VERSION" 'any(.[]; .headBranch == $tag and .event == "push" and .conclusion == "success")'
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -288,11 +288,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         with:
           version: 10.26.2
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24.21.0
           cache: pnpm
@@ -304,7 +304,7 @@ jobs:
         run: pnpm check:npm-security:fresh
       - name: Retain fresh npm advisory report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: npm-advisory-report-${{ github.job }}
           path: dist/security/npm-audit.json

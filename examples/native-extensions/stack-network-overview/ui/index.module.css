@@ -378,3 +378,32 @@
 .deviceRates {
   font-size: 12px;
 }
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.toolbar label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+.toolbar input:not([type='checkbox']),
+.toolbar select {
+  min-height: 40px;
+  padding: 8px;
+  color: var(--vessel-color-text);
+  background: var(--vessel-color-surface);
+  border: 1px solid var(--vessel-color-border);
+  border-radius: 6px;
+  max-width: 100%;
+}
+.inspector {
+  border: 1px solid var(--vessel-color-focus);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-wrap: anywhere;
+}

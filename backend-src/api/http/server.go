@@ -69,6 +69,7 @@ import (
 	"github.com/portainer/portainer/api/kubernetes/cli"
 	motdservice "github.com/portainer/portainer/api/motd"
 	extensiondomain "github.com/portainer/portainer/api/nativeextensions"
+	extensiondelivery "github.com/portainer/portainer/api/nativeextensions/delivery"
 	extensionrpc "github.com/portainer/portainer/api/nativeextensions/rpc"
 	extensiontopology "github.com/portainer/portainer/api/nativeextensions/topology"
 	"github.com/portainer/portainer/api/pendingactions"
@@ -370,6 +371,14 @@ func (server *Server) Start(ctx context.Context) error {
 	stackHandler.SwarmStackManager = server.SwarmStackManager
 	stackHandler.ComposeStackManager = server.ComposeStackManager
 	stackHandler.StackDeployer = server.StackDeployer
+	nativeExtensionsHandler.Redeploy = stackHandler.RedeployFromExtension
+	nativeExtensionsHandler.DeliveryRead = func(ctx context.Context, env, stack int, checkImages bool) (extensiondelivery.Snapshot, error) {
+		if checkImages {
+			return extensiondelivery.ReadImages(ctx, server.DataStore, server.DockerClientFactory, env, stack)
+		}
+		return extensiondelivery.Read(ctx, server.DataStore, env, stack)
+	}
+	nativeExtensionsHandler.StartImageAutomation(ctx)
 
 	var storybookHandler = storybook.NewHandler(server.AssetsPath)
 

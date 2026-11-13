@@ -14,6 +14,12 @@ import {
 
 import { ExtensionDetailsView } from './ExtensionDetailsView';
 
+vi.mock('../../services/settings.service', () => ({
+  extensionSettings: () => ({
+    read: async () => ({ version: 0, values: {}, secretKeys: [] }),
+  }),
+}));
+
 vi.mock('@/core/session/useUser', () => ({ useIsPureAdmin: vi.fn() }));
 vi.mock('../../services/extensions.service', () => ({
   getExtensions: vi.fn(),

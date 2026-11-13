@@ -47,17 +47,19 @@ type Note struct {
 }
 
 type Record struct {
-	Note               *Note        `json:"note,omitempty"`
-	ID                 int          `json:"id"`
-	Manifest           Manifest     `json:"manifest"`
-	Revision           int          `json:"revision"`
-	Status             string       `json:"status"`
-	Grants             []Permission `json:"grants"`
-	TrustedNativeUI    bool         `json:"trustedNativeUI"`
-	ServiceReadEnabled bool         `json:"serviceReadEnabled"`
-	UpdatedAt          int64        `json:"updatedAt"`
-	PackageAvailable   bool         `json:"packageAvailable"`
-	ArchiveDigest      string       `json:"archiveDigest,omitempty"`
+	ImageAutomation    *ImageAutomation `json:"imageAutomation,omitempty"`
+	Settings           *Settings        `json:"settings,omitempty"`
+	Note               *Note            `json:"note,omitempty"`
+	ID                 int              `json:"id"`
+	Manifest           Manifest         `json:"manifest"`
+	Revision           int              `json:"revision"`
+	Status             string           `json:"status"`
+	Grants             []Permission     `json:"grants"`
+	TrustedNativeUI    bool             `json:"trustedNativeUI"`
+	ServiceReadEnabled bool             `json:"serviceReadEnabled"`
+	UpdatedAt          int64            `json:"updatedAt"`
+	PackageAvailable   bool             `json:"packageAvailable"`
+	ArchiveDigest      string           `json:"archiveDigest,omitempty"`
 }
 type Approval struct {
 	Revision           int          `json:"revision"`
@@ -118,7 +120,7 @@ func validatePermissions(ps []Permission) error {
 		}
 		seen[p.Capability] = true
 		if !isStackCapability(p.Capability) && p.StackIDs != nil {
-			return errors.New("stack scopes are only supported for stack network and traffic reads")
+			return errors.New("stack scopes require an explicitly supported stack capability")
 		}
 		if isStackCapability(p.Capability) {
 			if len(p.StackIDs) == 0 || len(p.StackIDs) > 1000 {
@@ -138,7 +140,7 @@ func validatePermissions(ps []Permission) error {
 			if len(p.EnvironmentIDs) != 0 {
 				return errors.New("native UI and extension storage permissions are global")
 			}
-		case "environments.read", "containers.read", "stacks.read", "stacks.network.read", "stacks.traffic.read":
+		case "environments.read", "containers.read", "stacks.read", "stacks.network.read", "stacks.traffic.read", "stacks.delivery.read", "stacks.gitops.sync", "stacks.images.read", "stacks.images.update", "stacks.images.configure", "stacks.images.auto-update":
 			if len(p.EnvironmentIDs) == 0 || len(p.EnvironmentIDs) > 1000 {
 				return errors.New("explicit environment scope required")
 			}
@@ -243,7 +245,7 @@ func AuthorizeStackNetwork(r Record, environmentID, stackID int) error {
 	return AuthorizeStackCapability(r, "stacks.network.read", environmentID, stackID)
 }
 func isStackCapability(capability string) bool {
-	return capability == "stacks.network.read" || capability == "stacks.traffic.read"
+	return capability == "stacks.network.read" || capability == "stacks.traffic.read" || capability == "stacks.delivery.read" || capability == "stacks.gitops.sync" || capability == "stacks.images.read" || capability == "stacks.images.update" || capability == "stacks.images.configure" || capability == "stacks.images.auto-update"
 }
 
 // AuthorizeStackCapability never permits a stack capability using an environment grant alone.

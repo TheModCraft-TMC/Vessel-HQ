@@ -41,11 +41,11 @@ export function DatatableHeader({
       data-cy={`${dataCy}-search-input`}
     />
   );
-  const tableActions = !!renderTableActions && (
-    <Table.Actions>{renderTableActions()}</Table.Actions>
-  );
-  const tableTitleSettings = !!renderTableSettings && (
-    <Table.TitleActions>{renderTableSettings()}</Table.TitleActions>
+  const actions = renderTableActions?.();
+  const settings = renderTableSettings?.();
+  const tableActions = !!actions && <Table.Actions>{actions}</Table.Actions>;
+  const tableTitleSettings = !!settings && (
+    <Table.TitleActions>{settings}</Table.TitleActions>
   );
 
   return (

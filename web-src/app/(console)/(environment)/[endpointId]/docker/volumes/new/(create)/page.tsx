@@ -1,5 +1,7 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
 import { CreateVolumeForm } from '@/domains/volumes/views/CreateView';
 import { useCurrentUser, useIsEdgeAdmin } from '@/core/session/useUser';
 import { PageHeader } from '@/ui/layouts/view-layout';
@@ -19,7 +21,13 @@ export default function Page() {
           'Add volume',
         ]}
       />
-      <CreateVolumeForm isAdmin={isAdmin} userId={user.Id} showHeader={false} />
+      <PageContent>
+        <CreateVolumeForm
+          isAdmin={isAdmin}
+          userId={user.Id}
+          showHeader={false}
+        />
+      </PageContent>
     </>
   );
 }

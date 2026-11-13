@@ -12,7 +12,7 @@ export function TableActions({
   onRemove(items: Array<DecoratedVolume>): void;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <Authorized authorizations="DockerVolumeDelete">
         <DeleteButton
           disabled={selectedItems.length === 0}

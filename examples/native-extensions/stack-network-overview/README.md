@@ -1,5 +1,11 @@
 # Stack network overview extension
 
+Version 0.4.0 adds an Argo CD-inspired stack → networks → workloads resource
+tree, a network-attachment layout toggle, resource search, an attention-state
+filter and a node inspector with keyboard-accessible resource selection. Unknown
+workload state remains unknown; running state is not application health. The
+attachment table follows the current filters.
+
 This native React Flow extension adds **Network overview** inside its own collapsible card between Docker Stack details and Containers
 (or Services). Its expandable drawer stays inside the stack page and shares the
 neighboring cards’ alignment. It draws the selected stack's workloads and networks with a minimap,

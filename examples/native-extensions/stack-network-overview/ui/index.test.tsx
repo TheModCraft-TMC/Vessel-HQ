@@ -66,7 +66,7 @@ it('requests only the selected stack and renders a real graph with a text altern
   );
   expect(
     await screen.findByLabelText('Rendered topology graph')
-  ).toHaveTextContent('2 nodes, 1 connections');
+  ).toHaveTextContent('3 nodes, 2 connections');
   expect(invoke).toHaveBeenCalledExactlyOnceWith('stacks.network.read', {
     environmentId: 2,
     stackId: 5,

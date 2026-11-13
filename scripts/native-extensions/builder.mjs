@@ -1,11 +1,13 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { promises as fs } from 'node:fs';
+import { constants } from 'node:fs';
 import path from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import { validateSources } from './source-policy.mjs';
 import { sourceArchive } from './archive.mjs';
+import { withBuildLock } from './build-lock.mjs';
 
 // Changing this policy requires a new trusted release baseline, never an extension grant.
 const roots = [
@@ -155,7 +157,7 @@ function validateManifest(manifest, entries) {
   const seen = new Set();
   for (const permission of manifest.permissions) {
     if (!permission || Object.keys(permission).some((key) => !['capability', 'environmentIds', 'stackIds'].includes(key))) fail('Unsupported permission fields');
-    if (seen.has(permission.capability) || !['ui.native', 'environments.read', 'containers.read', 'stacks.read', 'stacks.network.read', 'stacks.traffic.read', 'storage.read', 'storage.write', 'storage.service.read', 'storage.service.write'].includes(permission.capability))
+    if (seen.has(permission.capability) || !['ui.native', 'environments.read', 'containers.read', 'stacks.read', 'stacks.network.read', 'stacks.traffic.read', 'stacks.delivery.read', 'stacks.gitops.sync', 'stacks.images.read', 'stacks.images.update', 'stacks.images.configure', 'stacks.images.auto-update', 'storage.read', 'storage.write', 'storage.service.read', 'storage.service.write'].includes(permission.capability))
       fail('Invalid or duplicate capability');
     seen.add(permission.capability);
     if (
@@ -166,7 +168,7 @@ function validateManifest(manifest, entries) {
       (['ui.native', 'storage.read', 'storage.write', 'storage.service.read', 'storage.service.write'].includes(permission.capability) ? permission.environmentIds.length !== 0 : permission.environmentIds.length === 0)
     )
       fail('Explicit valid permission scopes required');
-    if (['stacks.network.read', 'stacks.traffic.read'].includes(permission.capability)) {
+    if (['stacks.network.read', 'stacks.traffic.read', 'stacks.delivery.read', 'stacks.gitops.sync', 'stacks.images.read', 'stacks.images.update', 'stacks.images.configure', 'stacks.images.auto-update'].includes(permission.capability)) {
       if (
         !Array.isArray(permission.stackIds) ||
         !permission.stackIds.length ||
@@ -295,7 +297,14 @@ export async function stage(root, baselineFile, digest, output, packageRoots) {
   if (absoluteOutput === absoluteRoot || absoluteOutput.startsWith(`${absoluteRoot}${path.sep}`)) fail('Candidate must be outside the source tree');
   // mkdir without recursive guarantees no overwrite of an existing candidate.
   await fs.mkdir(absoluteOutput);
-  await copyEntries(root, absoluteOutput, protectedInputs.entries);
+  // This is a complete selected package set. Do not copy previously compiled
+  // packages into the candidate: same-ID replacements would collide, and omitted
+  // packages must not survive selection. The original baseline still protects
+  // every installed byte in the source checkout before and after staging.
+  const coreEntries = Object.fromEntries(Object.entries(protectedInputs.entries).filter(
+    ([name]) => name !== namespace && !name.startsWith(`${namespace}/`) && name !== registration
+  ));
+  await copyEntries(root, absoluteOutput, coreEntries);
   // Next rewrites this framework-owned declaration between dev and production.
   // Normalize only its known generated type imports in the disposable candidate;
   // arbitrary core content remains bound to the reviewed input inventory.
@@ -348,6 +357,27 @@ export async function stage(root, baselineFile, digest, output, packageRoots) {
 }
 
 const checks = ['check:frontend-modernization', 'check:frontend-boundaries', 'check:app-router-compliance', 'typecheck', 'test:extensions', 'test', 'lint:ci', 'build'];
+// Operator configuration only; extension inputs never select the host executable.
+export async function resolveDockerExecutable(configured = process.env.VESSEL_DOCKER_BINARY) {
+  if (configured !== undefined && (!configured || !path.isAbsolute(configured)))
+    fail('VESSEL_DOCKER_BINARY must be an absolute executable path');
+  const candidates = configured !== undefined ? [configured] : process.platform === 'win32'
+    ? ['C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe']
+    : ['/usr/local/bin/docker', '/usr/bin/docker', '/opt/homebrew/bin/docker', '/snap/bin/docker', '/Applications/Docker.app/Contents/Resources/bin/docker'];
+  for (const executable of candidates) {
+    try {
+      if (!(await fs.stat(executable)).isFile()) continue;
+      await fs.access(executable, constants.X_OK);
+      // Keep the absolute invocation path: symlink-based wrappers such as snap
+      // dispatch using argv[0], so executing their realpath changes behavior.
+      return executable;
+    } catch (error) {
+      if (!['ENOENT', 'ENOTDIR', 'EACCES'].includes(error.code)) throw error;
+    }
+  }
+  fail('Docker executable unavailable; set VESSEL_DOCKER_BINARY to a trusted absolute path');
+}
+
 function run(command, args, containerName) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, { stdio: 'inherit', env: { PATH: process.env.PATH, HOME: process.env.HOME } });
@@ -366,7 +396,7 @@ function run(command, args, containerName) {
       if (stopping) return;
       stopping = true;
       child.kill('SIGTERM');
-      const cleanup = spawn('docker', ['rm', '--force', containerName], { stdio: 'ignore', timeout: 30000, env: { PATH: process.env.PATH, HOME: process.env.HOME } });
+      const cleanup = spawn(command, ['rm', '--force', containerName], { stdio: 'ignore', timeout: 30000, env: { PATH: process.env.PATH, HOME: process.env.HOME } });
       cleanup.once('error', () => finish(new Error(`${message}; container cleanup failed`)));
       cleanup.once('exit', (code) => finish(new Error(`${message}${code === 0 ? '' : '; verify container cleanup'}`)));
     };
@@ -386,6 +416,10 @@ function run(command, args, containerName) {
 // Untrusted UI can execute during bundling. Only run it in an operator-provided,
 // pinned, pre-provisioned build image; never run package scripts on the host.
 export async function build(candidate, image, trustedReceiptDigest) {
+ if (!/^(?:[a-zA-Z0-9./:_-]+@)?sha256:[a-f0-9]{64}$/.test(image)) fail('Builder image must be pinned by sha256 digest');
+ return withBuildLock(candidate,()=>buildLocked(candidate,image,trustedReceiptDigest));
+}
+async function buildLocked(candidate, image, trustedReceiptDigest) {
   if (!/^(?:[a-zA-Z0-9./:_-]+@)?sha256:[a-f0-9]{64}$/.test(image)) fail('Builder image must be pinned by sha256 digest');
   const root = await fs.realpath(candidate);
   const inputs = await fs.readFile(path.join(root, 'candidate-inputs.json'));
@@ -399,14 +433,17 @@ export async function build(candidate, image, trustedReceiptDigest) {
     const packageRoot = path.join(root, namespace, item.manifest.id);
     await validateSources(packageRoot, await inventory(packageRoot, await fs.readdir(packageRoot)));
   }
+  const docker = await resolveDockerExecutable();
   const dependenciesVolume = `vessel-extension-deps-${randomUUID()}`;
   receipt.builderImage = image;
   receipt.status = 'building';
+ receipt.startedAt=new Date().toISOString();
+ receipt.currentCheck='seed-dependencies';
   await atomicJSON(path.join(root, 'candidate.json'), receipt);
   try {
     const seedContainer = `vessel-extension-${randomUUID()}`;
     await run(
-      'docker',
+      docker,
       [
         'run',
         '--rm',
@@ -431,10 +468,12 @@ export async function build(candidate, image, trustedReceiptDigest) {
       seedContainer
     );
     for (const check of checks) {
+ receipt.currentCheck=check;receipt.updatedAt=new Date().toISOString();
+ await atomicJSON(path.join(root, 'candidate.json'), receipt);
       const containerName = `vessel-extension-${randomUUID()}`;
       // Image supplies approved /opt/vessel/node_modules matching the lock digest.
       await run(
-        'docker',
+        docker,
         [
           'run',
           '--rm',
@@ -471,6 +510,8 @@ export async function build(candidate, image, trustedReceiptDigest) {
       );
       if (JSON.stringify(await baseline(root)) !== JSON.stringify(expected)) fail('Build modified protected candidate inputs');
       receipt.checks.push({ name: check, passed: true });
+ await fs.appendFile(path.join(root,'validation-events.jsonl'),json({time:new Date().toISOString(),check,status:'passed'}).replace(/\n/g,'')+'\n',{mode:0o600});
+ await atomicJSON(path.join(root, 'candidate.json'), receipt);
     }
     receipt.artifactDigest = await artifactDigest(path.join(root, 'dist/next'));
     receipt.status = 'validated';
@@ -480,10 +521,11 @@ export async function build(candidate, image, trustedReceiptDigest) {
   } catch (error) {
     receipt.status = 'failed';
     receipt.activatable = false;
-    receipt.error = error.message;
+    receipt.error = 'Validation failed; inspect the operator terminal for details.';
     throw error;
   } finally {
-    const cleanup = spawnSync('docker', ['volume', 'rm', '--force', dependenciesVolume], {
+ receipt.finishedAt=new Date().toISOString();
+    const cleanup = spawnSync(docker, ['volume', 'rm', '--force', dependenciesVolume], {
       stdio: 'ignore',
       timeout: 30000,
       env: { PATH: process.env.PATH, HOME: process.env.HOME },

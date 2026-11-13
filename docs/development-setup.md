@@ -49,7 +49,7 @@ when you are in the repository root.
 
 Default local URLs:
 
-- Portainer server: <https://localhost:9443>
+- Portainer server: <https://localhost:19443>
 - Frontend dev server: <http://localhost:8999>
 
 `npm run dev` also starts the local development backend when it is not already
@@ -66,7 +66,13 @@ make dev-client
 ```
 
 `make dev-server` rebuilds the server binary and starts a container named
-`portainer`. `make dev-client` runs the frontend development server.
+`portainer`. Docker development ports bind to loopback by default: HTTP 9000,
+HTTPS 19443 and the Edge tunnel 18000, leaving a normal Portainer installation's
+8000/9443 ports available. Override `PORTAINER_BIND_ADDRESS`,
+`PORTAINER_HTTP_PORT`, `PORTAINER_HTTPS_PORT` or `PORTAINER_TUNNEL_PORT` when needed.
+The pnpm launchers derive the frontend API origin from `PORTAINER_HTTP_PORT` unless
+`PORTAINER_API_ORIGIN` is explicitly set. `make dev-client` runs the frontend
+development server.
 
 ## Native extension development instance
 

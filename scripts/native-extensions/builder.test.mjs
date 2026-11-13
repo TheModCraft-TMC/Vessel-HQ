@@ -6,7 +6,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { after, test } from 'node:test';
 
-import { baseline, verify, inspectPackage, stage, build, pack } from './builder.mjs';
+import { baseline, verify, inspectPackage, stage, build, pack, resolveDockerExecutable } from './builder.mjs';
 
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 const json = (value) => `${JSON.stringify(value, null, 2)}\n`;
@@ -31,7 +31,23 @@ await fs.writeFile(path.join(example, 'ui/index.tsx'), "export default function 
 
 test('trusted inventory verifies unmodified sources', async (t) => {
   const f = await fixture(t);
-  await verify(f.root, f.file, f.digest);
+  assert.deepEqual(await verify(f.root, f.file, f.digest), await baseline(f.root));
+});
+
+test('Docker selection rejects PATH lookups, directories and nonexecutable files', async (t) => {
+  const f = await fixture(t);
+  for (const value of ['', 'docker', './docker'])
+    await assert.rejects(resolveDockerExecutable(value), /absolute executable path/);
+  await assert.rejects(resolveDockerExecutable(f.root), /Docker executable unavailable/);
+  await assert.rejects(resolveDockerExecutable(path.join(f.temp, 'missing')), /Docker executable unavailable/);
+  const executable = path.join(f.temp, 'docker');
+  await fs.writeFile(executable, '#!/bin/sh\nexit 0\n', { mode: 0o600 });
+  await assert.rejects(resolveDockerExecutable(executable), /Docker executable unavailable/);
+  await fs.chmod(executable, 0o700);
+  assert.equal(await resolveDockerExecutable(executable), executable);
+  const alias = path.join(f.temp, 'docker-alias');
+  await fs.symlink(executable, alias);
+  assert.equal(await resolveDockerExecutable(alias), alias);
 });
 for (const change of ['modified', 'added', 'deleted', 'symlink', 'executable']) {
   test(`rejects protected ${change} input`, async (t) => {
@@ -73,6 +89,29 @@ test('cache and credential files are never staged', async (t) => {
   assert.ok(stagedModule.startsWith("'use client';"));
   assert.equal((await inspectPackage(example)).manifest.packageDigest, receipt.packages[0].manifest.packageDigest);
   await assert.rejects(stage(f.root, f.file, f.digest, candidate, [example]), /EEXIST/);
+});
+
+test('complete-set staging replaces installed packages only inside the new candidate', async (t) => {
+  const f = await fixture(t);
+  const namespace = 'web-src/core/native-extensions/packages';
+  const installed = path.join(f.root, namespace, 'environment-summary');
+  const omitted = path.join(f.root, namespace, 'old-package');
+  await fs.mkdir(path.join(installed, 'ui'), { recursive: true });
+  await fs.mkdir(path.join(omitted, 'ui'), { recursive: true });
+  await fs.writeFile(path.join(installed, 'manifest.json'), 'old manifest');
+  await fs.writeFile(path.join(installed, 'ui/index.tsx'), 'old installed UI');
+  await fs.writeFile(path.join(omitted, 'ui/index.tsx'), 'unselected UI');
+  const reviewed = json(await baseline(f.root));
+  await fs.writeFile(f.file, reviewed);
+  const candidate = path.join(f.temp, 'candidate');
+  const receipt = await stage(f.root, f.file, sha(reviewed), candidate, [example]);
+  assert.equal(receipt.packages.length, 1);
+  assert.match(await fs.readFile(path.join(candidate, namespace, 'environment-summary/ui/index.tsx'), 'utf8'), /EnvironmentSummary/);
+  await assert.rejects(fs.stat(path.join(candidate, namespace, 'old-package')), { code: 'ENOENT' });
+  assert.equal(await fs.readFile(path.join(installed, 'manifest.json'), 'utf8'), 'old manifest');
+  assert.equal(await fs.readFile(path.join(installed, 'ui/index.tsx'), 'utf8'), 'old installed UI');
+  assert.equal(await fs.readFile(path.join(omitted, 'ui/index.tsx'), 'utf8'), 'unselected UI');
+  assert.deepEqual(await verify(f.root, f.file, sha(reviewed)), JSON.parse(reviewed));
 });
 test('cannot stage inside protected source via a symlinked parent', async (t) => {
   const f = await fixture(t);

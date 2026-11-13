@@ -24,7 +24,7 @@ const meta: Meta = {
     const icon = link.querySelector('svg');
     const label = link.querySelector('span');
     if (!icon || !label) throw new Error('Sidebar icon or label missing');
-    const expectedGap = parseFloat(
+    const expectedGap = Number.parseFloat(
       getComputedStyle(document.documentElement).fontSize
     );
     const actualGap =

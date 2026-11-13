@@ -8,6 +8,12 @@ export interface ExtensionPermission {
     | 'environments.read'
     | 'containers.read'
     | 'stacks.read'
+    | 'stacks.delivery.read'
+    | 'stacks.gitops.sync'
+    | 'stacks.images.read'
+    | 'stacks.images.update'
+    | 'stacks.images.configure'
+    | 'stacks.images.auto-update'
     | 'stacks.network.read'
     | 'stacks.traffic.read';
   environmentIds: number[];

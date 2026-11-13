@@ -18,13 +18,18 @@ const actual = createHash('sha256')
 if (expected !== actual) throw new Error('Build image dependencies do not match candidate lockfile');
 // Existing repository guards resolve their root with git. Never mount the real
 // checkout's .git or credentials into the build container.
-if (spawnSync('git', ['init', '--quiet', '/workspace']).status !== 0) throw new Error('Cannot initialize disposable build metadata');
-const child = spawn('pnpm', ['run', check, ...(['test', 'test:extensions'].includes(check) ? ['--maxWorkers=4'] : [])], {
+// These are fixed paths in the separately provisioned Debian/official Node
+// builder image. Candidate files and an inherited PATH cannot select tools.
+const toolEnvironment = {
+  PATH: '/usr/local/bin:/usr/bin:/bin',
+  HOME: '/tmp',
+};
+if (spawnSync('/usr/bin/git', ['init', '--quiet', '/workspace'], { env: toolEnvironment }).status !== 0) throw new Error('Cannot initialize disposable build metadata');
+const child = spawn('/usr/local/bin/pnpm', ['run', check, ...(['test', 'test:extensions'].includes(check) ? ['--maxWorkers=4'] : [])], {
   cwd: '/workspace',
   stdio: 'inherit',
   env: {
-    PATH: process.env.PATH,
-    HOME: '/tmp',
+    ...toolEnvironment,
     COREPACK_HOME: '/opt/vessel/corepack',
     COREPACK_ENABLE_NETWORK: '0',
     COREPACK_ENABLE_DOWNLOAD_PROMPT: '0',

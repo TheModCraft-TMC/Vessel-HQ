@@ -84,6 +84,39 @@ describe('stack topology graph', () => {
     expect(graph.edges).toHaveLength(1);
   });
 
+  it('orders missing network IDs and edges by code units rather than locale or numeric value', () => {
+    const ids = ['é', 'a', '2', 'Z', '10'];
+    const input = {
+      ...topology,
+      networks: [],
+      workloads: [
+        {
+          ...topology.workloads[0],
+          networks: ids.map((networkId) => ({ networkId })),
+        },
+      ],
+    };
+    const graph = createTopologyGraph(input);
+    const expected = ['10', '2', 'Z', 'a', 'é'].map((id) => `network:${id}`);
+    expect(
+      graph.nodes
+        .filter((node) => node.data.kind === 'network')
+        .map((node) => node.id)
+    ).toEqual(expected);
+    expect(graph.edges.map((edge) => edge.source)).toEqual(expected);
+    expect(
+      createTopologyGraph({
+        ...input,
+        workloads: [
+          {
+            ...input.workloads[0],
+            networks: [...input.workloads[0].networks].reverse(),
+          },
+        ],
+      })
+    ).toEqual(graph);
+  });
+
   it('retains attachments with missing network metadata using an explicit unavailable node', () => {
     const graph = createTopologyGraph({ ...topology, networks: [] });
     expect(

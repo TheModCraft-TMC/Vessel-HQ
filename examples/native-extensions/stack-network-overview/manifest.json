@@ -1,10 +1,10 @@
 {
   "id": "stack-network-overview",
   "name": "Stack network overview",
-  "version": "0.3.0",
-  "description": "Stack networks, label-based Traefik routing and live Docker network byte counters.",
+  "version": "0.4.0",
+  "description": "Stack resource tree, network attachments, scoped traffic and Traefik routing with resource filters and inspection.",
   "apiVersion": "v1",
-  "packageDigest": "sha256:54bf467c2c600bd2d84c85d1d55bf6dc73eaf388b838ebfb6c9265fec9e70300",
+  "packageDigest": "sha256:76ac78da5e69b47caf6a586c39e35f66f3e14a6d103c65eb724138ce1aec5d69",
   "permissions": [
     {
       "capability": "ui.native",

@@ -157,21 +157,64 @@ function ExtensionAction({
   const client = useQueryClient();
   const invoke = useCallback<NativeExtensionProps['invoke']>(
     <T,>(
-      operation: 'stacks.network.read' | 'stacks.traffic.read',
-      input: { environmentId: number; stackId: number }
+      operation:
+        | 'stacks.network.read'
+        | 'stacks.traffic.read'
+        | 'stacks.delivery.read'
+        | 'stacks.gitops.sync'
+        | 'stacks.images.read'
+        | 'stacks.images.update'
+        | 'stacks.images.configure',
+      input: {
+        environmentId: number;
+        stackId: number;
+        version?: string;
+        automation?: {
+          version: number;
+          enabled: boolean;
+          mode: 'monitor-only' | 'automatic';
+          intervalMinutes: number;
+        };
+      }
     ) => {
       const scopedInput = {
         environmentId: input.environmentId,
         stackId: input.stackId,
+        version: input.version,
+        automation: input.automation,
       };
       if (
-        !['stacks.network.read', 'stacks.traffic.read'].includes(operation) ||
+        ![
+          'stacks.network.read',
+          'stacks.traffic.read',
+          'stacks.delivery.read',
+          'stacks.gitops.sync',
+          'stacks.images.read',
+          'stacks.images.update',
+          'stacks.images.configure',
+        ].includes(operation) ||
         scopedInput.environmentId !== environmentId ||
         scopedInput.stackId !== stackId
       ) {
         return Promise.reject(
           new Error('Extension request is outside the current stack.')
         );
+      }
+      if (
+        operation === 'stacks.gitops.sync' ||
+        operation === 'stacks.images.update' ||
+        operation === 'stacks.images.configure'
+      ) {
+        return invokeStackExtension<T>(record.id, operation, scopedInput, {
+          revision: record.revision,
+          packageDigest: record.manifest.packageDigest,
+        }).then(async (result) => {
+          await Promise.all([
+            client.invalidateQueries(['stacks']),
+            client.invalidateQueries(['docker', environmentId]),
+          ]);
+          return result;
+        });
       }
       return client.fetchQuery<T>({
         queryKey: [
