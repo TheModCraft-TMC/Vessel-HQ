@@ -1918,3 +1918,16 @@ a no-exec temporary mount is excluded. The clean rerun used an executable,
 bounded memory filesystem for compilation; its complete passing log is the final
 evidence. All task containers, temporary mounts, caches, network and scratch
 sources were removed after saving the sanitized results.
+
+
+### Issue #299 Docker Hub publication
+
+After Docker Hub authentication was restored, published the validated OCI index
+as `themodcrafttmc/vessel-hq:1.3.3-beta.1` and `:beta`. Both tags were read back with
+index digest `sha256:5023ec8da3ef7a85201fa557cf6d4afcdbb9ddf7b9da96bd9c1cb8bb55071aa9`;
+both platform configurations and labels match. Stable `latest` was checked before
+and after and remained unchanged. The arm64 image pulled by digest also passed
+API-status and built login HTML checks, completing amd64/arm64 runtime smoke
+coverage. The temporary local container and anonymous datastore volume were
+removed. Registry/arm64 receipts and their checksum file were added to the GitHub
+prerelease without replacing existing assets. GHCR still has no matching login.

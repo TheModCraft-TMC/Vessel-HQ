@@ -72,11 +72,12 @@ Both final Linux binaries were compiled against the published SDK with
 `GOWORK=off`. The multi-platform OCI candidate includes `linux/amd64` and
 `linux/arm64`, with index digest
 `sha256:5023ec8da3ef7a85201fa557cf6d4afcdbb9ddf7b9da96bd9c1cb8bb55071aa9`.
-The amd64 container passed API status and built Next.js login HTML checks;
+Both amd64 and arm64 containers passed API status and built Next.js login HTML checks;
 API compatibility remains 2.45.0 and the image release label is 1.3.3-beta.1.
-Arm64 runtime execution remains separate from binary and manifest validation.
-Registry publication requires a working Docker Hub/GHCR login; an OCI archive
-is an offline candidate, not evidence of a published registry tag.
+The arm64 runtime check pulled the published image by its immutable index digest.
+Docker Hub version `1.3.3-beta.1` and channel `beta` now resolve to that same
+verified digest. GHCR remains unpublished because no matching credentials are
+available; stable `latest` was checked before and after and remained unchanged.
 
 The [GitHub prerelease](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.3-beta.1)
 contains architecture bundles, the OCI archive, SHA256SUMS and sanitized validation
@@ -104,3 +105,15 @@ a no-exec temporary mount is excluded. The clean rerun used an executable,
 bounded memory filesystem for compilation; its complete passing log is the final
 evidence. All task containers, temporary mounts, caches, network and scratch
 sources were removed after saving the sanitized results.
+
+
+### Docker Hub publication and arm64 runtime
+
+Published `docker.io/themodcrafttmc/vessel-hq:1.3.3-beta.1` and `:beta` from the
+previously validated OCI archive, preserving index digest
+`sha256:5023ec8da3ef7a85201fa557cf6d4afcdbb9ddf7b9da96bd9c1cb8bb55071aa9`.
+Both platform manifests and configurations were read back from Docker Hub and
+verified. The native arm64 container pulled by digest passed API status (2.45.0)
+and built login HTML checks. Its disposable container and volume were removed.
+The prerelease includes registry and arm64 receipts with a separate checksum file;
+the earlier immutable download assets are unchanged.
