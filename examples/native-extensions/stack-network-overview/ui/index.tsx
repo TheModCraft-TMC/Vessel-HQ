@@ -21,6 +21,11 @@ import styles from './index.module.css';
 import { GraphViewport } from './GraphViewport';
 import { TrafficPanel } from './TrafficPanel';
 import { useGraphTheme } from './useGraphTheme';
+import {
+  createResourceTree,
+  filterTopology,
+  workloadHealth,
+} from './resource-tree';
 
 export type StackNetworkExtensionProps = NativeExtensionProps;
 
@@ -31,21 +36,27 @@ type Snapshot =
 
 function NetworkNode({ data }: NodeProps<TopologyNode>) {
   const network = data.kind === 'network';
+  const root = data.kind === 'stack';
   return (
     <div
       className={`${styles.node} ${network ? styles.network : styles.workload}`}
     >
       <Handle
-        type={network ? 'source' : 'target'}
-        position={network ? Position.Right : Position.Left}
+        type={network || root ? 'source' : 'target'}
+        position={network || root ? Position.Right : Position.Left}
         isConnectable={false}
       />
+      {network && (
+        <Handle type="target" position={Position.Left} isConnectable={false} />
+      )}
       <span className={styles.kind}>
-        {network
-          ? 'Network'
-          : data.kind === 'service'
-            ? 'Service'
-            : 'Container'}
+        {root
+          ? 'Stack'
+          : network
+            ? 'Network'
+            : data.kind === 'service'
+              ? 'Service'
+              : 'Container'}
       </span>
       <strong title={data.label}>{data.label}</strong>
       <span className={styles.description}>{data.description}</span>
@@ -66,6 +77,10 @@ function NetworkAttachments({ context, invoke }: StackNetworkExtensionProps) {
   const mode = useGraphTheme();
   const { environmentId, stackId, stackName } = context;
   const [attempt, setAttempt] = useState(0);
+  const [layout, setLayout] = useState<'tree' | 'attachments'>('tree');
+  const [search, setSearch] = useState('');
+  const [attentionOnly, setAttentionOnly] = useState(false);
+  const [selected, setSelected] = useState('');
   const key = `${environmentId}:${stackId}:${attempt}`;
   const validScope =
     Number.isSafeInteger(environmentId) &&
@@ -121,10 +136,25 @@ function NetworkAttachments({ context, invoke }: StackNetworkExtensionProps) {
     validScope && snapshot.key === key && snapshot.status === 'ready'
       ? snapshot.data
       : undefined;
-  const graph = useMemo(
-    () => (topology ? createTopologyGraph(topology) : { nodes: [], edges: [] }),
-    [topology]
+  const filtered = useMemo(
+    () =>
+      topology ? filterTopology(topology, search, attentionOnly) : undefined,
+    [topology, search, attentionOnly]
   );
+  const graph = useMemo(
+    () =>
+      filtered
+        ? layout === 'tree'
+          ? createResourceTree(filtered)
+          : createTopologyGraph(filtered)
+        : { nodes: [], edges: [] },
+    [filtered, layout]
+  );
+  const inspected = graph.nodes.find((node) => node.id === selected);
+  const attentionCount =
+    topology?.workloads.filter(
+      (workload) => workloadHealth(workload.state) === 'attention'
+    ).length || 0;
   const networkNames = useMemo(
     () =>
       new Map(topology?.networks.map((network) => [network.id, network.name])),
@@ -168,6 +198,83 @@ function NetworkAttachments({ context, invoke }: StackNetworkExtensionProps) {
           </p>
         </div>
       )}
+      {topology && (
+        <div className={styles.toolbar}>
+          <label>
+            Filter resources
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Name, network or state"
+            />
+          </label>
+          <label>
+            Layout
+            <select
+              value={layout}
+              onChange={(event) =>
+                setLayout(event.target.value as 'tree' | 'attachments')
+              }
+            >
+              <option value="tree">Resource tree</option>
+              <option value="attachments">Network attachments</option>
+            </select>
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={attentionOnly}
+              onChange={(event) => setAttentionOnly(event.target.checked)}
+            />
+            Needs attention ({attentionCount})
+          </label>
+          <label>
+            Inspect resource
+            <select
+              value={inspected?.id || ''}
+              onChange={(event) => setSelected(event.target.value)}
+            >
+              <option value="">Select a resource</option>
+              {graph.nodes.map((node) => (
+                <option key={node.id} value={node.id}>
+                  {node.data.kind}: {node.data.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
+      {inspected && (
+        <aside className={styles.inspector} aria-label="Resource inspector">
+          <h4>{inspected.data.label}</h4>
+          <p>
+            {inspected.data.kind} · {inspected.data.description}
+          </p>
+          <code>{inspected.id}</code>
+          <p>
+            {
+              graph.edges.filter(
+                (edge) =>
+                  edge.source === inspected.id || edge.target === inspected.id
+              ).length
+            }{' '}
+            connections in this view
+          </p>
+          <button
+            type="button"
+            className={styles.button}
+            onClick={() => setSelected('')}
+          >
+            Close inspector
+          </button>
+        </aside>
+      )}
+      {topology &&
+        filtered?.workloads.length === 0 &&
+        filtered.networks.length === 0 && (
+          <p>No resources match the current filters.</p>
+        )}
       {topology && graph.nodes.length === 0 && (
         <p>No networks or workloads were found for this stack.</p>
       )}
@@ -183,7 +290,12 @@ function NetworkAttachments({ context, invoke }: StackNetworkExtensionProps) {
                 ? 'services / containers'
                 : 'containers'}
             </span>
-            <span>Connections show network attachments</span>
+            <span>
+              {layout === 'tree'
+                ? 'Stack → networks → workloads'
+                : 'Connections show network attachments'}{' '}
+              · Running state is not application health
+            </span>
           </div>
           <div
             className={styles.canvas}
@@ -191,7 +303,8 @@ function NetworkAttachments({ context, invoke }: StackNetworkExtensionProps) {
             aria-label={`Network topology for ${stackName}`}
           >
             <ReactFlow
-              key={key}
+              key={`${key}:${layout}:${search}:${attentionOnly}`}
+              onNodeClick={(_event, node) => setSelected(node.id)}
               colorMode={mode}
               defaultNodes={graph.nodes}
               defaultEdges={graph.edges}
@@ -239,7 +352,7 @@ function NetworkAttachments({ context, invoke }: StackNetworkExtensionProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {topology.workloads.map((workload) => (
+                  {filtered?.workloads.map((workload) => (
                     <tr key={`${workload.kind}:${workload.id}`}>
                       <th scope="row">{workload.name}</th>
                       <td>{workload.kind}</td>

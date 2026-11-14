@@ -387,3 +387,50 @@ it('requires explicit independent machine storage grants without native browser 
     grants: [{ capability: 'storage.service.read', environmentIds: [] }],
   });
 });
+
+it('keeps settings secrets separate from public configuration approval', async () => {
+  const onApprove = vi.fn().mockResolvedValue(undefined);
+  const extension: ExtensionRecord = {
+    id: 9,
+    revision: 1,
+    status: 'pending_approval',
+    grants: [],
+    trustedNativeUI: false,
+    updatedAt: 1,
+    manifest: {
+      id: 'service-settings',
+      name: 'Service settings',
+      version: '1',
+      apiVersion: 'v1',
+      packageDigest: `sha256:${'a'.repeat(64)}`,
+      permissions: [
+        { capability: 'settings.service.read', environmentIds: [] },
+        { capability: 'settings.service.secrets.read', environmentIds: [] },
+      ],
+    },
+  };
+  render(
+    <PermissionReview
+      extension={extension}
+      busy={false}
+      onCancel={vi.fn()}
+      onApprove={onApprove}
+    />
+  );
+  const user = userEvent.setup();
+  expect(
+    screen.getByLabelText('Allow the service to read its secret settings')
+  ).not.toBeChecked();
+  await user.click(
+    screen.getByLabelText('Allow the service to read its public settings')
+  );
+  await user.click(
+    screen.getByRole('button', { name: 'Save permission approval' })
+  );
+  expect(onApprove).toHaveBeenCalledWith({
+    revision: 1,
+    trustedNativeUI: false,
+    serviceReadEnabled: false,
+    grants: [{ capability: 'settings.service.read', environmentIds: [] }],
+  });
+});

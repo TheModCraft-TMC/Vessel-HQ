@@ -4,6 +4,368 @@ Status: stable `1.3.2` published and production verified, updated October 31, 20
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
 
+## Combined working-tree commit verification — November 13, 2026
+
+The maintainer requested committing and pushing the accumulated resource layout,
+extension settings/delivery, tooling, development setup and documentation changes.
+Fresh pre-commit checks passed modernization, boundaries (3,331 source files),
+App Router compliance (168 pages), typecheck, all 71 native-extension tooling
+tests, all 30 extension authoring tests across eight files, and whitespace checks.
+These checks used the available Node 26.3.0 and pnpm 10.26.2; Node 26 is outside
+the required Node 24 range. Full frontend tests, lint, production build, Go tests
+and browser/runtime checks were not rerun for this Git handoff. Earlier dated
+verification remains separate and does not establish fresh coverage of this
+combined snapshot.
+
+Commit message: `feat(extensions): add stack delivery workflows and settings`
+
+## Bounded delivery-extension cycle and development startup — November 12, 2026
+
+The maintainer authorized a 40-minute cycle beginning at 16:12:58 UTC, prioritizing
+an Argo-inspired network extension, a Docker stack GitOps extension and an
+Arcane/Watchtower-inspired updater, then the remaining roadmap. This record is a
+local implementation/verification scope; the broad roadmap was not completed.
+
+- Network Overview 0.4.0 adds a stack/network/workload resource tree, attachment
+  layout toggle, search, attention filtering and resource inspection. It retains
+  traffic/Traefik views, text alternatives and theme handling. Running/unknown
+  workload states are not presented as application health.
+- Stack GitOps 0.1.0 shows recorded source/deployment revisions, source interval,
+  deployment state and workloads, with explicit confirmation before syncing the
+  existing configured Git source. It has no runtime Compose diff or history and
+  rollback UI; existing source scheduling remains authoritative.
+- Stack image updates 0.1.0 checks registry digests, confirms current-reference
+  repull/redeployment, and offers explicitly enabled server-side monitor/automatic
+  policies. Jobs require distinct scoped grants, a current administrator owner,
+  complete current image checks and eligible workload labels. Whole-stack updates
+  stop for excluded or monitor-only workloads. Configuration uses optimistic
+  versions, survives restarts and turns off on package replacement/disable. No
+  version-tag selection, image-age delay, notifications or HA job lease is claimed.
+- New host delivery operations preserve normal authorization/deployment, Vault,
+  Compose/Swarm and source reconciliation paths. Opaque review hashes cover stack,
+  workflow and source inputs; transaction-time rechecks reject stale inputs,
+  demoted owners and revoked package/grants, including changes during Git/registry
+  I/O. Browser responses omit Compose, environment values, repository URLs,
+  credentials and underlying stack-handler responses. Scheduled jobs reconstruct
+  only an in-process identity; they mint no JWT or extension credential.
+- Build management adds exclusive ownership, gate progress/timestamps, sanitized
+  phase events and complete-set development replacement. Failed/cancelled builds
+  preserve the serving source. Crashed locks require operator inspection; there is
+  no automatic stale-lock takeover or production activation adapter.
+- The maintainer reported local startup failing because `portainer-docker-ui`
+  already owned ports 8000/9443. Docker development defaults now bind loopback
+  9000/19443/18000 with explicit port/address overrides. Both pnpm launchers derive
+  the API origin from the HTTP port. The backend and frontend were started using
+  Node 24.22.1; public backend status returned HTTP 200. Existing other containers
+  were preserved. Go's dependency-refresh step was skipped when rebuilding the
+  local binary; this did not update module versions.
+
+Authoring packages were inspected and packed under ignored
+`dist/extension-delivery-20261112/`. Package source digests:
+
+- Network Overview: `sha256:76ac78da5e69b47caf6a586c39e35f66f3e14a6d103c65eb724138ce1aec5d69`.
+- Stack GitOps: `sha256:61775be9336d3dcb6da207c0cb10138020cfeea0d36b8b8403af9a56ce61aefe`.
+- Stack image updates: `sha256:11515c3fabe4dd8a34a01b8a9853aafa6d433f07182f8b2f42a4d68098384ca5`.
+
+Native Chrome visually rendered the resource tree and GitOps cards against
+synthetic fixtures. Attention filtering retained only the restarting workload and
+its network; confirmed Git synchronization showed acceptance and disabled another
+write until refresh. The narrow image-updater fixture was opened, but the active
+browser tab changed before its controls could be verified. That coverage is
+incomplete. No real stack was synced/recreated and no automatic production update
+was enabled. No package upload, approval, compiled source selection or production
+activation is claimed. The running development console retains its prior compiled
+extension set; the new package set is validated separately.
+
+Fresh scoped verification:
+
+- Go race tests passed for native extension domain/RPC/topology, the new delivery
+  projection/transaction authorization, extension HTTP handlers, stack handlers and
+  the HTTP server package. The last focused rerun passed delivery, extension/stack
+  handlers and HTTP after the final scheduler/transaction fixes.
+- Native-extension tooling: 71 tests passed, including concurrent ownership and
+  failed-owner cleanup. Authoring: 30 tests across eight files passed, including
+  explicit policy confirmation; the initial combined candidate ran 29 before the
+  additional policy regression was added.
+- Root modernization, boundaries, App Router and typecheck passed; root lint passed
+  with 0 errors and 192 existing warnings. The first complete-set candidate passed
+  those guards, typecheck and all 375 frontend files (2,531 passed, 5 skipped,
+  11 todo), then exposed six staged-only import/promise lint errors in the two new
+  packages. Those were fixed in the authoring sources and repacked with new digests.
+  A fresh final candidate is being verified with independent isolated gate groups;
+  its final per-gate state is retained in the ignored `final-gates.json` report.
+- Public backend status and frontend `/login` returned HTTP 200 after the port
+  repair. No authenticated new-extension read, registry check or actual deployment
+  was exercised against live infrastructure.
+- An initial HTTP test attempt lacked sandbox socket permission; the permitted
+  loopback race run passed. Two early candidates were cancelled to include a
+  Storybook lint fix and the sanitized-error test expectation. An isolated failed
+  candidate was retained rather than editing its protected inputs or declaring it
+  validated. Documentation paths and whitespace were checked independently.
+
+Managed extension
+binaries, production health/rollback, certificate lifecycle, HA, webhook provision,
+remaining Bootstrap/module migrations and the wider backlog remain future work.
+
+## Extension settings editor — November 12, 2026
+
+Resumed the unfinished administrator editor on `fix/resource-layout-cycle`.
+The extension details Settings dialog now loads namespaced settings and supports
+public string values, adding/replacing write-only secrets, explicit removals,
+confirmed reset and confirmed reload. Stored secret inputs remain blank to retain
+their values. Save failures clear entered secrets and block further writes until
+reload; package/settings conflicts preserve newer server data. Client validation
+matches key, entry and UTF-8 byte limits, while the server accounts for retained
+secret bytes that the editor cannot read.
+
+Settings reads use TanStack Query with immediate cache removal on unmount and no
+routine refetching. Secret writes bypass the mutation cache and sanitize transport
+errors so secret-bearing request objects are not retained there. Configuration
+saves disable concurrent permission/removal controls in the dialog. The editor
+does not expose settings to extension code or add package schemas, SDK changes,
+runtime execution or production activation. Existing unrelated changes remain.
+
+Native Chrome rendered the real editor with synthetic, disposable MSW data.
+Desktop public/secret save showed success and cleared the secret input; confirmed
+reset showed no saved settings. Visual inspection covered 900px and 390px fixture
+containers, including stacked narrow rows and wrapping actions. Confirmed reload
+showed success in the narrow fixture. This is container responsiveness in a desktop
+browser, not a phone viewport or authenticated backend/production test. Browser
+discovery remained unavailable; native app access worked. Storybook logged its
+existing docgen warning and a browser-extension warning.
+
+Fresh verification uses Node `24.22.1` and pnpm `10.26.2`:
+
+- Modernization, boundaries (3,331 source files), App Router compliance (168
+  pages), typecheck and lint passed. Lint reports 0 errors and 192 existing warnings.
+- `pnpm test --maxWorkers=4` passed all 375 files: 2,531 tests passed, 5 skipped
+  and 11 todo. The final focused editor/service/details suite passed 15 tests.
+- `pnpm build` passed webpack compilation, type checking, page generation and
+  standalone packaging; the packaged server and static assets are present.
+- Changed-document relative paths, new settings source whitespace and
+  `git diff --check` passed. The temporary Storybook processes were stopped.
+- Initial checks selected the shell's unsupported Node 26 and were stopped.
+  Lint then caught the native confirmation prompt/import spacing; the inline
+  confirmation fix and its regression passed the final checks above. An interim
+  full test run overlapped that edit and failed the changed confirmation test;
+  the final full run used the completed source and passed.
+
+Backend implementation was unchanged in this editor scope; its November 11 tests
+below were not rerun. No authenticated backend or production coverage is claimed.
+
+Draft commit for this scope: `feat(extensions): add administrator settings editor`
+
+## Extension settings backend foundation — November 11, 2026
+
+The maintainer resumed extension work with the next roadmap item. This scope adds
+administrator-only `GET`/`PUT`/`DELETE` settings endpoints, namespaced to each
+registration, with separate public and write-only secret string maps. Validation
+bounds keys, entry counts, per-value bytes and aggregate storage. Package revision
+and digest checks reject stale callers; independent settings versions prevent
+lost updates and stale resets. A secret key cannot be published in the same update
+that removes it from the secret map.
+
+Settings survive package updates and disable/revocation, without granting runtime
+access, and are removed with registration deletion. Public registration responses
+omit all settings. Settings responses are non-cacheable and include only public
+values and secret key names. Transactional read/update/reset audit records include
+identity and settings version, never configuration keys or values. Audit failures
+roll back writes. Decoder errors are sanitized before logging/response handling.
+
+This is a backend configuration foundation, not the entire roadmap settings item:
+there is no settings editor, manifest-declared schema, settings RPC, runtime secret
+delivery or new field encryption. Stored secrets inherit existing datastore/backup
+protections. The SDK wire contract and source/package digests remain unchanged.
+No managed service, candidate activation or deployment was performed. Existing
+unrelated working-tree changes were preserved.
+
+Fresh verification:
+
+- `GOWORK=off GOCACHE=/tmp/vessel-extension-settings-go-cache go -C backend-src
+  test -mod=readonly -race ./api/nativeextensions/...
+  ./api/http/handler/nativeextensions ./api/dataservices/nativeextension` passed
+  domain, RPC, topology and HTTP suites; the datastore package has no tests.
+- Regression coverage exercises admin/anonymous/non-admin boundaries, namespace
+  isolation, concurrent writers, stale identities/versions, validation, secret
+  redaction/preservation/removal, upgrade retention, disabled configuration,
+  reset/uninstall and audit-failure rollback.
+- Documentation relative paths, new-file whitespace and `git diff --check` passed.
+- The first run encountered a local Go cache/toolchain error; an isolated fresh
+  cache resolved it. The broad sandboxed run then failed socket-binding tests;
+  rerunning with local socket access passed. These initial failures are separate
+  from the successful final scoped result.
+- Frontend implementation was untouched by this scope, so frontend checks and
+  browser tests were not rerun. Existing desktop/UI changes retain their separate
+  verification record. No production or live Docker workflow check is claimed.
+
+Draft commit for this scope: `feat(extensions): persist administrator settings`
+
+## Working branch and follow-up scheduling — November 11, 2026
+
+Created and switched from `develop` to `fix/resource-layout-cycle` at the
+maintainer's request, preserving the existing tracked and untracked work.
+The desktop/UI cycle continues on that branch. Extension work was initially
+deferred; the later settings entry above records the maintainer's resumption. The
+[roadmap follow-up](vessel-hq-roadmap.md#current-cycle-and-extension-follow-up)
+orders settings persistence, build management and integration/failure-path checks,
+with managed runtime/production activation retained as a later lifecycle phase.
+No commit, remote branch, publication or deployment is part of this branch and
+documentation change. Fresh verification is limited to branch/worktree readback,
+changed-document links and whitespace; earlier application results below were
+not rerun for this documentation-only update.
+
+## Isolated extension validation and desktop spacing — November 11, 2026
+
+The maintainer selected extension validation and resource UI alignment, emphasizing
+desktop behavior. Docker Desktop started successfully through its CLI. The trusted
+builder was provisioned from only the reviewed package/lockfile, patches, lock
+digest, validator and Dockerfile, using the existing pinned Node base. Its local
+image identity is
+`sha256:3859cc4c83d4cdcace4d6b89768576b0c4d8ba94c7a28acfd6553d57ba70ba9b`.
+
+Real staging exposed a same-ID package collision: the core copy included the
+previously installed package before the assembler wrote its selected replacement.
+A failing-first regression now proves complete-set selection replaces package
+inputs only inside the new candidate, omits unselected compiled packages, and
+preserves the original installed bytes and protected-source baseline. The source
+copy excludes only the assembler-owned package namespace and generated
+registration; all host integrity checks remain in force. All 69 Node tooling
+tests pass.
+
+The reviewed development candidate contains Stack Network Overview `0.3.1` and
+the desktop spacing implementation below. Its externally retained baseline and
+staging receipt digests were used for all eight validation gates in separate
+network-disabled containers, with read-only dependencies, dropped capabilities,
+no-new-privileges, unprivileged check processes and bounded resources. Every gate
+passed: modernization, boundaries (3,324 candidate source files), App Router (168
+pages), typecheck, extension tests (20), full frontend tests (2,521 passed across
+373 files; 5 skipped; 11 todo), lint (0 errors; 192 existing warnings), webpack
+build and standalone packaging. Artifact digest:
+`e6f27a81e5247be87bb8f95dc9964eb900f3eccf0472188ba55f532f146cee79`.
+
+A separate read-only, network-disabled container executed the packaged server as
+UID/GID 65534. Its loopback `/login` returned HTTP 200 with Vessel branding. The
+temporary health container and validation dependency volume were removed; no
+validation container remained. The candidate retains `activatable: false`;
+installed packages, backend approvals and production were not changed. No
+authenticated new-package rendering or cross-platform runtime claim is made.
+The sanitized receipt and browser/health record are under ignored
+`dist/native-extension-validation-20261111/`.
+
+Desktop/UI source changes:
+
+- Image/network/volume list routes and their domain views now use shared
+  `PageContent`; their list tables are flush inside that grid. Image pull cards
+  no longer use a separate Bootstrap gutter. Image build/import and network/
+  volume creation routes use the same content inset as their lists and headings.
+- Shared table headers omit null action/settings groups instead of rendering
+  empty toolbar spacers. The shared action group has the actual `actionBar` CSS
+  hook and wraps; network and volume action groups match the image table's
+  wrapping and eight-pixel spacing. Two regressions cover empty versus populated
+  table controls; the focused header/image suite passes 67 tests.
+- A local Storybook fixture renders the actual seven route components with
+  synthetic read-only API data. Its iframe gives desktop/phone media queries a
+  real viewport and checks card insets, page overflow and toolbar containment.
+  The final assertion accounts for a vertical scrollbar relative to the content
+  shell. That fixture-only correction followed candidate staging; final working
+  tree typecheck/lint passed and the built application implementation is unchanged.
+
+Observed native Chrome coverage: images at 1024px (initial empty data) and 1440px
+(populated row), networks and volumes at 1024px (populated rows), and network
+creation at 1024px. Geometry checks passed; the network form screenshot was also
+visually inspected. These are local route fixtures, not authenticated production
+coverage. Storybook reported a React `transitionTypes` warning and a browser
+extension warning; this is not a zero-console-error claim.
+
+Remaining browser coverage is explicit: volume creation, image build/import,
+phone widths, and authenticated production routes. The browser host remained
+unavailable after reconnection and a fresh tool session; native app control later
+failed with `cgWindowNotFound`. No alternate protocol was used to bypass browser
+permissions. The earlier blanket Docker-unavailable limitation below is superseded
+by this successful isolated run; browser limitations and SDK-workspace absence
+remain separate.
+
+Draft commit for the combined local follow-up:
+
+`fix: validate extension upgrades and align resource page spacing`
+
+## Effort-ordered follow-up — November 11, 2026
+
+The maintainer requested addressing the open backlog from lower to higher effort,
+including every item in #299. The [roadmap queue](vessel-hq-roadmap.md#effort-ordered-implementation-queue--november-11-2026)
+records that order. This section describes local changes, not a publication or
+remote issue disposition.
+
+- Correct stale roadmap text: stable `1.3.2` was already released and reissued.
+- Replace invalid `cursor: hand` with `pointer`, use `Number.parseFloat` in the
+  sidebar regression story, and make the two extension-tool success tests assert
+  their expected outcomes explicitly.
+- Pin all action references in the stable/manual image and extension-prerelease
+  workflows to full commit hashes. Existing pinned versions are reused; the
+  additional Docker/pnpm/artifact identities were verified against upstream Git
+  references, including dereferencing pnpm's annotated tag. Job permissions,
+  publication conditions and immutable-release checks are unchanged.
+- Harden extension tooling: fixed validator executables and environment search
+  path, absolute host Docker selection for execution and cleanup, rejection of
+  relative/nonexecutable Docker overrides, OS-specific private temporary
+  extraction, and a non-root builder-image default without world-writable image
+  cache directories. Explicit root-only volume seeding and operator-UID validation
+  remain. These image changes require a freshly provisioned trusted builder.
+- Upgrade the standalone MCP adapter's direct and SDK-transitive Zod resolution
+  from `4.3.6` to `4.6.6`, preserving every other selected version and the
+  cross-platform optional binaries. No remote PR was merged.
+- Update the Stack Network Overview authoring package to `0.3.1`, with explicit
+  code-unit sorting for missing network IDs/edges and `Number.parseFloat` for
+  measured traffic. A regression proves stable positions/edge ordering across
+  reordered numeric, mixed-case and accented IDs. The trusted packer verified and
+  produced `dist/effort-ordered-follow-up/stack-network-overview-0.3.1.vesselhq`.
+  Its archive SHA-256 is
+  `c5c3c46c9ecb7c0a8a8bcb150b50d3ed7e140f3179281cd8dcd18f4db5d9a9b9`.
+  The installed compiled package and its existing approved digest were not edited;
+  it still needs isolated rebuilding and approval for the new source digest.
+
+Fresh local verification used Node `24.22.1`, pnpm `10.26.2`:
+
+- Modernization, boundaries (3,324 source files), App Router (168 pages),
+  typecheck, full frontend tests (2,519 passed; 5 skipped; 11 todo), lint
+  (0 errors; 192 existing warnings), webpack production build and standalone
+  packaging passed. Subsequent authoring/tooling edits passed the architecture
+  guards and focused tooling lint; they do not change the built console source.
+- Final native-extension tooling: 68 tests passed. Extension authoring: 20 tests
+  across five files passed. The recorded npm range gate and nine audit/mitigation/
+  glob regressions passed.
+- MCP adapter: frozen offline installation, all 17 tests and three deterministic
+  benchmark workflows passed. The fresh scoped pnpm audit reported zero
+  advisories across its 30 reported dependencies. The first sandboxed integration
+  attempt could not bind loopback; the allowed local-server rerun passed. The
+  root console dependency graph was not freshly audited by this scoped scan.
+- Both changed workflows passed actionlint `1.7.12` with shellcheck disabled and
+  parsed with all 29 action references pinned. The initial actionlint attempt
+  encountered mismatched local Go roots; clearing inherited Go root/tool paths
+  allowed the check to pass. Whitespace and changed documentation links passed.
+
+Remaining coverage and blockers: browser discovery reports the browser access
+host unavailable. Docker is installed but its daemon socket is absent; attempting
+to launch the app timed out, and the subsequent daemon probe still failed. No
+builder image was provisioned or executed, no extension was activated, and no
+authenticated production/mobile or live platform behavior was checked. The
+separate SDK authoring workspace referenced by historical notes is absent from
+its documented local path, so its Persistent Notes callback was not edited.
+Installed-package Sonar findings need the proper package rebuild, and all changed
+Sonar findings still require remote reanalysis. GitHub issue/PR states, production,
+application release identity and API/datastore baseline remain unchanged.
+
+The source inventory has an empty frontend `FeatureFlag` enum and no enumerated
+Business Edition capability set; removing edition checks cannot provide absent
+implementations. The all-items request is retained in the roadmap, with the
+listed HA/Kubernetes, remote, webhook, extension, sync and activity-log workflows
+requiring concrete lifecycle and compatibility criteria in their implementation
+batches.
+
+Draft commit for this local scope:
+
+`fix: harden extension tooling and address small backlog findings`
+
 ## Same-tag UI repair — October 31, 2026
 
 - Replace sidebar margin-based icon spacing with flex gap; Tailwind 4's spacing
@@ -1477,3 +1839,95 @@ time, ports, mounts and restart policy; its HTTPS status returned 200 and its
 version remains `1.3.0`. The sanitized local receipt is
 `dist/native-extension-production-smoke/results.json`. This Docker smoke does not
 establish production activation support or Kubernetes/Swarm/ACI coverage.
+
+## Issue #299 continuation — November 14, 2026
+
+Continued the interrupted settings, HA, webhook, upstream and realtime working
+changes without resetting concurrent work. Published independent SDK beta.2 at
+`1f1021142f179ddad3b9ccdf3071e298a6f2d71c`, with an allowlisted source archive and
+SHA-256 checksum. Public Go module/checksum discovery now passes, and the affected backend race suite passes with `GOWORK=off` against the published module.
+GitHub Actions dispatch returned “Actions has been disabled for this user”; local
+SDK race, vet, generation and packaging validation passed.
+
+Finished shared Docker event fan-out with environment scoping, coalescing,
+backpressure, disconnect cleanup, bounded I/O, current role and session checks.
+Added real HTTP-stream cancellation and revoked-session regressions. Applied the
+complete Helm SSRF backport alongside the six previously adapted upstream fixes.
+Hardened the optional webhook gateway with route-bound signatures and bounded
+concurrency before reservation. Documented signed calls and at-most-once behavior.
+Made existing Git reference/path browsing available for configured sources without
+an edition check, preserving manual entry, HEAD and unadvertised commit refs.
+
+Fresh source checks and remaining infrastructure acceptance are recorded in the
+[issue #299 matrix](issue-299.md). Production frontend build, typecheck, architecture
+guards and lint passed. The full frontend run had one fixture failure among 375
+files; the corrected final changed set passes 43 tests in six files. Affected
+backend tests and targeted race suites passed with `GOWORK=off` against the published SDK after initial temporary-workspace validation.
+Headless 390px/1440px images, networks and volumes fixtures have matching heading
+offsets and no page overflow; the settings dialog fits 390px and shows no saved
+secret. Docker is stopped locally. No live provider, cross-host fencing/failover,
+production activation or application image-publication success is inferred.
+
+### Git browsing request-path completion
+
+Review found that repository listing methods existed in the Git service but the
+HTTP routes were absent, and the query hooks still checked edition. This candidate
+now wires source-bound POST routes for refs and deployment-file search, with normal
+source read authorization, SSRF enforcement, stored credentials, request/deadline
+and result bounds, and value-free errors. Caller-supplied repository URLs or
+credentials are rejected. API contracts were regenerated with `make generate-api`.
+Route tests cover successful requests, denied private-source access, invalid
+payloads and credential redaction. UI tests now assert actual requests in CE.
+
+### Issue #299 final candidate verification — November 14, 2026
+
+This supersedes the earlier partial frontend run above. The clean Linux run
+passed 377 files / 2,537 tests, with five skipped and eleven todo cases; required
+architecture, typecheck, lint and production-build gates passed. Fresh npm audit
+found one low advisory and no moderate/high/critical advisories.
+
+Nine live disposable-engine/API checks passed, including 229 ms event delivery,
+settings/source access checks, signed Swarm webhook delivery, replay rejection,
+session revocation and same-host abrupt HA takeover with persistent replay state.
+The webhook Docker negotiation now uses the delivery context and has a deadline
+regression test. The final source commit is `beae78041`; both Linux architectures
+were compiled, the OCI index contains amd64/arm64, and the amd64 image serves API
+status and built login HTML. See the [acceptance matrix](issue-299.md) for remaining
+provider, cross-host fencing and registry-publication boundaries.
+
+Published [1.3.3-beta.1](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.3-beta.1)
+from immutable implementation commit `beae7804124e2fdd524594ce12a4715e45a35c8e`,
+with architecture bundles, multi-platform OCI archive, checksums and sanitized
+receipts. GitHub reports matching sizes and SHA-256 digests for all nine assets.
+Docker Hub/GHCR publication remains blocked by unavailable registry credentials;
+no registry or stable-channel success is claimed. Disposable remote containers,
+network, datastore volumes, scratch files, tunnel and local browser/server were
+removed after validation; production services were not replaced.
+
+
+### Final Linux backend suite
+
+The clean `GOWORK=off go test -mod=readonly ./...` run completed with exit code 0
+on Go 1.26.11 / linux/amd64: **156 test packages passed**. The published SDK was
+resolved normally. The prerelease now also includes `backend-validation.log` and
+`backend-validation.sha256`; the original nine assets remain unchanged. The
+amd64 image's `--version` output is `1.3.3-beta.1`.
+
+The slow Mac broad run was superseded, and the initial Linux attempt blocked by
+a no-exec temporary mount is excluded. The clean rerun used an executable,
+bounded memory filesystem for compilation; its complete passing log is the final
+evidence. All task containers, temporary mounts, caches, network and scratch
+sources were removed after saving the sanitized results.
+
+
+### Issue #299 Docker Hub publication
+
+After Docker Hub authentication was restored, published the validated OCI index
+as `themodcrafttmc/vessel-hq:1.3.3-beta.1` and `:beta`. Both tags were read back with
+index digest `sha256:5023ec8da3ef7a85201fa557cf6d4afcdbb9ddf7b9da96bd9c1cb8bb55071aa9`;
+both platform configurations and labels match. Stable `latest` was checked before
+and after and remained unchanged. The arm64 image pulled by digest also passed
+API-status and built login HTML checks, completing amd64/arm64 runtime smoke
+coverage. The temporary local container and anonymous datastore volume were
+removed. Registry/arm64 receipts and their checksum file were added to the GitHub
+prerelease without replacing existing assets. GHCR still has no matching login.

@@ -4,10 +4,12 @@ import (
 	"cmp"
 	"context"
 	"crypto/sha256"
-	nethttp "net/http"
 	"os"
+	"os/signal"
 	"path"
+	"runtime"
 	"strings"
+	"syscall"
 	"time"
 
 	portainer "github.com/portainer/portainer/api"
@@ -29,6 +31,7 @@ import (
 	"github.com/portainer/portainer/api/git"
 	"github.com/portainer/portainer/api/gitops/scheduling"
 	gitopssecrets "github.com/portainer/portainer/api/gitops/secrets"
+	"github.com/portainer/portainer/api/ha"
 	"github.com/portainer/portainer/api/http"
 	"github.com/portainer/portainer/api/http/proxy"
 	kubeproxy "github.com/portainer/portainer/api/http/proxy/factory/kubernetes"
@@ -60,10 +63,6 @@ import (
 	libswarm "github.com/portainer/portainer/pkg/libstack/swarm"
 	"github.com/portainer/portainer/pkg/validate"
 
-	gogitclient "github.com/go-git/go-git/v5/plumbing/transport/client"
-	gogitraw "github.com/go-git/go-git/v5/plumbing/transport/git"
-	gogithttp "github.com/go-git/go-git/v5/plumbing/transport/http"
-	gogitssh "github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
@@ -434,10 +433,7 @@ func buildServer(flags *portainer.CLIFlags, shutdownCtx context.Context, shutdow
 		log.Fatal().Msg("failed to wrap default HTTP transport with SSRF protection")
 	}
 
-	gogithttp.DefaultClient = gogithttp.NewClient(&nethttp.Client{Transport: nethttp.DefaultTransport})
-	gogitclient.InstallProtocol("git", git.NewSSRFGitTransport(gogitraw.DefaultClient))
-	gogitclient.InstallProtocol("ssh", git.NewSSRFGitTransport(gogitssh.DefaultClient))
-	gogitclient.InstallProtocol("file", nil)
+	git.InstallSSRFProtocols()
 
 	instanceID, err := dataStore.Version().InstanceID()
 	if err != nil {
@@ -513,6 +509,7 @@ func buildServer(flags *portainer.CLIFlags, shutdownCtx context.Context, shutdow
 
 	pendingActionsService := pendingactions.NewService(dataStore, kubernetesClientFactory)
 	pendingActionsService.RegisterHandler(actions.CleanNAPWithOverridePolicies, handlers.NewHandlerCleanNAPWithOverridePolicies(authorizationService, dataStore))
+	pendingActionsService.RegisterHandler(actions.CleanupNamespaceRecords, handlers.NewHandlerCleanupNamespaceRecords(dataStore, kubernetesClientFactory))
 	pendingActionsService.RegisterHandler(actions.DeletePortainerK8sRegistrySecrets, handlers.NewHandlerDeleteRegistrySecrets(authorizationService, dataStore, kubernetesClientFactory))
 	pendingActionsService.RegisterHandler(actions.PostInitMigrateEnvironment, handlers.NewHandlerPostInitMigrateEnvironment(authorizationService, dataStore, kubernetesClientFactory, dockerClientFactory, *flags.Assets, kubernetesDeployer))
 
@@ -712,6 +709,26 @@ func main() {
 
 	logs.SetLoggingLevel(*flags.LogLevel)
 	logs.SetLoggingMode(*flags.LogMode)
+
+	// HA is optional. Gate the whole process before filesystem/datastore setup;
+	// BoltDB's own lock is too late for encryption migration and file backups.
+	if mode := os.Getenv("VESSEL_HA_MODE"); mode != "" && mode != "disabled" {
+		waiting, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		log.Info().Msg("waiting for exclusive HA storage ownership")
+		lease, err := ha.Acquire(waiting, *flags.Data, mode)
+		canceled := waiting.Err() != nil
+		stop()
+		if err != nil {
+			if canceled {
+				return
+			}
+			log.Fatal().Err(err).Msg("unable to acquire HA storage ownership")
+		}
+		// Do not unlock during shutdown: background work and datastore teardown
+		// must finish before the OS releases this process's file descriptors.
+		defer runtime.KeepAlive(lease)
+		log.Info().Msg("acquired exclusive HA storage ownership")
+	}
 
 	// The loop lets Portainer rebuild and restart its server after an internal
 	// shutdown request, such as restoring a database backup.

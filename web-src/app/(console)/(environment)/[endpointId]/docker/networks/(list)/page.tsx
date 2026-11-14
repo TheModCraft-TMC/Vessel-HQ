@@ -1,5 +1,7 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
 import { NetworksDatatable } from '@/domains/networks/components/NetworkList/NetworksDatatable';
 import { useDeleteNetworkListMutation } from '@/domains/networks/queries/useDeleteNetworkListMutation';
 import { PageHeader } from '@/ui/layouts/view-layout';
@@ -10,9 +12,11 @@ export default function Page() {
   return (
     <>
       <PageHeader title="Network list" breadcrumbs="Networks" reload />
-      <NetworksDatatable
-        onRemove={(networks) => removeNetworks.mutate({ networks })}
-      />
+      <PageContent>
+        <NetworksDatatable
+          onRemove={(networks) => removeNetworks.mutate({ networks })}
+        />
+      </PageContent>
     </>
   );
 }

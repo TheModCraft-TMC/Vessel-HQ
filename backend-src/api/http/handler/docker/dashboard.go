@@ -87,7 +87,7 @@ func (h *Handler) dashboard(w http.ResponseWriter, r *http.Request) *httperror.H
 			if item == nil {
 				return nil, errors.New("Found nil volume in volumes list")
 			}
-			return uac.VolumeResourceControlGetter(tx, endpoint.ID)(*item)
+			return uac.VolumeResourceControlGetter(tx, endpoint.ID, cachedData.engineID)(*item)
 		})
 		if err != nil {
 			return err

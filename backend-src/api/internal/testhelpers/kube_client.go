@@ -11,6 +11,11 @@ type testKubeClient struct {
 	portainer.KubeClient
 }
 
+func (kcl *testKubeClient) NamespaceAccessPoliciesDeleteNamespace(string) error { return nil }
+func (kcl *testKubeClient) GetNamespace(name string) (portainer.K8sNamespaceInfo, error) {
+	return portainer.K8sNamespaceInfo{Name: name}, nil
+}
+
 func NewKubernetesClient() portainer.KubeClient {
 	return &testKubeClient{}
 }

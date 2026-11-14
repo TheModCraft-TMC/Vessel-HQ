@@ -5,9 +5,17 @@ export interface ExtensionPermission {
     | 'storage.write'
     | 'storage.service.read'
     | 'storage.service.write'
+    | 'settings.service.read'
+    | 'settings.service.secrets.read'
     | 'environments.read'
     | 'containers.read'
     | 'stacks.read'
+    | 'stacks.delivery.read'
+    | 'stacks.gitops.sync'
+    | 'stacks.images.read'
+    | 'stacks.images.update'
+    | 'stacks.images.configure'
+    | 'stacks.images.auto-update'
     | 'stacks.network.read'
     | 'stacks.traffic.read';
   environmentIds: number[];
@@ -22,6 +30,17 @@ export interface ExtensionManifest {
   apiVersion: 'v1';
   packageDigest: string;
   permissions: ExtensionPermission[];
+  settings?: {
+    fields: Record<
+      string,
+      {
+        type: 'string' | 'boolean' | 'integer';
+        required?: boolean;
+        secret?: boolean;
+        enum?: string[];
+      }
+    >;
+  };
   ui?: {
     entry: string;
     slots: {

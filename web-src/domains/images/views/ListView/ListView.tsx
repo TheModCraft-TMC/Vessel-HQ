@@ -1,3 +1,5 @@
+import { PageContent } from '@console/layout/PageContent';
+
 import { PageHeader } from '@/ui/layouts/view-layout';
 import { useIsSwarmAgent } from '@/core/docker/proxy/queries/useIsSwarmAgent';
 
@@ -11,13 +13,10 @@ export function ListView() {
     <>
       <PageHeader title="Image list" breadcrumbs="Images" reload />
 
-      <div className="row">
-        <div className="col-sm-12">
-          <PullImageFormWidget isNodeVisible={isSwarmAgent} />
-        </div>
-      </div>
-
-      <ImagesDatatable isHostColumnVisible={isSwarmAgent} />
+      <PageContent>
+        <PullImageFormWidget isNodeVisible={isSwarmAgent} />
+        <ImagesDatatable isHostColumnVisible={isSwarmAgent} />
+      </PageContent>
     </>
   );
 }

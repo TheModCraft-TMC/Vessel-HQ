@@ -29,11 +29,13 @@ import (
 )
 
 type invokePayload struct {
-	Revision      int    `json:"revision"`
-	PackageDigest string `json:"packageDigest"`
-	Operation     string `json:"operation"`
-	EnvironmentID int    `json:"environmentId"`
-	StackID       int    `json:"stackId"`
+	Automation    *domain.ImageAutomation `json:"automation,omitempty"`
+	Revision      int                     `json:"revision"`
+	PackageDigest string                  `json:"packageDigest"`
+	Operation     string                  `json:"operation"`
+	EnvironmentID int                     `json:"environmentId"`
+	StackID       int                     `json:"stackId"`
+	Version       string                  `json:"version,omitempty"`
 }
 type slotManifest struct {
 	ID            string `json:"id"`
@@ -90,6 +92,9 @@ func (h *Handler) invoke(w http.ResponseWriter, r *http.Request) *httperror.Hand
 	var payload invokePayload
 	if err := decode(w, r, &payload); err != nil {
 		return httperror.BadRequest("Invalid extension operation", err)
+	}
+	if payload.Operation == "stacks.delivery.read" || payload.Operation == "stacks.images.read" || payload.Operation == "stacks.gitops.sync" || payload.Operation == "stacks.images.update" || payload.Operation == "stacks.images.configure" {
+		return h.invokeDelivery(w, r, payload)
 	}
 	graph, err := h.invokeGraph(r, payload)
 	if err != nil {

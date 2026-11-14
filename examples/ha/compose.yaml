@@ -1,0 +1,17 @@
+# Deploy this opt-in file separately on EACH of the two Docker hosts.
+# /srv/vessel-ha-data must be the SAME coherently locked shared filesystem.
+services:
+  vessel:
+    image: ${VESSEL_HA_IMAGE:?Set the same reviewed immutable image on both hosts}
+    restart: unless-stopped
+    environment:
+      VESSEL_HA_MODE: shared-storage
+    ports:
+      - "9443:9443"
+      - "8000:8000"
+    volumes:
+      - type: bind
+        source: /srv/vessel-ha-data
+        target: /data
+        bind:
+          create_host_path: false

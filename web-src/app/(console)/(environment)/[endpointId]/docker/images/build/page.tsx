@@ -1,5 +1,7 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
 import { BuildImageForm } from '@/domains/images/views/BuildView/BuildView';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
@@ -13,7 +15,9 @@ export default function Page() {
           'Build image',
         ]}
       />
-      <BuildImageForm />
+      <PageContent>
+        <BuildImageForm />
+      </PageContent>
     </>
   );
 }

@@ -3,7 +3,7 @@ package rpc
 import (
 	"context"
 	"errors"
-	v1 "github.com/TheModCraft-TMC/Vessel-HQ/sdk/go/proto/v1"
+	v1 "github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/proto/v1"
 	"github.com/portainer/portainer/api/nativeextensions"
 	"github.com/portainer/portainer/api/nativeextensions/topology"
 	"github.com/stretchr/testify/require"
