@@ -1878,3 +1878,28 @@ and result bounds, and value-free errors. Caller-supplied repository URLs or
 credentials are rejected. API contracts were regenerated with `make generate-api`.
 Route tests cover successful requests, denied private-source access, invalid
 payloads and credential redaction. UI tests now assert actual requests in CE.
+
+### Issue #299 final candidate verification — November 14, 2026
+
+This supersedes the earlier partial frontend run above. The clean Linux run
+passed 377 files / 2,537 tests, with five skipped and eleven todo cases; required
+architecture, typecheck, lint and production-build gates passed. Fresh npm audit
+found one low advisory and no moderate/high/critical advisories.
+
+Nine live disposable-engine/API checks passed, including 229 ms event delivery,
+settings/source access checks, signed Swarm webhook delivery, replay rejection,
+session revocation and same-host abrupt HA takeover with persistent replay state.
+The webhook Docker negotiation now uses the delivery context and has a deadline
+regression test. The final source commit is `beae78041`; both Linux architectures
+were compiled, the OCI index contains amd64/arm64, and the amd64 image serves API
+status and built login HTML. See the [acceptance matrix](issue-299.md) for remaining
+provider, cross-host fencing and registry-publication boundaries.
+
+Published [1.3.3-beta.1](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.3-beta.1)
+from immutable implementation commit `beae7804124e2fdd524594ce12a4715e45a35c8e`,
+with architecture bundles, multi-platform OCI archive, checksums and sanitized
+receipts. GitHub reports matching sizes and SHA-256 digests for all nine assets.
+Docker Hub/GHCR publication remains blocked by unavailable registry credentials;
+no registry or stable-channel success is claimed. Disposable remote containers,
+network, datastore volumes, scratch files, tunnel and local browser/server were
+removed after validation; production services were not replaced.
