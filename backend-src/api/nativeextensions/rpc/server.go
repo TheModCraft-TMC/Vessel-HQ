@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	extensionv1 "github.com/TheModCraft-TMC/Vessel-HQ/sdk/go/proto/v1"
+	extensionv1 "github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/proto/v1"
 	"github.com/portainer/portainer/api/nativeextensions"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -77,10 +77,16 @@ type Server struct {
 	userAuthorize UserAuthorize
 	leases        *leaseSigner
 	notes         NoteStorage
+	settings      SettingsStorage
+}
+
+type StorageServices struct {
+	Notes    NoteStorage
+	Settings SettingsStorage
 }
 
 // NewServer never accepts caller-supplied transport credentials or auth options.
-func NewServer(config Config, lookup Lookup, read EnvironmentLookup, audit AccessAudit, notes ...NoteStorage) (*grpc.Server, error) {
+func NewServer(config Config, lookup Lookup, read EnvironmentLookup, audit AccessAudit, storage ...StorageServices) (*grpc.Server, error) {
 	if lookup == nil {
 		return nil, errors.New("extension registry lookup required")
 	}
@@ -98,8 +104,12 @@ func NewServer(config Config, lookup Lookup, read EnvironmentLookup, audit Acces
 	}
 	transport := credentials.NewTLS(&tls.Config{MinVersion: tls.VersionTLS13, Certificates: []tls.Certificate{cert}, ClientCAs: pool, ClientAuth: tls.RequireAndVerifyClientCert})
 	service := &Server{lookup: lookup, read: read, audit: audit}
-	if len(notes) > 0 {
-		service.notes = notes[0]
+	if len(storage) > 1 {
+		return nil, errors.New("only one storage service configuration supported")
+	}
+	if len(storage) > 0 {
+		service.notes = storage[0].Notes
+		service.settings = storage[0].Settings
 	}
 	return newGRPCServer(transport, service), nil
 }
@@ -111,8 +121,8 @@ func newGRPCServer(transport credentials.TransportCredentials, service *Server) 
 
 // Start serves on a dedicated listener; it is never exposed through the public
 // browser router. Cancellation closes existing connections and ongoing RPCs.
-func Start(ctx context.Context, config Config, lookup Lookup, read EnvironmentLookup, audit AccessAudit, notes ...NoteStorage) (<-chan error, error) {
-	server, err := NewServer(config, lookup, read, audit, notes...)
+func Start(ctx context.Context, config Config, lookup Lookup, read EnvironmentLookup, audit AccessAudit, storage ...StorageServices) (<-chan error, error) {
+	server, err := NewServer(config, lookup, read, audit, storage...)
 	if err != nil {
 		return nil, err
 	}

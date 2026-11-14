@@ -8,7 +8,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	v1 "github.com/TheModCraft-TMC/Vessel-HQ/sdk/go/proto/v1"
+	v1 "github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/proto/v1"
 	"github.com/portainer/portainer/api/nativeextensions"
 	"github.com/portainer/portainer/api/nativeextensions/topology"
 	"google.golang.org/grpc/codes"

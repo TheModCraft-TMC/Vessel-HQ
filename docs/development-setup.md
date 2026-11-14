@@ -8,7 +8,7 @@ development.
 Install:
 
 - Docker
-- Go 1.26.10
+- Go 1.26.11
 - Node.js 24.21.0 or newer in the 24.x LTS line
 - pnpm 10.26.2
 

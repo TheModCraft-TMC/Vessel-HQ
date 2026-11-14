@@ -1,17 +1,20 @@
 import { useRouteParams } from '@console/routing/useRouteParams';
 import {
   createContext,
+  useEffect,
   ReactNode,
   useContext,
   useMemo,
   PropsWithChildren,
 } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { isBE } from '@/shared/feature-flags/feature-flags.service';
 import {
-  type EnvironmentId,
-  useEnvironment,
-} from '@/domains/environments';
+  startRealtimeQuerySync,
+  stopRealtimeQuerySync,
+} from '@/core/realtime/query-sync';
+import { isBE } from '@/shared/feature-flags/feature-flags.service';
+import { type EnvironmentId, useEnvironment } from '@/domains/environments';
 import {
   isEdgeAdmin,
   isPureAdmin,
@@ -206,6 +209,14 @@ interface UserProviderProps {
 
 export function UserProvider({ children }: UserProviderProps) {
   const userQuery = useLoadCurrentUser();
+  const queryClient = useQueryClient();
+  const environmentId = Number(useRouteParams().endpointId) || undefined;
+  const userId = userQuery.data?.Id;
+  useEffect(() => {
+    if (!userId) return undefined;
+    startRealtimeQuerySync(queryClient, environmentId);
+    return stopRealtimeQuerySync;
+  }, [queryClient, userId, environmentId]);
 
   const providerState = useMemo(
     () => ({ user: userQuery.data }),

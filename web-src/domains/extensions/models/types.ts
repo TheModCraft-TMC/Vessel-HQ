@@ -5,6 +5,8 @@ export interface ExtensionPermission {
     | 'storage.write'
     | 'storage.service.read'
     | 'storage.service.write'
+    | 'settings.service.read'
+    | 'settings.service.secrets.read'
     | 'environments.read'
     | 'containers.read'
     | 'stacks.read'
@@ -28,6 +30,17 @@ export interface ExtensionManifest {
   apiVersion: 'v1';
   packageDigest: string;
   permissions: ExtensionPermission[];
+  settings?: {
+    fields: Record<
+      string,
+      {
+        type: 'string' | 'boolean' | 'integer';
+        required?: boolean;
+        secret?: boolean;
+        enum?: string[];
+      }
+    >;
+  };
   ui?: {
     entry: string;
     slots: {

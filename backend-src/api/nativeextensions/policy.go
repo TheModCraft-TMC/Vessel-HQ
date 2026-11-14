@@ -31,15 +31,16 @@ type Backend struct {
 	Entrypoints map[string]string `json:"entrypoints"`
 }
 type Manifest struct {
-	ID            string       `json:"id"`
-	Name          string       `json:"name"`
-	Version       string       `json:"version"`
-	Description   string       `json:"description,omitempty"`
-	APIVersion    string       `json:"apiVersion"`
-	PackageDigest string       `json:"packageDigest"`
-	Permissions   []Permission `json:"permissions"`
-	UI            *UI          `json:"ui,omitempty"`
-	Backend       *Backend     `json:"backend,omitempty"`
+	Settings      *SettingsSchema `json:"settings,omitempty"`
+	ID            string          `json:"id"`
+	Name          string          `json:"name"`
+	Version       string          `json:"version"`
+	Description   string          `json:"description,omitempty"`
+	APIVersion    string          `json:"apiVersion"`
+	PackageDigest string          `json:"packageDigest"`
+	Permissions   []Permission    `json:"permissions"`
+	UI            *UI             `json:"ui,omitempty"`
+	Backend       *Backend        `json:"backend,omitempty"`
 }
 type Note struct {
 	Text    string `json:"text"`
@@ -73,6 +74,9 @@ var slug = regexp.MustCompile(`^[a-z0-9][a-z0-9.-]{1,126}[a-z0-9]$`)
 var digest = regexp.MustCompile(`^sha256:[a-f0-9]{64}$`)
 
 func (m *Manifest) Validate() error {
+	if err := m.Settings.Validate(); err != nil {
+		return err
+	}
 	if !slug.MatchString(m.ID) || strings.Contains(m.ID, "..") || strings.TrimSpace(m.Name) == "" || len(m.Name) > 128 || len(m.Version) == 0 || len(m.Version) > 64 || len(m.Description) > 4096 || m.APIVersion != "v1" || !digest.MatchString(m.PackageDigest) {
 		return errors.New("invalid manifest identity, version, API version, or package digest")
 	}
@@ -136,7 +140,7 @@ func validatePermissions(ps []Permission) error {
 		}
 
 		switch p.Capability {
-		case "ui.native", "storage.read", "storage.write", "storage.service.read", "storage.service.write":
+		case "ui.native", "storage.read", "storage.write", "storage.service.read", "storage.service.write", "settings.service.read", "settings.service.secrets.read":
 			if len(p.EnvironmentIDs) != 0 {
 				return errors.New("native UI and extension storage permissions are global")
 			}
@@ -160,7 +164,7 @@ func validatePermissions(ps []Permission) error {
 func has(ps []Permission, capability string, environmentID int) bool {
 	for _, p := range ps {
 		if p.Capability == capability {
-			if capability == "ui.native" || capability == "storage.read" || capability == "storage.write" || capability == "storage.service.read" || capability == "storage.service.write" {
+			if isGlobalCapability(capability) {
 				return environmentID == 0 && len(p.EnvironmentIDs) == 0
 			}
 			return environmentID > 0 && slices.Contains(p.EnvironmentIDs, environmentID)
@@ -182,7 +186,7 @@ func (a *Approval) ValidateFor(r Record) error {
 		return err
 	}
 	for _, p := range a.Grants {
-		if p.Capability == "ui.native" || p.Capability == "storage.read" || p.Capability == "storage.write" || p.Capability == "storage.service.read" || p.Capability == "storage.service.write" {
+		if isGlobalCapability(p.Capability) {
 			if (p.Capability == "ui.native" && !a.TrustedNativeUI) || !has(r.Manifest.Permissions, p.Capability, 0) {
 				return ErrDenied
 			}
@@ -222,6 +226,15 @@ func (a *Approval) ValidateFor(r Record) error {
 		return errors.New("native UI trust requires its explicit grant")
 	}
 	return nil
+}
+
+func isGlobalCapability(capability string) bool {
+	switch capability {
+	case "ui.native", "storage.read", "storage.write", "storage.service.read", "storage.service.write", "settings.service.read", "settings.service.secrets.read":
+		return true
+	default:
+		return false
+	}
 }
 
 // Authorize checks an approved grant, not runtime activation or user access.

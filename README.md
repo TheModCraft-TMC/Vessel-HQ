@@ -36,6 +36,8 @@ Vessel HQ is a community fork, not Portainer Business Edition. Future capabiliti
 - Custom roles, Authentik group synchronization, effective-access visibility, and per-stack read-only sharing.
 - GitHub Container Registry integration and authenticated repository/tag browsing.
 - Persistent activity logs and export workflows.
+- Optional signed webhook fan-out; see the [gateway contract](./docs/webhook-gateway.md).
+- Experimental opt-in active/standby startup; see the [HA requirements](./docs/high-availability.md).
 - Cached overviews, authenticated realtime invalidation, live logs, and node metrics.
 - Fork-aware version reporting and multi-architecture release tooling.
 
@@ -43,7 +45,7 @@ See the [feature catalog](./docs/recent-features/README.md) and [customization g
 
 ## Local development
 
-Prerequisites: Docker, Go 1.26.10, Node.js 24.21.0 or newer in the 24.x line, and pnpm 10.26.2. Keep Docker running for the local backend.
+Prerequisites: Docker, Go 1.26.11, Node.js 24.21.0 or newer in the 24.x line, and pnpm 10.26.2. Keep Docker running for the local backend.
 
 ```sh
 make deps

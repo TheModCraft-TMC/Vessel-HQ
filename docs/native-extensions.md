@@ -99,8 +99,16 @@ dialog to edit public values, add or replace write-only secrets, explicitly remo
 entries, or reset all settings after confirmation. Leave an existing secret blank
 to preserve it. Reloading asks before discarding edits; a failed save clears entered
 secrets and requires reloading before another write. Package and settings version
-conflicts never overwrite newer data. There is no manifest settings schema, SDK
-settings RPC or runtime secret delivery in this slice.
+conflicts never overwrite newer data. Packages may declare a bounded `settings.fields`
+schema with string, boolean or integer fields, required flags, string enums and
+secret placement. Undeclared keys, invalid values and public/secret mismatches
+are rejected; packages without a schema retain the existing string-map contract.
+
+SDK beta.2 adds `GetSettings(revision, includeSecrets)` over package-bound mTLS.
+Every read requires current approval and `settings.service.read`; secrets also
+require the independent `settings.service.secrets.read` grant. Public reads never
+return secrets. Revision checks, schema validation and value-free audits are
+transactional. Upload and administrator settings access grant no machine access.
 
 - `GET` requires `revision` and `packageDigest` query parameters. It returns
   `{version, values, secretKeys}`. Secret values are never returned.
@@ -120,8 +128,8 @@ versions return `409` without changing data. Missing registrations return `404`.
 Keys start with an ASCII letter and contain only letters, numbers, `_`, `.` and
 `-`, up to 64 characters. Values are UTF-8 strings up to 16 KiB each; public and
 secret settings share limits of 64 entries and 64 KiB total key/value bytes. A key
-cannot appear in both maps. These are storage validation rules, not a package
-schema or an authorization grant.
+cannot appear in both maps. These storage limits also apply when a package declares a schema. A schema
+does not grant runtime authorization.
 
 Settings responses use `Cache-Control: no-store`. Registration responses exclude
 all settings. Reads, updates and resets are audited transactionally with package
@@ -302,7 +310,7 @@ generates private development mTLS credentials and uses the SDK for its calls.
 The SDK also includes an independent environment-configured executable example.
 Rust or other gRPC clients can use the same protobuf contract.
 
-The shared [wire contract](https://github.com/TheModCraft-TMC/Vessel-HQ/blob/sdk/go/v0.1.0-beta.1/sdk/go/proto/v1/extension.proto) comes from the pinned published SDK module. Vessel has no local SDK replacement or duplicate generated Go wire types. SDK authoring and pinned protobuf generation now belong to the [independent SDK workspace](extension-sdk-workspace.md); host integration tests run with `GOWORK=off make test-extension-host`.
+The shared [wire contract](https://github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/blob/v0.1.0-beta.2/proto/v1/extension.proto) comes from the pinned published SDK module. Vessel has no local SDK replacement or duplicate generated Go wire types. SDK authoring and pinned protobuf generation now belong to the [independent SDK workspace](extension-sdk-workspace.md); host integration tests run with `GOWORK=off make test-extension-host`.
 
 See the [design and remaining milestones](planning/plugin-system.md) and
 [roadmap](planning/vessel-hq-roadmap.md) before expanding this experimental API.

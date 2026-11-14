@@ -1839,3 +1839,31 @@ time, ports, mounts and restart policy; its HTTPS status returned 200 and its
 version remains `1.3.0`. The sanitized local receipt is
 `dist/native-extension-production-smoke/results.json`. This Docker smoke does not
 establish production activation support or Kubernetes/Swarm/ACI coverage.
+
+## Issue #299 continuation — November 14, 2026
+
+Continued the interrupted settings, HA, webhook, upstream and realtime working
+changes without resetting concurrent work. Published independent SDK beta.2 at
+`1f1021142f179ddad3b9ccdf3071e298a6f2d71c`, with an allowlisted source archive and
+SHA-256 checksum. Public Go module/checksum discovery now passes, and the affected backend race suite passes with `GOWORK=off` against the published module.
+GitHub Actions dispatch returned “Actions has been disabled for this user”; local
+SDK race, vet, generation and packaging validation passed.
+
+Finished shared Docker event fan-out with environment scoping, coalescing,
+backpressure, disconnect cleanup, bounded I/O, current role and session checks.
+Added real HTTP-stream cancellation and revoked-session regressions. Applied the
+complete Helm SSRF backport alongside the six previously adapted upstream fixes.
+Hardened the optional webhook gateway with route-bound signatures and bounded
+concurrency before reservation. Documented signed calls and at-most-once behavior.
+Made existing Git reference/path browsing available for configured sources without
+an edition check, preserving manual entry, HEAD and unadvertised commit refs.
+
+Fresh source checks and remaining infrastructure acceptance are recorded in the
+[issue #299 matrix](issue-299.md). Production frontend build, typecheck, architecture
+guards and lint passed. The full frontend run had one fixture failure among 375
+files; the corrected final changed set passes 43 tests in six files. Affected
+backend tests and targeted race suites passed with `GOWORK=off` against the published SDK after initial temporary-workspace validation.
+Headless 390px/1440px images, networks and volumes fixtures have matching heading
+offsets and no page overflow; the settings dialog fits 390px and shows no saved
+secret. Docker is stopped locally. No live provider, cross-host fencing/failover,
+production activation or application image-publication success is inferred.

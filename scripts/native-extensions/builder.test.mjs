@@ -149,6 +149,33 @@ for (const mutation of ['protected-path', 'symlink', 'digest', 'entry-traversal'
 test('requires digest-pinned builder image before any execution', async () => {
   await assert.rejects(build('/nonexistent', 'node:latest'), /pinned/);
 });
+
+test('settings schema is validated and retained in the manifest inventory', async (t) => {
+  const f = await fixture(t);
+  const source = path.join(f.temp, 'schema-extension');
+  await fs.cp(example, source, { recursive: true });
+  const file = path.join(source, 'manifest.json');
+  const manifest = JSON.parse(await fs.readFile(file));
+  const original = await inspectPackage(source);
+  manifest.settings = { fields: { token: { type: 'string', secret: true, required: true }, attempts: { type: 'integer', enum: ['0', '9223372036854775807'] } } };
+  await fs.writeFile(file, json(manifest));
+  const inspected = await inspectPackage(source, { verifyDigest: false });
+  assert.notEqual(inspected.manifestDigest, original.manifestDigest);
+  assert.equal(inspected.computedPackageDigest, manifest.packageDigest);
+  manifest.packageDigest = inspected.computedPackageDigest;
+  await fs.writeFile(file, json(manifest));
+  assert.deepEqual((await inspectPackage(source)).manifest.settings, manifest.settings);
+  for (const field of [
+    { type: 'number' }, { type: 'boolean', secret: true }, { type: 'string', secret: true, enum: ['private'] },
+    { type: 'integer', enum: ['9223372036854775808'] }, { type: 'integer', enum: ['-0'] },
+    { type: 'integer', enum: ['01'] }, { type: 'boolean', enum: ['yes'] }, { type: 'string', enum: ['same', 'same'] },
+    { type: 'string', default: 'private' }, { type: 'string', enum: ['\ud800'] },
+  ]) {
+    manifest.settings.fields.attempts = field;
+    await fs.writeFile(file, json(manifest));
+    await assert.rejects(inspectPackage(source, { verifyDigest: false }), /settings schema/i);
+  }
+});
 test('modified candidate refuses to invoke container build', async (t) => {
   const f = await fixture(t);
   const output = path.join(f.temp, 'candidate');

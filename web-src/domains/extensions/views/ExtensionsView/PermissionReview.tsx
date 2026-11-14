@@ -54,6 +54,8 @@ export function PermissionReview({
             'storage.write',
             'storage.service.read',
             'storage.service.write',
+            'settings.service.read',
+            'settings.service.secrets.read',
           ].includes(permission.capability)
         ) {
           return selected.includes(permission.capability)
@@ -133,7 +135,9 @@ export function PermissionReview({
               ) : permission.capability === 'storage.read' ||
                 permission.capability === 'storage.write' ||
                 permission.capability === 'storage.service.read' ||
-                permission.capability === 'storage.service.write' ? (
+                permission.capability === 'storage.service.write' ||
+                permission.capability === 'settings.service.read' ||
+                permission.capability === 'settings.service.secrets.read' ? (
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -146,7 +150,11 @@ export function PermissionReview({
                       ? 'Write this extension’s saved notes'
                       : permission.capability === 'storage.service.read'
                         ? 'Allow the service to read its saved notes without a user session'
-                        : 'Allow the service to write its saved notes without a user session'}
+                        : permission.capability === 'storage.service.write'
+                          ? 'Allow the service to write its saved notes without a user session'
+                          : permission.capability === 'settings.service.read'
+                            ? 'Allow the service to read its public settings'
+                            : 'Allow the service to read its secret settings'}
                 </label>
               ) : (
                 permission.environmentIds.map((id) => (

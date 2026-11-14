@@ -54,8 +54,33 @@ export function ExtensionConfiguration({
       <h3>Saved settings</h3>
       <p>
         Configure this extension without enabling it or changing its
-        permissions. Settings are not yet available to extension code.
+        permissions. Approved services can read settings through the gateway
+        with explicit settings permissions. Secret access requires a separate
+        permission.
       </p>
+      {extension.manifest.settings && (
+        <div role="group" aria-label="Settings schema">
+          <h4>Declared settings</h4>
+          <p>
+            Only these keys are accepted. Boolean values use true or false;
+            integers use decimal whole numbers.
+          </p>
+          <ul>
+            {Object.entries(extension.manifest.settings.fields).map(
+              ([key, field]) => (
+                <li key={key}>
+                  <code>{key}</code>: {field.type},{' '}
+                  {field.secret ? 'secret' : 'public'},{' '}
+                  {field.required ? 'required' : 'optional'}
+                  {field.enum?.length
+                    ? `; allowed values: ${field.enum.join(', ')}`
+                    : ''}
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+      )}
       {notice && <p role="status">{notice}</p>}
       {query.isLoading && <p role="status">Loading saved settings…</p>}
       {query.isError && (

@@ -5,7 +5,6 @@ import { useStateWrapper } from '@/core/hooks/useStateWrapper';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { Input } from '@/ui/components/forms/Input';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
-import { isBE } from '@/shared/feature-flags/feature-flags.service';
 
 import { RefSelector } from './RefSelector';
 
@@ -19,7 +18,7 @@ interface Props {
 export function RefField({ value, onChange, sourceId, error }: Props) {
   const [inputValue, updateInputValue] = useStateWrapper(value, onChange);
   const inputId = 'repository-reference-field';
-  return isBE ? (
+  return sourceId ? (
     <Wrapper
       inputId={inputId}
       errors={error}
@@ -89,10 +88,5 @@ function Wrapper({
 }
 
 export function refFieldValidation(): SchemaOf<string> {
-  return string()
-    .when({
-      is: isBE,
-      then: string().required('Repository reference name is required'),
-    })
-    .default('');
+  return string().default('');
 }

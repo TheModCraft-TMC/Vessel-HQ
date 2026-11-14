@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	extension "github.com/TheModCraft-TMC/Vessel-HQ/sdk/go"
+	extension "github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/datastore"
@@ -45,7 +45,7 @@ func TestMachineNotesOverUnixGateway(t *testing.T) {
 		}
 		return *r, nil
 	}
-	_, err = Start(ctx, Config{Address: address, CertificateFile: cert, KeyFile: key, ClientCAFile: ca}, lookup, nil, nil, NewNoteStorage(store))
+	_, err = Start(ctx, Config{Address: address, CertificateFile: cert, KeyFile: key, ClientCAFile: ca}, lookup, nil, nil, StorageServices{Notes: NewNoteStorage(store)})
 	require.NoError(t, err)
 	client, err := extension.Dial(ctx, extension.Config{Address: address, CAFile: ca, CertificateFile: clientCert, KeyFile: clientKey, ServerName: "localhost", RPCTimeout: time.Second})
 	require.NoError(t, err)
