@@ -69,7 +69,7 @@ func (handler *Handler) executeServiceWebhook(
 	registryID portainer.RegistryID,
 	imageTag string,
 ) *httperror.HandlerError {
-	dockerClient, err := handler.DockerClientFactory.CreateClient(endpoint, "", nil)
+	dockerClient, err := handler.DockerClientFactory.CreateClientWithContext(ctx, endpoint, "", nil)
 	if err != nil {
 		return httperror.InternalServerError("Error creating docker client", err)
 	}
