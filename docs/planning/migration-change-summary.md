@@ -1903,3 +1903,18 @@ Docker Hub/GHCR publication remains blocked by unavailable registry credentials;
 no registry or stable-channel success is claimed. Disposable remote containers,
 network, datastore volumes, scratch files, tunnel and local browser/server were
 removed after validation; production services were not replaced.
+
+
+### Final Linux backend suite
+
+The clean `GOWORK=off go test -mod=readonly ./...` run completed with exit code 0
+on Go 1.26.11 / linux/amd64: **156 test packages passed**. The published SDK was
+resolved normally. The prerelease now also includes `backend-validation.log` and
+`backend-validation.sha256`; the original nine assets remain unchanged. The
+amd64 image's `--version` output is `1.3.3-beta.1`.
+
+The slow Mac broad run was superseded, and the initial Linux attempt blocked by
+a no-exec temporary mount is excluded. The clean rerun used an executable,
+bounded memory filesystem for compilation; its complete passing log is the final
+evidence. All task containers, temporary mounts, caches, network and scratch
+sources were removed after saving the sanitized results.
