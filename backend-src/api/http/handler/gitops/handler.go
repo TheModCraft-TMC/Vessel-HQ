@@ -35,6 +35,9 @@ func NewHandler(bouncer security.BouncerService, dataStore dataservices.DataStor
 	authenticatedRouter := h.NewRoute().Subrouter()
 	authenticatedRouter.Use(bouncer.AuthenticatedAccess)
 
+	authenticatedRouter.Handle("/gitops/repo/refs", httperror.LoggerHandler(h.gitOperationRepoRefs)).Methods(http.MethodPost)
+	authenticatedRouter.Handle("/gitops/repo/files/search", httperror.LoggerHandler(h.gitOperationRepoFileSearch)).Methods(http.MethodPost)
+
 	authenticatedRouter.Handle("/gitops/repo/file/preview", httperror.LoggerHandler(h.gitOperationRepoFilePreview)).Methods(http.MethodPost)
 
 	workflowsHandler := workflows.NewHandler(dataStore, gitService, k8sFactory)

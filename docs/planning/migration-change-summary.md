@@ -1867,3 +1867,14 @@ Headless 390px/1440px images, networks and volumes fixtures have matching headin
 offsets and no page overflow; the settings dialog fits 390px and shows no saved
 secret. Docker is stopped locally. No live provider, cross-host fencing/failover,
 production activation or application image-publication success is inferred.
+
+### Git browsing request-path completion
+
+Review found that repository listing methods existed in the Git service but the
+HTTP routes were absent, and the query hooks still checked edition. This candidate
+now wires source-bound POST routes for refs and deployment-file search, with normal
+source read authorization, SSRF enforcement, stored credentials, request/deadline
+and result bounds, and value-free errors. Caller-supplied repository URLs or
+credentials are rejected. API contracts were regenerated with `make generate-api`.
+Route tests cover successful requests, denied private-source access, invalid
+payloads and credential redaction. UI tests now assert actual requests in CE.

@@ -3103,6 +3103,74 @@ paths:
       summary: preview the content of target file in the git repository
       tags:
         - gitops
+  /gitops/repo/files/search:
+    post:
+      operationId: GitOperationRepoFileSearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/gitops.repositoryBrowsePayload"
+        description: Stored source, reference and path filter
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: Search deployment paths in an authorized stored Git source
+      tags:
+        - gitops
+  /gitops/repo/refs:
+    post:
+      operationId: GitOperationRepoRefs
+      parameters:
+        - description: Refresh cached references
+          in: query
+          name: force
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/gitops.repositoryBrowsePayload"
+        description: Stored source
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: List references from an authorized stored Git source
+      tags:
+        - gitops
   /gitops/sources:
     get:
       description: >-
@@ -13925,6 +13993,17 @@ components:
       properties:
         FileContent:
           type: string
+      type: object
+    gitops.repositoryBrowsePayload:
+      properties:
+        dirOnly:
+          type: boolean
+        keyword:
+          type: string
+        reference:
+          type: string
+        sourceId:
+          type: integer
       type: object
     gitops.repositoryFilePreviewPayload:
       properties:

@@ -1305,6 +1305,17 @@ definitions:
       FileContent:
         type: string
     type: object
+  gitops.repositoryBrowsePayload:
+    properties:
+      dirOnly:
+        type: boolean
+      keyword:
+        type: string
+      reference:
+        type: string
+      sourceId:
+        type: integer
+    type: object
   gitops.repositoryFilePreviewPayload:
     properties:
       password:
@@ -18214,6 +18225,76 @@ paths:
       - ApiKeyAuth: []
       - jwt: []
       summary: preview the content of target file in the git repository
+      tags:
+      - gitops
+  /gitops/repo/files/search:
+    post:
+      consumes:
+      - application/json
+      operationId: GitOperationRepoFileSearch
+      parameters:
+      - description: Stored source, reference and path filter
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/gitops.repositoryBrowsePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+      - ApiKeyAuth: []
+      - jwt: []
+      summary: Search deployment paths in an authorized stored Git source
+      tags:
+      - gitops
+  /gitops/repo/refs:
+    post:
+      consumes:
+      - application/json
+      operationId: GitOperationRepoRefs
+      parameters:
+      - description: Stored source
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/gitops.repositoryBrowsePayload'
+      - description: Refresh cached references
+        in: query
+        name: force
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+      - ApiKeyAuth: []
+      - jwt: []
+      summary: List references from an authorized stored Git source
       tags:
       - gitops
   /gitops/sources:

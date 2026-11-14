@@ -491,6 +491,12 @@ import type {
   GitOperationRepoFilePreviewData,
   GitOperationRepoFilePreviewErrors,
   GitOperationRepoFilePreviewResponses,
+  GitOperationRepoFileSearchData,
+  GitOperationRepoFileSearchErrors,
+  GitOperationRepoFileSearchResponses,
+  GitOperationRepoRefsData,
+  GitOperationRepoRefsErrors,
+  GitOperationRepoRefsResponses,
   GitOpsSourceGetData,
   GitOpsSourceGetErrors,
   GitOpsSourceGetResponses,
@@ -1253,6 +1259,11 @@ import {
   zGetWebsocketPodQuery,
   zGitOperationRepoFilePreviewBody,
   zGitOperationRepoFilePreviewResponse,
+  zGitOperationRepoFileSearchBody,
+  zGitOperationRepoFileSearchResponse,
+  zGitOperationRepoRefsBody,
+  zGitOperationRepoRefsQuery,
+  zGitOperationRepoRefsResponse,
   zGitOpsSourceGetPath,
   zGitOpsSourceGetResponse,
   zGitOpsSourcesCreateGitBody,
@@ -4248,6 +4259,82 @@ export const gitOperationRepoFilePreview = <
       { name: 'Authorization', type: 'apiKey' },
     ],
     url: '/gitops/repo/file/preview',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Search deployment paths in an authorized stored Git source
+ */
+export const gitOperationRepoFileSearch = <ThrowOnError extends boolean = true>(
+  options: Options<GitOperationRepoFileSearchData, ThrowOnError>
+): RequestResult<
+  GitOperationRepoFileSearchResponses,
+  GitOperationRepoFileSearchErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    GitOperationRepoFileSearchResponses,
+    GitOperationRepoFileSearchErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: zGitOperationRepoFileSearchBody,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
+    responseType: 'json',
+    responseValidator: async (data) =>
+      await zGitOperationRepoFileSearchResponse.parseAsync(data),
+    security: [
+      { name: 'X-API-KEY', type: 'apiKey' },
+      { name: 'Authorization', type: 'apiKey' },
+    ],
+    url: '/gitops/repo/files/search',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List references from an authorized stored Git source
+ */
+export const gitOperationRepoRefs = <ThrowOnError extends boolean = true>(
+  options: Options<GitOperationRepoRefsData, ThrowOnError>
+): RequestResult<
+  GitOperationRepoRefsResponses,
+  GitOperationRepoRefsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    GitOperationRepoRefsResponses,
+    GitOperationRepoRefsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: zGitOperationRepoRefsBody,
+          path: z.never().optional(),
+          query: zGitOperationRepoRefsQuery.optional(),
+        })
+        .parseAsync(data),
+    responseType: 'json',
+    responseValidator: async (data) =>
+      await zGitOperationRepoRefsResponse.parseAsync(data),
+    security: [
+      { name: 'X-API-KEY', type: 'apiKey' },
+      { name: 'Authorization', type: 'apiKey' },
+    ],
+    url: '/gitops/repo/refs',
     ...options,
     headers: {
       'Content-Type': 'application/json',

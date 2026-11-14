@@ -7,17 +7,20 @@ import { server, http } from '@/core/test-support/setup/server';
 import { RefSelector } from './RefSelector';
 
 it('preserves an explicit unadvertised reference without rewriting the deployment', async () => {
+  const requested = vi.fn();
   server.use(
-    http.post('/api/gitops/repo/refs', () =>
-      HttpResponse.json(['refs/heads/develop', 'refs/heads/main'])
-    )
+    http.post('/api/gitops/repo/refs', async ({ request }) => {
+      requested(await request.json());
+      return HttpResponse.json(['refs/heads/develop', 'refs/heads/main']);
+    })
   );
   const onChange = vi.fn();
   const Component = withTestQueryProvider(RefSelector);
   render(
     <Component inputId="ref" sourceId={7} value="abc1234" onChange={onChange} />
   );
-  await waitFor(() => expect(screen.getByText('abc1234')).toBeVisible());
+  await waitFor(() => expect(requested).toHaveBeenCalledWith({ sourceId: 7 }));
+  expect(screen.getByText('abc1234')).toBeVisible();
   expect(onChange).not.toHaveBeenCalled();
 });
 
