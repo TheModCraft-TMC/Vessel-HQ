@@ -2111,3 +2111,25 @@ applied. Arm64 was not attempted after confirming the quarantine. Local Docker
 Desktop now reports running, but bounded engine info/image inspections time out.
 No test container was created. The user-owned security review and engine restart
 decisions are pending; see the current handoff before resuming.
+
+### Requested 1.3.3-beta.2 build
+
+The maintainer authorized a new build. Prepared version-specific prerelease notes
+and RELEASE_VERSION 1.3.3-beta.2, then published isolated release commit
+`fe9e9f710417e64de1e834bf8e9b3594b1d1ffeb` on `release/1.3.3-beta.2` and immutable
+tag `v1.3.3-beta.2`. The current worktree/index and unrelated local browser output
+were preserved. Version validation and whitespace checks pass.
+
+Runnable publication is blocked: GitHub rejected the normal workflow dispatch
+with HTTP 422, "Actions has been disabled for this user." The manual Docker
+builder still times out. No new image, runnable bundle, GitHub Release, stable
+promotion or deployment is claimed. Prepared source and resume receipts are in
+`dist/release-1.3.3-beta.2/`; existing security settings were not changed.
+
+### Official stable target
+
+The maintainer changed the requested target to official **1.3.3** and explicitly
+selected the saved **SimonLugi** account for GitHub Actions. Prepare a separate
+stable release commit from the beta.2 source with version/release documentation
+changes; preserve the beta tag. The normal stable publisher must verify both
+platforms and the immutable version before promoting matching `latest` aliases.
