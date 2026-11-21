@@ -3103,6 +3103,74 @@ paths:
       summary: preview the content of target file in the git repository
       tags:
         - gitops
+  /gitops/repo/files/search:
+    post:
+      operationId: GitOperationRepoFileSearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/gitops.repositoryBrowsePayload"
+        description: Stored source, reference and path filter
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: Search deployment paths in an authorized stored Git source
+      tags:
+        - gitops
+  /gitops/repo/refs:
+    post:
+      operationId: GitOperationRepoRefs
+      parameters:
+        - description: Refresh cached references
+          in: query
+          name: force
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/gitops.repositoryBrowsePayload"
+        description: Stored source
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: List references from an authorized stored Git source
+      tags:
+        - gitops
   /gitops/sources:
     get:
       description: >-
@@ -9839,6 +9907,12 @@ paths:
           required: true
           schema:
             type: integer
+        - description: Quoted project revision returned by StackFileInspect; stale
+            revisions are rejected
+          in: header
+          name: If-Match
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -9932,11 +10006,21 @@ paths:
           required: true
           schema:
             type: integer
+        - description: Use project for a portable archive of declared Compose files
+          in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - project
       responses:
         "200":
           description: Success
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/stacks.stackFileResponse"
+            application/zip:
               schema:
                 $ref: "#/components/schemas/stacks.stackFileResponse"
         "400":
@@ -10344,9 +10428,13 @@ paths:
                     JSON array [{'name': 'name', 'value': 'value'}]."
                   type: string
                 file:
-                  description: Stack file
+                  description: Stack YAML file or reviewed portable project ZIP
                   type: string
                   format: binary
+                ProjectDigest:
+                  description: Exact archive digest from StackProjectInspect, required for ZIP
+                    projects
+                  type: string
               required:
                 - Name
         required: true
@@ -10479,9 +10567,13 @@ paths:
                     JSON array [{'name': 'name', 'value': 'value'}]. Optional"
                   type: string
                 file:
-                  description: Stack file
+                  description: Stack YAML file or reviewed portable project ZIP
                   type: string
                   format: binary
+                ProjectDigest:
+                  description: Exact archive digest from StackProjectInspect, required for ZIP
+                    projects
+                  type: string
       responses:
         "200":
           description: OK
@@ -10619,6 +10711,40 @@ paths:
         - ApiKeyAuth: []
         - jwt: []
       summary: Remove Kubernetes stacks by name
+      tags:
+        - stacks
+  /stacks/project/inspect:
+    post:
+      description: Checks bounded archive paths, checksums, file order and YAML
+        syntax. Does not resolve interpolation or referenced host files, contact
+        an engine, or certify external requirements.
+      operationId: StackProjectInspect
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: Portable project ZIP archive
+                  type: string
+                  format: binary
+              required:
+                - file
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stacks.projectArchiveResponse"
+        "400":
+          description: Invalid project archive
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: Validate and preview a portable Compose project without deployment
       tags:
         - stacks
   "/stacks/webhooks/{webhookID}":
@@ -13925,6 +14051,17 @@ components:
       properties:
         FileContent:
           type: string
+      type: object
+    gitops.repositoryBrowsePayload:
+      properties:
+        dirOnly:
+          type: boolean
+        keyword:
+          type: string
+        reference:
+          type: string
+        sourceId:
+          type: integer
       type: object
     gitops.repositoryFilePreviewPayload:
       properties:
@@ -18302,6 +18439,36 @@ components:
       x-enum-varnames:
         - _
         - ServiceWebhook
+    projectfiles.File:
+      properties:
+        path:
+          type: string
+        sha256:
+          type: string
+      type: object
+    projectfiles.Manifest:
+      properties:
+        composeFiles:
+          items:
+            type: string
+          type: array
+        entryPoint:
+          type: string
+        environmentNames:
+          items:
+            type: string
+          type: array
+        files:
+          items:
+            $ref: "#/components/schemas/projectfiles.File"
+          type: array
+        requirements:
+          items:
+            type: string
+          type: array
+        version:
+          type: integer
+      type: object
     registries.registryCatalogResponse:
       properties:
         repositories:
@@ -19671,8 +19838,23 @@ components:
         StackName:
           type: string
       type: object
+    stacks.projectArchiveResponse:
+      properties:
+        archiveDigest:
+          type: string
+        files:
+          additionalProperties:
+            type: string
+          type: object
+        manifest:
+          $ref: "#/components/schemas/projectfiles.Manifest"
+      type: object
     stacks.stackFileResponse:
       properties:
+        Revision:
+          description: Revision of all declared project files; use as If-Match when
+            updating.
+          type: string
         StackFileContent:
           description: Content of the Stack file
           example: |-

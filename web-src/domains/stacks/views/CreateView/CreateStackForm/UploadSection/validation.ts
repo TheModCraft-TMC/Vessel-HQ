@@ -1,4 +1,4 @@
-import { SchemaOf, object, mixed } from 'yup';
+import { SchemaOf, object, mixed, string } from 'yup';
 
 import { validateYAML } from '@/domains/stacks/components/common/stackYamlValidation';
 
@@ -16,7 +16,7 @@ export function getUploadValidationSchema({
         'valid-yaml',
         'Invalid YAML',
         async function validateYamlTest(value) {
-          if (!value) {
+          if (!value || value.name.toLowerCase().endsWith('.zip')) {
             return true;
           }
 
@@ -34,6 +34,16 @@ export function getUploadValidationSchema({
           }
 
           return true;
+        }
+      ),
+    projectDigest: string()
+      .optional()
+      .test(
+        'reviewed-project',
+        'Review the project archive and confirm its external requirements',
+        function reviewedProject(value) {
+          const file = (this.parent as UploadFormValues).file;
+          return !file?.name.toLowerCase().endsWith('.zip') || !!value;
         }
       ),
   });

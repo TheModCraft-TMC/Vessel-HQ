@@ -27,7 +27,7 @@ func CreateComposeStackFileBuilder(securityContext *security.RestrictedRequestCo
 	}
 }
 
-func (b *ComposeStackFileBuilder) prepare(_ context.Context, payload *StackPayload, userID portainer.UserID) error {
+func (b *ComposeStackFileBuilder) prepare(ctx context.Context, payload *StackPayload, userID portainer.UserID) error {
 	b.stack.Name = payload.Name
 	b.stack.Type = portainer.DockerComposeStack
 	b.stack.EntryPoint = filesystem.ComposeFileDefaultName
@@ -39,7 +39,7 @@ func (b *ComposeStackFileBuilder) prepare(_ context.Context, payload *StackPaylo
 		return err
 	}
 
-	return b.storeStackFile(payload.StackFileContent)
+	return b.storeProject(ctx, payload)
 }
 
 func (b *ComposeStackFileBuilder) deploy(ctx context.Context, endpoint *portainer.Endpoint) error {

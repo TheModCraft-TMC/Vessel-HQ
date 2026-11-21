@@ -1,8 +1,8 @@
 # Extension SDK workspace
 
-The Go SDK and simple plugin authoring sources now live in the independent local project at `/Users/themodcraft/GolandProjects/vesselhq-extension-sdk`. The target preserves its existing `.idea` directory; its Git `origin` is configured as `https://github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK`. The existing local initial commit and origin were configured separately during extraction and were preserved. This source move does not publish a new module path or alter the immutable beta.1 tags.
+The Go SDK and simple plugin authoring sources live in the independent [SDK repository](https://github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK), with a local checkout at `/Users/themodcraft/GolandProjects/vesselhq-extension-sdk`.
 
-Vessel consumes the published `github.com/TheModCraft-TMC/Vessel-HQ/sdk/go@v0.1.0-beta.1` module, including its generated protobuf contract, with no sibling checkout or `replace` directive required. [Published SDK API guide](https://github.com/TheModCraft-TMC/Vessel-HQ/blob/sdk/go/v0.1.0-beta.1/sdk/go/README.md) and [wire schema](https://github.com/TheModCraft-TMC/Vessel-HQ/blob/sdk/go/v0.1.0-beta.1/sdk/go/proto/v1/extension.proto) remain available at the immutable SDK tag.
+Issue #299 publishes the standalone module `github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK@v0.1.0-beta.2`. The [immutable release](https://github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/releases/tag/v0.1.0-beta.2) adds typed settings reads with independently granted secret access. The original `github.com/TheModCraft-TMC/Vessel-HQ/sdk/go@v0.1.0-beta.1` and its tags remain immutable. Host publication must pass normal Go proxy and checksum verification without a sibling checkout or committed replacement.
 
 ## Ownership
 

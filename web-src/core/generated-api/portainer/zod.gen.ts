@@ -239,6 +239,13 @@ export const zGitopsFileResponse = z.object({
   FileContent: z.string().optional(),
 });
 
+export const zGitopsRepositoryBrowsePayload = z.object({
+  dirOnly: z.boolean().optional(),
+  keyword: z.string().optional(),
+  reference: z.string().optional(),
+  sourceId: z.int().optional(),
+});
+
 export const zGitopsRepositoryFilePreviewPayload = z.object({
   password: z.string().optional(),
   reference: z.string().optional(),
@@ -1925,6 +1932,20 @@ export const zPortainerWebhook = z.object({
   Type: zPortainerWebhookType.optional(),
 });
 
+export const zProjectfilesFile = z.object({
+  path: z.string().optional(),
+  sha256: z.string().optional(),
+});
+
+export const zProjectfilesManifest = z.object({
+  composeFiles: z.array(z.string()).optional(),
+  entryPoint: z.string().optional(),
+  environmentNames: z.array(z.string()).optional(),
+  files: z.array(zProjectfilesFile).optional(),
+  requirements: z.array(z.string()).optional(),
+  version: z.int().optional(),
+});
+
 export const zRegistriesRegistryCatalogResponse = z.object({
   repositories: z.array(z.string()).optional(),
 });
@@ -2397,7 +2418,14 @@ export const zStacksKubernetesStringDeploymentPayload = z.object({
   StackName: z.string().optional(),
 });
 
+export const zStacksProjectArchiveResponse = z.object({
+  archiveDigest: z.string().optional(),
+  files: z.record(z.string(), z.string()).optional(),
+  manifest: zProjectfilesManifest.optional(),
+});
+
 export const zStacksStackFileResponse = z.object({
+  Revision: z.string().optional(),
   StackFileContent: z.string().optional(),
 });
 
@@ -5584,6 +5612,30 @@ export const zGitOperationRepoFilePreviewBody =
  */
 export const zGitOperationRepoFilePreviewResponse = zGitopsFileResponse;
 
+/**
+ * Stored source, reference and path filter
+ */
+export const zGitOperationRepoFileSearchBody = zGitopsRepositoryBrowsePayload;
+
+/**
+ * OK
+ */
+export const zGitOperationRepoFileSearchResponse = z.array(z.string());
+
+/**
+ * Stored source
+ */
+export const zGitOperationRepoRefsBody = zGitopsRepositoryBrowsePayload;
+
+export const zGitOperationRepoRefsQuery = z.object({
+  force: z.boolean().optional(),
+});
+
+/**
+ * OK
+ */
+export const zGitOperationRepoRefsResponse = z.array(z.string());
+
 export const zGitOpsSourcesListQuery = z.object({
   search: z.string().optional(),
   sort: z.string().optional(),
@@ -7420,6 +7472,10 @@ export const zStackInspectResponse = zStacksStackResponse;
  */
 export const zStackUpdateBody = zStacksUpdateSwarmStackPayload;
 
+export const zStackUpdateHeaders = z.object({
+  'If-Match': z.string().optional(),
+});
+
 export const zStackUpdatePath = z.object({
   id: z.int(),
 });
@@ -7450,6 +7506,10 @@ export const zStackAssociateResponse = zPortainerStack;
 
 export const zStackFileInspectPath = z.object({
   id: z.int(),
+});
+
+export const zStackFileInspectQuery = z.object({
+  format: z.enum(['project']).optional(),
 });
 
 /**
@@ -7589,6 +7649,7 @@ export const zStackCreateDockerStandaloneFileBody = z.object({
   Name: z.string(),
   Env: z.string().optional(),
   file: z.union([z.instanceof(Blob), z.instanceof(File)]).optional(),
+  ProjectDigest: z.string().optional(),
 });
 
 export const zStackCreateDockerStandaloneFileQuery = z.object({
@@ -7635,6 +7696,7 @@ export const zStackCreateDockerSwarmFileBody = z.object({
   SwarmID: z.string().optional(),
   Env: z.string().optional(),
   file: z.union([z.instanceof(Blob), z.instanceof(File)]).optional(),
+  ProjectDigest: z.string().optional(),
 });
 
 export const zStackCreateDockerSwarmFileQuery = z.object({
@@ -7689,6 +7751,15 @@ export const zStackDeleteKubernetesByNameQuery = z.object({
  * Success
  */
 export const zStackDeleteKubernetesByNameResponse = z.void();
+
+export const zStackProjectInspectBody = z.object({
+  file: z.union([z.instanceof(Blob), z.instanceof(File)]),
+});
+
+/**
+ * OK
+ */
+export const zStackProjectInspectResponse = zStacksProjectArchiveResponse;
 
 export const zWebhookInvokePath = z.object({
   webhookID: z.string(),

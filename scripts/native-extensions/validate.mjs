@@ -4,13 +4,15 @@ import { readFile, cp } from 'node:fs/promises';
 import { spawn, spawnSync } from 'node:child_process';
 
 const checks = new Set(['check:frontend-modernization', 'check:frontend-boundaries', 'check:app-router-compliance', 'typecheck', 'test:extensions', 'test', 'lint:ci', 'build']);
-const check = process.argv[2];
-if (check === '--seed-dependencies') {
+// Select the trusted literal rather than forwarding the caller's raw argument.
+const requestedCheck = process.argv[2];
+const check = [...checks].find((operation) => operation === requestedCheck);
+if (requestedCheck === '--seed-dependencies') {
   // This action receives only a fresh Docker volume, never candidate sources.
   await cp('/opt/vessel/node_modules', '/deps', { recursive: true, verbatimSymlinks: true });
   process.exit(0);
 }
-if (!checks.has(check)) throw new Error('Unknown validation operation');
+if (!check) throw new Error('Unknown validation operation');
 const expected = (await readFile('/opt/vessel/lock.sha256', 'utf8')).trim();
 const actual = createHash('sha256')
   .update(await readFile('/workspace/pnpm-lock.yaml'))

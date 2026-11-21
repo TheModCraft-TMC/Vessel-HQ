@@ -57,6 +57,7 @@ export type SwarmCreatePayload =
       payload: SwarmBasePayload & {
         /** File to upload */
         file: File;
+        projectDigest?: string;
         /** Optional webhook configuration */
         webhook?: string;
       };
@@ -88,6 +89,7 @@ type StandaloneCreatePayload =
       payload: DockerBasePayload & {
         /** File to upload */
         file: File;
+        projectDigest?: string;
         /** Optional webhook configuration */
         webhook?: string;
       };
@@ -183,6 +185,7 @@ function createSwarmStack({ method, payload }: SwarmCreatePayload) {
       return createSwarmStackFromFile({
         environmentId: payload.environmentId,
         file: payload.file,
+        ProjectDigest: payload.projectDigest,
         Name: payload.name,
         SwarmID: payload.swarmId,
         Env: payload.env,
@@ -232,6 +235,7 @@ function createStandaloneStack({ method, payload }: StandaloneCreatePayload) {
       return createStandaloneStackFromFile({
         environmentId: payload.environmentId,
         file: payload.file,
+        ProjectDigest: payload.projectDigest,
         Name: payload.name,
         Env: payload.env,
         Webhook: payload.webhook,

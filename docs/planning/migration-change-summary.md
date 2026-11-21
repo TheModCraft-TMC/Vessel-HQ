@@ -4,6 +4,101 @@ Status: stable `1.3.2` published and production verified, updated October 31, 20
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
 
+## Open-issue continuation — November 15, 2026
+
+The exhaustive live GitHub query returned 35 open issues. The
+[continuation ledger](open-issue-continuation-2026-11-15.md) records all current
+source dispositions and remaining acceptance; no issue was closed by this work.
+Existing accumulated edits and local artifacts were preserved.
+
+This continuation fixes the Compose editor retaining its old revision after its
+own successful save. The revision now advances only when the refreshed source
+matches the submitted content, preserving edits made during deployment. It also
+regenerates Swagger/OpenAPI and the TypeScript client to include preview file
+contents omitted by the previous generated contract. Upload review tests and
+Compose/Swarm Storybook fixtures cover file selection, override preview and
+confirmation reset. The ignored float on an absolutely positioned edition link
+was removed. Storybook now excludes `.next` and screenshot output from watching:
+the live server was observed reloading fixtures on generated Next HTML changes,
+discarding the archive review state during concurrent build verification.
+
+The maintained x/crypto release advances to v0.59.0 with its required Go
+submodules. The pre-upgrade scan reported 15 records across seven IDs, including
+GO-2026-5932 and the newly recorded Distribution digest-verification advisory
+GO-2026-6778. The old Docker and Distribution selections remain in the application
+graph. The post-upgrade selected-module scan confirms x/crypto v0.59.0 and six
+remaining Docker/Distribution IDs; GO-2026-5932 is absent in that scope.
+An isolated unpublished-fork experiment has only GO-2026-5932 in its
+package-level scan; this is not a published or shipped dependency resolution.
+
+Fresh checks used Node 24.22.1, pnpm 10.26.2 and Go 1.26.11:
+
+- Modernization, boundaries (3,335 files), App Router compliance (168 pages),
+  post-regeneration typecheck and lint passed. Lint had zero errors; warnings
+  remain. Later Storybook/test-only edits receive focused lint separately.
+- All 73 extension tooling tests passed. The editor revision tests passed both
+  cases, including a second save that retains edits entered during deployment.
+- Six affected backend packages passed with `GOWORK=off` against the published
+  SDK before the x/crypto update: stacks, projectfiles, Git, HA, webhook gateway
+  and WebSocket handlers. This does not validate the subsequent module update.
+- The current-source phone fixture rendered project file order, environment
+  names, explicit confirmation and the selected Unicode override. Generated-file
+  reloads interrupted screenshot/geometry capture; no final screenshot or complete
+  authenticated mobile audit is claimed.
+- Full frontend runs were incomplete: existing environment-group tests timed
+  out at five and fifteen seconds; a focused rerun could not start its fork worker
+  within sixty seconds. These runs are not passing suite evidence. The final
+  single-thread focused run passed all four tests in both new project test files.
+  Backend-wide, final vulnerability and production-build runs were stopped as
+  incomplete after prolonged local resource contention. Their partial logs do
+  not establish validation of the x/crypto update or a passing production build.
+  A separate full frontend attempt with two thread workers and no concurrent
+  build/Go run produced no test results after ten minutes and was stopped as
+  incomplete. The selected-module advisory scan completed separately, as above.
+
+A source-only, checksum-verifiable Linux validation package is prepared under
+ignored `dist/verification-20261115/`. Its runner uses the reviewed pinned builder,
+an unprivileged container user, no runtime network, no published ports, no Docker
+socket or credential mounts, bounded CPU/memory, and cleanup of its own artifacts.
+Node4 read-only SSH succeeded using existing Keychain metadata. Automatic approval
+review rejected the proposed sudo Docker check because privileged use of its
+`svc-admin` account was not explicitly authorized. No privileged remote check,
+validation container, source transfer, production change or release was executed.
+
+Draft commit for this continuation: `fix(stacks): complete project preview contracts and preserve save revisions`
+
+## Work-branch continuation verification — November 13, 2026
+
+Pulled `develop` (already current), then resumed the newly fetched
+`fix/resource-layout-cycle` at `8e4895fca`. Corrected contradictory builder guide
+instructions: development selection accepts an existing compiled namespace and
+replaces it with the complete requested set after validation and approval checks.
+The guide now distinguishes sanitized gate events from raw container output.
+
+Fresh local checks used Node `24.22.1`, pnpm `10.26.2` and Go `1.26.10`:
+
+- Modernization, boundaries (3,331 source files), App Router compliance (168
+  pages) and typecheck passed.
+- Lint passed with 0 errors and 192 existing warnings. All 71 native-extension
+  tooling tests and all 30 extension authoring tests across eight files passed.
+- The full frontend suite passed all 375 files: 2,531 tests passed, 5 skipped
+  and 11 todo (`pnpm test --maxWorkers=4`).
+- Go race tests passed for native extension domain/delivery/RPC/topology,
+  extension HTTP handlers, stack handlers and the HTTP server package, with
+  `GOWORK=off` and the published SDK dependency.
+- The production webpack build completed compilation, type checking, page
+  generation and standalone packaging. The packaged server served `/login`
+  with HTTP 200 on a temporary loopback port and was then stopped.
+
+This checks the combined work-branch source locally; it does not establish
+authenticated browser coverage, isolated compilation of the new complete package
+set, real registry/deployment behavior or production activation. The first full
+frontend test session was lost during a tool-server restart; the orphaned run was
+stopped and the logged rerun above passed. Changed-document local links and
+`git diff --check` passed. Existing untracked local artifacts were preserved.
+
+Draft commit for this continuation: `docs: align extension build guidance and record branch verification`
+
 ## Combined working-tree commit verification — November 13, 2026
 
 The maintainer requested committing and pushing the accumulated resource layout,
@@ -1839,3 +1934,180 @@ time, ports, mounts and restart policy; its HTTPS status returned 200 and its
 version remains `1.3.0`. The sanitized local receipt is
 `dist/native-extension-production-smoke/results.json`. This Docker smoke does not
 establish production activation support or Kubernetes/Swarm/ACI coverage.
+
+## Issue #299 continuation — November 14, 2026
+
+Continued the interrupted settings, HA, webhook, upstream and realtime working
+changes without resetting concurrent work. Published independent SDK beta.2 at
+`1f1021142f179ddad3b9ccdf3071e298a6f2d71c`, with an allowlisted source archive and
+SHA-256 checksum. Public Go module/checksum discovery now passes, and the affected backend race suite passes with `GOWORK=off` against the published module.
+GitHub Actions dispatch returned “Actions has been disabled for this user”; local
+SDK race, vet, generation and packaging validation passed.
+
+Finished shared Docker event fan-out with environment scoping, coalescing,
+backpressure, disconnect cleanup, bounded I/O, current role and session checks.
+Added real HTTP-stream cancellation and revoked-session regressions. Applied the
+complete Helm SSRF backport alongside the six previously adapted upstream fixes.
+Hardened the optional webhook gateway with route-bound signatures and bounded
+concurrency before reservation. Documented signed calls and at-most-once behavior.
+Made existing Git reference/path browsing available for configured sources without
+an edition check, preserving manual entry, HEAD and unadvertised commit refs.
+
+Fresh source checks and remaining infrastructure acceptance are recorded in the
+[issue #299 matrix](issue-299.md). Production frontend build, typecheck, architecture
+guards and lint passed. The full frontend run had one fixture failure among 375
+files; the corrected final changed set passes 43 tests in six files. Affected
+backend tests and targeted race suites passed with `GOWORK=off` against the published SDK after initial temporary-workspace validation.
+Headless 390px/1440px images, networks and volumes fixtures have matching heading
+offsets and no page overflow; the settings dialog fits 390px and shows no saved
+secret. Docker is stopped locally. No live provider, cross-host fencing/failover,
+production activation or application image-publication success is inferred.
+
+### Issue #299 final candidate verification — November 14, 2026
+
+This supersedes the earlier partial frontend run above. The clean Linux run
+passed 377 files / 2,537 tests, with five skipped and eleven todo cases; required
+architecture, typecheck, lint and production-build gates passed. Fresh npm audit
+found one low advisory and no moderate/high/critical advisories.
+
+Nine live disposable-engine/API checks passed, including 229 ms event delivery,
+settings/source access checks, signed Swarm webhook delivery, replay rejection,
+session revocation and same-host abrupt HA takeover with persistent replay state.
+The webhook Docker negotiation now uses the delivery context and has a deadline
+regression test. The final source commit is `beae78041`; both Linux architectures
+were compiled, the OCI index contains amd64/arm64, and the amd64 image serves API
+status and built login HTML. See the [acceptance matrix](issue-299.md) for remaining
+provider, cross-host fencing and registry-publication boundaries.
+
+Published [1.3.3-beta.1](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.3-beta.1)
+from immutable implementation commit `beae7804124e2fdd524594ce12a4715e45a35c8e`,
+with architecture bundles, multi-platform OCI archive, checksums and sanitized
+receipts. GitHub reports matching sizes and SHA-256 digests for all nine assets.
+Docker Hub/GHCR publication remains blocked by unavailable registry credentials;
+no registry or stable-channel success is claimed. Disposable remote containers,
+network, datastore volumes, scratch files, tunnel and local browser/server were
+removed after validation; production services were not replaced.
+
+
+### Final Linux backend suite
+
+The clean `GOWORK=off go test -mod=readonly ./...` run completed with exit code 0
+on Go 1.26.11 / linux/amd64: **156 test packages passed**. The published SDK was
+resolved normally. The prerelease now also includes `backend-validation.log` and
+`backend-validation.sha256`; the original nine assets remain unchanged. The
+amd64 image's `--version` output is `1.3.3-beta.1`.
+
+The slow Mac broad run was superseded, and the initial Linux attempt blocked by
+a no-exec temporary mount is excluded. The clean rerun used an executable,
+bounded memory filesystem for compilation; its complete passing log is the final
+evidence. All task containers, temporary mounts, caches, network and scratch
+sources were removed after saving the sanitized results.
+
+
+### Issue #299 Docker Hub publication
+
+After Docker Hub authentication was restored, published the validated OCI index
+as `themodcrafttmc/vessel-hq:1.3.3-beta.1` and `:beta`. Both tags were read back with
+index digest `sha256:5023ec8da3ef7a85201fa557cf6d4afcdbb9ddf7b9da96bd9c1cb8bb55071aa9`;
+both platform configurations and labels match. Stable `latest` was checked before
+and after and remained unchanged. The arm64 image pulled by digest also passed
+API-status and built login HTML checks, completing amd64/arm64 runtime smoke
+coverage. The temporary local container and anonymous datastore volume were
+removed. Registry/arm64 receipts and their checksum file were added to the GitHub
+prerelease without replacing existing assets. GHCR still has no matching login.
+## Open issue validation continuation — November 20, 2026
+
+Rechecked the fork through the connected GitHub API: 35 issues remain open,
+including 30 synchronized Sonar findings and #241, #262, #264, #299 and #300.
+The November 15 inventory remains the issue-by-issue acceptance reference;
+source fixes alone do not establish remote Sonar closure or runtime acceptance.
+
+Replaced Helm repository-search tests that contacted public sites with a local
+HTTP fixture and private Helm configuration/cache directories. The tests assert
+returned chart metadata, trailing-slash handling, missing repositories, malformed
+indexes and missing URLs. Production Helm behavior and SSRF policy are unchanged.
+This completes the public-network fixture work already pending for registry ping
+and network diagnostics tests; those earlier edits remain separate working-tree
+changes.
+
+The full frontend run completed with 377 passing files, 2,538 passing tests,
+five skipped cases and eleven todo cases. Its sole failure was an unreadable-file
+test double lacking a filename after ZIP detection was introduced. Replaced it
+with a real named File whose text reader rejects, and added review-digest checks
+for both `.zip` and `.ZIP` uploads. The corrected file passes all seven tests.
+This focused rerun validates the correction; the entire suite was not rerun after
+this test-only change. Production frontend behavior was unchanged.
+
+The subsequent production build compiled and generated routes, then stopped on
+Next.js's security advisory check for the pinned 16.4.1. Verified the official
+[16.4.5 security release](https://github.com/vercel/next.js/releases/tag/v16.4.5)
+and [16.4.6 patch release](https://github.com/vercel/next.js/releases/tag/v16.4.6).
+Updated the exact Next.js pin to 16.4.6 and only its corresponding lockfile
+metadata/references, preserving unrelated dependency resolutions and manifest
+ordering. The exact published version exists and its NPMScan/OSV query returned
+no known advisories or query failure. Frozen offline installation passed with
+scripts disabled. All required frontend gates were rerun on this final tree;
+the earlier full-suite result above is historical for the pre-upgrade tree.
+
+Fresh checks passed: all three frontend architecture guards (3,335 boundary
+source files and 168 App Router pages), TypeScript checking, 73 extension-tooling
+tests, four Compose import/editor UI tests, and the five affected Go packages
+(`projectfiles`, stack handlers, networking, registry handlers and Helm SDK).
+Lint completed with zero errors and 192 warnings. The full backend log contains
+157 passing test packages and all 223 packages returned by `go list ./...`, with
+no failures; the process exited after the server restart, which lost its exit-code
+tracking. Targeted Helm, networking and registry race tests separately exited 0.
+The refreshed `govulncheck v1.9.0` report contains six distinct advisory IDs in
+the retained Docker/Distribution modules; see the dated dependency-security
+record. Local logs, module graph and package-coverage receipts are retained under
+`dist/verification-20261120/`. No issue closure, merge, release or deployment is claimed.
+
+### Final patched frontend results
+
+All required gates exited **0** on Next.js 16.4.6: modernization, boundaries,
+App Router compliance, typecheck, full tests, lint and production build. The full
+suite passed **378 files / 2,541 tests**, with five skipped and eleven todo cases.
+Lint reported zero errors and 192 warnings. The fresh npm advisory gate also
+exited 0, reporting **zero advisories at every severity**. Per-gate logs and exit
+receipts are under `dist/verification-20261120/final-frontend/`; the audit report
+was retained alongside them.
+
+Headless smoke of the built standalone login page rendered Vessel HQ at 390px,
+with document width equal to viewport width. The browser displayed the expected
+public-settings error because no backend was running; this does not establish
+successful login or authenticated provider workflows. The screenshot is
+`output/playwright/next-16.4.6-login-390.png`. Temporary browser and server were
+closed after the check.
+
+At the user's request, added [agent handoff](../agent-handoff/README.md) with a
+dated progress log, exact results, artifact locations and next steps. Linked it
+from root agent guidance and the planning index for future continuation after a
+usage limit or restart. The 35-issue backlog and six Go advisory IDs remain open
+as described in the issue inventory; these passing local checks do not close them.
+
+## Published dependency application validation — November 21, 2026
+
+Recovered actual application receipts after the maintained dependency migration:
+full backend tests exit 0 (157 passing test packages), `go mod verify` exit 0,
+and full-source `govulncheck` exit 0 with zero parsed finding records. The resolved
+755-module graph contains no Docker monolith or Distribution v2 identities and
+no local-path replacements. Published fork versions, commit identities and
+public checksum receipts are in the [dependency handoff](../agent-handoff/issue-262-dependency-forks.md).
+
+The interrupted race gate had an obsolete package path. No validator process
+survived; resumed the pending gates using the corrected saved path and preserved
+successful receipts. Linux amd64/arm64 builds follow the race gate. The local
+Docker socket is absent; provider runtime acceptance of the migrated binary
+remains outstanding. The tracker still has 35 open issues. No release, deployment,
+merge or issue closure occurred. Follow the [November 21 log](../agent-handoff/progress-2026-11-21.md)
+for current gate status and subsequent results.
+
+The five-package affected race suite and supplemental Swarm race suite both
+completed with exit 0. Linux amd64 linking completes, but Avira quarantines the
+executable as `PUA/LINUX.Chisel.G` before Go reopens it for build-ID rewriting.
+System events confirm the detection and quarantine; a minimal Go Linux binary
+builds successfully. No protection setting was changed and no workaround was
+applied. Arm64 was not attempted after confirming the quarantine. Local Docker
+Desktop now reports running, but bounded engine info/image inspections time out.
+No test container was created. The user-owned security review and engine restart
+decisions are pending; see the current handoff before resuming.

@@ -84,10 +84,10 @@ services:
       containerNames,
     });
 
-    // Create a mock file that throws an error when text() is called
-    const mockFile = {
-      text: () => Promise.reject(new Error('Read error')),
-    } as File;
+    const mockFile = new File([], 'unreadable.yml');
+    Object.defineProperty(mockFile, 'text', {
+      value: () => Promise.reject(new Error('Read error')),
+    });
 
     const invalidData: UploadFormValues = {
       file: mockFile,
@@ -97,4 +97,19 @@ services:
       'Unable to read file'
     );
   });
+
+  it.each(['project.zip', 'project.ZIP'])(
+    'requires review before accepting %s',
+    async (filename) => {
+      const schema = getUploadValidationSchema({ containerNames });
+      const file = new File(['archive bytes'], filename);
+
+      await expect(schema.validate({ file })).rejects.toThrow(
+        'Review the project archive and confirm its external requirements'
+      );
+      await expect(
+        schema.validate({ file, projectDigest: 'reviewed-archive-digest' })
+      ).resolves.toBeDefined();
+    }
+  );
 });

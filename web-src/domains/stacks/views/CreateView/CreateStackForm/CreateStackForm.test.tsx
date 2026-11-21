@@ -77,8 +77,9 @@ describe('CreateStackForm', () => {
 
     expect(element).toBeChecked();
     expect(
-      screen.getByText('You can upload a Compose file from your computer.')
+      screen.getByText(/You can upload a Compose file from your computer\./)
     ).toBeVisible();
+    expect(screen.getByText(/portable Vessel project ZIP/)).toBeVisible();
   });
 
   it('should switch to git method', async () => {
@@ -161,10 +162,8 @@ describe('CreateStackForm', () => {
     // TODO: find a way to use getByRole
     const editor = screen.getByTestId('stack-creation-editor');
 
-    await user.type(
-      editor,
-      'version: "3"\nservices:\n  web:\n    image: nginx'
-    );
+    await user.click(editor);
+    await user.paste('version: "3"\nservices:\n  web:\n    image: nginx');
 
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -497,10 +496,8 @@ describe('CreateStackForm', () => {
 
     const editor = screen.getByTestId('stack-creation-editor');
 
-    await user.type(
-      editor,
-      'version: "3"\nservices:\n  web:\n    image: nginx'
-    );
+    await user.click(editor);
+    await user.paste('version: "3"\nservices:\n  web:\n    image: nginx');
 
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument();

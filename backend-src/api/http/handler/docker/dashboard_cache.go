@@ -14,6 +14,7 @@ import (
 	"github.com/moby/moby/api/types/swarm"
 	"github.com/moby/moby/api/types/volume"
 	portainer "github.com/portainer/portainer/api"
+	dockerapi "github.com/portainer/portainer/api/docker"
 	"github.com/portainer/portainer/api/docker/stats"
 	"github.com/portainer/portainer/pkg/schedule"
 	"github.com/rs/zerolog/log"
@@ -33,6 +34,7 @@ func (key dashboardCacheKey) singleflightKey() string {
 }
 
 type dashboardData struct {
+	engineID       string
 	containers     []container.Summary
 	containerStats stats.ContainerStatsCache
 	images         imagesCounters
@@ -213,6 +215,7 @@ func (h *Handler) fetchDashboardData(ctx context.Context, key dashboardCacheKey)
 		volumes[i] = &volumesResponse.Items[i]
 	}
 	return &dashboardData{
+		engineID:       dockerapi.EngineID(info),
 		containers:     containers,
 		containerStats: containerStats,
 		images:         imageCounts,

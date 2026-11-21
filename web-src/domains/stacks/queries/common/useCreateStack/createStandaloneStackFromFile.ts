@@ -12,6 +12,7 @@ export type StandaloneFileUploadPayload = {
   Name: string;
 
   file: File;
+  ProjectDigest?: string;
   /** List of environment variables */
   Env?: Array<Pair>;
 

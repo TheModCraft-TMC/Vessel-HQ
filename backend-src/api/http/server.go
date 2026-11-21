@@ -76,6 +76,7 @@ import (
 	"github.com/portainer/portainer/api/platform"
 	"github.com/portainer/portainer/api/stacks/deployments"
 	"github.com/portainer/portainer/api/stacks/teardown"
+	"github.com/portainer/portainer/api/webhookgateway"
 	libhelmtypes "github.com/portainer/portainer/pkg/libhelm/types"
 
 	"github.com/rs/zerolog/log"
@@ -175,7 +176,7 @@ func (server *Server) Start(ctx context.Context) error {
 				action = "extension.grpc.failed"
 			}
 			return server.DataStore.ActivityLog().Create(&portainer.ActivityLog{Timestamp: time.Now().Unix(), Username: "extension:" + event.ExtensionID, Action: action, Context: "native-extensions", Payload: base64.StdEncoding.EncodeToString(payload)})
-		}, extensionrpc.NewNoteStorage(server.DataStore))
+		}, extensionrpc.StorageServices{Notes: extensionrpc.NewNoteStorage(server.DataStore), Settings: extensionrpc.NewSettingsStorage(server.DataStore)})
 		if err != nil {
 			return errors.Wrap(err, "unable to start native extension gRPC")
 		}
@@ -426,6 +427,7 @@ func (server *Server) Start(ctx context.Context) error {
 		websocketHandler.PublishMutation()
 	})
 	websocketHandler.DataStore = server.DataStore
+	websocketHandler.DockerClientFactory = server.DockerClientFactory
 	websocketHandler.SignatureService = server.SignatureService
 	websocketHandler.ReverseTunnelService = server.ReverseTunnelService
 	websocketHandler.KubernetesClientFactory = server.KubernetesClientFactory
@@ -434,9 +436,15 @@ func (server *Server) Start(ctx context.Context) error {
 	var webhookHandler = webhooks.NewHandler(requestBouncer)
 	webhookHandler.DataStore = server.DataStore
 	webhookHandler.DockerClientFactory = server.DockerClientFactory
+	reserveWebhook, completeWebhook := webhookgateway.PersistentAudit(server.DataStore)
+	webhookGateway, err := webhookgateway.FromEnvironment(webhookgateway.LocalDispatch(stackHandler, webhookHandler), reserveWebhook, completeWebhook)
+	if err != nil {
+		return err
+	}
 
 	// The top-level handler combines all feature routers into one http.Handler.
 	server.Handler = &handler.Handler{
+		WebhookGateway:          webhookGateway,
 		RoleHandler:             roleHandler,
 		AuthHandler:             authHandler,
 		BackupHandler:           backupHandler,

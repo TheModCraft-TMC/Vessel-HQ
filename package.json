@@ -109,7 +109,7 @@
     "moment": "^2.31.0",
     "moment-timezone": "^0.6.5",
     "mustache": "^4.2.0",
-    "next": "16.4.1",
+    "next": "16.4.6",
     "parse-duration": "^2.1.9",
     "qs": "^6.16.1",
     "rc-slider": "^10.6.2",

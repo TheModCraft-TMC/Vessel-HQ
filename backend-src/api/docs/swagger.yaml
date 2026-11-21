@@ -1305,6 +1305,17 @@ definitions:
       FileContent:
         type: string
     type: object
+  gitops.repositoryBrowsePayload:
+    properties:
+      dirOnly:
+        type: boolean
+      keyword:
+        type: string
+      reference:
+        type: string
+      sourceId:
+        type: integer
+    type: object
   gitops.repositoryFilePreviewPayload:
     properties:
       password:
@@ -5490,6 +5501,36 @@ definitions:
     x-enum-varnames:
     - _
     - ServiceWebhook
+  projectfiles.File:
+    properties:
+      path:
+        type: string
+      sha256:
+        type: string
+    type: object
+  projectfiles.Manifest:
+    properties:
+      composeFiles:
+        items:
+          type: string
+        type: array
+      entryPoint:
+        type: string
+      environmentNames:
+        items:
+          type: string
+        type: array
+      files:
+        items:
+          $ref: '#/definitions/projectfiles.File'
+        type: array
+      requirements:
+        items:
+          type: string
+        type: array
+      version:
+        type: integer
+    type: object
   registries.registryCatalogResponse:
     properties:
       repositories:
@@ -6840,8 +6881,23 @@ definitions:
       StackName:
         type: string
     type: object
+  stacks.projectArchiveResponse:
+    properties:
+      archiveDigest:
+        type: string
+      files:
+        additionalProperties:
+          type: string
+        type: object
+      manifest:
+        $ref: '#/definitions/projectfiles.Manifest'
+    type: object
   stacks.stackFileResponse:
     properties:
+      Revision:
+        description: Revision of all declared project files; use as If-Match when
+          updating.
+        type: string
       StackFileContent:
         description: Content of the Stack file
         example: |-
@@ -18216,6 +18272,76 @@ paths:
       summary: preview the content of target file in the git repository
       tags:
       - gitops
+  /gitops/repo/files/search:
+    post:
+      consumes:
+      - application/json
+      operationId: GitOperationRepoFileSearch
+      parameters:
+      - description: Stored source, reference and path filter
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/gitops.repositoryBrowsePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+      - ApiKeyAuth: []
+      - jwt: []
+      summary: Search deployment paths in an authorized stored Git source
+      tags:
+      - gitops
+  /gitops/repo/refs:
+    post:
+      consumes:
+      - application/json
+      operationId: GitOperationRepoRefs
+      parameters:
+      - description: Stored source
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/gitops.repositoryBrowsePayload'
+      - description: Refresh cached references
+        in: query
+        name: force
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+      - ApiKeyAuth: []
+      - jwt: []
+      summary: List references from an authorized stored Git source
+      tags:
+      - gitops
   /gitops/sources:
     get:
       description: |-
@@ -24669,6 +24795,11 @@ paths:
         name: endpointId
         required: true
         type: integer
+      - description: Quoted project revision returned by StackFileInspect; stale revisions
+          are rejected
+        in: header
+        name: If-Match
+        type: string
       - description: Stack details
         in: body
         name: body
@@ -24756,8 +24887,15 @@ paths:
         name: id
         required: true
         type: integer
+      - description: Use project for a portable archive of declared Compose files
+        enum:
+        - project
+        in: query
+        name: format
+        type: string
       produces:
       - application/json
+      - application/zip
       responses:
         "200":
           description: Success
@@ -25130,10 +25268,15 @@ paths:
         in: formData
         name: Env
         type: string
-      - description: Stack file
+      - description: Stack YAML file or reviewed portable project ZIP
         in: formData
         name: file
         type: file
+      - description: Exact archive digest from StackProjectInspect, required for ZIP
+          projects
+        in: formData
+        name: ProjectDigest
+        type: string
       - description: Identifier of the environment that will be used to deploy the
           stack
         in: query
@@ -25257,10 +25400,15 @@ paths:
         in: formData
         name: Env
         type: string
-      - description: Stack file
+      - description: Stack YAML file or reviewed portable project ZIP
         in: formData
         name: file
         type: file
+      - description: Exact archive digest from StackProjectInspect, required for ZIP
+          projects
+        in: formData
+        name: ProjectDigest
+        type: string
       - description: Identifier of the environment that will be used to deploy the
           stack
         in: query
@@ -25399,6 +25547,35 @@ paths:
       - ApiKeyAuth: []
       - jwt: []
       summary: Remove Kubernetes stacks by name
+      tags:
+      - stacks
+  /stacks/project/inspect:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Checks bounded archive paths, checksums, file order and YAML syntax.
+        Does not resolve interpolation or referenced host files, contact an engine,
+        or certify external requirements.
+      operationId: StackProjectInspect
+      parameters:
+      - description: Portable project ZIP archive
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/stacks.projectArchiveResponse'
+        "400":
+          description: Invalid project archive
+      security:
+      - ApiKeyAuth: []
+      - jwt: []
+      summary: Validate and preview a portable Compose project without deployment
       tags:
       - stacks
   /stacks/webhooks/{webhookID}:

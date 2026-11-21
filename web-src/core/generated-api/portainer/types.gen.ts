@@ -781,6 +781,13 @@ export type GitopsFileResponse = {
   FileContent?: string;
 };
 
+export type GitopsRepositoryBrowsePayload = {
+  dirOnly?: boolean;
+  keyword?: string;
+  reference?: string;
+  sourceId?: number;
+};
+
 export type GitopsRepositoryFilePreviewPayload = {
   /**
    * Password for git authentication.
@@ -4133,6 +4140,20 @@ export const PortainerWebhookType = {
 export type PortainerWebhookType =
   (typeof PortainerWebhookType)[keyof typeof PortainerWebhookType];
 
+export type ProjectfilesFile = {
+  path?: string;
+  sha256?: string;
+};
+
+export type ProjectfilesManifest = {
+  composeFiles?: Array<string>;
+  entryPoint?: string;
+  environmentNames?: Array<string>;
+  files?: Array<ProjectfilesFile>;
+  requirements?: Array<string>;
+  version?: number;
+};
+
 export type RegistriesRegistryCatalogResponse = {
   repositories?: Array<string>;
 };
@@ -5178,7 +5199,19 @@ export type StacksKubernetesStringDeploymentPayload = {
   StackName?: string;
 };
 
+export type StacksProjectArchiveResponse = {
+  archiveDigest?: string;
+  files?: {
+    [key: string]: string;
+  };
+  manifest?: ProjectfilesManifest;
+};
+
 export type StacksStackFileResponse = {
+  /**
+   * Revision of all declared project files; use as If-Match when updating.
+   */
+  Revision?: string;
   /**
    * Content of the Stack file
    */
@@ -16627,6 +16660,81 @@ export type GitOperationRepoFilePreviewResponses = {
 export type GitOperationRepoFilePreviewResponse =
   GitOperationRepoFilePreviewResponses[keyof GitOperationRepoFilePreviewResponses];
 
+export type GitOperationRepoFileSearchData = {
+  /**
+   * Stored source, reference and path filter
+   */
+  body: GitopsRepositoryBrowsePayload;
+  path?: never;
+  query?: never;
+  url: '/gitops/repo/files/search';
+};
+
+export type GitOperationRepoFileSearchErrors = {
+  /**
+   * Invalid request
+   */
+  400: unknown;
+  /**
+   * Source access denied
+   */
+  403: unknown;
+  /**
+   * Source not found
+   */
+  404: unknown;
+};
+
+export type GitOperationRepoFileSearchResponses = {
+  /**
+   * OK
+   */
+  200: Array<string>;
+};
+
+export type GitOperationRepoFileSearchResponse =
+  GitOperationRepoFileSearchResponses[keyof GitOperationRepoFileSearchResponses];
+
+export type GitOperationRepoRefsData = {
+  /**
+   * Stored source
+   */
+  body: GitopsRepositoryBrowsePayload;
+  path?: never;
+  query?: {
+    /**
+     * Refresh cached references
+     */
+    force?: boolean;
+  };
+  url: '/gitops/repo/refs';
+};
+
+export type GitOperationRepoRefsErrors = {
+  /**
+   * Invalid request
+   */
+  400: unknown;
+  /**
+   * Source access denied
+   */
+  403: unknown;
+  /**
+   * Source not found
+   */
+  404: unknown;
+};
+
+export type GitOperationRepoRefsResponses = {
+  /**
+   * OK
+   */
+  200: Array<string>;
+};
+
+export type GitOperationRepoRefsResponse =
+  GitOperationRepoRefsResponses[keyof GitOperationRepoRefsResponses];
+
 export type GitOpsSourcesListData = {
   body?: never;
   path?: never;
@@ -23377,6 +23485,12 @@ export type StackUpdateData = {
    * Stack details
    */
   body: StacksUpdateSwarmStackPayload;
+  headers?: {
+    /**
+     * Quoted project revision returned by StackFileInspect; stale revisions are rejected
+     */
+    'If-Match'?: string;
+  };
   path: {
     /**
      * Stack identifier
@@ -23487,7 +23601,12 @@ export type StackFileInspectData = {
      */
     id: number;
   };
-  query?: never;
+  query?: {
+    /**
+     * Use project for a portable archive of declared Compose files
+     */
+    format?: 'project';
+  };
   url: '/stacks/{id}/file';
 };
 
@@ -23900,9 +24019,13 @@ export type StackCreateDockerStandaloneFileData = {
      */
     Env?: string;
     /**
-     * Stack file
+     * Stack YAML file or reviewed portable project ZIP
      */
     file?: Blob | File;
+    /**
+     * Exact archive digest from StackProjectInspect, required for ZIP projects
+     */
+    ProjectDigest?: string;
   };
   path?: never;
   query: {
@@ -24026,9 +24149,13 @@ export type StackCreateDockerSwarmFileData = {
      */
     Env?: string;
     /**
-     * Stack file
+     * Stack YAML file or reviewed portable project ZIP
      */
     file?: Blob | File;
+    /**
+     * Exact archive digest from StackProjectInspect, required for ZIP projects
+     */
+    ProjectDigest?: string;
   };
   path?: never;
   query: {
@@ -24186,6 +24313,35 @@ export type StackDeleteKubernetesByNameResponses = {
 
 export type StackDeleteKubernetesByNameResponse =
   StackDeleteKubernetesByNameResponses[keyof StackDeleteKubernetesByNameResponses];
+
+export type StackProjectInspectData = {
+  body: {
+    /**
+     * Portable project ZIP archive
+     */
+    file: Blob | File;
+  };
+  path?: never;
+  query?: never;
+  url: '/stacks/project/inspect';
+};
+
+export type StackProjectInspectErrors = {
+  /**
+   * Invalid project archive
+   */
+  400: unknown;
+};
+
+export type StackProjectInspectResponses = {
+  /**
+   * OK
+   */
+  200: StacksProjectArchiveResponse;
+};
+
+export type StackProjectInspectResponse =
+  StackProjectInspectResponses[keyof StackProjectInspectResponses];
 
 export type WebhookInvokeData = {
   body?: never;

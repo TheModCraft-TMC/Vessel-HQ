@@ -26,14 +26,19 @@ type UpdateStackParams = {
   stackId: number;
   environmentId: number;
   payload: Payload;
+  expectedRevision?: string;
 };
 
 export async function updateStack({
   stackId,
   environmentId,
   payload,
+  expectedRevision,
 }: UpdateStackParams): Promise<Stack> {
   return axios.put(buildStackUrl(stackId), payload, {
     params: { endpointId: environmentId },
+    headers: expectedRevision
+      ? { 'If-Match': `"${expectedRevision}"` }
+      : undefined,
   });
 }

@@ -183,9 +183,11 @@ inputs after every check. The volume is removed on completion or failure; cleanu
 warnings name any volume the operator needs to remove.
 
 Container isolation depends on the operator's Docker/kernel security. Do not run
-this as a privileged production-host service. The current tool does not provide a
-build queue API, log sanitization, provenance verification or production deployment
-adapter. Container output should stay in a trusted operator terminal.
+this as a privileged production-host service. The current tool records sanitized
+gate progress and fixed failure diagnostics; it does not sanitize arbitrary
+container output or provide a build queue API, provenance verification or
+production deployment adapter. Container output should stay in a trusted operator
+terminal.
 
 All checks must succeed for `validated` status. Failures record `failed`; the
 running console remains untouched. Even `validated` candidates retain
@@ -238,9 +240,10 @@ checks the exact uploaded archive/source digests, revision, current grants and
 native trust before and after compilation and around selection. A changed
 approval rejects the candidate. Credentials never reach build containers.
 
-The initial controller requires an empty compiled extension namespace so it cannot
-silently discard existing extensions. After successful isolated checks, it swaps
-only `web-src/core/native-extensions/packages/` and the trusted generated registry,
+The controller accepts an existing compiled extension namespace. Supply the
+complete desired package set: packages omitted from that set are removed from the
+development selection. After successful isolated checks, it swaps only
+`web-src/core/native-extensions/packages/` and the trusted generated registry,
 with rollback if selection or fresh approval checks fail. It compares all other
 protected inputs against the reviewed baseline. Next.js development reloads the
 selected source; run browser checks before treating the result as verified. Native
@@ -250,8 +253,8 @@ checkout is not a production artifact deployment mechanism.
 Every production receipt remains `activatable:false`. The development selection
 record explicitly reports `productionActivatable:false` and
 `browserSmokeRequired:true`. Production artifact signing/serving, health checks,
-replica coordination, complete-set updates and emergency rollback remain required
-before enabling UI-driven production builds or activation.
+replica coordination, production complete-set updates and emergency rollback
+remain required before enabling UI-driven production builds or activation.
 
 ## Tests
 
@@ -291,9 +294,10 @@ replacing the single-package `--archive`, `--archive-digest`, `--extension-id` a
 `--package-digest` arguments with `--packages-file /tmp/approved-packages.json`.
 All other arguments remain required. The set must contain 1–32 unique IDs. Every
 archive is revalidated by the Go extractor before staging. All package approvals
-must remain unchanged for the entire build and selection. The initial development
-controller still requires an empty compiled namespace; use a fresh disposable
-checkout for a new complete-set build rather than overwriting an existing set.
+must remain unchanged for the entire build and selection. The development
+controller preserves the existing compiled set until validation and approval
+checks pass, then replaces it with this complete set. Selection failures restore
+the previous packages and generated registry.
 
 [Persistent Notes](../../docs/extension-sdk-workspace.md)
 demonstrates explicit write-back with independent note-read and note-write grants,

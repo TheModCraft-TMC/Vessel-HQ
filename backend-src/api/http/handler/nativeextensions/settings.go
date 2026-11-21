@@ -2,6 +2,7 @@ package nativeextensions
 
 import (
 	"errors"
+	"math"
 	"net/http"
 	"slices"
 	"strconv"
@@ -75,6 +76,9 @@ func (h *Handler) settings(w http.ResponseWriter, r *http.Request) *httperror.Ha
 			if input.Version != current.Version {
 				return httperror.Conflict("Settings changed; reload before saving", errors.New("stale settings version"))
 			}
+			if current.Version == math.MaxInt {
+				return httperror.Conflict("Settings version exhausted", errors.New("settings version exhausted"))
+			}
 			next := &domain.Settings{Version: current.Version + 1, Values: map[string]string{}, Secrets: map[string]string{}}
 			if r.Method == http.MethodPut {
 				for key, value := range input.Values {
@@ -93,7 +97,7 @@ func (h *Handler) settings(w http.ResponseWriter, r *http.Request) *httperror.Ha
 						next.Secrets[key] = *value
 					}
 				}
-				if err := domain.ValidateSettings(next.Values, next.Secrets); err != nil {
+				if err := domain.ValidateSettingsFor(record.Manifest, next.Values, next.Secrets); err != nil {
 					return httperror.BadRequest("Invalid settings", err)
 				}
 				action = "extension.settings.update"

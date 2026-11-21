@@ -50,6 +50,7 @@ type Handler struct {
 	PendingActionsService *pendingactions.PendingActionsService
 	listRepositories      func(context.Context, *portainer.Registry) ([]string, error)
 	listTags              func(context.Context, *portainer.Registry, string) ([]string, error)
+	newRegistryClient     func(portainer.Registry) (registryPingClient, error)
 }
 
 // NewHandler creates a handler to manage registry operations.

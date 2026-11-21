@@ -8,7 +8,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	v1 "github.com/TheModCraft-TMC/Vessel-HQ/sdk/go/proto/v1"
+	v1 "github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/proto/v1"
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/nativeextensions"

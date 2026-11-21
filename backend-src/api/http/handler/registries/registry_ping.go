@@ -44,6 +44,14 @@ type registryPingResponse struct {
 	Message string `json:"message" example:"Registry connection successful"`
 }
 
+type registryPingClient interface {
+	Ping(context.Context) error
+}
+
+func newRegistryPingClient(registry portainer.Registry) (registryPingClient, error) {
+	return liboras.CreateClient(registry)
+}
+
 func (payload *registryPingPayload) Validate(_ *http.Request) error {
 	if len(payload.Username) == 0 || len(payload.Password) == 0 {
 		return httperror.BadRequest("Username and password are required", nil)
@@ -116,7 +124,11 @@ func (handler *Handler) pingRegistry(w http.ResponseWriter, r *http.Request) *ht
 
 // testRegistryConnection tests if we can connect to the registry
 func (handler *Handler) testRegistryConnection(registry *portainer.Registry) (bool, string) {
-	registryClient, err := liboras.CreateClient(*registry)
+	newClient := handler.newRegistryClient
+	if newClient == nil {
+		newClient = newRegistryPingClient
+	}
+	registryClient, err := newClient(*registry)
 	if err != nil {
 		log.Error().Err(err).Str("registryURL", registry.URL).Msg("Failed to create registry client")
 		return false, "Connection error: Failed to create registry client - " + err.Error()
