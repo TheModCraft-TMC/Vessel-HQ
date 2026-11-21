@@ -2133,3 +2133,23 @@ selected the saved **SimonLugi** account for GitHub Actions. Prepare a separate
 stable release commit from the beta.2 source with version/release documentation
 changes; preserve the beta tag. The normal stable publisher must verify both
 platforms and the immutable version before promoting matching `latest` aliases.
+
+### Official 1.3.3 publication completed
+
+Published [Vessel HQ 1.3.3](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.3)
+as the stable/latest GitHub release from source
+`f617f22462e7d4b384c797ab81ad0cea24eebca9`. The maintainer-selected SimonLugi
+[workflow](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/44905417870)
+passed all validation, packaging and both architecture execution checks. Fresh
+Linux logs confirm 378 frontend files / 2,541 tests passed (five skipped, eleven
+todo), plus 157 backend test packages.
+
+Docker Hub `themodcrafttmc/vessel-hq:1.3.3` and `:latest` share index
+`sha256:92b87e0a72380a084b8a39ec434df180f2fa7283039e74a58c29adec17c2588f`;
+the publisher verified the same index in GHCR. Independent anonymous Docker Hub
+readback checked manifest/config hashes, amd64/arm64 platforms and exact version/
+revision labels. Beta remained unchanged. The local receipt set is
+`dist/release-1.3.3/`; public release notes contain the digest and workflow evidence.
+GitHub rejected optional receipt uploads with HTTP 400, so no downloadable
+verification assets or runnable bundles are claimed. No source tag was moved,
+security setting altered, issue closed or production deployment replaced.
