@@ -151,7 +151,7 @@ export function createTrafficGraph(
       routed.add(targetWorkload!);
       const data = nodes.get(workloadId)!.data;
       const active = [data.receive, data.transmit].some(
-        (value) => value && /^\d/.test(value) && parseFloat(value) > 0
+        (value) => value && /^\d/.test(value) && Number.parseFloat(value) > 0
       );
       link(serviceId, workloadId, active);
     }

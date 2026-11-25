@@ -4,7 +4,7 @@
   "version": "0.4.0",
   "description": "Stack resource tree, network attachments, scoped traffic and Traefik routing with resource filters and inspection.",
   "apiVersion": "v1",
-  "packageDigest": "sha256:76ac78da5e69b47caf6a586c39e35f66f3e14a6d103c65eb724138ce1aec5d69",
+  "packageDigest": "sha256:8f791474c148a1eb85de5ba24827384da322b56fd7205ead5e401c421980d9ff",
   "permissions": [
     {
       "capability": "ui.native",

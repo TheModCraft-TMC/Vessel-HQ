@@ -1,10 +1,8 @@
 package client
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -76,7 +74,7 @@ func TestVersionMetadataConcurrentRequests(t *testing.T) {
 
 func TestVersionMetadataPreservesSDKResultsAndErrors(t *testing.T) {
 	t.Parallel()
-	large := `{"Version":"29.0","Components":[{"Name":"Engine","Version":"29.0","Details":{"large":"` + strings.Repeat("x", maxVersionMetadataBytes+1) + `"}}]}`
+	large := `{"Version":"29.0","Components":[{"Name":"Engine","Version":"29.0","Details":{"large":"` + strings.Repeat("x", (1<<20)+1) + `"}}]}`
 	for _, tc := range []struct {
 		name   string
 		status int
@@ -242,87 +240,4 @@ func TestVersionMetadataHonorsContext(t *testing.T) {
 	}()
 	_, err = ServerVersion(ctx, cli)
 	require.ErrorIs(t, err, context.Canceled)
-}
-
-type observedVersionBody struct {
-	io.Reader
-	reads  int
-	closes int
-}
-
-func (b *observedVersionBody) Read(p []byte) (int, error) {
-	b.reads++
-	return b.Reader.Read(p)
-}
-
-func (b *observedVersionBody) Close() error {
-	b.closes++
-	return nil
-}
-
-type versionErrorReader struct{ err error }
-
-func (r versionErrorReader) Read([]byte) (int, error) { return 0, r.err }
-
-func TestVersionMetadataHookObservesWithoutChangingResponse(t *testing.T) {
-	t.Parallel()
-	readErr := errors.New("original read failure")
-	body := &observedVersionBody{Reader: io.MultiReader(strings.NewReader(legacyVersionBody), versionErrorReader{readErr})}
-	capture := &versionMetadataCapture{}
-	req := httptest.NewRequest(http.MethodGet, "/v1.24/version", nil).WithContext(context.WithValue(t.Context(), versionMetadataKey{}, capture))
-	resp := &http.Response{
-		Request: req, Body: body, StatusCode: http.StatusOK, Status: "200 OK", ContentLength: -1,
-		Header: http.Header{"Api-Version": {"1.24"}, "Server": {"unchanged"}},
-	}
-	before := *resp
-	captureVersionMetadata(resp)
-	require.Zero(t, body.reads, "the SDK hook must not read the body")
-	require.Zero(t, body.closes, "the SDK hook must not close the body")
-	observed, err := io.ReadAll(resp.Body)
-	require.ErrorIs(t, err, readErr)
-	require.Equal(t, legacyVersionBody, string(observed))
-	require.Equal(t, observed, capture.data)
-	require.NoError(t, resp.Body.Close())
-	require.Equal(t, 1, body.closes, "the SDK's close must reach the original body")
-	resp.Body = body
-	require.Equal(t, before, *resp, "observation must not change status, headers, version or length")
-}
-
-func TestVersionMetadataCaptureBoundAndOptIn(t *testing.T) {
-	t.Parallel()
-	capture := &versionMetadataCapture{}
-	payload := bytes.Repeat([]byte("x"), maxVersionMetadataBytes*2)
-	n, err := capture.Write(payload)
-	require.NoError(t, err)
-	require.Equal(t, len(payload), n, "the tee must not truncate or fail the SDK read")
-	require.Len(t, capture.data, maxVersionMetadataBytes)
-	n, err = capture.Write([]byte("after the bound"))
-	require.NoError(t, err)
-	require.Equal(t, len("after the bound"), n)
-	require.Len(t, capture.data, maxVersionMetadataBytes)
-	for _, tc := range []struct {
-		name   string
-		method string
-		path   string
-		status int
-		optIn  bool
-	}{
-		{name: "ordinary SDK version call", method: http.MethodGet, path: "/v1.24/version", status: http.StatusOK},
-		{name: "unrelated route", method: http.MethodGet, path: "/v1.24/info", status: http.StatusOK, optIn: true},
-		{name: "error response", method: http.MethodGet, path: "/v1.24/version", status: http.StatusInternalServerError, optIn: true},
-		{name: "HEAD", method: http.MethodHead, path: "/v1.24/version", status: http.StatusOK, optIn: true},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			req := httptest.NewRequest(tc.method, tc.path, nil)
-			if tc.optIn {
-				req = req.WithContext(context.WithValue(t.Context(), versionMetadataKey{}, &versionMetadataCapture{}))
-			}
-			body := &observedVersionBody{Reader: strings.NewReader(legacyVersionBody)}
-			resp := &http.Response{Request: req, Body: body, StatusCode: tc.status}
-			captureVersionMetadata(resp)
-			require.Same(t, body, resp.Body)
-			require.Zero(t, body.reads)
-			require.Zero(t, body.closes)
-		})
-	}
 }

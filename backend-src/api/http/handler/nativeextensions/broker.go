@@ -48,9 +48,10 @@ type slotUI struct {
 	Slots []domain.UISlot `json:"slots"`
 }
 type slotRecord struct {
-	ID       int          `json:"id"`
-	Revision int          `json:"revision"`
-	Manifest slotManifest `json:"manifest"`
+	UpdatedAt int64        `json:"updatedAt"`
+	ID        int          `json:"id"`
+	Revision  int          `json:"revision"`
+	Manifest  slotManifest `json:"manifest"`
 }
 
 func (h *Handler) slots(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
@@ -82,7 +83,7 @@ func (h *Handler) slots(w http.ResponseWriter, r *http.Request) *httperror.Handl
 			}
 		}
 		if len(slots) > 0 {
-			result = append(result, slotRecord{ID: record.ID, Revision: record.Revision, Manifest: slotManifest{ID: record.Manifest.ID, Name: record.Manifest.Name, PackageDigest: record.Manifest.PackageDigest, UI: slotUI{Entry: record.Manifest.UI.Entry, Slots: slots}}})
+			result = append(result, slotRecord{ID: record.ID, Revision: record.Revision, UpdatedAt: record.UpdatedAt, Manifest: slotManifest{ID: record.Manifest.ID, Name: record.Manifest.Name, PackageDigest: record.Manifest.PackageDigest, UI: slotUI{Entry: record.Manifest.UI.Entry, Slots: slots}}})
 		}
 	}
 	w.Header().Set("Cache-Control", "no-store")
@@ -92,6 +93,13 @@ func (h *Handler) invoke(w http.ResponseWriter, r *http.Request) *httperror.Hand
 	var payload invokePayload
 	if err := decode(w, r, &payload); err != nil {
 		return httperror.BadRequest("Invalid extension operation", err)
+	}
+	if err := h.checkRuntimeBudget(w, r, payload.Revision, payload.PackageDigest); err != nil {
+		return err
+	}
+	switch payload.Operation {
+	case "stacks.network.read", "stacks.traffic.read", "stacks.delivery.read", "stacks.images.read":
+		security.MarkReadOnlyOperation(r)
 	}
 	if payload.Operation == "stacks.delivery.read" || payload.Operation == "stacks.images.read" || payload.Operation == "stacks.gitops.sync" || payload.Operation == "stacks.images.update" || payload.Operation == "stacks.images.configure" {
 		return h.invokeDelivery(w, r, payload)
@@ -167,6 +175,21 @@ func (h *Handler) trafficStream(w http.ResponseWriter, r *http.Request) *httperr
 	if payload.Operation != "stacks.traffic.read" {
 		return httperror.BadRequest("Traffic operation required", domain.ErrDenied)
 	}
+	if err := h.checkRuntimeBudget(w, r, payload.Revision, payload.PackageDigest); err != nil {
+		return err
+	}
+	id, _ := librequest.RetrieveNumericRouteVariableValue(r, "id")
+	user, _ := security.RetrieveRestrictedRequestContext(r)
+	if user == nil {
+		return httperror.Forbidden("Current user required", domain.ErrDenied)
+	}
+	streamKey := fmt.Sprintf("%d:%d:%d", id, payload.Revision, user.UserID)
+	release, ok := h.runtimeRequests.retainStream(streamKey)
+	if !ok {
+		w.Header().Set("Retry-After", "60")
+		return httperror.NewError(http.StatusTooManyRequests, "Too many active extension traffic streams", domain.ErrDenied)
+	}
+	defer release()
 	ctx, cancel := context.WithTimeout(r.Context(), time.Minute)
 	defer cancel()
 	r = r.WithContext(ctx)

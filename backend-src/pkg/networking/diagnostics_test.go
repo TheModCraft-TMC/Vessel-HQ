@@ -2,6 +2,8 @@ package networking
 
 import (
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
@@ -46,7 +48,7 @@ func TestProbeDNSConnection(t *testing.T) {
 	}{
 		{
 			name:           "Valid domain",
-			host:           "https://api.portainer.io",
+			host:           "https://localhost",
 			wantSuccess:    true,
 			statusContains: "dns lookup successful",
 		},
@@ -76,6 +78,10 @@ func TestProbeDNSConnection(t *testing.T) {
 
 func TestProbeTelnetConnection(t *testing.T) {
 	t.Parallel()
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	t.Cleanup(server.Close)
 	tests := []struct {
 		name           string
 		url            string
@@ -84,13 +90,13 @@ func TestProbeTelnetConnection(t *testing.T) {
 	}{
 		{
 			name:           "Valid connection",
-			url:            "https://api.portainer.io",
+			url:            server.URL,
 			wantSuccess:    true,
 			statusContains: "connected to",
 		},
 		{
 			name:           "Invalid port",
-			url:            "https://api.portainer.io:99999",
+			url:            "https://127.0.0.1:99999",
 			wantSuccess:    false,
 			statusContains: "failed to connect",
 		},
@@ -116,6 +122,11 @@ func TestProbeTelnetConnection(t *testing.T) {
 func TestDetectProxy(t *testing.T) {
 	t.Parallel()
 	fips.InitFIPS(false)
+	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Via", "1.1 local-test-proxy")
+		w.WriteHeader(http.StatusOK)
+	}))
+	t.Cleanup(server.Close)
 
 	tests := []struct {
 		name           string
@@ -125,13 +136,13 @@ func TestDetectProxy(t *testing.T) {
 	}{
 		{
 			name:           "Valid URL",
-			url:            "https://api.portainer.io",
+			url:            server.URL,
 			wantSuccess:    true,
-			statusContains: "proxy",
+			statusContains: "proxy detected via headers",
 		},
 		{
 			name:           "Invalid URL",
-			url:            "https://nonexistent.domain.invalid",
+			url:            "https://[invalid",
 			wantSuccess:    false,
 			statusContains: "failed to make request",
 		},

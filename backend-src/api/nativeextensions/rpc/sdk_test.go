@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	extension "github.com/TheModCraft-TMC/Vessel-HQ/sdk/go"
+	extension "github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK"
 	"github.com/portainer/portainer/api/nativeextensions"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

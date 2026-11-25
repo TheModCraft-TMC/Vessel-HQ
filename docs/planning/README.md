@@ -2,7 +2,11 @@
 
 ## Current future plans and migration handoff
 
+- [Agent handoff](../agent-handoff/README.md): current progress and resume instructions after usage limits or restarts.
 - [Vessel HQ roadmap](vessel-hq-roadmap.md): current product and architecture direction.
+- [Open issue continuation — November 15](open-issue-continuation-2026-11-15.md): current source disposition and outstanding acceptance for all 35 open issues.
+- [Compose portability and CLI interoperability](compose-portability.md): scoped
+  #300 requirements, current file ownership and export/conflict acceptance.
 - [Native extension system](plugin-system.md): experimental whole-package upload, scoped grants, native preview, protected builds, topology/traffic reads and persistent notes; the [Go SDK](../extension-sdk-workspace.md) has an independent authoring workspace. Managed execution and production activation/rollback remain future work. See [development scope](../native-extensions.md).
 - [Migration changes and draft commit message](migration-change-summary.md): dated migration, beta publication and verification record.
 

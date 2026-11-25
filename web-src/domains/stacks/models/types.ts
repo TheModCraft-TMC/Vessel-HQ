@@ -106,6 +106,7 @@ export interface Stack {
 
 export type StackFile = {
   StackFileContent: string;
+  Revision?: string;
 };
 
 export interface GitStackPayload {

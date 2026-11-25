@@ -3,6 +3,8 @@ package stackbuilders
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -10,6 +12,7 @@ import (
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/http/security"
 	"github.com/portainer/portainer/api/stacks/deployments"
+	"github.com/portainer/portainer/api/stacks/projectfiles"
 	"github.com/portainer/portainer/api/stacks/stackutils"
 
 	"github.com/rs/zerolog/log"
@@ -113,6 +116,29 @@ func (b *StackBuilder) storeStackFile(content []byte) error {
 	b.stack.ProjectPath = projectPath
 
 	return nil
+}
+
+func (b *StackBuilder) storeProject(ctx context.Context, payload *StackPayload) error {
+	if len(payload.ProjectArchive) == 0 {
+		return b.storeStackFile(payload.StackFileContent)
+	}
+	project, err := projectfiles.Import(ctx, payload.ProjectArchive)
+	if err != nil {
+		return err
+	}
+	manifest := project.Manifest()
+	b.stack.EntryPoint = manifest.EntryPoint
+	b.stack.AdditionalFiles = append([]string(nil), manifest.ComposeFiles[1:]...)
+	projectPath := b.fileService.GetStackProjectPath(strconv.Itoa(int(b.stack.ID)))
+	if err := os.MkdirAll(filepath.Dir(projectPath), 0o700); err != nil {
+		return err
+	}
+	if err := os.Mkdir(projectPath, 0o700); err != nil {
+		return err
+	}
+	// Cleanup owns only a directory that this import created successfully.
+	b.stack.ProjectPath = projectPath
+	return project.Store(ctx, projectPath)
 }
 
 func (b *StackBuilder) initComposeDeployment(secCtx *security.RestrictedRequestContext, endpoint *portainer.Endpoint) error {

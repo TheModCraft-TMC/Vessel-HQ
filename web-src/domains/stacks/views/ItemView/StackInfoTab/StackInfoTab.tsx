@@ -18,11 +18,13 @@ import { useComposeStackContainers } from '../useComposeStackContainers';
 import { StackDuplicationForm } from './StackDuplicationForm/StackDuplicationForm';
 import { StackActions } from './StackActions';
 import { AssociateStackForm } from './AssociateStackForm';
+import { DownloadProjectButton } from './DownloadProjectButton/DownloadProjectButton';
 
 interface StackInfoTabProps {
   stack?: Stack; // will be loaded only if regular or orphaned
   stackName: string;
   stackFileContent?: string;
+  fileRevision?: string;
   isRegular?: boolean;
   isExternal: boolean;
   isOrphaned: boolean;
@@ -35,6 +37,7 @@ export function StackInfoTab({
   stack,
   stackName,
   stackFileContent,
+  fileRevision,
   isRegular,
   isExternal,
   isOrphaned,
@@ -80,6 +83,7 @@ export function StackInfoTab({
               <StackActions
                 stack={stack}
                 fileContent={stackFileContent}
+                fileRevision={fileRevision}
                 isRegular={isRegular}
                 environmentId={environmentId}
                 isExternal={isExternal}
@@ -88,6 +92,11 @@ export function StackInfoTab({
             </div>
           )}
         </div>
+        {stack &&
+          (stack.Type === StackType.DockerCompose ||
+            stack.Type === StackType.DockerSwarm) && (
+            <DownloadProjectButton stackId={stack.Id} />
+          )}
       </FormSection>
 
       {stack && (

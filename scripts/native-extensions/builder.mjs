@@ -121,7 +121,7 @@ function validateManifest(manifest, entries) {
   if (
     !manifest ||
     typeof manifest !== 'object' ||
-    Object.keys(manifest).some((key) => !['id', 'name', 'version', 'description', 'apiVersion', 'packageDigest', 'permissions', 'ui', 'backend'].includes(key))
+    Object.keys(manifest).some((key) => !['id', 'name', 'version', 'description', 'apiVersion', 'packageDigest', 'permissions', 'ui', 'backend', 'settings'].includes(key))
   )
     fail('Unsupported manifest fields');
   if (typeof manifest.id !== 'string' || !/^[a-z0-9][a-z0-9.-]{1,126}[a-z0-9]$/.test(manifest.id) || manifest.id.includes('..')) fail('Invalid extension ID');
@@ -137,6 +137,7 @@ function validateManifest(manifest, entries) {
   )
     fail('Invalid extension identity/version');
   if (!Array.isArray(manifest.permissions) || manifest.permissions.length > 32) fail('Permissions must be declared');
+  validateSettingsSchema(manifest.settings);
   if (!manifest.ui && !manifest.backend) fail('A UI or backend entrypoint is required');
   if (manifest.ui && !manifest.permissions.some((p) => p?.capability === 'ui.native')) fail('Native UI permission must be declared');
   if (manifest.backend) {
@@ -157,7 +158,7 @@ function validateManifest(manifest, entries) {
   const seen = new Set();
   for (const permission of manifest.permissions) {
     if (!permission || Object.keys(permission).some((key) => !['capability', 'environmentIds', 'stackIds'].includes(key))) fail('Unsupported permission fields');
-    if (seen.has(permission.capability) || !['ui.native', 'environments.read', 'containers.read', 'stacks.read', 'stacks.network.read', 'stacks.traffic.read', 'stacks.delivery.read', 'stacks.gitops.sync', 'stacks.images.read', 'stacks.images.update', 'stacks.images.configure', 'stacks.images.auto-update', 'storage.read', 'storage.write', 'storage.service.read', 'storage.service.write'].includes(permission.capability))
+    if (seen.has(permission.capability) || !['ui.native', 'environments.read', 'containers.read', 'stacks.read', 'stacks.network.read', 'stacks.traffic.read', 'stacks.delivery.read', 'stacks.gitops.sync', 'stacks.images.read', 'stacks.images.update', 'stacks.images.configure', 'stacks.images.auto-update', 'storage.read', 'storage.write', 'storage.service.read', 'storage.service.write', 'settings.service.read', 'settings.service.secrets.read'].includes(permission.capability))
       fail('Invalid or duplicate capability');
     seen.add(permission.capability);
     if (
@@ -165,7 +166,7 @@ function validateManifest(manifest, entries) {
       permission.environmentIds.length > 1000 ||
       permission.environmentIds.some((id) => !Number.isSafeInteger(id) || id <= 0) ||
       new Set(permission.environmentIds).size !== permission.environmentIds.length ||
-      (['ui.native', 'storage.read', 'storage.write', 'storage.service.read', 'storage.service.write'].includes(permission.capability) ? permission.environmentIds.length !== 0 : permission.environmentIds.length === 0)
+      (['ui.native', 'storage.read', 'storage.write', 'storage.service.read', 'storage.service.write', 'settings.service.read', 'settings.service.secrets.read'].includes(permission.capability) ? permission.environmentIds.length !== 0 : permission.environmentIds.length === 0)
     )
       fail('Explicit valid permission scopes required');
     if (['stacks.network.read', 'stacks.traffic.read', 'stacks.delivery.read', 'stacks.gitops.sync', 'stacks.images.read', 'stacks.images.update', 'stacks.images.configure', 'stacks.images.auto-update'].includes(permission.capability)) {
@@ -206,6 +207,37 @@ function validateManifest(manifest, entries) {
       fail('Invalid or duplicate native slot');
     slots.add(slot.id);
   }
+}
+
+function validateSettingsSchema(schema) {
+  if (schema === undefined || schema === null) return;
+  const object = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+  if (!object(schema) || Object.keys(schema).some((key) => key !== 'fields') || !object(schema.fields)) fail('Invalid settings schema');
+  const fields = Object.entries(schema.fields);
+  if (!fields.length || fields.length > 64) fail('Settings schema requires 1 to 64 fields');
+  let size = 0;
+  for (const [key, field] of fields) {
+    if (!/^[a-zA-Z][a-zA-Z0-9_.-]{0,63}$/.test(key) || !object(field) ||
+        Object.keys(field).some((name) => !['type', 'required', 'secret', 'enum'].includes(name)) ||
+        !['string', 'boolean', 'integer'].includes(field.type) ||
+        ['required', 'secret'].some((name) => field[name] !== undefined && typeof field[name] !== 'boolean') ||
+        (field.enum !== undefined && (!Array.isArray(field.enum) || field.enum.length > 64)) ||
+        (field.secret && (field.type !== 'string' || field.enum?.length))) fail('Invalid settings schema field');
+    size += Buffer.byteLength(key);
+    const seen = new Set();
+    for (const value of field.enum ?? []) {
+      if (typeof value !== 'string' || Buffer.byteLength(value) > 16384 || !value.isWellFormed() || seen.has(value)) fail('Invalid settings schema enum');
+      if (field.type === 'boolean' && !['true', 'false'].includes(value)) fail('Invalid settings schema enum');
+      if (field.type === 'integer') {
+        if (!/^(0|-?[1-9][0-9]*)$/.test(value)) fail('Invalid settings schema enum');
+        const number = BigInt(value);
+        if (number < -9223372036854775808n || number > 9223372036854775807n) fail('Invalid settings schema enum');
+      }
+      seen.add(value);
+      size += Buffer.byteLength(value);
+    }
+  }
+  if (size > 65536) fail('Settings schema exceeds 64 KiB');
 }
 
 export async function inspectPackage(root, { verifyDigest = true } = {}) {

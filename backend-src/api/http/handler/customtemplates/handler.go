@@ -20,17 +20,16 @@ type Handler struct {
 	DataStore      dataservices.DataStore
 	FileService    portainer.FileService
 	GitService     portainer.GitService
-	gitFetchMutexs map[portainer.TemplateID]*sync.Mutex
+	gitFetchMutexs sync.Map // portainer.TemplateID -> *sync.Mutex
 }
 
 // NewHandler creates a handler to manage environment(endpoint) group operations.
 func NewHandler(bouncer security.BouncerService, dataStore dataservices.DataStore, fileService portainer.FileService, gitService portainer.GitService) *Handler {
 	h := &Handler{
-		Router:         mux.NewRouter(),
-		DataStore:      dataStore,
-		FileService:    fileService,
-		GitService:     gitService,
-		gitFetchMutexs: make(map[portainer.TemplateID]*sync.Mutex),
+		Router:      mux.NewRouter(),
+		DataStore:   dataStore,
+		FileService: fileService,
+		GitService:  gitService,
 	}
 
 	h.Handle("/custom_templates/create/{method}",

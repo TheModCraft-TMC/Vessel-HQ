@@ -13,10 +13,15 @@ import {
   notifySuccess,
 } from '@/ui/components/toast/notifications';
 import { useUpdateStackMutation } from '@/domains/stacks/queries/useUpdateStack';
+import { useStackFile } from '@/domains/stacks/queries/common/useStackFile';
+import { LoadingButton } from '@/ui/components/buttons';
+import { confirmWebEditorDiscard } from '@/ui/components/dialog/confirm';
+import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 
 import { StackEditorFormValues } from './StackEditorTab.types';
 import { getValidationSchema } from './StackEditorTab.validation';
 import { StackEditorTabInner } from './StackEditorTabInner';
+import styles from './StackEditorTab.module.css';
 
 interface StackEditorTabProps {
   isOrphaned: boolean;
@@ -24,6 +29,7 @@ interface StackEditorTabProps {
   originalContainerNames?: string[];
   stack: Stack;
   originalFileContent: string;
+  originalFileRevision?: string;
 
   onSubmitSuccess?(): void;
 }
@@ -34,6 +40,7 @@ export function StackEditorTab({
   containerNames = [],
   originalContainerNames = [],
   originalFileContent,
+  originalFileRevision,
   onSubmitSuccess = () => {},
   stack,
 }: StackEditorTabProps) {
@@ -46,6 +53,18 @@ export function StackEditorTab({
   const envQuery = useCurrentEnvironment();
   const schemaQuery = useDockerComposeSchema();
   const [webhookId] = useState(() => stack.Webhook || uuidv4());
+  const [project, setProject] = useState({
+    content: originalFileContent,
+    revision: originalFileRevision,
+  });
+  const fileQuery = useStackFile(
+    stack.Id,
+    {
+      version: stack.StackFileVersion,
+      commitHash: stack.GitConfig?.ConfigHash,
+    },
+    { enabled: false }
+  );
 
   if (!envQuery.data || !schemaQuery.data) {
     return null;
@@ -59,7 +78,7 @@ export function StackEditorTab({
   const initialValues: StackEditorFormValues = {
     environmentVariables: stack.Env || [],
     prune: !!(stack.Option && stack.Option.Prune),
-    stackFileContent: originalFileContent,
+    stackFileContent: project.content,
     enabledWebhook: !!stack.Webhook,
   };
 
@@ -84,6 +103,7 @@ export function StackEditorTab({
           {
             stackId: stack.Id,
             environmentId: envQuery.data.Id,
+            expectedRevision: project.revision,
             payload: {
               stackFileContent: values.stackFileContent,
               env: values.environmentVariables,
@@ -94,7 +114,21 @@ export function StackEditorTab({
             },
           },
           {
-            onSuccess() {
+            async onSuccess() {
+              // App Router refresh preserves this editor's state. Advance the
+              // revision after our own write so the next save does not conflict
+              // with it, without reinitializing any edits made during deployment.
+              const result = await fileQuery.refetch();
+              const savedFile = result.data;
+              if (
+                !result.error &&
+                savedFile?.StackFileContent === values.stackFileContent
+              ) {
+                setProject((current) => ({
+                  ...current,
+                  revision: savedFile.Revision,
+                }));
+              }
               notifySuccess('Success', 'Stack successfully deployed');
               router.refresh();
               onSubmitSuccess();
@@ -108,19 +142,51 @@ export function StackEditorTab({
       validateOnMount
       enableReinitialize
     >
-      <StackEditorTabInner
-        stackId={stack.Id}
-        stackType={stack.Type}
-        composeSyntaxMaxVersion={composeSyntaxMaxVersion}
-        isOrphaned={isOrphaned}
-        envType={envType}
-        schema={schemaQuery.data}
-        versions={versions}
-        isSubmitting={mutation.isLoading}
-        isSaved={mutation.isSuccess}
-        webhookId={webhookId}
-        isReadOnly={!!stack.ReadOnly}
-      />
+      <>
+        {!project.revision && (
+          <TextTip color="orange">
+            External-file conflict checks are unavailable for this project.
+            Reload and review its files before deploying.
+          </TextTip>
+        )}
+        <LoadingButton
+          className={styles.reloadButton}
+          type="button"
+          size="small"
+          color="default"
+          isLoading={fileQuery.isFetching}
+          loadingText="Reloading…"
+          onClick={() => void reloadProject()}
+          data-cy="stack-reload-project"
+        >
+          Reload project from disk (discard edits)
+        </LoadingButton>
+        <StackEditorTabInner
+          stackId={stack.Id}
+          stackType={stack.Type}
+          composeSyntaxMaxVersion={composeSyntaxMaxVersion}
+          isOrphaned={isOrphaned}
+          envType={envType}
+          schema={schemaQuery.data}
+          versions={versions}
+          isSubmitting={mutation.isLoading}
+          isSaved={mutation.isSuccess}
+          webhookId={webhookId}
+          isReadOnly={!!stack.ReadOnly}
+        />
+      </>
     </Formik>
   );
+
+  async function reloadProject() {
+    if (!(await confirmWebEditorDiscard())) return;
+    const result = await fileQuery.refetch();
+    if (result.data && !result.error) {
+      setProject({
+        content: result.data.StackFileContent,
+        revision: result.data.Revision,
+      });
+      mutation.reset();
+    }
+  }
 }

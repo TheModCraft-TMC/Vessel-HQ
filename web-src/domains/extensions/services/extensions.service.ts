@@ -8,9 +8,37 @@ import type {
 
 const base = '/native-extensions';
 
+export interface ExtensionRuntimeBinding {
+  id: number;
+  revision: number;
+  packageDigest: string;
+  updatedAt: number;
+}
+export type ExtensionSafetyReason =
+  | 'request-rate'
+  | 'restart-loop'
+  | 'render-error'
+  | 'repeated-errors';
+
+export async function tripExtensionRuntime(
+  binding: ExtensionRuntimeBinding,
+  reason: ExtensionSafetyReason
+) {
+  await axios.post(
+    `${base}/${binding.id}/safety-trip`,
+    {
+      revision: binding.revision,
+      packageDigest: binding.packageDigest,
+      updatedAt: binding.updatedAt,
+      reason,
+    },
+    { timeout: 10_000 }
+  );
+}
+
 export async function getExtensions() {
   try {
-    return (await axios.get<ExtensionRecord[]>(base)).data;
+    return (await axios.get<ExtensionRecord[]>(base, { timeout: 10_000 })).data;
   } catch (error) {
     throw parseAxiosError(error, 'Unable to load extensions');
   }

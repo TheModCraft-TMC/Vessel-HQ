@@ -1,6 +1,7 @@
 import axios, { parseAxiosError } from '@/shared/http';
 
 export interface ExtensionSlotRegistration {
+  updatedAt?: number;
   id: number;
   revision: number;
   manifest: {
@@ -18,6 +19,7 @@ export async function getExtensionSlots(
   try {
     return (
       await axios.get<ExtensionSlotRegistration[]>('/native-extensions/slots', {
+        timeout: 10_000,
         params: { environmentId, stackId },
       })
     ).data;

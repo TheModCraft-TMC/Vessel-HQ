@@ -77,8 +77,10 @@ func TestAddBindMountHashLabel(t *testing.T) {
 
 	t.Run("non-bind volume is skipped", func(t *testing.T) {
 		svc := types.ServiceConfig{
-			Name:    "web",
-			Volumes: []types.ServiceVolumeConfig{{Type: "volume", Source: "myvolume"}},
+			Name: "web",
+			ContainerSpec: types.ContainerSpec{
+				Volumes: []types.ServiceVolumeConfig{{Type: "volume", Source: "myvolume"}},
+			},
 		}
 		result, err := addBindMountHashLabel("web", svc)
 		require.NoError(t, err)
@@ -87,8 +89,10 @@ func TestAddBindMountHashLabel(t *testing.T) {
 
 	t.Run("missing path silently skips label", func(t *testing.T) {
 		svc := types.ServiceConfig{
-			Name:    "web",
-			Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: "/nonexistent/path"}},
+			Name: "web",
+			ContainerSpec: types.ContainerSpec{
+				Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: "/nonexistent/path"}},
+			},
 		}
 		result, err := addBindMountHashLabel("web", svc)
 		require.NoError(t, err)
@@ -97,8 +101,10 @@ func TestAddBindMountHashLabel(t *testing.T) {
 
 	t.Run("valid bind mount with directory source sets label", func(t *testing.T) {
 		svc := types.ServiceConfig{
-			Name:    "web",
-			Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: webDir}},
+			Name: "web",
+			ContainerSpec: types.ContainerSpec{
+				Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: webDir}},
+			},
 		}
 		result, err := addBindMountHashLabel("web", svc)
 		require.NoError(t, err)
@@ -107,8 +113,10 @@ func TestAddBindMountHashLabel(t *testing.T) {
 
 	t.Run("valid bind mount with file source sets label", func(t *testing.T) {
 		svc := types.ServiceConfig{
-			Name:    "web",
-			Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: filesystem.JoinPaths(webDir, "nginx.conf")}},
+			Name: "web",
+			ContainerSpec: types.ContainerSpec{
+				Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: filesystem.JoinPaths(webDir, "nginx.conf")}},
+			},
 		}
 		result, err := addBindMountHashLabel("web", svc)
 		require.NoError(t, err)
@@ -117,8 +125,10 @@ func TestAddBindMountHashLabel(t *testing.T) {
 
 	t.Run("label is deterministic", func(t *testing.T) {
 		svc := types.ServiceConfig{
-			Name:    "web",
-			Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: webDir}},
+			Name: "web",
+			ContainerSpec: types.ContainerSpec{
+				Volumes: []types.ServiceVolumeConfig{{Type: "bind", Source: webDir}},
+			},
 		}
 		r1, err := addBindMountHashLabel("web", svc)
 		require.NoError(t, err)

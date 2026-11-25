@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
 
 import { useIsPureAdmin } from '@/core/session/useUser';
@@ -6,14 +6,20 @@ import {
   useNativeExtensions,
   type ExtensionRecord,
 } from '@/domains/extensions';
+import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 
 import { nativeExtensionRegistrations } from './generated/registrations';
-import { NativeExtensionPreview } from './NativeExtensionPreview';
+import { NativeExtensionPreview as NativeExtensionPreviewComponent } from './NativeExtensionPreview';
+
+let NativeExtensionPreview = withTestQueryProvider(
+  NativeExtensionPreviewComponent
+);
 
 vi.mock('@/core/session/useUser', () => ({ useIsPureAdmin: vi.fn() }));
 vi.mock('@/domains/extensions', () => ({
   useNativeExtensions: vi.fn(),
   extensionStorage: vi.fn(() => ({ read: vi.fn(), write: vi.fn() })),
+  tripExtensionRuntime: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock('./generated/registrations', () => ({
   nativeExtensionRegistrations: [],
@@ -58,6 +64,10 @@ function setQuery(records: ExtensionRecord[], extra: object = {}) {
 }
 
 beforeEach(() => {
+  sessionStorage.clear();
+  NativeExtensionPreview = withTestQueryProvider(
+    NativeExtensionPreviewComponent
+  );
   vi.clearAllMocks();
   vi.mocked(useIsPureAdmin).mockReturnValue(true);
   load.mockResolvedValue({
@@ -130,12 +140,33 @@ it('blocks cached approval while verification is in flight', () => {
   expect(load).not.toHaveBeenCalled();
 });
 
-it('shows a recovery message when loading the bundle fails', async () => {
+it('retains an already verified editor during background approval refresh and stops on revocation', async () => {
+  const data = [record()];
+  setQuery(data);
+  load.mockResolvedValue({
+    default: () => <input aria-label="Draft" defaultValue="" />,
+  });
+  const view = render(<NativeExtensionPreview extensionId={extensionId} />);
+  const editor = await screen.findByRole('textbox', { name: 'Draft' });
+  fireEvent.change(editor, { target: { value: 'unsaved text' } });
+  setQuery(data, { isFetching: true });
+  view.rerender(<NativeExtensionPreview extensionId={extensionId} />);
+  expect(screen.getByRole('textbox', { name: 'Draft' })).toBe(editor);
+  expect(editor).toHaveValue('unsaved text');
+  expect(load).toHaveBeenCalledOnce();
+  setQuery([record({ status: 'disabled' })]);
+  view.rerender(<NativeExtensionPreview extensionId={extensionId} />);
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+});
+
+it('stops and revokes an extension when loading the bundle fails', async () => {
   vi.spyOn(console, 'error').mockImplementation(() => undefined);
   load.mockRejectedValue(new Error('Candidate bundle unavailable'));
-  render(<NativeExtensionPreview extensionId={extensionId} />);
+  await act(async () => {
+    render(<NativeExtensionPreview extensionId={extensionId} />);
+  });
   expect(await screen.findByRole('alert')).toHaveTextContent(
-    'Extension preview failed'
+    'Extension stopped by its safety guard'
   );
 });
 
@@ -148,7 +179,7 @@ it('shows a recovery message when extension rendering fails', async () => {
   });
   render(<NativeExtensionPreview extensionId={extensionId} />);
   expect(await screen.findByRole('alert')).toHaveTextContent(
-    'Extension preview failed'
+    'Extension stopped by its safety guard'
   );
 });
 

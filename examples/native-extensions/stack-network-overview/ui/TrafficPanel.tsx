@@ -12,12 +12,31 @@ export { counterRate } from './traffic';
 
 type Pair = { current?: StackTrafficOverview; previous?: StackTrafficOverview };
 
+type TrafficPanelProps = NativeExtensionProps & { mode: 'traffic' | 'config' };
+
 export function TrafficPanel({
   context,
   invoke,
   watchTraffic,
   mode,
-}: NativeExtensionProps & { mode: 'traffic' | 'config' }) {
+}: TrafficPanelProps) {
+  return (
+    <TrafficSession
+      key={`${context.environmentId}:${context.stackId}`}
+      context={context}
+      invoke={invoke}
+      watchTraffic={watchTraffic}
+      mode={mode}
+    />
+  );
+}
+
+function TrafficSession({
+  context,
+  invoke,
+  watchTraffic,
+  mode,
+}: TrafficPanelProps) {
   const [pair, setPair] = useState<Pair>({});
   const [attempt, setAttempt] = useState(0);
   const [error, setError] = useState('');

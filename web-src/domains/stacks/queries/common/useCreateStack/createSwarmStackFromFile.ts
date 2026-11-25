@@ -21,6 +21,7 @@ export type SwarmFileUploadPayload = {
   SwarmID: string;
 
   file: File;
+  ProjectDigest?: string;
   environmentId: EnvironmentId;
 
   Registries?: Array<RegistryId>;

@@ -23,7 +23,7 @@ type nilDiscoveryClientset struct {
 	*kfake.Clientset
 }
 
-func (n *nilDiscoveryClientset) Discovery() discovery.DiscoveryInterface {
+func (n *nilDiscoveryClientset) Discovery() discovery.DiscoveryInterfaces {
 	return nil
 }
 

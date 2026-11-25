@@ -54,16 +54,18 @@ func Test_createProject_win(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
-						Volumes: []types.ServiceVolumeConfig{
-							{
-								Type:     "bind",
-								Source:   "/c/Users/Joey/Desktop/backend",
-								Target:   "/var/www/html",
-								ReadOnly: false,
-								Bind:     &types.ServiceVolumeBind{CreateHostPath: true},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+							Volumes: []types.ServiceVolumeConfig{
+								{
+									Type:     "bind",
+									Source:   "/c/Users/Joey/Desktop/backend",
+									Target:   "/var/www/html",
+									ReadOnly: false,
+									Bind:     &types.ServiceVolumeBind{CreateHostPath: true},
+								},
 							},
 						},
 					},

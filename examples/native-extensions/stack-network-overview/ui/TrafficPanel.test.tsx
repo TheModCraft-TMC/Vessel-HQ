@@ -136,3 +136,75 @@ it('rejects a response for another stack and does not show its routes', async ()
   );
   expect(screen.queryByText('Host(`shop.test`)')).not.toBeInTheDocument();
 });
+
+it.each(['environment', 'stack'])(
+  'discards traffic and aborts the old stream when the %s changes',
+  async (scope) => {
+    const invoke = vi
+      .fn()
+      .mockResolvedValueOnce(snapshot())
+      .mockImplementationOnce(() => new Promise(() => {}));
+    let signal: AbortSignal | undefined;
+    const watchTraffic: NonNullable<NativeExtensionProps['watchTraffic']> =
+      vi.fn((_accept, incoming) => {
+        signal = incoming;
+        return new Promise<void>((resolve) =>
+          incoming.addEventListener('abort', () => resolve(), { once: true })
+        );
+      });
+    const view = render(
+      <TrafficPanel
+        context={context}
+        invoke={invoke}
+        watchTraffic={watchTraffic}
+        mode="traffic"
+      />
+    );
+    await screen.findByRole('img', { name: 'Traffic topology' });
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Start live traffic' })
+    );
+    expect(signal?.aborted).toBe(false);
+
+    const nextContext = {
+      ...context,
+      ...(scope === 'environment' ? { environmentId: 3 } : { stackId: 4 }),
+    };
+    view.rerender(
+      <TrafficPanel
+        context={nextContext}
+        invoke={invoke}
+        watchTraffic={watchTraffic}
+        mode="traffic"
+      />
+    );
+
+    expect(signal?.aborted).toBe(true);
+    expect(
+      screen.queryByRole('img', { name: 'Traffic topology' })
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Loading routing labels and Docker counters'
+    );
+    expect(
+      screen.getByRole('button', { name: 'Start live traffic' })
+    ).toBeDisabled();
+    expect(invoke).toHaveBeenLastCalledWith('stacks.traffic.read', {
+      environmentId: nextContext.environmentId,
+      stackId: nextContext.stackId,
+    });
+  }
+);
+
+it.each(['not-a-date', ''])(
+  'rejects an invalid sample timestamp %j',
+  (time) => {
+    const before = snapshot('2026-10-16T00:00:00Z', '9007199254740992');
+    expect(counterRate(before, snapshot(time), 'web', 'receivedBytes')).toBe(
+      'Counter reset or invalid interval'
+    );
+    expect(counterRate(snapshot(time), before, 'web', 'receivedBytes')).toBe(
+      'Counter reset or invalid interval'
+    );
+  }
+);

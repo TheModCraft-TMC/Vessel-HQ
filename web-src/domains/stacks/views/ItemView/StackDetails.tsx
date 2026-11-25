@@ -95,6 +95,7 @@ export function StackDetails({
               isRegular={isRegular}
               stack={stack}
               stackFileContent={stackFileContent}
+              fileRevision={fileQuery.data?.Revision}
               yamlError={yamlError}
             />
           </WidgetBody>
@@ -113,6 +114,7 @@ export function StackDetails({
               stack={stack!}
               isOrphaned={isOrphaned}
               originalFileContent={stackFileContent || ''}
+              originalFileRevision={fileQuery.data?.Revision}
               containerNames={containerNamesQuery.data}
               originalContainerNames={originalContainerNames}
               onSubmitSuccess={() =>
@@ -138,6 +140,7 @@ export function StackDetails({
     stackFileContent,
     yamlError,
     fileQuery.isLoading,
+    fileQuery.data?.Revision,
     containerNamesQuery.data,
     originalContainerNames,
     router,

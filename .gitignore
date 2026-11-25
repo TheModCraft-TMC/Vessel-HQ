@@ -25,3 +25,7 @@ go.work.local.sum
 # Generated SonarQube external-issues reports
 /reports/sonar/app-router-compliance.json
 /reports/app-router-page-index.md
+
+# Python test and tooling caches
+__pycache__/
+*.py[cod]

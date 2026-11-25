@@ -50,6 +50,7 @@ type Handler struct {
 	PendingActionsService *pendingactions.PendingActionsService
 	listRepositories      func(context.Context, *portainer.Registry) ([]string, error)
 	listTags              func(context.Context, *portainer.Registry, string) ([]string, error)
+	newRegistryClient     func(portainer.Registry) (registryPingClient, error)
 }
 
 // NewHandler creates a handler to manage registry operations.
@@ -89,7 +90,7 @@ func (handler *Handler) initRouter(bouncer accessGuard) {
 	// Keep the gitlab proxy on the regular authenticated router as it doesn't require specific registry access
 	authenticatedRouter := handler.NewRoute().Subrouter()
 	authenticatedRouter.Use(bouncer.AuthenticatedAccess)
-	authenticatedRouter.Handle("/registries/ping", httperror.LoggerHandler(handler.pingRegistry)).Methods(http.MethodPost)
+	authenticatedRouter.Handle("/registries/ping", security.ReadOnlyOperation(httperror.LoggerHandler(handler.pingRegistry))).Methods(http.MethodPost)
 }
 
 type accessGuard interface {

@@ -18,7 +18,7 @@ func (c *Client) RolloutRestart(ctx context.Context, manifests []string) (string
 	})
 	defer cmdutil.DefaultBehaviorOnFatal()
 
-	cmd := rollout.NewCmdRollout(c.factory, c.streams)
+	cmd := rollout.NewCmdRollout("kubectl", c.factory, c.streams)
 	args := []string{"restart"}
 	args = append(args, resourcesToArgs(manifests)...)
 

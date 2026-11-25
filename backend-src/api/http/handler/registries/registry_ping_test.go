@@ -2,6 +2,7 @@ package registries
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -16,6 +17,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"oras.land/oras-go/v2/registry/remote/errcode"
 )
+
+type rejectedRegistryPing struct{}
+
+func (rejectedRegistryPing) Ping(context.Context) error {
+	return &errcode.ErrorResponse{StatusCode: http.StatusUnauthorized}
+}
 
 func Test_categorizeRegistryError(t *testing.T) {
 	t.Parallel()
@@ -190,6 +197,12 @@ func TestHandler_pingRegistry(t *testing.T) {
 	t.Parallel()
 
 	handler, _ := newTestHandler(t)
+	clientCalls := 0
+	handler.newRegistryClient = func(registry portainer.Registry) (registryPingClient, error) {
+		clientCalls++
+		assert.Equal(t, "registry-1.docker.io", registry.URL)
+		return rejectedRegistryPing{}, nil
+	}
 
 	tests := []struct {
 		name           string
@@ -285,12 +298,18 @@ func TestHandler_pingRegistry(t *testing.T) {
 			}
 		})
 	}
+	assert.Equal(t, 1, clientCalls, "invalid payloads must not contact a registry")
 }
 
 func TestHandler_pingRegistry_DockerHubURL(t *testing.T) {
 	t.Parallel()
 
 	handler, _ := newTestHandler(t)
+	handler.newRegistryClient = func(registry portainer.Registry) (registryPingClient, error) {
+		assert.Equal(t, "registry-1.docker.io", registry.URL)
+		assert.Equal(t, portainer.DockerHubRegistry, registry.Type)
+		return rejectedRegistryPing{}, nil
+	}
 
 	t.Run("empty URL for DockerHub gets default URL", func(t *testing.T) {
 		payload := registryPingPayload{

@@ -15,6 +15,9 @@ import { extensionStorage, useNativeExtensions } from '@/domains/extensions';
 import { nativeExtensionRegistrations } from './generated/registrations';
 import type { NativeExtensionRegistration } from './types';
 import type { NativeExtensionStorage } from './sdk';
+import { useVerifiedExtensionData } from './useVerifiedExtensionData';
+import { useRuntimeWatchdog } from './useRuntimeWatchdog';
+import type { RuntimeWatchdog } from './runtime-watchdog';
 
 function subscribeToBrowser() {
   return () => undefined;
@@ -30,6 +33,7 @@ class PreviewBoundary extends Component<
   {
     registration: NativeExtensionRegistration;
     storage: NativeExtensionStorage;
+    watchdog?: RuntimeWatchdog;
   },
   { failed: boolean }
 > {
@@ -54,6 +58,11 @@ class PreviewBoundary extends Component<
 
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+
+  componentDidCatch() {
+    const { watchdog } = this.props;
+    watchdog?.trip('render-error');
   }
 
   render() {
@@ -97,21 +106,35 @@ export function NativeExtensionPreview({
 
 function ApprovedPreview({ extensionId }: { extensionId: string }) {
   const query = useNativeExtensions();
-  const record = query.data?.find((item) => item.manifest.id === extensionId);
+  const verifiedData = useVerifiedExtensionData(query);
+  const record = verifiedData?.find((item) => item.manifest.id === extensionId);
   const registration = nativeExtensionRegistrations.find(
     (item) => item.id === extensionId
   );
+  const id = record?.id ?? 0;
+  const revision = record?.revision ?? 0;
+  const packageDigest = record?.manifest.packageDigest ?? '';
+  const updatedAt = record?.updatedAt ?? 0;
+  const binding = useMemo(
+    () => (id ? { id, revision, packageDigest, updatedAt } : undefined),
+    [id, revision, packageDigest, updatedAt]
+  );
+  const { guard, state: safety } = useRuntimeWatchdog(
+    binding,
+    'preview',
+    !!record &&
+      record.status === 'approved' &&
+      record.trustedNativeUI &&
+      registration?.packageDigest === record.manifest.packageDigest &&
+      !registration?.slots?.some(
+        (slot) => slot.slot === 'docker.stack.detail.action'
+      )
+  );
   const storage = useMemo(
-    () =>
-      extensionStorage(
-        record?.id ?? 0,
-        record?.revision ?? 0,
-        record?.manifest.packageDigest ?? ''
-      ),
-    [record?.id, record?.revision, record?.manifest.packageDigest]
+    () => guardStorage(extensionStorage(id, revision, packageDigest), guard),
+    [id, revision, packageDigest, guard]
   );
   const allowed =
-    !query.isFetching &&
     !query.isError &&
     record?.status === 'approved' &&
     record.trustedNativeUI &&
@@ -120,7 +143,7 @@ function ApprovedPreview({ extensionId }: { extensionId: string }) {
     registration?.packageDigest === record.manifest.packageDigest &&
     registration?.uiEntry === record.manifest.ui?.entry;
 
-  if (query.isLoading || query.isFetching)
+  if (query.isLoading || (query.isFetching && !verifiedData))
     return <p>Checking current approval…</p>;
   if (query.isError) {
     return (
@@ -147,6 +170,17 @@ function ApprovedPreview({ extensionId }: { extensionId: string }) {
       </p>
     );
   }
+  if (safety.reason)
+    return (
+      <p role="alert">
+        Extension stopped by its safety guard ({safety.reason}).{' '}
+        {safety.reportFailed
+          ? 'Server revocation failed; disable it in extension settings.'
+          : safety.disabled
+            ? 'Permissions revoked. Review settings before approving again.'
+            : 'Revoking extension permissions…'}
+      </p>
+    );
   return (
     <>
       <p role="status">
@@ -157,7 +191,19 @@ function ApprovedPreview({ extensionId }: { extensionId: string }) {
         key={`${extensionId}:${record?.revision}`}
         registration={registration}
         storage={storage}
+        watchdog={guard}
       />
     </>
   );
+}
+
+function guardStorage(
+  storage: NativeExtensionStorage,
+  guard?: RuntimeWatchdog
+): NativeExtensionStorage {
+  return {
+    read: () => (guard ? guard.run(() => storage.read()) : storage.read()),
+    write: (note) =>
+      guard ? guard.run(() => storage.write(note)) : storage.write(note),
+  };
 }

@@ -23,19 +23,21 @@ import (
 
 type Handler struct {
 	*mux.Router
-	DataStore       dataservices.DataStore
-	FileService     portainer.FileService
-	Broker          *extensionrpc.InternalBroker
-	AuthorizeUser   extensionrpc.UserAuthorize
-	DeliveryRead    func(context.Context, int, int, bool) (delivery.Snapshot, error)
-	Redeploy        func(http.ResponseWriter, *http.Request, int, int, string, bool) *httperror.HandlerError
-	deploymentMutex sync.Mutex
+	DataStore         dataservices.DataStore
+	FileService       portainer.FileService
+	Broker            *extensionrpc.InternalBroker
+	AuthorizeUser     extensionrpc.UserAuthorize
+	DeliveryRead      func(context.Context, int, int, bool) (delivery.Snapshot, error)
+	Redeploy          func(http.ResponseWriter, *http.Request, int, int, string, bool) *httperror.HandlerError
+	deploymentMutex   sync.Mutex
+	runtimeRequests   runtimeBudget
+	PublishSafetyTrip func()
 }
 
 func NewHandler(b security.BouncerService) *Handler {
 	h := &Handler{Router: mux.NewRouter()}
 	h.Handle("/native-extensions/slots", b.RestrictedAccess(httperror.LoggerHandler(h.slots))).Methods("GET")
-	h.Handle("/native-extensions/{id}/traffic-stream", b.RestrictedAccess(httperror.LoggerHandler(h.trafficStream))).Methods("POST")
+	h.Handle("/native-extensions/{id}/traffic-stream", b.RestrictedAccess(security.ReadOnlyOperation(httperror.LoggerHandler(h.trafficStream)))).Methods("POST")
 	h.Handle("/native-extensions/{id}/invoke", b.RestrictedAccess(httperror.LoggerHandler(h.invoke))).Methods("POST")
 	h.Handle("/native-extensions/{id}/storage", b.AdminAccess(httperror.LoggerHandler(h.readStorage))).Methods("GET")
 	h.Handle("/native-extensions/{id}/storage", b.AdminAccess(httperror.LoggerHandler(h.writeStorage))).Methods("PUT")
@@ -47,6 +49,7 @@ func NewHandler(b security.BouncerService) *Handler {
 	h.Handle("/native-extensions/upload", b.AdminAccess(httperror.LoggerHandler(h.upload))).Methods("POST")
 	h.Handle("/native-extensions/{id}/approval", b.AdminAccess(httperror.LoggerHandler(h.approve))).Methods("PUT")
 	h.Handle("/native-extensions/{id}/disable", b.AdminAccess(httperror.LoggerHandler(h.disable))).Methods("POST")
+	h.Handle("/native-extensions/{id}/safety-trip", b.AdminAccess(httperror.LoggerHandler(h.safetyTrip))).Methods("POST")
 	h.Handle("/native-extensions/{id}", b.AdminAccess(httperror.LoggerHandler(h.remove))).Methods("DELETE")
 	return h
 }
@@ -139,9 +142,12 @@ func (h *Handler) mutate(w http.ResponseWriter, r *http.Request, action string, 
 			return e
 		}
 		if e = f(v); e != nil {
+			if errors.Is(e, errRuntimeAlreadyDisabled) {
+				return nil
+			}
 			return e
 		}
-		v.UpdatedAt = time.Now().Unix()
+		v.UpdatedAt = max(time.Now().Unix(), v.UpdatedAt+1)
 		if action == "extension.remove" {
 			e = tx.NativeExtension().Delete(id)
 		} else {
@@ -179,19 +185,14 @@ func (h *Handler) approve(w http.ResponseWriter, r *http.Request) *httperror.Han
 		v.TrustedNativeUI = a.TrustedNativeUI
 		v.ServiceReadEnabled = a.ServiceReadEnabled
 		v.Status = "approved"
+		v.SafetyReason = ""
+		h.runtimeRequests.resetExtension(v.ID)
 		return nil
 	})
 }
 func (h *Handler) disable(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
 	return h.mutate(w, r, "extension.disable", func(v *domain.Record) error {
-		v.Status = "disabled"
-		v.Grants = []domain.Permission{}
-		v.TrustedNativeUI = false
-		v.ServiceReadEnabled = false
-		if v.ImageAutomation != nil {
-			v.ImageAutomation.Enabled = false
-			v.ImageAutomation.Version++
-		}
+		disableRecord(v)
 		return nil
 	})
 }

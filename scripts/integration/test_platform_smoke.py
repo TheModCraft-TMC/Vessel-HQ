@@ -578,7 +578,9 @@ class PlatformSmokeTests(unittest.TestCase):
     def test_companion_identity_and_acl_checks_survive_optimized_python(self):
         result = subprocess.run([sys.executable, "-O", "-m", "unittest",
             "test_platform_smoke.PlatformSmokeTests.test_oauth_companion_rejects_wrong_identity_role_or_acl_and_restores_token"],
-            cwd=Path(smoke.__file__).parent, capture_output=True, text=True, timeout=10)
+            # Three callback cases each retain their own five-second HTTP
+            # deadline. The child budget must also cover startup and cleanup.
+            cwd=Path(smoke.__file__).parent, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_optimized_python_is_refused_before_any_verification(self):

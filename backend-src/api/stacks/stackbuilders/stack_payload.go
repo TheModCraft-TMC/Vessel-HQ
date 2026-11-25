@@ -12,7 +12,9 @@ type StackPayload struct {
 	SwarmID string `example:"jpofkc0i9uo9wtx1zesuk649w" validate:"required"`
 	// Stack file data
 	StackFileContent []byte
-	Webhook          string
+	// Optional reviewed portable project archive. Never persisted in metadata.
+	ProjectArchive []byte `json:"-"`
+	Webhook        string
 	// A list of environment(endpoint) variables used during stack deployment
 	Env []portainer.Pair
 	// A list of deploy-time secret mappings injected into the stack environment

@@ -31,6 +31,14 @@ func NewHandler(bouncer security.BouncerService, dataStore dataservices.DataStor
 		sourceScheduler: sourceScheduler,
 	}
 
+	// Match the literal vault/test path before the authenticated {id}/test
+	// route so the admin-only operation cannot be shadowed by a source ID.
+	adminRouter := h.PathPrefix("/gitops/sources").Subrouter()
+	adminRouter.Use(bouncer.AdminAccess)
+	adminRouter.Handle("/vault", httperror.LoggerHandler(h.vaultSourceCreate)).Methods(http.MethodPost)
+	adminRouter.Handle("/vault/test", security.ReadOnlyOperation(httperror.LoggerHandler(h.vaultSourceTest))).Methods(http.MethodPost)
+	adminRouter.Handle("/{id}/access", httperror.LoggerHandler(h.gitSourceUpdateAccess)).Methods(http.MethodPut)
+
 	authenticatedRouter := h.PathPrefix("/gitops/sources").Subrouter()
 	authenticatedRouter.Use(bouncer.AuthenticatedAccess)
 	authenticatedRouter.Handle("", httperror.LoggerHandler(h.list)).Methods(http.MethodGet)
@@ -38,15 +46,10 @@ func NewHandler(bouncer security.BouncerService, dataStore dataservices.DataStor
 	authenticatedRouter.Handle("/{id}", httperror.LoggerHandler(h.getSource)).Methods(http.MethodGet)
 	authenticatedRouter.Handle("/{id}/workflows", httperror.LoggerHandler(h.listSourceWorkflows)).Methods(http.MethodGet)
 	authenticatedRouter.Handle("/git", httperror.LoggerHandler(h.gitSourceCreate)).Methods(http.MethodPost)
-	authenticatedRouter.Handle("/test", httperror.LoggerHandler(h.gitSourceTest)).Methods(http.MethodPost)
+	authenticatedRouter.Handle("/test", security.ReadOnlyOperation(httperror.LoggerHandler(h.gitSourceTest))).Methods(http.MethodPost)
 	authenticatedRouter.Handle("/{id}", httperror.LoggerHandler(h.gitSourceUpdate)).Methods(http.MethodPut)
 	authenticatedRouter.Handle("/{id}", httperror.LoggerHandler(h.sourceDelete)).Methods(http.MethodDelete)
-	authenticatedRouter.Handle("/{id}/test", httperror.LoggerHandler(h.sourceTestConnection)).Methods(http.MethodPost)
+	authenticatedRouter.Handle("/{id}/test", security.ReadOnlyOperation(httperror.LoggerHandler(h.sourceTestConnection))).Methods(http.MethodPost)
 
-	adminRouter := h.PathPrefix("/gitops/sources").Subrouter()
-	adminRouter.Use(bouncer.AdminAccess)
-	adminRouter.Handle("/vault", httperror.LoggerHandler(h.vaultSourceCreate)).Methods(http.MethodPost)
-	adminRouter.Handle("/vault/test", httperror.LoggerHandler(h.vaultSourceTest)).Methods(http.MethodPost)
-	adminRouter.Handle("/{id}/access", httperror.LoggerHandler(h.gitSourceUpdateAccess)).Methods(http.MethodPut)
 	return h
 }

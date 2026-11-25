@@ -141,6 +141,9 @@ function ExtensionSettings({
     }
   }
   const settings = [
+    ...(extension.safetyReason
+      ? [['Safety stop', extension.safetyReason]]
+      : []),
     [
       'Package',
       extension.packageAvailable

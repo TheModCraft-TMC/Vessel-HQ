@@ -27,7 +27,7 @@ func CreateSwarmStackFileBuilder(securityContext *security.RestrictedRequestCont
 	}
 }
 
-func (b *SwarmStackFileBuilder) prepare(_ context.Context, payload *StackPayload, userID portainer.UserID) error {
+func (b *SwarmStackFileBuilder) prepare(ctx context.Context, payload *StackPayload, userID portainer.UserID) error {
 	b.stack.Name = payload.Name
 	b.stack.Type = portainer.DockerSwarmStack
 	b.stack.SwarmID = payload.SwarmID
@@ -40,7 +40,7 @@ func (b *SwarmStackFileBuilder) prepare(_ context.Context, payload *StackPayload
 		return err
 	}
 
-	return b.storeStackFile(payload.StackFileContent)
+	return b.storeProject(ctx, payload)
 }
 
 func (b *SwarmStackFileBuilder) deploy(ctx context.Context, endpoint *portainer.Endpoint) error {

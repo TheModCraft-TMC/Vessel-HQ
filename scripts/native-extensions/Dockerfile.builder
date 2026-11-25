@@ -13,6 +13,7 @@ COPY package.json pnpm-lock.yaml ./
 COPY patches/ ./patches/
 RUN pnpm install --frozen-lockfile --ignore-scripts && pnpm rebuild @swc/core esbuild unrs-resolver
 COPY lock.sha256 validate.mjs ./
-RUN mkdir -p /opt/vessel/node_modules/.cache /opt/vessel/node_modules/.vite /opt/vessel/node_modules/.vite-temp
+RUN mkdir -p /opt/vessel/node_modules/.cache /opt/vessel/node_modules/.vite /opt/vessel/node_modules/.vite-temp \
+    && chown -R node:node /opt/vessel/node_modules/.cache /opt/vessel/node_modules/.vite /opt/vessel/node_modules/.vite-temp
 WORKDIR /workspace
 USER node

@@ -143,7 +143,6 @@ function openLogsStream(
 ) {
   let socket: WebSocket | undefined;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
-  let updateTimer: ReturnType<typeof setTimeout> | undefined;
   let stopped = false;
   const lineLimit = Math.min(
     normalizeNonNegative(options.tail, 100),
@@ -151,20 +150,12 @@ function openLogsStream(
   );
   const rawLogs = new BoundedTextBuffer(Math.max(1, lineLimit + 1));
   const publisher = createThrottledPublisher(
-    () => options.onLogs(formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps })),
+    () =>
+      options.onLogs(
+        formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps })
+      ),
     UPDATE_INTERVAL_MS
   );
-
-  function publish() {
-    updateTimer = undefined;
-    options.onLogs(formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps }));
-  }
-
-  function schedulePublish() {
-    if (!updateTimer) {
-      updateTimer = setTimeout(publish, UPDATE_INTERVAL_MS);
-    }
-  }
 
   function appendLogs(value: string) {
     if (!value) {
@@ -172,7 +163,6 @@ function openLogsStream(
     }
     rawLogs.append(value);
     publisher.publish(value);
-    schedulePublish();
   }
 
   function connect() {
@@ -185,6 +175,9 @@ function openLogsStream(
     socket.binaryType = 'arraybuffer';
 
     socket.addEventListener('message', (event) => {
+      if (stopped) {
+        return;
+      }
       try {
         if (typeof event.data === 'string') {
           throw new Error(event.data || 'Unable to stream Docker logs');
@@ -212,10 +205,13 @@ function openLogsStream(
       }
 
       if (!stopped && !reconnectTimer) {
-        reconnectTimer = setTimeout(() => {
-          reconnectTimer = undefined;
-          connect();
-        }, exponentialBackoff(0, { jitterMs: 0 }));
+        reconnectTimer = setTimeout(
+          () => {
+            reconnectTimer = undefined;
+            connect();
+          },
+          exponentialBackoff(0, { jitterMs: 0 })
+        );
       }
     });
 
@@ -238,10 +234,6 @@ function openLogsStream(
       if (reconnectTimer) {
         clearTimeout(reconnectTimer);
       }
-      if (updateTimer) {
-        clearTimeout(updateTimer);
-      }
-      publisher.flush();
       publisher.close();
       socket?.close();
     },

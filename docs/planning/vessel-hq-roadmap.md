@@ -4,6 +4,11 @@ Status: stable `1.3.2` is released; native extensions remain experimental. Futur
 
 Last updated: November 12, 2026.
 
+November 15 continuation: the [open-issue ledger](open-issue-continuation-2026-11-15.md)
+covers all 35 current issues. Compose project portability is now implemented in
+the working tree with reviewed import/export and file-revision conflict checks;
+remaining runtime acceptance and broader product work are recorded separately.
+
 This document records why the fork exists, what has already changed, and the direction agreed for future work. It is deliberately explicit about status so that roadmap context is not mistaken for shipped behavior.
 
 ## Product context
@@ -77,8 +82,7 @@ The extension follow-up is planned in this order:
    checks, update/reset and transactional audits. Secret values stay server-side
    and registration responses omit all settings. The administrator editor now
    supports public values, write-only secrets, reload and confirmed reset.
-   Remaining work: package-declared schemas and a separately designed runtime/SDK
-   settings contract.
+   Package-declared schemas and the beta.2 runtime/SDK settings contract are now implemented with separate public and secret machine grants.
    See the [API contract and limits](../native-extensions.md#administrator-settings-api).
 2. Improve complete-set build management: visible status and sanitized logs,
    repeatable source/package identities, serialized builds, retry/cancellation
@@ -125,13 +129,11 @@ installed package has not been replaced. Row 4's list/create route spacing and
 shared toolbar fixes are implemented. Selected desktop images, networks, volumes
 and network-creation fixtures passed browser checks. Other desktop forms, phone
 widths and authenticated production coverage remain open because browser control
-failed. The separate SDK workspace is missing at its documented path. Fresh
+failed. The separate SDK workspace is available; SDK beta.2 is published from its independent repository. Fresh
 results and exact limits are recorded in the
 [November 11 validation handoff](migration-change-summary.md#isolated-extension-validation-and-desktop-spacing--november-11-2026).
 All #299 items remain in scope, including the request to recreate Business Edition
-capabilities. The current frontend feature-flag enum is empty; inventory and
-requirements must identify actual missing implementations before edition-related
-code changes can deliver a capability.
+capabilities. The frontend contains an edition feature map and direct edition checks. Source-backed Git reference and file browsing are now selected by source availability; a complete capability inventory must distinguish existing handlers from absent implementations before broader parity is claimed.
 
 ## Dependency compatibility follow-up
 

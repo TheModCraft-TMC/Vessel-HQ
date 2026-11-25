@@ -1,6 +1,5 @@
 import { CellContext } from '@tanstack/react-table';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import _ from 'lodash';
 import { buildHref } from '@console/routing/buildHref';
 
@@ -8,6 +7,7 @@ import type { ContainerListViewModel } from '@/domains/containers/types';
 import { useTableSettings } from '@/ui/components/data-table/useTableSettings';
 
 import { TableSettings } from '../types';
+import { useRowContext } from '../RowContext';
 
 import { columnHelper } from './helper';
 
@@ -23,12 +23,12 @@ export function NameCell({
 }: CellContext<ContainerListViewModel, string>) {
   const name = getValue();
 
-  const pathname = usePathname();
-  const href = buildHref(
-    './:id',
-    { id: container.Id, nodeName: container.NodeName },
-    pathname
-  );
+  const { environment } = useRowContext();
+  const href = buildHref('/:endpointId/docker/containers/:id', {
+    endpointId: environment.Id,
+    id: container.Id,
+    nodeName: container.NodeName,
+  });
 
   const settings = useTableSettings<TableSettings>();
   const truncate = settings.truncateContainerName;

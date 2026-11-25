@@ -79,7 +79,74 @@ describe('DockerLogStreamDecoder', () => {
 
 describe('openDockerLogsStream', () => {
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
+  });
+
+  function openStream(onLogs = vi.fn(), tail = 100) {
+    vi.useFakeTimers();
+    vi.stubGlobal('WebSocket', FakeWebSocket);
+    const stream = openDockerLogsStream({
+      environmentId: 1,
+      resource: 'containers',
+      resourceId: 'abc123',
+      timestamps: false,
+      since: 0,
+      tail,
+      multiplexed: false,
+      onLogs,
+      onError: vi.fn(),
+    });
+    const socket = FakeWebSocket.current;
+    return {
+      stream,
+      onLogs,
+      send(text: string) {
+        socket.emit(
+          'message',
+          new MessageEvent('message', {
+            data: new TextEncoder().encode(text).buffer,
+          })
+        );
+      },
+    };
+  }
+
+  it('publishes one snapshot per burst without changing chunk boundaries into lines', () => {
+    const { stream, onLogs, send } = openStream();
+    send('first li');
+    send('ne\nsecond line\n');
+    expect(onLogs).not.toHaveBeenCalled();
+
+    vi.advanceTimersByTime(100);
+
+    expect(onLogs).toHaveBeenCalledTimes(1);
+    expect(
+      onLogs.mock.calls[0][0].map((line: { line: string }) => line.line)
+    ).toEqual(['first line', 'second line']);
+    stream.close();
+  });
+
+  it('retains the newest complete lines while appending fragmented output', () => {
+    const { stream, onLogs, send } = openStream(vi.fn(), 2);
+    send('old\nnew');
+    send('er\nnewest\n');
+    vi.advanceTimersByTime(100);
+
+    expect(
+      onLogs.mock.lastCall?.[0].map((line: { line: string }) => line.line)
+    ).toEqual(['newer', 'newest']);
+    stream.close();
+  });
+
+  it('cancels a pending snapshot and ignores late messages after explicit close', () => {
+    const { stream, onLogs, send } = openStream();
+    send('pending\n');
+    stream.close();
+    send('late\n');
+    vi.advanceTimersByTime(1_000);
+
+    expect(onLogs).not.toHaveBeenCalled();
   });
 
   it('does not report a partial frame when the user closes the stream', () => {

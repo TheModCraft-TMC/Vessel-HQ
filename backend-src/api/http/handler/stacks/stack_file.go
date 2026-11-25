@@ -2,7 +2,9 @@ package stacks
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
@@ -10,6 +12,7 @@ import (
 	gittypes "github.com/portainer/portainer/api/git/types"
 	httperrors "github.com/portainer/portainer/api/http/errors"
 	"github.com/portainer/portainer/api/http/security"
+	"github.com/portainer/portainer/api/stacks/projectfiles"
 	"github.com/portainer/portainer/api/stacks/stackutils"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 	"github.com/portainer/portainer/pkg/libhttp/request"
@@ -19,6 +22,8 @@ import (
 type stackFileResponse struct {
 	// Content of the Stack file
 	StackFileContent string `json:"StackFileContent" example:"version: 3\n services:\n web:\n image:nginx"`
+	// Revision of all declared project files; use as If-Match when updating.
+	Revision string `json:"Revision,omitempty"`
 }
 
 // @id StackFileInspect
@@ -29,7 +34,9 @@ type stackFileResponse struct {
 // @security ApiKeyAuth
 // @security jwt
 // @produce json
+// @produce application/zip
 // @param id path int true "Stack identifier"
+// @param format query string false "Use project for a portable archive of declared Compose files" Enums(project)
 // @success 200 {object} stackFileResponse "Success"
 // @failure 400 "Invalid request"
 // @failure 403 "Permission denied"
@@ -111,12 +118,49 @@ func (handler *Handler) stackFile(w http.ResponseWriter, r *http.Request) *httpe
 		return httperror.Conflict("Stack git settings have changed. Redeploy the stack to apply the new configuration.", errors.New("git settings updated without redeploy"))
 	}
 
-	stackFileContent, err := handler.FileService.GetFileContent(stack.ProjectPath, stack.EntryPoint)
-	if err != nil {
-		return httperror.InternalServerError("Unable to retrieve Compose file from disk", err)
+	if format := r.URL.Query().Get("format"); format != "" {
+		if format != "project" || (stack.Type != portainer.DockerComposeStack && stack.Type != portainer.DockerSwarmStack) {
+			return httperror.BadRequest("Project export requires a Compose or Swarm stack", errors.New("unsupported export format or stack type"))
+		}
+		variables := make([]string, 0, len(stack.Env)+len(stack.SecretMappings))
+		for _, variable := range stack.Env {
+			variables = append(variables, variable.Name)
+		}
+		for _, secret := range stack.SecretMappings {
+			variables = append(variables, secret.Name)
+		}
+		archive, err := projectfiles.Export(r.Context(), stack.ProjectPath, stack.EntryPoint, stack.AdditionalFiles, variables)
+		if err != nil {
+			return httperror.Conflict("Unable to export complete Compose project; check its files and retry", err)
+		}
+		w.Header().Set("Content-Type", "application/zip")
+		w.Header().Set("Content-Length", strconv.Itoa(len(archive)))
+		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="vessel-stack-%d.zip"`, stack.ID))
+		w.Header().Set("Cache-Control", "no-store")
+		if _, err := w.Write(archive); err != nil {
+			return httperror.InternalServerError("Unable to write project export", err)
+		}
+		return nil
 	}
 
-	return response.JSON(w, &stackFileResponse{StackFileContent: string(stackFileContent)})
+	snapshot, err := projectfiles.Read(r.Context(), stack.ProjectPath, stack.EntryPoint, stack.AdditionalFiles)
+	if err != nil {
+		// Preserve legacy inspection/recovery for projects that cannot use the
+		// bounded portable workflow (for example an internal repository link).
+		// Never attach a revision to bytes from a different read.
+		if handler.FileService == nil {
+			return httperror.Conflict("Unable to read complete stack project from disk", err)
+		}
+		content, readErr := handler.FileService.GetFileContent(stack.ProjectPath, stack.EntryPoint)
+		if readErr != nil {
+			return httperror.InternalServerError("Unable to retrieve Compose file from disk", readErr)
+		}
+		w.Header().Set("Cache-Control", "no-store")
+		return response.JSON(w, &stackFileResponse{StackFileContent: string(content)})
+	}
+	w.Header().Set("ETag", fmt.Sprintf(`"%s"`, snapshot.Revision))
+	w.Header().Set("Cache-Control", "no-store")
+	return response.JSON(w, &stackFileResponse{StackFileContent: string(snapshot.Content), Revision: snapshot.Revision})
 }
 
 // gitStackPendingRedeploy returns true when the stack's git settings (URL or config file path)
