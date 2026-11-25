@@ -2255,3 +2255,18 @@ attachment/archive activity while retaining lifecycle and health changes.
 Focused websocket/security Go tests pass. See the
 [November 25 handoff](../agent-handoff/progress-2026-11-25.md) for coverage limits.
 No deployment or production recovery is claimed.
+
+
+November 25 review follow-up (PR #303): periodic realtime snapshots now avoid
+whole-console metadata refreshes, verified extension UI survives background
+approval checks, and bounded SDK/server circuit breakers revoke reviewed grants
+when an extension loops or floods requests. Limits and remaining live acceptance
+are recorded in the current handoff. i18next is patched to 26.3.4, with translation
+compatibility coverage and zero fresh npm findings confirmed locally and in Linux
+CI. Extension host integration passes on Linux. The corrected full frontend CI is green, including architecture/type checks,
+tests, lint and the production build. Full backend tests pass 158 packages; the
+platform harness passes 46 tests. Linux published-module/security validation is
+green with zero reachable advisory findings.
+The new read-only Go dependency workflow checks published identities/checksums
+and reachable advisories; extension integration also invokes it. No deployment
+or issue closure is implied.
