@@ -127,6 +127,7 @@ jobs:
           bash scripts/check-release-version.test.sh
           node --test build/*.test.cjs scripts/*.test.mjs
           pnpm check:npm-security
+          pnpm test:i18n
           pnpm check:frontend-modernization
           pnpm check:frontend-boundaries
           pnpm check:app-router-compliance
@@ -318,6 +319,7 @@ jobs:
           pnpm typecheck
       - name: Test extensions and frontend
         run: |
+          pnpm test:i18n
           pnpm test:extensions --maxWorkers=4
           pnpm test --maxWorkers=4
       - name: Lint frontend

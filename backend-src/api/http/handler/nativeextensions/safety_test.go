@@ -83,7 +83,9 @@ func TestSafetyTripBindsApprovalRevokesAndPreservesData(t *testing.T) {
 	h.DataStore = store
 	broadcasts := 0
 	h.PublishSafetyTrip = func() { broadcasts++ }
-	record := domain.Record{Revision: 2, UpdatedAt: 10, Status: "approved", TrustedNativeUI: true, ServiceReadEnabled: true, Manifest: domain.Manifest{ID: "org.example.safe", PackageDigest: "sha256:" + strings.Repeat("a", 64)}, Grants: []domain.Permission{{Capability: "ui.native"}}, Note: &domain.Note{Text: "keep", Version: 4}, ImageAutomation: &domain.ImageAutomation{Enabled: true, Version: 3}}
+	record := domain.Record{Revision: 2, UpdatedAt: 10, Status: "approved", TrustedNativeUI: true, ServiceReadEnabled: true, Manifest: domain.Manifest{ID: "org.example.safe", Name: "Safety", Version: "1.0.0", APIVersion: "v1", PackageDigest: "sha256:" + strings.Repeat("a", 64), Permissions: []domain.Permission{{Capability: "ui.native"}, {Capability: "storage.read"}}}, Grants: []domain.Permission{{Capability: "ui.native"}}, Note: &domain.Note{Text: "keep", Version: 4}, ImageAutomation: &domain.ImageAutomation{Enabled: true, Version: 3}}
+	require.NoError(t, record.Manifest.Validate())
+	require.NoError(t, domain.Authorize(record, "ui.native", 0))
 	require.NoError(t, store.NativeExtension().Create(&record))
 	report := safetyTripRequest{Revision: 2, UpdatedAt: 10, PackageDigest: record.Manifest.PackageDigest, Reason: "restart-loop"}
 	call := func(credential string, input safetyTripRequest) *httptest.ResponseRecorder {
