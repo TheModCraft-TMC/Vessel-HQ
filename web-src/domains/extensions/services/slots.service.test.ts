@@ -23,7 +23,7 @@ it('asks the backend for authorized slots in the exact environment and stack', a
   expect(await getExtensionSlots(2, 5)).toEqual(records);
   expect(axios.get).toHaveBeenCalledExactlyOnceWith(
     '/native-extensions/slots',
-    { params: { environmentId: 2, stackId: 5 } }
+    { timeout: 10_000, params: { environmentId: 2, stackId: 5 } }
   );
 });
 

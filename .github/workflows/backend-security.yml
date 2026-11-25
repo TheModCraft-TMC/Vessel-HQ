@@ -14,6 +14,7 @@ on:
       - 'go.work'
       - '.github/workflows/backend-security.yml'
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
