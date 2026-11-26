@@ -1,5 +1,7 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
 import { ImagesDatatable } from '@/domains/images/views/ListView/ImagesDatatable/ImagesDatatable';
 import { PullImageFormWidget } from '@/domains/images/views/ListView/PullImageFormWidget';
 import { useIsSwarmAgent } from '@/core/docker/proxy/queries/useIsSwarmAgent';
@@ -11,14 +13,10 @@ export default function Page() {
   return (
     <>
       <PageHeader title="Image list" breadcrumbs="Images" reload />
-      <div>
-        <div className="row">
-          <div className="col-sm-12">
-            <PullImageFormWidget isNodeVisible={isSwarmAgent} />
-          </div>
-        </div>
+      <PageContent>
+        <PullImageFormWidget isNodeVisible={isSwarmAgent} />
         <ImagesDatatable isHostColumnVisible={isSwarmAgent} />
-      </div>
+      </PageContent>
     </>
   );
 }

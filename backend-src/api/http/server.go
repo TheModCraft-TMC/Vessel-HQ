@@ -69,12 +69,14 @@ import (
 	"github.com/portainer/portainer/api/kubernetes/cli"
 	motdservice "github.com/portainer/portainer/api/motd"
 	extensiondomain "github.com/portainer/portainer/api/nativeextensions"
+	extensiondelivery "github.com/portainer/portainer/api/nativeextensions/delivery"
 	extensionrpc "github.com/portainer/portainer/api/nativeextensions/rpc"
 	extensiontopology "github.com/portainer/portainer/api/nativeextensions/topology"
 	"github.com/portainer/portainer/api/pendingactions"
 	"github.com/portainer/portainer/api/platform"
 	"github.com/portainer/portainer/api/stacks/deployments"
 	"github.com/portainer/portainer/api/stacks/teardown"
+	"github.com/portainer/portainer/api/webhookgateway"
 	libhelmtypes "github.com/portainer/portainer/pkg/libhelm/types"
 
 	"github.com/rs/zerolog/log"
@@ -174,7 +176,7 @@ func (server *Server) Start(ctx context.Context) error {
 				action = "extension.grpc.failed"
 			}
 			return server.DataStore.ActivityLog().Create(&portainer.ActivityLog{Timestamp: time.Now().Unix(), Username: "extension:" + event.ExtensionID, Action: action, Context: "native-extensions", Payload: base64.StdEncoding.EncodeToString(payload)})
-		}, extensionrpc.NewNoteStorage(server.DataStore))
+		}, extensionrpc.StorageServices{Notes: extensionrpc.NewNoteStorage(server.DataStore), Settings: extensionrpc.NewSettingsStorage(server.DataStore)})
 		if err != nil {
 			return errors.Wrap(err, "unable to start native extension gRPC")
 		}
@@ -370,6 +372,14 @@ func (server *Server) Start(ctx context.Context) error {
 	stackHandler.SwarmStackManager = server.SwarmStackManager
 	stackHandler.ComposeStackManager = server.ComposeStackManager
 	stackHandler.StackDeployer = server.StackDeployer
+	nativeExtensionsHandler.Redeploy = stackHandler.RedeployFromExtension
+	nativeExtensionsHandler.DeliveryRead = func(ctx context.Context, env, stack int, checkImages bool) (extensiondelivery.Snapshot, error) {
+		if checkImages {
+			return extensiondelivery.ReadImages(ctx, server.DataStore, server.DockerClientFactory, env, stack)
+		}
+		return extensiondelivery.Read(ctx, server.DataStore, env, stack)
+	}
+	nativeExtensionsHandler.StartImageAutomation(ctx)
 
 	var storybookHandler = storybook.NewHandler(server.AssetsPath)
 
@@ -417,6 +427,7 @@ func (server *Server) Start(ctx context.Context) error {
 		websocketHandler.PublishMutation()
 	})
 	websocketHandler.DataStore = server.DataStore
+	websocketHandler.DockerClientFactory = server.DockerClientFactory
 	websocketHandler.SignatureService = server.SignatureService
 	websocketHandler.ReverseTunnelService = server.ReverseTunnelService
 	websocketHandler.KubernetesClientFactory = server.KubernetesClientFactory
@@ -425,9 +436,15 @@ func (server *Server) Start(ctx context.Context) error {
 	var webhookHandler = webhooks.NewHandler(requestBouncer)
 	webhookHandler.DataStore = server.DataStore
 	webhookHandler.DockerClientFactory = server.DockerClientFactory
+	reserveWebhook, completeWebhook := webhookgateway.PersistentAudit(server.DataStore)
+	webhookGateway, err := webhookgateway.FromEnvironment(webhookgateway.LocalDispatch(stackHandler, webhookHandler), reserveWebhook, completeWebhook)
+	if err != nil {
+		return err
+	}
 
 	// The top-level handler combines all feature routers into one http.Handler.
 	server.Handler = &handler.Handler{
+		WebhookGateway:          webhookGateway,
 		RoleHandler:             roleHandler,
 		AuthHandler:             authHandler,
 		BackupHandler:           backupHandler,

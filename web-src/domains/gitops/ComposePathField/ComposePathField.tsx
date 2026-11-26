@@ -2,7 +2,6 @@ import { useStateWrapper } from '@/core/hooks/useStateWrapper';
 import { FormControl } from '@/ui/components/forms/FormControl';
 import { TextTip } from '@/ui/components/feedback/Tip/TextTip';
 import { Input } from '@/ui/components/forms/Input';
-import { isBE } from '@/shared/feature-flags/feature-flags.service';
 
 import { GitFormModel } from '../types';
 
@@ -67,7 +66,7 @@ export function ComposePathField({
           required
           errors={errors}
         >
-          {isBE ? (
+          {model.SourceId ? (
             <PathSelector
               value={value}
               onChange={onChange}

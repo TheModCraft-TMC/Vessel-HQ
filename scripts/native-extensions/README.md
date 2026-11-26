@@ -49,6 +49,12 @@ source digest for a package author to write into a reviewed manifest. `inspect`
 and `pack` require that declared digest to match. This is integrity metadata, not
 publisher provenance.
 
+Staging selects a complete package set. Previously compiled packages and generated
+registrations are omitted from the candidate core copy, then rebuilt from the
+selected inputs. This permits same-ID package upgrades and prevents unselected
+compiled packages from lingering. The original installed files remain protected
+by the baseline and unchanged in the source checkout.
+
 The assembler copies only frontend source and the manifest into
 `web-src/core/native-extensions/packages/<id>/` and generates the fixed registration
 module. Backend executables never enter the browser source tree and are not
@@ -131,6 +137,15 @@ pinned by digest. Publish/identify the resulting builder by its own image digest
 The supplied Dockerfile expects a Debian-based Node image and provisions git and
 ripgrep for the existing architecture guards. Git metadata is created afresh in
 the disposable candidate; the real checkout's `.git` is never mounted.
+The validator invokes `/usr/bin/git` and `/usr/local/bin/pnpm` with a fixed tool
+search path; candidate inputs and inherited environment cannot select replacements.
+The image defaults to the unprivileged `node` user. The builder explicitly selects
+root only to seed a fresh dependency volume, then runs checks as the operator UID
+with private temporary cache mounts; image cache directories are not world-writable.
+Host Docker commands use an absolute executable from standard Docker installation
+locations, including cleanup. For another installation, the operator can set
+`VESSEL_DOCKER_BINARY` to a trusted absolute executable path. Relative paths and
+PATH-based lookup are rejected; extension packages cannot configure this value.
 Image provisioning is an operator/release action; the extension CLI never installs
 packages or builds a toolchain image. The image must include pnpm 10.26.2 and the
 approved dependency tree; changing either requires a new image review. The
@@ -300,3 +315,20 @@ container. Node's automatic ~2 GiB heap in that container is insufficient for th
 full console webpack build. Other checks keep their default heap. This setting is
 part of the reviewed validator image, never inherited from operator or extension
 input; provision a new pinned builder after changing it.
+
+## Build ownership and progress
+
+Candidate builds and development source selection now hold an exclusive
+`.vessel-build.lock` directory. Concurrent owners are rejected. Normal success,
+failure and cancellation release ownership; a crashed process may leave a lock.
+Inspect `owner.json` and running Docker containers before manually removing a
+stale lock. A PID or timestamp alone never automatically steals ownership.
+
+`candidate.json` records the current gate, completed gates and start/update/finish
+times. `validation-events.jsonl` contains only gate names, timestamps and pass
+outcomes; terminal output is not copied into these events. Failed receipts use a
+fixed diagnostic. Retry with a fresh staged candidate and its independently
+retained receipt digest. Complete-set development selection now accepts existing
+compiled packages, protecting their original bytes and replacing only the selected
+set after validation and repeated approval checks. This remains a development
+adapter; it does not activate production or run extension backend binaries.

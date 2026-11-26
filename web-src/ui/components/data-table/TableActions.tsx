@@ -14,6 +14,10 @@ export function TableActions({
   }
 
   return (
-    <div className={clsx('flex items-center gap-2', className)}>{children}</div>
+    <div
+      className={clsx('actionBar flex flex-wrap items-center gap-2', className)}
+    >
+      {children}
+    </div>
   );
 }

@@ -1,5 +1,7 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
 import { ImportImageForm } from '@/domains/images/views/ImportView/ImportView';
 import { PageHeader } from '@/ui/layouts/view-layout';
 
@@ -13,7 +15,9 @@ export default function Page() {
           'Import image',
         ]}
       />
-      <ImportImageForm />
+      <PageContent>
+        <ImportImageForm />
+      </PageContent>
     </>
   );
 }

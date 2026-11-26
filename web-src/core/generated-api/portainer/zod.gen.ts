@@ -239,6 +239,13 @@ export const zGitopsFileResponse = z.object({
   FileContent: z.string().optional(),
 });
 
+export const zGitopsRepositoryBrowsePayload = z.object({
+  dirOnly: z.boolean().optional(),
+  keyword: z.string().optional(),
+  reference: z.string().optional(),
+  sourceId: z.int().optional(),
+});
+
 export const zGitopsRepositoryFilePreviewPayload = z.object({
   password: z.string().optional(),
   reference: z.string().optional(),
@@ -5583,6 +5590,30 @@ export const zGitOperationRepoFilePreviewBody =
  * Success
  */
 export const zGitOperationRepoFilePreviewResponse = zGitopsFileResponse;
+
+/**
+ * Stored source, reference and path filter
+ */
+export const zGitOperationRepoFileSearchBody = zGitopsRepositoryBrowsePayload;
+
+/**
+ * OK
+ */
+export const zGitOperationRepoFileSearchResponse = z.array(z.string());
+
+/**
+ * Stored source
+ */
+export const zGitOperationRepoRefsBody = zGitopsRepositoryBrowsePayload;
+
+export const zGitOperationRepoRefsQuery = z.object({
+  force: z.boolean().optional(),
+});
+
+/**
+ * OK
+ */
+export const zGitOperationRepoRefsResponse = z.array(z.string());
 
 export const zGitOpsSourcesListQuery = z.object({
   search: z.string().optional(),

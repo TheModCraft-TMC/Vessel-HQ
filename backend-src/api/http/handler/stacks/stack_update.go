@@ -162,6 +162,9 @@ func (handler *Handler) updateStackInTx(tx dataservices.DataStoreTx, r *http.Req
 		return nil, nil, nil, httperror.InternalServerError("Unable to find a stack with the specified identifier inside the database", err)
 	}
 
+	if reviewErr := checkExtensionReview(tx, r, stack); reviewErr != nil {
+		return nil, nil, nil, reviewErr
+	}
 	if stack.Status == portainer.StackStatusDeploying {
 		return nil, nil, nil, httperror.Conflict("Unable to update stack", errors.New("Stack deployment is already in progress"))
 	}

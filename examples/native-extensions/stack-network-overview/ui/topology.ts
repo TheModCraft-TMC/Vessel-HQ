@@ -23,12 +23,17 @@ export interface StackNetworkTopology {
 export interface TopologyNodeData extends Record<string, unknown> {
   label: string;
   description: string;
-  kind: 'network' | 'container' | 'service';
+  kind: 'stack' | 'network' | 'container' | 'service';
   internal?: boolean;
   unavailable?: boolean;
 }
 
 export type TopologyNode = Node<TopologyNodeData, 'topology'>;
+
+// Network IDs use code-unit order so layout is independent of browser locale.
+function compareStrings(left: string, right: string) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
 
 function compare(
   a: { name: string; id: string },
@@ -36,7 +41,7 @@ function compare(
 ) {
   const left = `${a.name}\u0000${a.id}`;
   const right = `${b.name}\u0000${b.id}`;
-  return left < right ? -1 : left > right ? 1 : 0;
+  return compareStrings(left, right);
 }
 
 export function createTopologyGraph(topology: StackNetworkTopology): {
@@ -58,7 +63,7 @@ export function createTopologyGraph(topology: StackNetworkTopology): {
         )
         .filter((id) => !networkIds.has(id))
     ),
-  ].sort();
+  ].sort(compareStrings);
   const networkCount = networks.length + missingNetworkIds.length;
   const rows = Math.max(networkCount, workloads.length);
   const networkOffset = (rows - networkCount) * 60;
@@ -123,7 +128,7 @@ export function createTopologyGraph(topology: StackNetworkTopology): {
   const names = new Map(networks.map((network) => [network.id, network.name]));
   const edges: Edge[] = workloads.flatMap((workload) =>
     [...new Set(workload.networks.map(({ networkId }) => networkId))]
-      .sort()
+      .sort(compareStrings)
       .map(
         (networkId): Edge => ({
           id: `${networkNodeId(networkId)}->${workloadNodeId(workload)}`,

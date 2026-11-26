@@ -43,6 +43,7 @@ export function VolumesDatatable({
 
   return (
     <Datatable
+      flush
       title="Volumes"
       titleIcon={Database}
       columns={columns}

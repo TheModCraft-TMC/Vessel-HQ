@@ -781,6 +781,13 @@ export type GitopsFileResponse = {
   FileContent?: string;
 };
 
+export type GitopsRepositoryBrowsePayload = {
+  dirOnly?: boolean;
+  keyword?: string;
+  reference?: string;
+  sourceId?: number;
+};
+
 export type GitopsRepositoryFilePreviewPayload = {
   /**
    * Password for git authentication.
@@ -16626,6 +16633,81 @@ export type GitOperationRepoFilePreviewResponses = {
 
 export type GitOperationRepoFilePreviewResponse =
   GitOperationRepoFilePreviewResponses[keyof GitOperationRepoFilePreviewResponses];
+
+export type GitOperationRepoFileSearchData = {
+  /**
+   * Stored source, reference and path filter
+   */
+  body: GitopsRepositoryBrowsePayload;
+  path?: never;
+  query?: never;
+  url: '/gitops/repo/files/search';
+};
+
+export type GitOperationRepoFileSearchErrors = {
+  /**
+   * Invalid request
+   */
+  400: unknown;
+  /**
+   * Source access denied
+   */
+  403: unknown;
+  /**
+   * Source not found
+   */
+  404: unknown;
+};
+
+export type GitOperationRepoFileSearchResponses = {
+  /**
+   * OK
+   */
+  200: Array<string>;
+};
+
+export type GitOperationRepoFileSearchResponse =
+  GitOperationRepoFileSearchResponses[keyof GitOperationRepoFileSearchResponses];
+
+export type GitOperationRepoRefsData = {
+  /**
+   * Stored source
+   */
+  body: GitopsRepositoryBrowsePayload;
+  path?: never;
+  query?: {
+    /**
+     * Refresh cached references
+     */
+    force?: boolean;
+  };
+  url: '/gitops/repo/refs';
+};
+
+export type GitOperationRepoRefsErrors = {
+  /**
+   * Invalid request
+   */
+  400: unknown;
+  /**
+   * Source access denied
+   */
+  403: unknown;
+  /**
+   * Source not found
+   */
+  404: unknown;
+};
+
+export type GitOperationRepoRefsResponses = {
+  /**
+   * OK
+   */
+  200: Array<string>;
+};
+
+export type GitOperationRepoRefsResponse =
+  GitOperationRepoRefsResponses[keyof GitOperationRepoRefsResponses];
 
 export type GitOpsSourcesListData = {
   body?: never;

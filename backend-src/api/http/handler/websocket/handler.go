@@ -3,11 +3,13 @@ package websocket
 import (
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
+	dockerclient "github.com/portainer/portainer/api/docker/client"
 	"github.com/portainer/portainer/api/http/proxy"
 	"github.com/portainer/portainer/api/http/proxy/factory/kubernetes"
 	"github.com/portainer/portainer/api/http/security"
 	"github.com/portainer/portainer/api/kubernetes/cli"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
+	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -25,6 +27,9 @@ type Handler struct {
 	connectionUpgrader          websocket.Upgrader
 	kubernetesTokenCacheManager *kubernetes.TokenCacheManager
 	eventHub                    *eventHub
+	DockerClientFactory         *dockerclient.ClientFactory
+	engineWatchMu               sync.Mutex
+	engineWatches               map[int]*engineWatch
 }
 
 // NewHandler creates a handler to manage websocket operations.
@@ -35,6 +40,7 @@ func NewHandler(kubernetesTokenCacheManager *kubernetes.TokenCacheManager, bounc
 		requestBouncer:              bouncer,
 		kubernetesTokenCacheManager: kubernetesTokenCacheManager,
 		eventHub:                    newEventHub(),
+		engineWatches:               map[int]*engineWatch{},
 	}
 	h.PathPrefix("/websocket/exec").Handler(
 		bouncer.AuthenticatedAccess(httperror.LoggerHandler(h.websocketExec)))

@@ -54,6 +54,8 @@ export function PermissionReview({
             'storage.write',
             'storage.service.read',
             'storage.service.write',
+            'settings.service.read',
+            'settings.service.secrets.read',
           ].includes(permission.capability)
         ) {
           return selected.includes(permission.capability)
@@ -64,9 +66,16 @@ export function PermissionReview({
           selected.includes(`${permission.capability}:${id}`)
         );
         if (
-          ['stacks.network.read', 'stacks.traffic.read'].includes(
-            permission.capability
-          )
+          [
+            'stacks.network.read',
+            'stacks.traffic.read',
+            'stacks.delivery.read',
+            'stacks.gitops.sync',
+            'stacks.images.read',
+            'stacks.images.update',
+            'stacks.images.configure',
+            'stacks.images.auto-update',
+          ].includes(permission.capability)
         ) {
           const stackIds =
             permission.stackIds?.filter((id) =>
@@ -126,7 +135,9 @@ export function PermissionReview({
               ) : permission.capability === 'storage.read' ||
                 permission.capability === 'storage.write' ||
                 permission.capability === 'storage.service.read' ||
-                permission.capability === 'storage.service.write' ? (
+                permission.capability === 'storage.service.write' ||
+                permission.capability === 'settings.service.read' ||
+                permission.capability === 'settings.service.secrets.read' ? (
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -139,7 +150,11 @@ export function PermissionReview({
                       ? 'Write this extension’s saved notes'
                       : permission.capability === 'storage.service.read'
                         ? 'Allow the service to read its saved notes without a user session'
-                        : 'Allow the service to write its saved notes without a user session'}
+                        : permission.capability === 'storage.service.write'
+                          ? 'Allow the service to write its saved notes without a user session'
+                          : permission.capability === 'settings.service.read'
+                            ? 'Allow the service to read its public settings'
+                            : 'Allow the service to read its secret settings'}
                 </label>
               ) : (
                 permission.environmentIds.map((id) => (
@@ -155,10 +170,17 @@ export function PermissionReview({
                   </label>
                 ))
               )}
-              {['stacks.network.read', 'stacks.traffic.read'].includes(
-                permission.capability
-              ) && (
-                <div className="ml-4 mt-2 space-y-2">
+              {[
+                'stacks.network.read',
+                'stacks.traffic.read',
+                'stacks.delivery.read',
+                'stacks.gitops.sync',
+                'stacks.images.read',
+                'stacks.images.update',
+                'stacks.images.configure',
+                'stacks.images.auto-update',
+              ].includes(permission.capability) && (
+                <div className="mt-2 ml-4 space-y-2">
                   <p className="text-muted">
                     Stack network and traffic reads apply only to the selected
                     stacks in the selected environments. No stack writes or

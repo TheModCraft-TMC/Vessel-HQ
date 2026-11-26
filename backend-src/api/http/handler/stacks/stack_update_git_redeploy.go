@@ -89,6 +89,9 @@ func (handler *Handler) stackGitRedeploy(w http.ResponseWriter, r *http.Request)
 			return httperror.InternalServerError("Unable to find a stack with the specified identifier inside the database", err)
 		}
 
+		if reviewErr := checkExtensionReview(tx, r, stack); reviewErr != nil {
+			return reviewErr
+		}
 		if stack.WorkflowID == 0 {
 			return httperror.BadRequest("Stack is not created from git", errors.New("stack has no git workflow"))
 		}
@@ -189,7 +192,7 @@ func (handler *Handler) stackGitRedeploy(w http.ResponseWriter, r *http.Request)
 		TLSSkipVerify: gitConfig.TLSSkipVerify,
 	}
 
-	clean, err := git.CloneWithBackup(context.TODO(), handler.GitService, handler.FileService, cloneOptions)
+	clean, err := git.CloneWithBackup(r.Context(), handler.GitService, handler.FileService, cloneOptions)
 	if err != nil {
 		if persistErr := handler.DataStore.UpdateTx(func(tx dataservices.DataStoreTx) error {
 			return persistSourceSyncError(tx, securityContext, sourceID, err)
@@ -202,7 +205,7 @@ func (handler *Handler) stackGitRedeploy(w http.ResponseWriter, r *http.Request)
 
 	defer clean()
 
-	newHash, err := handler.GitService.LatestCommitID(context.TODO(), gitConfig.URL, gitConfig.ReferenceName, auth.Username, auth.Password, gitConfig.TLSSkipVerify)
+	newHash, err := handler.GitService.LatestCommitID(r.Context(), gitConfig.URL, gitConfig.ReferenceName, auth.Username, auth.Password, gitConfig.TLSSkipVerify)
 	if err != nil {
 		if persistErr := handler.DataStore.UpdateTx(func(tx dataservices.DataStoreTx) error {
 			return persistSourceSyncError(tx, securityContext, sourceID, err)
@@ -277,6 +280,13 @@ func (handler *Handler) stackGitRedeploy(w http.ResponseWriter, r *http.Request)
 
 	// Async deployment workflow for Swarm and Compose stacks
 	if err := handler.DataStore.UpdateTx(func(tx dataservices.DataStoreTx) error {
+		live, err := tx.Stack().Read(stack.ID)
+		if err != nil {
+			return err
+		}
+		if reviewErr := checkExtensionReview(tx, r, live); reviewErr != nil {
+			return reviewErr
+		}
 		if err := tx.Stack().Update(stack.ID, stack); err != nil {
 			return err
 		}

@@ -1,0 +1,69 @@
+{
+  "id": "stack-image-updates",
+  "name": "Stack image updates",
+  "version": "0.1.0",
+  "description": "Stack image updates with reviewed stack-scoped host operations.",
+  "apiVersion": "v1",
+  "packageDigest": "sha256:11515c3fabe4dd8a34a01b8a9853aafa6d433f07182f8b2f42a4d68098384ca5",
+  "permissions": [
+    {
+      "capability": "ui.native",
+      "environmentIds": []
+    },
+    {
+      "capability": "stacks.network.read",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    },
+    {
+      "capability": "stacks.images.read",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    },
+    {
+      "capability": "stacks.images.update",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    },
+    {
+      "capability": "stacks.images.configure",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    },
+    {
+      "capability": "stacks.images.auto-update",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    }
+  ],
+  "ui": {
+    "entry": "ui/index.tsx",
+    "slots": [
+      {
+        "id": "stack-image-updates",
+        "title": "Stack image updates",
+        "slot": "docker.stack.detail.action"
+      }
+    ]
+  }
+}

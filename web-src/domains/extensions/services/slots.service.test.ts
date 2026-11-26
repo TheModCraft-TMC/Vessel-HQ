@@ -52,7 +52,7 @@ it('invokes the registered extension operation with explicit stack and environme
   );
 });
 
-it('propagates an authorization denial instead of returning cached or empty graph data', async () => {
+it('sanitizes an authorization denial instead of returning cached or empty graph data', async () => {
   vi.mocked(axios.post).mockRejectedValue(
     new Error('Stack scope is not approved')
   );
@@ -66,7 +66,9 @@ it('propagates an authorization denial instead of returning cached or empty grap
       },
       binding
     )
-  ).rejects.toThrow('Stack scope is not approved');
+  ).rejects.toThrow(
+    'Extension operation failed. Refresh status and check the current grants before retrying.'
+  );
 });
 
 it('parses split live frames, binds the stream and cancels its reader on completion', async () => {

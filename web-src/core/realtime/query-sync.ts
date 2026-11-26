@@ -17,7 +17,10 @@ type RealtimeEvent = {
   type: 'ready' | 'invalidate';
 };
 
-export function startRealtimeQuerySync(queryClient: QueryClient) {
+export function startRealtimeQuerySync(
+  queryClient: QueryClient,
+  environmentId?: number
+) {
   if (
     process.env.NODE_ENV === 'test' ||
     typeof window === 'undefined' ||
@@ -31,11 +34,21 @@ export function startRealtimeQuerySync(queryClient: QueryClient) {
 
   const base = new URL(baseHref(), window.location.origin);
   const url = new URL('api/websocket/events', base);
+  if (
+    environmentId &&
+    Number.isSafeInteger(environmentId) &&
+    environmentId > 0
+  ) {
+    url.searchParams.set('endpointId', String(environmentId));
+  }
   url.protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const nextSocket = new WebSocket(url);
   socket = nextSocket;
 
   nextSocket.addEventListener('message', (event) => {
+    if (socket !== nextSocket || stopped) {
+      return;
+    }
     const message = parseRealtimeEvent(event.data);
     if (!message) {
       return;
@@ -59,7 +72,7 @@ export function startRealtimeQuerySync(queryClient: QueryClient) {
       reconnectAttempt += 1;
       reconnectTimer = setTimeout(() => {
         reconnectTimer = undefined;
-        startRealtimeQuerySync(queryClient);
+        startRealtimeQuerySync(queryClient, environmentId);
       }, delay);
     }
   });
@@ -77,8 +90,9 @@ export function stopRealtimeQuerySync() {
     reconnectTimer = undefined;
   }
 
-  socket?.close();
+  const previousSocket = socket;
   socket = undefined;
+  previousSocket?.close();
 }
 
 export function applyRealtimeEvent(

@@ -18,11 +18,11 @@ async function check(t, source, extra = {}) {
 }
 
 test('allows native client components and confined helper/CSS imports', async (t) => {
-  await check(
+  await assert.doesNotReject(() => check(
     t,
     "import { useState } from 'react'; import { Check } from 'lucide-react'; import { Button } from '@/ui/Button'; import './style.css'; export { label } from './helper'; export default function Example() { return <Button><Check /></Button>; }",
     { 'ui/helper.ts': "export const label = 'ok';", 'ui/style.css': '.example { color: blue; }' }
-  );
+  ));
 });
 
 for (const [name, source] of Object.entries({

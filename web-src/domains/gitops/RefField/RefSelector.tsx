@@ -19,31 +19,24 @@ export function RefSelector({
     {
       enabled: !!sourceId,
       select: (refs) => {
-        if (refs.length === 0) {
-          return [{ value: 'refs/heads/main', label: 'refs/heads/main' }];
-        }
-
-        // put refs/heads/main first if it is present in repository
-        if (refs.includes('refs/heads/main')) {
-          refs.splice(refs.indexOf('refs/heads/main'), 1);
-          refs.unshift('refs/heads/main');
-        }
-
-        if (refs.includes('refs/heads/master')) {
-          refs.splice(refs.indexOf('refs/heads/master'), 1);
-          refs.unshift('refs/heads/master');
-        }
-
-        return refs.map((t: string) => ({
+        // Query data is shared. Sort a copy and retain an explicit reference
+        // even if the remote no longer advertises it (for example a commit SHA).
+        const ordered = [...refs].sort((a, b) => {
+          function rank(ref: string) {
+            return ref === 'refs/heads/main'
+              ? 0
+              : ref === 'refs/heads/master'
+                ? 1
+                : 2;
+          }
+          return rank(a) - rank(b);
+        });
+        if (value && !ordered.includes(value)) ordered.unshift(value);
+        if (!value) ordered.unshift('');
+        return ordered.map((t: string) => ({
           value: t,
-          label: t,
+          label: t || 'HEAD (default branch)',
         }));
-      },
-
-      onSuccess(refs) {
-        if (refs && !refs.some((ref) => ref.value === value)) {
-          onChange(refs[0].value);
-        }
       },
     }
   );
@@ -52,8 +45,8 @@ export function RefSelector({
     <PortainerSelect
       inputId={inputId}
       value={value}
-      options={refs || [{ value: 'refs/heads/main', label: 'refs/heads/main' }]}
-      onChange={(e) => e && onChange(e)}
+      options={refs || [{ value, label: value || 'HEAD (default branch)' }]}
+      onChange={(e) => e !== null && e !== undefined && onChange(e)}
       data-cy="component-gitRefInput"
     />
   );

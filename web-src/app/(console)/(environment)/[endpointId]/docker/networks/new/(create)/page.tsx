@@ -1,5 +1,7 @@
 'use client';
 
+import { PageContent } from '@console/layout/PageContent';
+
 import { CreateNetworkForm } from '@/domains/networks/views/CreateView/CreateView';
 import { useCurrentUser, useIsEdgeAdmin } from '@/core/session/useUser';
 import { PageHeader } from '@/ui/layouts/view-layout';
@@ -19,11 +21,13 @@ export default function Page() {
           'Add network',
         ]}
       />
-      <CreateNetworkForm
-        isAdmin={isAdmin}
-        userId={user.Id}
-        showHeader={false}
-      />
+      <PageContent>
+        <CreateNetworkForm
+          isAdmin={isAdmin}
+          userId={user.Id}
+          showHeader={false}
+        />
+      </PageContent>
     </>
   );
 }

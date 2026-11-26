@@ -23,8 +23,25 @@ export interface NativeExtensionProps {
   storage?: NativeExtensionStorage;
   context: Readonly<StackDetailContext>;
   invoke<T>(
-    operation: 'stacks.network.read' | 'stacks.traffic.read',
-    input: { environmentId: number; stackId: number }
+    operation:
+      | 'stacks.network.read'
+      | 'stacks.traffic.read'
+      | 'stacks.delivery.read'
+      | 'stacks.gitops.sync'
+      | 'stacks.images.read'
+      | 'stacks.images.update'
+      | 'stacks.images.configure',
+    input: {
+      environmentId: number;
+      stackId: number;
+      version?: string;
+      automation?: {
+        version: number;
+        enabled: boolean;
+        mode: 'monitor-only' | 'automatic';
+        intervalMinutes: number;
+      };
+    }
   ): Promise<T>;
 }
 
@@ -85,4 +102,46 @@ export interface StackTrafficOverview extends StackNetworkOverview {
     }[];
     warnings: string[];
   };
+}
+
+/** Administrator-only host projection. No credentials, Compose text or environment values. */
+export interface StackDeliverySnapshot {
+  automation?: {
+    version: number;
+    enabled: boolean;
+    mode: 'monitor-only' | 'automatic';
+    intervalMinutes: number;
+    environmentId: number;
+    stackId: number;
+    lastCheck: number;
+    lastOutcome: string;
+  };
+  environmentId: number;
+  stackId: number;
+  name: string;
+  version: string;
+  status: number;
+  workflowId: number;
+  updatedAt: number;
+  deployedRevision: string;
+  syncStatus: 'unknown' | 'unmanaged' | 'synced' | 'out-of-sync';
+  automaticSync: boolean;
+  repullOnSync: boolean;
+  sources: {
+    id: number;
+    name: string;
+    ref: string;
+    path: string;
+    desiredRevision: string;
+    status: number;
+    interval: string;
+  }[];
+  images: {
+    workloadId: string;
+    name: string;
+    kind: string;
+    reference: string;
+    policy: 'manual' | 'monitor-only' | 'excluded';
+    status: string;
+  }[];
 }

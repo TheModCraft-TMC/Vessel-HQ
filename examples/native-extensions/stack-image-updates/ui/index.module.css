@@ -1,0 +1,63 @@
+.root {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  color: var(--vessel-color-text);
+}
+.header,
+.actions,
+.summary {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+.card {
+  border: 1px solid var(--vessel-color-border);
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 12px;
+}
+.button {
+  padding: 8px 12px;
+  border: 1px solid var(--vessel-color-border);
+  border-radius: 6px;
+  color: inherit;
+  background: var(--vessel-color-surface);
+  cursor: pointer;
+}
+.button:focus-visible {
+  outline: 2px solid var(--vessel-color-focus);
+  outline-offset: 2px;
+}
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.table {
+  overflow-x: auto;
+}
+.table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--vessel-color-border);
+  overflow-wrap: anywhere;
+}
+.badge {
+  display: inline-block;
+  border: 1px solid var(--vessel-color-border);
+  border-radius: 20px;
+  padding: 4px 10px;
+}

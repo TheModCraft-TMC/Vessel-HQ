@@ -5,6 +5,26 @@ patterns were visually inspected on the deployed 1.3.1 desktop UI. Inventory
 coverage is not visual coverage. Resource detail routes require real resource
 IDs, suitable environment capabilities and authorized read access.
 
+## November 11 desktop follow-up
+
+The maintainer emphasized desktop alignment for images, networks and volumes.
+Their list routes now use the shared `PageContent` grid with flush tables; image
+pull cards, image build/import and network/volume creation routes share that
+content inset. Empty shared-toolbar groups are omitted and action groups wrap
+consistently. The isolated candidate passed every frontend gate (2,521 tests)
+and a standalone HTTP startup check. See the
+[fresh validation record](migration-change-summary.md#isolated-extension-validation-and-desktop-spacing--november-11-2026).
+
+Local Storybook renders the actual route components against synthetic read-only
+API fixtures. Browser geometry passed for images at 1024/1440px, networks and
+volumes at 1024px, and network creation at 1024px. The form screenshot was visually
+inspected. The viewport fixture also supports narrow widths, but no new phone
+coverage is claimed: browser automation remained unavailable after reconnection,
+and native control subsequently failed with `cgWindowNotFound`. Desktop volume
+creation, image build/import and authenticated production checks remain pending.
+The October 23 production inventory below is historical and has not been relabeled
+as newly verified.
+
 ## Confirmed findings and local fixes
 
 | Finding | Local change | Verification scope |
