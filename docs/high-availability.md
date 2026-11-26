@@ -10,8 +10,9 @@ filesystem initialization, database encryption, backup, migrations, background
 schedulers, gRPC or HTTP listeners. After the active process exits and storage
 releases its lock, the standby acquires it and starts normally. Local lock retries
 occur every 250 ms; storage failure detection, lock recovery and application
-startup add to the actual recovery time. Browser sessions and streams may need
-to reconnect. There is no automatic failback preference.
+startup add to the actual recovery time. The promoted process uses a new JWT
+signing key, so browser users must sign in again and reopen live streams. There
+is no automatic failback preference.
 
 The backend remains single-writer BoltDB. This is not database replication or
 active/active serving. Storage must provide coherent cross-host exclusive locks,
@@ -33,10 +34,12 @@ engine an environment means after a takeover.
 
 [Example manifest](../examples/ha/kubernetes.yaml) runs two replicas on separate
 nodes with one existing shared claim. Replace its deliberately invalid image
-placeholder with the reviewed immutable image. Provide the application's normal
-service account/RBAC, secrets and ingress appropriate to your cluster; the
-example does not grant cluster-admin. Readiness checks route traffic only to
-the process actually serving the API. Standbys intentionally have no API
+placeholder with the reviewed immutable image. Size the resource requests and
+limits for your environment count and workload. Supply secrets and ingress
+appropriate to your cluster. For in-cluster Kubernetes management, explicitly opt
+in to token mounting with a dedicated service account and the required RBAC.
+The example disables token mounting by default. Readiness checks route traffic
+only to the process actually serving the API. Standbys intentionally have no API
 listener, so an API liveness probe must not be copied onto both replicas.
 An unavailable active process that has not exited must be fenced or restarted
 by infrastructure before takeover. `Recreate` updates stop the old pair before

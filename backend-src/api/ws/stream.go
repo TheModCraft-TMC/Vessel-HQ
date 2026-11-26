@@ -53,29 +53,43 @@ func StreamFromWebsocketToWriter(websocketConn *websocket.Conn, writer io.Writer
 }
 
 func StreamFromReaderToWebsocket(websocketConn *websocket.Conn, reader io.Reader, errorChan chan error) {
-	out := make([]byte, ReaderBufferSize)
-
-	for {
-		n, err := reader.Read(out)
-		if err != nil {
-			errorChan <- err
-
-			break
-		}
-
-		processedOutput := ValidString(string(out[:n]))
-
+	errorChan <- readTerminalOutput(reader, func(output string) error {
 		if err := websocketConn.SetWriteDeadline(time.Now().Add(WriteWait)); err != nil {
-			errorChan <- err
+			return err
+		}
+		return websocketConn.WriteMessage(websocket.TextMessage, []byte(output))
+	})
+}
 
-			break
+// readTerminalOutput preserves UTF-8 characters split across reads while keeping
+// each published WebSocket text message valid UTF-8.
+func readTerminalOutput(reader io.Reader, publish func(string) error) error {
+	out := make([]byte, ReaderBufferSize+utf8.UTFMax-1)
+	pending := 0
+	for {
+		n, readErr := reader.Read(out[pending : pending+ReaderBufferSize])
+		end := pending + n
+		complete := end
+		if readErr == nil {
+			for start := end - 1; start >= 0 && end-start < utf8.UTFMax; start-- {
+				if utf8.RuneStart(out[start]) {
+					if !utf8.FullRune(out[start:end]) {
+						complete = start
+					}
+					break
+				}
+			}
 		}
 
-		if err := websocketConn.WriteMessage(websocket.TextMessage, []byte(processedOutput)); err != nil {
-			errorChan <- err
-
-			break
+		if output := ValidString(string(out[:complete])); output != "" {
+			if err := publish(output); err != nil {
+				return err
+			}
 		}
+		if readErr != nil {
+			return readErr
+		}
+		pending = copy(out, out[complete:end])
 	}
 }
 

@@ -16,6 +16,7 @@ spec:
       labels:
         app: vessel-ha
     spec:
+      automountServiceAccountToken: false
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -27,6 +28,14 @@ spec:
         - name: vessel
           # Replace with the SAME reviewed immutable Vessel image on both nodes.
           image: vessel-ha-image-must-be-replaced:unconfigured
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+              ephemeral-storage: 256Mi
+            limits:
+              memory: 1Gi
+              ephemeral-storage: 2Gi
           env:
             - name: VESSEL_HA_MODE
               value: shared-storage

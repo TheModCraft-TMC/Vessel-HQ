@@ -10,8 +10,8 @@ does not activate extensions or establish full Business Edition parity.
 | External container synchronization | One shared Docker event stream per viewed environment; coalesced invalidation, bounded subscribers, stream cancellation, current authorization and session rechecks; HTTP-stream and revocation race tests | Authenticated remote Docker event receipt measured at 229 ms in the live disposable-engine test; remote-agent reconnect and event-driven browser coverage remain |
 | Images/networks/volumes spacing | Existing shared layout verified at 390px and 1440px with production console and synthetic remote-engine responses; identical heading offsets and no page overflow | Authenticated production routes and populated data remain separate runtime coverage |
 | Source-available edition capabilities | Existing source-backed Git reference and file browsing now depends on source availability; manual entry and HEAD remain supported; explicit unadvertised refs preserved | Inventory and acceptance for capabilities absent from CE source; no blanket edition toggle or complete BE-parity claim |
-| Optional HA and Kubernetes | Explicit shared-storage active/standby gate before all datastore initialization; Kubernetes and two-host Compose examples; disabled default, lock exclusivity, cancellation and process-exit takeover tests | Cross-host coherent locking/mmap, storage fencing, host/node failure and ingress convergence on selected infrastructure |
-| Remote environments | Existing authenticated remote Docker/agent paths retained; event watcher uses the existing client factory and environment authorization | Live remote Docker/Edge, Swarm, Podman, Kubernetes and ACI compatibility matrix |
+| Optional HA and Kubernetes | Explicit shared-storage active/standby gate before datastore initialization; current-source Linux arm64 pair passed same-host takeover after abrupt active exit | Cross-host coherent locking/mmap, storage fencing, host/node failure and ingress convergence on selected infrastructure |
+| Remote environments | Current-source Linux arm64 passed Docker and Swarm 29.10.1, Podman 5.8.1, Edge Agent 2.45.0 tunnel and Kubernetes 1.35.0 acceptance against disposable engines | Production transport/reconnect behavior and live Azure Container Instances |
 | Settings and build management | Schema-aware save, write-only secrets, optimistic concurrency, runtime reads; existing complete-set builder ownership, progress receipts, sanitized events, cancellation cleanup and approval rechecks retained; 72 builder tests pass | Settings save/reset/conflict, secret redaction and role denial passed against a running API; extension builder execution and production activation remain separate |
 | Master webhook gateway | Optional private configuration, route-bound timestamped HMAC, local allowlisted fan-out, bounded concurrency, durable at-most-once reservation and outcome audit; replay/restart/concurrency/denial tests | Live allowlisted Swarm delivery, replay denial and persisted replay rejection after abrupt HA takeover passed; operator configuration and provider coverage remain; no queued retry guarantee |
 | Upstream changes | Seven reviewed Compose, Kubernetes, Docker-volume, Git and Helm backports adapted; focused package and race coverage | Live provider matrix; [application prerelease assets](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.3-beta.1) published from source commit `beae78041` |
@@ -117,3 +117,21 @@ verified. The native arm64 container pulled by digest passed API status (2.45.0)
 and built login HTML checks. Its disposable container and volume were removed.
 The prerelease includes registry and arm64 receipts with a separate checksum file;
 the earlier immutable download assets are unchanged.
+
+### Current review candidate — November 26, 2026
+
+The [dependency migration results](../agent-handoff/issue-262-dependency-forks.md#linux-arm64-provider-acceptance--november-26-2026)
+cover Docker, Swarm, Podman, authenticated registry and Kubernetes. The same
+Linux arm64 executable (`4034bcf79`, API compatibility 2.45.0) passed official
+Edge Agent 2.45.0 polling, tunnel access, container lifecycle and logs on a
+disposable engine. Azure acceptance requires an authorized nonproduction
+subscription with Container Instances access. No Azure CLI or configured
+account was present on the test host.
+
+The same-host HA check ran two disposable containers against one shared Docker
+volume. The standby opened its API only after the active process was killed.
+The first successful status poll occurred 2.34 seconds after the kill, with
+two-second polling. The old browser JWT returned 401 and the existing admin
+could sign in again. Both replicas and the test volume were removed. Selected
+cross-host storage coherence and fencing, cross-node failover and ingress
+convergence still require infrastructure acceptance.

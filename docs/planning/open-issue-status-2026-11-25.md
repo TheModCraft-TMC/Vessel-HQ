@@ -12,7 +12,7 @@ existing [acceptance matrix](issue-299.md) and dated verification evidence.
 | #266–276 | Workflow action references use full commit SHA pins | Workflow validation and Sonar analysis on integrated source |
 | #277–278, #291–292 | Authoring and compiled topology helpers use explicit sort comparators | Frontend tests and Sonar analysis |
 | #279, #293, #297 | Numeric parsing uses `Number.parseFloat` | Frontend tests/lint and Sonar analysis |
-| #280 | Builder base image uses an immutable digest | Trusted builder image build and Sonar analysis |
+| #280 | Builder defaults to the unprivileged `node` user | Trusted builder image build and Sonar analysis |
 | #281 | Non-root builder; writable cache ownership restricted to three tool cache directories | Trusted builder execution and Sonar analysis; no world-write workaround |
 | #282–283, #287–288 | Builder resolves trusted Docker executable; validator uses fixed executable paths and confined environment | Builder/validator regressions and Sonar analysis |
 | #284, #286 | Fixture assertions explicitly verify outcomes | Builder/source-policy tests and Sonar analysis |

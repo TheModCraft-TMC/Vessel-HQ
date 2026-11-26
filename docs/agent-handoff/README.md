@@ -1,6 +1,6 @@
 # Agent handoff
 
-Start with [the current progress log](progress-2026-11-25.md). It records the
+Start with [the current progress log](progress-2026-11-26.md). It records the
 active objective, completed changes, verification evidence, running commands and
 remaining work so another agent can resume after a usage limit or server restart.
 

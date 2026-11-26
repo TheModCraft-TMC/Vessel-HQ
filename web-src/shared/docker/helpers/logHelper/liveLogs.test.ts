@@ -101,8 +101,8 @@ describe('openDockerLogsStream', () => {
     return {
       stream,
       onLogs,
-      send(text: string) {
-        socket.emit(
+      send(text: string, target = socket) {
+        target.emit(
           'message',
           new MessageEvent('message', {
             data: new TextEncoder().encode(text).buffer,
@@ -136,6 +136,31 @@ describe('openDockerLogsStream', () => {
     expect(
       onLogs.mock.lastCall?.[0].map((line: { line: string }) => line.line)
     ).toEqual(['newer', 'newest']);
+    stream.close();
+  });
+
+  it('replaces the replayed tail on reconnect and ignores late events from the old socket', () => {
+    const { stream, onLogs, send } = openStream();
+    const previous = FakeWebSocket.current;
+    send('previous\nretained\n');
+    vi.advanceTimersByTime(100);
+    previous.close();
+
+    vi.advanceTimersByTime(1_000);
+    const reconnected = FakeWebSocket.current;
+    expect(reconnected).not.toBe(previous);
+    expect(onLogs).toHaveBeenCalledTimes(1);
+
+    send('retained\nnew\n', reconnected);
+    send('stale\n', previous);
+    previous.close();
+    vi.advanceTimersByTime(1_200);
+
+    expect(FakeWebSocket.current).toBe(reconnected);
+    expect(onLogs).toHaveBeenCalledTimes(2);
+    expect(
+      onLogs.mock.lastCall?.[0].map((line: { line: string }) => line.line)
+    ).toEqual(['retained', 'new']);
     stream.close();
   });
 

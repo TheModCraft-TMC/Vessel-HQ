@@ -12,12 +12,15 @@ import (
 	"io"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 
 	"go.yaml.in/yaml/v3"
 )
 
 const MaxArchiveBytes = 20 << 20
+
+var yamlErrorLine = regexp.MustCompile(`^yaml: line ([0-9]+):`)
 
 type Imported struct {
 	manifest      Manifest
@@ -123,13 +126,8 @@ func Import(ctx context.Context, archive []byte) (*Imported, error) {
 			return nil, errors.New("project file checksum mismatch")
 		}
 		declared[file.Path] = true
-		var document yaml.Node
-		parser := yaml.NewDecoder(bytes.NewReader(content))
-		if parser.Decode(&document) != nil || len(document.Content) != 1 || document.Content[0].Kind != yaml.MappingNode {
-			return nil, fmt.Errorf("invalid Compose YAML in %s", file.Path)
-		}
-		if parser.Decode(new(yaml.Node)) != io.EOF {
-			return nil, fmt.Errorf("multiple YAML documents in %s", file.Path)
+		if err := validateComposeDocument(file.Path, content); err != nil {
+			return nil, err
 		}
 	}
 	for _, name := range manifest.ComposeFiles {
@@ -148,4 +146,30 @@ func Import(ctx context.Context, archive []byte) (*Imported, error) {
 		return nil, err
 	}
 	return &Imported{manifest: manifest, files: files, ArchiveDigest: "sha256:" + hex.EncodeToString(digest[:])}, nil
+}
+
+func validateComposeDocument(name string, content []byte) error {
+	var document yaml.Node
+	parser := yaml.NewDecoder(bytes.NewReader(content))
+	if err := parser.Decode(&document); err != nil {
+		return composeSyntaxError(name, err)
+	}
+	if len(document.Content) != 1 || document.Content[0].Kind != yaml.MappingNode {
+		return fmt.Errorf("Compose file %q must contain a YAML mapping", name)
+	}
+	if err := parser.Decode(new(yaml.Node)); err != io.EOF {
+		if err != nil {
+			return composeSyntaxError(name, err)
+		}
+		return fmt.Errorf("multiple YAML documents in %q", name)
+	}
+	return nil
+}
+
+// Use the parser's location, without returning its source-dependent text.
+func composeSyntaxError(name string, err error) error {
+	if location := yamlErrorLine.FindStringSubmatch(err.Error()); len(location) > 0 {
+		return fmt.Errorf("invalid Compose YAML in %q at line %s", name, location[1])
+	}
+	return fmt.Errorf("invalid Compose YAML in %q", name)
 }

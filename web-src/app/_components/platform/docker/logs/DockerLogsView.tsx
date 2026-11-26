@@ -28,6 +28,14 @@ interface Props {
   multiplexed: boolean;
 }
 
+const sinceOptions = [
+  { label: 'All logs', value: '' },
+  { label: 'Last day', value: '86400' },
+  { label: 'Last 4 hours', value: '14400' },
+  { label: 'Last hour', value: '3600' },
+  { label: 'Last 10 minutes', value: '600' },
+];
+
 export function DockerLogsView({
   environmentId,
   resource,
@@ -40,7 +48,7 @@ export function DockerLogsView({
   const [live, setLive] = useState(true);
   const [wrapLines, setWrapLines] = useState(true);
   const [timestamps, setTimestamps] = useState(false);
-  const [sinceTimestamp, setSinceTimestamp] = useState('');
+  const [sinceWindow, setSinceWindow] = useState('');
   const [lineCount, setLineCount] = useState(100);
   const [search, setSearch] = useState('');
   const [selectedLines, setSelectedLines] = useState<string[]>([]);
@@ -59,8 +67,8 @@ export function DockerLogsView({
       return undefined;
     }
 
-    const parsedSince = sinceTimestamp
-      ? Math.floor(new Date(sinceTimestamp).getTime() / 1000)
+    const since = sinceWindow
+      ? Math.floor(Date.now() / 1000) - Number(sinceWindow)
       : 0;
     const stream = openDockerLogsStream({
       environmentId,
@@ -68,12 +76,14 @@ export function DockerLogsView({
       resourceId,
       nodeName,
       timestamps,
-      since: Number.isFinite(parsedSince) ? parsedSince : 0,
+      since,
       tail: lineCount,
       multiplexed,
       onLogs: setLogs,
-      onError: (error) =>
-        notifyError('Failure', error, `Unable to stream ${resource} logs`),
+      onError: (error) => {
+        setLive(false);
+        notifyError('Failure', error, `Unable to stream ${resource} logs`);
+      },
     });
 
     return () => stream.close();
@@ -85,7 +95,7 @@ export function DockerLogsView({
     nodeName,
     resource,
     resourceId,
-    sinceTimestamp,
+    sinceWindow,
     timestamps,
   ]);
 
@@ -100,7 +110,10 @@ export function DockerLogsView({
       <Widget>
         <WidgetTitle icon={FileText} title="Log viewer settings" />
         <WidgetBody>
-          <form className="form-horizontal">
+          <form
+            className="form-horizontal"
+            onSubmit={(event) => event.preventDefault()}
+          >
             <SwitchRow
               label="Live log stream"
               checked={live}
@@ -123,9 +136,9 @@ export function DockerLogsView({
             <FormControl label="Fetch" inputId="logs_since">
               <Select
                 id="logs_since"
-                value={sinceTimestamp}
-                onChange={(event) => setSinceTimestamp(event.target.value)}
-                options={sinceOptions()}
+                value={sinceWindow}
+                onChange={(event) => setSinceWindow(event.target.value)}
+                options={sinceOptions}
                 data-cy="logs-since-select"
               />
             </FormControl>
@@ -291,15 +304,4 @@ function SwitchRow({
       </div>
     </div>
   );
-}
-
-function sinceOptions() {
-  const now = Date.now();
-  return [
-    { label: 'All logs', value: '' },
-    { label: 'Last day', value: new Date(now - 86_400_000).toISOString() },
-    { label: 'Last 4 hours', value: new Date(now - 14_400_000).toISOString() },
-    { label: 'Last hour', value: new Date(now - 3_600_000).toISOString() },
-    { label: 'Last 10 minutes', value: new Date(now - 600_000).toISOString() },
-  ];
 }

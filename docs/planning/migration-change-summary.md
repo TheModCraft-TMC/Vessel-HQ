@@ -4,6 +4,16 @@ Status: stable `1.3.2` published and production verified, updated October 31, 20
 
 The October 16 records below cover beta application/SDK publication, Docker Hub mirroring, independent SDK CI, frontend validation without publication, and an isolated Docker host smoke check. These are dated verification results, not checks rerun by this documentation refresh. SDK authoring now lives in an independent workspace while Vessel consumes the published immutable beta.1 module. Managed extension execution, production activation and rollback remain future work.
 
+## Open-issue verification — November 26, 2026
+
+The [review branch](https://github.com/TheModCraft-TMC/Vessel-HQ/pull/303)
+adds fixes for portable Compose diagnostics, Docker terminal Unicode output,
+log replay on reconnect, and quality-gate findings. Signed-in mobile browser
+checks passed across ten routes at 390px. Disposable runtime checks cover
+authenticated registry operations, Docker, Swarm, Podman, Kubernetes and Edge.
+The [handoff](../agent-handoff/progress-2026-11-26.md) lists exact coverage and
+remaining production, infrastructure and integration work.
+
 ## Loading and realtime follow-up — November 21, 2026
 
 Unreleased changes replace the legacy Axios progress side effect with concurrent

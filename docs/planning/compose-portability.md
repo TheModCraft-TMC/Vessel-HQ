@@ -1,9 +1,8 @@
 # Compose portability and CLI interoperability (#300)
 
-Status: source implementation in the working tree, November 15, 2026. Portable
-project export, upload preview, reviewed import and filesystem revision checks
-are implemented. Runtime/CLI and browser acceptance remain open. This separates
-#300 from the broader #299 work.
+Portable project export, upload preview, reviewed import and filesystem revision
+checks are implemented. The November 26 acceptance below covers a local Docker
+engine and records the remaining browser and editor work.
 
 ## Existing behavior
 
@@ -70,10 +69,33 @@ Acceptance requires external edit -> visible new revision -> stale save rejectio
 protocol and filesystem watcher deployment are separate designs, not implied by
 this local workflow. #299 owns broader remote-environment and synchronization work.
 
+## November 26 acceptance
+
+- Vessel exported a project with `compose.yaml` and `配置/override.yaml`, imported
+  the archive, restored it to a separate directory and verified both file
+  checksums. Docker Compose CLI 5.1.4 rendered the supplied image variable and
+  kept the UTF-8 override. Docker Desktop engine 29.4.3 ran the restored project.
+  The container exited successfully with `grüezi` in its log. The disposable
+  project container and network were removed after the check.
+- The Docker exec WebSocket received all 2,059 expected bytes from an Alpine
+  PTY, including a Unicode character across the 2 KiB read boundary and output
+  sent as the session ended. The disposable PTY container was removed.
+- The Docker log viewer uses stable time-window choices across rerenders.
+  Restarting a stopped stream uses the selected window against the current
+  time. A reconnected socket replaces the earlier tail when its first output
+  arrives. The same viewer serves containers, services and tasks, with bounded
+  retention and filtering of the fetched lines.
+- The editor reports YAML syntax location and the portable ZIP preview reports
+  the file and available parser line. Validation messages omit parser excerpts
+  that could contain literal or interpolated values.
+- Focused frontend tests passed for the log view and stream (24 tests) and the
+  YAML validator and stack editor (41 tests). The WebSocket, portable project
+  and stack handler Go packages passed with the race detector enabled.
+
 ## Separate follow-up slices
 
-- Compose diagnostics: preserve parser line/column and actionable errors through
-  the API/editor while sanitizing paths and secret-bearing interpolation output.
+- Compose diagnostics: preserve locations and redact source-dependent values in
+  engine and interpolation errors shown after deployment validation.
 - Editor assistance: evaluate the existing YAML/editor implementation before
   adding completion, validation or a Docker-run conversion action. Define the
   supported input subset and report unsupported flags before conversion.

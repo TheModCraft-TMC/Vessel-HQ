@@ -1,25 +1,21 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { openDockerLogsStream as openServiceLogsStream } from '@/shared/docker/helpers/logHelper';
+import { openDockerLogsStream } from '@/shared/docker/helpers/logHelper';
+import { notifyError } from '@/ui/components/toast/notifications';
 import { DockerLogsView as ContainerLogsView } from '@app/_components/platform/docker/containers/ContainerLogs/DockerLogsView';
-import { openDockerLogsStream } from '@app/_components/platform/docker/containers/ContainerLogs/logHelper';
 
 import { DockerLogsView as ServiceLogsView } from './DockerLogsView';
 
 const scrollTo = vi.fn();
 
-vi.mock(
-  '@app/_components/platform/docker/containers/ContainerLogs/logHelper',
-  () => ({
-    openDockerLogsStream: vi.fn(),
-    concatLogsToString: vi.fn(),
-  })
-);
-
 vi.mock('@/shared/docker/helpers/logHelper', () => ({
   openDockerLogsStream: vi.fn(),
   concatLogsToString: vi.fn(),
+}));
+
+vi.mock('@/ui/components/toast/notifications', () => ({
+  notifyError: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -36,8 +32,7 @@ beforeEach(() => {
     ]);
     return { close: vi.fn() };
   }
-  vi.mocked(openDockerLogsStream).mockImplementation(openStream);
-  vi.mocked(openServiceLogsStream).mockImplementation(openStream);
+  vi.mocked(openDockerLogsStream).mockReset().mockImplementation(openStream);
 });
 
 describe.each([
@@ -55,6 +50,53 @@ describe.each([
       />
     );
   }
+
+  it('keeps the selected fetch window and uses it when opening a stream', async () => {
+    const user = userEvent.setup();
+    const now = vi.spyOn(Date, 'now');
+    const timestamp = 1_800_000_000;
+    now.mockReturnValue(timestamp * 1000);
+    try {
+      renderLogs();
+      const fetch = screen.getByRole('combobox', { name: 'Fetch' });
+      await user.selectOptions(fetch, '3600');
+      expect(fetch).toHaveValue('3600');
+      expect(openDockerLogsStream).toHaveBeenLastCalledWith(
+        expect.objectContaining({ since: timestamp - 3600 })
+      );
+
+      now.mockReturnValue((timestamp + 60) * 1000);
+      await user.click(
+        screen.getByRole('checkbox', { name: 'Display timestamps' })
+      );
+      expect(fetch).toHaveValue('3600');
+      expect(openDockerLogsStream).toHaveBeenLastCalledWith(
+        expect.objectContaining({ since: timestamp + 60 - 3600 })
+      );
+    } finally {
+      now.mockRestore();
+    }
+  });
+
+  it('shows a stopped stream after failure and lets the user start it again', async () => {
+    const user = userEvent.setup();
+    renderLogs();
+    const live = screen.getByRole('checkbox', { name: 'Live log stream' });
+    const initialStream = vi.mocked(openDockerLogsStream).mock.lastCall?.[0];
+
+    const error = new Error('Connection failed');
+    act(() => initialStream?.onError(error));
+    expect(notifyError).toHaveBeenCalledWith(
+      'Failure',
+      error,
+      'Unable to stream containers logs'
+    );
+    expect(live).not.toBeChecked();
+
+    await user.click(live);
+    expect(live).toBeChecked();
+    expect(openDockerLogsStream).toHaveBeenCalledTimes(2);
+  });
 
   it('keeps the log viewer styles when toggling line wrapping', async () => {
     const user = userEvent.setup();

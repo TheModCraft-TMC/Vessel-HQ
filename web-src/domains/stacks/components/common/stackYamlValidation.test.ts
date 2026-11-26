@@ -32,6 +32,15 @@ services:
       expect(result).toContain('There is an error in the yaml syntax:');
     });
 
+    it('reports location and a correction without printing the Compose source', () => {
+      const result = validateYAML(
+        'services:\n  app:\n    image: busybox\n    image: private-image'
+      );
+
+      expect(result).toMatch(/line 3, column 5.*Check indentation/);
+      expect(result).not.toContain('private-image');
+    });
+
     it('should handle empty YAML string', () => {
       const result = validateYAML('');
 

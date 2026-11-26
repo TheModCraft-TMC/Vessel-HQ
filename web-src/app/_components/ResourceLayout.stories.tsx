@@ -87,7 +87,7 @@ const meta = {
               EnableIPv6: false,
               IPAM: {
                 Driver: 'default',
-                Config: [{ Subnet: '172.30.0.0/24', Gateway: '172.30.0.1' }],
+                Config: [{ Subnet: '192.0.2.0/24', Gateway: '192.0.2.1' }],
               },
               Containers: {},
               Labels: {},

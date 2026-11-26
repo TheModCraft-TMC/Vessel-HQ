@@ -3,8 +3,8 @@
 Status: all five forks published after explicit user approval, November 20, 2026.
 Public proxy/checksum verification passed. The actual backend now uses the
 published modules. Full application tests, module integrity and advisory scanning
-have passed; race/build completion and provider runtime acceptance are tracked
-in the [current progress log](progress-2026-11-21.md).
+have passed. The latest provider results are recorded below and in the
+[current progress log](README.md).
 
 ## Published maintained sources
 
@@ -98,9 +98,40 @@ Do not mark fixture checks or historical binary runs as current provider accepta
 No residual provider incompatibility is accepted or assigned to a maintainer by
 this document. #262 and dependent umbrella #264 remain open.
 
-Build blocker: Avira quarantines the generated Linux amd64 executable as
+November 21 build blocker: Avira quarantined the generated Linux amd64 executable as
 `PUA/LINUX.Chisel.G` (existing Edge tunnel dependency), after linking and before
 Go's build-ID rewrite. A minimal Go Linux binary builds normally. The application
 binary was not restored or allowlisted, and arm64 was not attempted after this
-confirmation. User security review is pending. Updated-binary provider acceptance
-must wait for that decision and a responsive test engine.
+confirmation. User security review is pending for that executable. The following
+Linux arm64 run used a fresh review-branch build and a responsive engine.
+
+## Linux arm64 provider acceptance — November 26, 2026
+
+The application on PR #303 was compiled using Go 1.26.11, `GOWORK=off` and
+`-mod=readonly`. ELF build metadata records source commit
+`4034bcf79678aec6f79a9b298418dc47cd38f4ba` and the five published fork versions.
+The artifact's SHA-256 is
+`3f192fb7ed92b314ef53d674b081c1e458ac91cd6a98dfd25b1000c81d24ae73`.
+The published Vessel 1.3.3 image supplied runtime files while each test mounted
+the freshly built executable. The five focused HA, Docker, Kubernetes,
+registry-handler and websocket Go race packages passed.
+
+- Docker and Swarm 29.10.1 passed API environment and container lifecycle,
+  logs and stack create/update/delete. Swarm also replaced running tasks on
+  service force-update.
+- Podman 5.8.1 passed environment and container lifecycle, logs and Compose
+  stack create/update/delete.
+- A disposable Distribution v3 registry denied anonymous push and incorrect
+  credentials. The Vessel API authenticated, pushed an image, listed repositories
+  and tags, pulled by digest and rejected an unknown digest.
+- Kubernetes v1.35.0 passed environment, namespace and deployment lifecycle
+  and stack apply/delete using in-cluster service-account authentication. The
+  first Kind run tried to import a multi-platform index with only arm64 cached.
+  The successful rerun loaded the verified arm64 manifest directly.
+
+Receipts are in `dist/remaining-issues-20261126/provider/` as `platform.json`,
+`registry-retry.json` and `kubernetes-retry.json`. Fixture cleanup passed. The
+verified [Linux dependency scan](https://github.com/TheModCraft-TMC/Vessel-HQ/actions/runs/45685749811)
+ran against the same module graph and recorded zero findings. This completes
+the #262 acceptance matrix on the review candidate. The fix still needs
+integration before closing #262 and the #264 tracker.

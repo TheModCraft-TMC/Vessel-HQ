@@ -1,6 +1,12 @@
 package websocket
 
 import (
+	"net"
+	"net/http"
+	"net/url"
+	"strings"
+	"sync"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
 	dockerclient "github.com/portainer/portainer/api/docker/client"
@@ -9,7 +15,6 @@ import (
 	"github.com/portainer/portainer/api/http/security"
 	"github.com/portainer/portainer/api/kubernetes/cli"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
-	"sync"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -36,7 +41,7 @@ type Handler struct {
 func NewHandler(kubernetesTokenCacheManager *kubernetes.TokenCacheManager, bouncer security.BouncerService) *Handler {
 	h := &Handler{
 		Router:                      mux.NewRouter(),
-		connectionUpgrader:          websocket.Upgrader{},
+		connectionUpgrader:          websocket.Upgrader{CheckOrigin: checkOrigin},
 		requestBouncer:              bouncer,
 		kubernetesTokenCacheManager: kubernetesTokenCacheManager,
 		eventHub:                    newEventHub(),
@@ -55,6 +60,35 @@ func NewHandler(kubernetesTokenCacheManager *kubernetes.TokenCacheManager, bounc
 	h.Handle("/websocket/logs",
 		bouncer.AuthenticatedAccess(httperror.LoggerHandler(h.websocketLogs))).Methods("GET")
 	return h
+}
+
+func checkOrigin(r *http.Request) bool {
+	origins := r.Header.Values("Origin")
+	if len(origins) == 0 {
+		return true
+	}
+	if len(origins) != 1 {
+		return false
+	}
+	origin, err := url.Parse(origins[0])
+	if err != nil || origin.Host == "" || (origin.Scheme != "http" && origin.Scheme != "https") {
+		return false
+	}
+	if strings.EqualFold(origin.Host, r.Host) {
+		return true
+	}
+
+	// Next.js rewrites the upstream Host and overwrites X-Forwarded-Host
+	// with the original Host. Only consult it on the local proxy hop.
+	peer, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil || !net.ParseIP(peer).IsLoopback() {
+		return false
+	}
+	if site := r.Header.Get("Sec-Fetch-Site"); site != "" && site != "same-origin" {
+		return false
+	}
+	forwarded := r.Header.Values("X-Forwarded-Host")
+	return len(forwarded) == 1 && strings.EqualFold(origin.Host, forwarded[0])
 }
 
 // PublishMutation notifies connected browsers that cached API data may have

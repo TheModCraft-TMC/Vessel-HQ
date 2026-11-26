@@ -410,9 +410,16 @@ export async function resolveDockerExecutable(configured = process.env.VESSEL_DO
   fail('Docker executable unavailable; set VESSEL_DOCKER_BINARY to a trusted absolute path');
 }
 
+const dockerEnvironment = {
+  PATH: process.platform === 'win32'
+    ? 'C:\\Windows\\System32;C:\\Windows\\System32\\OpenSSH'
+    : '/usr/bin:/bin',
+  HOME: process.env.HOME,
+};
+
 function run(command, args, containerName) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, { stdio: 'inherit', env: { PATH: process.env.PATH, HOME: process.env.HOME } });
+    const child = spawn(command, args, { stdio: 'inherit', env: dockerEnvironment });
     let settled = false;
     let stopping = false;
     const finish = (error) => {
@@ -428,7 +435,7 @@ function run(command, args, containerName) {
       if (stopping) return;
       stopping = true;
       child.kill('SIGTERM');
-      const cleanup = spawn(command, ['rm', '--force', containerName], { stdio: 'ignore', timeout: 30000, env: { PATH: process.env.PATH, HOME: process.env.HOME } });
+      const cleanup = spawn(command, ['rm', '--force', containerName], { stdio: 'ignore', timeout: 30000, env: dockerEnvironment });
       cleanup.once('error', () => finish(new Error(`${message}; container cleanup failed`)));
       cleanup.once('exit', (code) => finish(new Error(`${message}${code === 0 ? '' : '; verify container cleanup'}`)));
     };
@@ -560,7 +567,7 @@ async function buildLocked(candidate, image, trustedReceiptDigest) {
     const cleanup = spawnSync(docker, ['volume', 'rm', '--force', dependenciesVolume], {
       stdio: 'ignore',
       timeout: 30000,
-      env: { PATH: process.env.PATH, HOME: process.env.HOME },
+      env: dockerEnvironment,
     });
     if (cleanup.status !== 0) receipt.cleanupWarning = `Verify removal of Docker volume ${dependenciesVolume}`;
     await atomicJSON(path.join(root, 'candidate.json'), receipt);

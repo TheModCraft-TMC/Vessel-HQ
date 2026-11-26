@@ -703,10 +703,13 @@ configs:
 `), true, "")
 }
 
-func TestIsValidStackFile_EnvFileRestrictions(t *testing.T) {
-	t.Parallel()
+const externalStackFileForbidden = "reading a file from the host is disabled for non administrator users"
 
-	const forbidden = "reading a file from the host is disabled for non administrator users"
+func externalStackFileFixture(t *testing.T, projectFile string, fileContent []byte) (
+	outsideFile string,
+	validate func(yamlContent []byte, allowBindMounts bool, wantErrSubstring string),
+) {
+	t.Helper()
 
 	root := t.TempDir()
 	projectDir := filesystem.JoinPaths(root, "project")
@@ -718,14 +721,14 @@ func TestIsValidStackFile_EnvFileRestrictions(t *testing.T) {
 	err = os.MkdirAll(outsideDir, 0700)
 	require.NoError(t, err)
 
-	err = os.WriteFile(filesystem.JoinPaths(projectDir, "web.env"), []byte("HOST_PORT=3000\n"), 0600)
+	err = os.WriteFile(filesystem.JoinPaths(projectDir, projectFile), fileContent, 0600)
 	require.NoError(t, err)
 
-	outsideFile := filesystem.JoinPaths(outsideDir, "secret.env")
-	err = os.WriteFile(outsideFile, []byte("HOST_PORT=3000\n"), 0600)
+	outsideFile = filesystem.JoinPaths(outsideDir, "secret.env")
+	err = os.WriteFile(outsideFile, fileContent, 0600)
 	require.NoError(t, err)
 
-	f := func(yamlContent []byte, allowBindMounts bool, wantErrSubstring string) {
+	validate = func(yamlContent []byte, allowBindMounts bool, wantErrSubstring string) {
 		t.Helper()
 
 		err := IsValidStackFile(StackFileValidationConfig{
@@ -744,37 +747,44 @@ func TestIsValidStackFile_EnvFileRestrictions(t *testing.T) {
 		require.ErrorContains(t, err, wantErrSubstring)
 	}
 
+	return outsideFile, validate
+}
+
+func TestIsValidStackFile_EnvFileRestrictions(t *testing.T) {
+	t.Parallel()
+	outsideFile, validate := externalStackFileFixture(t, "web.env", []byte("HOST_PORT=3000\n"))
+
 	// an env_file reading an absolute host path outside the project is rejected
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
     env_file:
       - `+outsideFile+`
-`), false, forbidden)
+`), false, externalStackFileForbidden)
 
 	// an env_file pointing outside the project is rejected even when the target
 	// doesn't exist, proving the check runs before compose-go's own env_file
 	// resolution ever touches the filesystem
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
     env_file:
       - /this/path/does/not/exist/at/all.env
-`), false, forbidden)
+`), false, externalStackFileForbidden)
 
 	// an env_file climbing out of the stack directory is rejected
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
     env_file:
       - ../outside/secret.env
-`), false, forbidden)
+`), false, externalStackFileForbidden)
 
 	// an env_file shipped with the stack keeps working
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
@@ -783,7 +793,7 @@ services:
 `), false, "")
 
 	// administrators are still allowed to read host paths
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
@@ -794,76 +804,39 @@ services:
 
 func TestIsValidStackFile_LabelFileRestrictions(t *testing.T) {
 	t.Parallel()
-
-	const forbidden = "reading a file from the host is disabled for non administrator users"
-
-	root := t.TempDir()
-	projectDir := filesystem.JoinPaths(root, "project")
-	outsideDir := filesystem.JoinPaths(root, "outside")
-
-	err := os.MkdirAll(projectDir, 0700)
-	require.NoError(t, err)
-
-	err = os.MkdirAll(outsideDir, 0700)
-	require.NoError(t, err)
-
-	err = os.WriteFile(filesystem.JoinPaths(projectDir, "labels.env"), []byte("owner=team-a\n"), 0600)
-	require.NoError(t, err)
-
-	outsideFile := filesystem.JoinPaths(outsideDir, "secret.env")
-	err = os.WriteFile(outsideFile, []byte("owner=team-a\n"), 0600)
-	require.NoError(t, err)
-
-	f := func(yamlContent []byte, allowBindMounts bool, wantErrSubstring string) {
-		t.Helper()
-
-		err := IsValidStackFile(StackFileValidationConfig{
-			Content:          yamlContent,
-			SecuritySettings: &portainer.EndpointSecuritySettings{AllowBindMountsForRegularUsers: allowBindMounts},
-			WorkingDir:       projectDir,
-			ProjectPath:      projectDir,
-		})
-
-		if wantErrSubstring == "" {
-			require.NoError(t, err)
-
-			return
-		}
-
-		require.ErrorContains(t, err, wantErrSubstring)
-	}
+	outsideFile, validate := externalStackFileFixture(t, "labels.env", []byte("owner=team-a\n"))
 
 	// a label_file reading an absolute host path outside the project is rejected
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
     label_file:
       - `+outsideFile+`
-`), false, forbidden)
+`), false, externalStackFileForbidden)
 
 	// a label_file pointing outside the project is rejected even when the target
 	// doesn't exist, proving the check runs before compose-go's own label_file
 	// resolution ever touches the filesystem
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
     label_file:
       - /this/path/does/not/exist/at/all.env
-`), false, forbidden)
+`), false, externalStackFileForbidden)
 
 	// a label_file climbing out of the stack directory is rejected
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
     label_file:
       - ../outside/secret.env
-`), false, forbidden)
+`), false, externalStackFileForbidden)
 
 	// a label_file shipped with the stack keeps working
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx
@@ -872,7 +845,7 @@ services:
 `), false, "")
 
 	// administrators are still allowed to read host paths
-	f([]byte(`
+	validate([]byte(`
 services:
   api:
     image: nginx

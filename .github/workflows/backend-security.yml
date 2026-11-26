@@ -7,12 +7,14 @@ on:
       - 'backend-src/**'
       - 'go.work'
       - '.github/workflows/backend-security.yml'
+      - '.github/tools/govulncheck/**'
   push:
     branches: [develop]
     paths:
       - 'backend-src/**'
       - 'go.work'
       - '.github/workflows/backend-security.yml'
+      - '.github/tools/govulncheck/**'
   workflow_dispatch:
   workflow_call:
 
@@ -38,7 +40,9 @@ jobs:
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version-file: backend-src/go.mod
-          cache-dependency-path: backend-src/go.sum
+          cache-dependency-path: |
+            backend-src/go.sum
+            .github/tools/govulncheck/go.sum
       - name: Verify published module identities and checksums
         run: |
           mkdir -p ../dist/security/backend
@@ -63,8 +67,11 @@ jobs:
               count += 1
           print(f'Verified {count} selected module identities')
           PY
-      - name: Install pinned official scanner
-        run: GOBIN="$RUNNER_TEMP/go-security-bin" go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
+      - name: Build the official scanner from its locked dependency graph
+        working-directory: .github/tools/govulncheck
+        run: |
+          go build -mod=readonly -trimpath -o "$RUNNER_TEMP/go-security-bin/govulncheck" golang.org/x/vuln/cmd/govulncheck
+          go mod verify
       - name: Scan deployed Linux source for reachable advisories
         run: '"$RUNNER_TEMP/go-security-bin/govulncheck" -json ./... > ../dist/security/backend/govulncheck.json'
       - name: Retain dependency security evidence

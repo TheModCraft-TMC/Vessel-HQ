@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -102,5 +103,21 @@ func TestImportRejectsTamperingTraversalSymlinksAndUndeclaredFiles(t *testing.T)
 	cancel()
 	if project, err := Import(ctx, archive); err == nil || project != nil {
 		t.Fatal("cancelled import accepted")
+	}
+}
+
+func TestImportReportsSafeComposeSyntaxLocation(t *testing.T) {
+	dir := t.TempDir()
+	err := os.WriteFile(filepath.Join(dir, "compose.yaml"), []byte("services:\n  app:\n    image: [literal-private-value\n    command: hello\n"), 0600)
+	if err != nil {
+		t.Fatal(err)
+	}
+	archive, err := Export(t.Context(), dir, "compose.yaml", nil, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = Import(t.Context(), archive)
+	if err == nil || !strings.Contains(err.Error(), `invalid Compose YAML in "compose.yaml" at line`) || strings.Contains(err.Error(), "literal-private-value") {
+		t.Fatalf("expected syntax location without raw parser content, got %v", err)
 	}
 }
