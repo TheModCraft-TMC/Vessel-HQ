@@ -59,18 +59,21 @@ packages:
     engines: {node: '>=18'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@unchartedfr/zapcode-linux-x64-gnu@1.5.3':
     resolution: {integrity: sha512-Q3MEOvAee9n+4/5ZgEbpw365hq7O3rd57k/Wsawk+bk/I26dIuN+r73VBzOvxScldWU1Ay8a9pg5Q+fI6Qj03w==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@unchartedfr/zapcode-linux-x64-musl@1.5.3':
     resolution: {integrity: sha512-H7TyTVKkKZwASP9GTuUdbScILRmragFSYnl4F/XpBnTjHnV1gFEnQlcVrpjEdnCeBYrLC0IH7N+9FaI0UDIrgA==}
     engines: {node: '>=18'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@unchartedfr/zapcode-win32-arm64-msvc@1.5.3':
     resolution: {integrity: sha512-cHxwwSEE31RQzuAh1IsstWB4Q7ANMRzM936miE4NnP+LVx6F2pIqfefRqx799V067UZNEPwR7tmGVVA2NrD1Sg==}
