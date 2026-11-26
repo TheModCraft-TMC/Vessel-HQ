@@ -1,7 +1,7 @@
-import { vi } from 'vitest';
+import { it, vi } from 'vitest';
 
 import type { StackTrafficOverview } from '@/core/native-extensions/sdk';
-import { testTrafficPanel } from '@/core/native-extensions/test-support/traffic-panel-suite';
+import { trafficPanelCases } from '@/core/native-extensions/test-support/traffic-panel-suite';
 
 import { TrafficPanel, counterRate } from './TrafficPanel';
 
@@ -13,4 +13,7 @@ vi.mock('./TrafficGraph', () => ({
   ),
 }));
 
-testTrafficPanel(TrafficPanel, counterRate);
+it.each(trafficPanelCases(TrafficPanel, counterRate))(
+  '$name',
+  ({ assertCase }) => assertCase()
+);

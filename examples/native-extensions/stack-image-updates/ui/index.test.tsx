@@ -1,24 +1,26 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { it, vi } from 'vitest';
 
 import {
   networkGraph,
   stackContext,
   stackDeliverySnapshot,
-  testStackDelivery,
+  stackDeliveryCases,
 } from '@/core/native-extensions/test-support/stack-delivery-suite';
 
 import Extension from './index';
 
 const snapshot = stackDeliverySnapshot(0);
 
-testStackDelivery(
-  Extension,
-  'Repull and redeploy stack',
-  'stacks.images.update',
-  0
-);
+it.each(
+  stackDeliveryCases(
+    Extension,
+    'Repull and redeploy stack',
+    'stacks.images.update',
+    0
+  )
+)('$name', ({ assertCase }) => assertCase());
 
 it('blocks whole-stack updates when a workload is monitor-only', async () => {
   const invoke = vi.fn().mockImplementation(async (operation: string) =>
