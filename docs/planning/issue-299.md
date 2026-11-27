@@ -7,7 +7,7 @@ does not activate extensions or establish full Business Edition parity.
 | Request | Current source and evidence | Remaining acceptance |
 | --- | --- | --- |
 | Extension integration | Package schemas, host validation, separate machine settings grants, typed mTLS settings reads; standalone SDK beta.2 published with source archive/checksum | Public Go proxy/checksum resolution now verified; affected host race tests pass without replacements. Production identity/startup lifecycle remains separate |
-| External container synchronization | One shared Docker event stream per viewed environment; coalesced invalidation, bounded subscribers, stream cancellation, current authorization and session rechecks; HTTP-stream and revocation race tests | Authenticated remote Docker event receipt measured at 229 ms in the live disposable-engine test; remote-agent reconnect and event-driven browser coverage remain |
+| External container synchronization | One shared Docker event stream per viewed environment; coalesced invalidation, bounded subscribers, stream cancellation, current authorization and session rechecks; HTTP-stream and revocation race tests | Disposable Edge restart passed. Production event-driven browser acceptance remains |
 | Images/networks/volumes spacing | Existing shared layout verified at 390px and 1440px with production console and synthetic remote-engine responses; identical heading offsets and no page overflow | Authenticated production routes and populated data remain separate runtime coverage |
 | Source-available edition capabilities | Existing source-backed Git reference and file browsing now depends on source availability; manual entry and HEAD remain supported; explicit unadvertised refs preserved | Inventory and acceptance for capabilities absent from CE source; no blanket edition toggle or complete BE-parity claim |
 | Optional HA and Kubernetes | Explicit shared-storage active/standby gate before datastore initialization; current-source Linux arm64 pair passed same-host takeover after abrupt active exit | Cross-host coherent locking/mmap, storage fencing, host/node failure and ingress convergence on selected infrastructure |
@@ -135,3 +135,17 @@ two-second polling. The old browser JWT returned 401 and the existing admin
 could sign in again. Both replicas and the test volume were removed. Selected
 cross-host storage coherence and fencing, cross-node failover and ingress
 convergence still require infrastructure acceptance.
+
+### Edge restart and extension slots — November 27, 2026
+
+A disposable official Edge Agent 2.45.0 connected to Docker 29.10.1.
+One authenticated browser-origin WebSocket received external container events,
+kept its connection and received scoped snapshots during the outage, then
+received external events again after the agent restarted. The proxy returned
+to service in 65.3 seconds. All fixture resources were removed. Production
+transport, Azure and cross-host HA still require their own environments.
+
+A stack action's restart counter now includes its declared slot ID. The
+regression test opens two slots under the same approval, verifies their
+mounts are counted separately, then checks repeated mounting of one slot
+still triggers the shared safety stop.

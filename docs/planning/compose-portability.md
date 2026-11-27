@@ -92,13 +92,25 @@ this local workflow. #299 owns broader remote-environment and synchronization wo
   YAML validator and stack editor (41 tests). The WebSocket, portable project
   and stack handler Go packages passed with the race detector enabled.
 
+## Convert a Docker run command
+
+Open **Convert Docker run to Compose** in the Docker Compose stack editor, paste
+one literal `docker run` command, and select **Preview Compose**. **Insert YAML**
+fills an empty editor. **Copy YAML** lets you merge the result into an existing
+draft. Review the rendered service before deploying it.
+
+The converter accepts a literal image and command arguments, shell quoting and
+line continuations, `--name`, explicit `NAME=value` environment settings,
+single-port mappings, volumes, a restart policy, user, working directory,
+entrypoint, stdin and TTY options. Compose controls attachment independently
+of Docker run's `-d` flag. A volume can use an absolute target and an absolute
+or named source with `ro` or `rw` access. Unsupported options such as `--rm`,
+shell pipelines and shell expansion produce an error before generating YAML.
+
 ## Separate follow-up slices
 
 - Compose diagnostics: preserve locations and redact source-dependent values in
   engine and interpolation errors shown after deployment validation.
-- Editor assistance: evaluate the existing YAML/editor implementation before
-  adding completion, validation or a Docker-run conversion action. Define the
-  supported input subset and report unsupported flags before conversion.
 - Logs/terminal: specify search scope, bounded retention, reconnect behavior,
   keyboard handling and phone acceptance against the existing streaming paths.
 

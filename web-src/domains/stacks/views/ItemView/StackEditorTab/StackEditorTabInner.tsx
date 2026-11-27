@@ -2,6 +2,7 @@ import { Form, useFormikContext } from 'formik';
 import { JSONSchema7 } from 'json-schema';
 import { useCallback } from 'react';
 
+import { DockerRunImport } from '@/domains/stacks/components/common/DockerRunImport';
 import { Stack, StackType } from '@/domains/stacks/models/types';
 import { PruneField } from '@/domains/stacks/components/common/PruneField';
 import { EnvironmentType } from '@/domains/environments';
@@ -110,6 +111,14 @@ export function StackEditorTabInner({
 
       <div className="form-group">
         <div className="col-sm-12">
+          {stackType === StackType.DockerCompose &&
+            canUpdate &&
+            !isOrphaned && (
+              <DockerRunImport
+                isEmpty={!values.stackFileContent.trim()}
+                onInsert={(value) => setFieldValue('stackFileContent', value)}
+              />
+            )}
           <CodeEditor
             id="stack-editor"
             textTip="Define or paste the content of your docker compose file here"
