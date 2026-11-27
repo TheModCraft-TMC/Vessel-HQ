@@ -11,11 +11,11 @@ does not activate extensions or establish full Business Edition parity.
 | Images/networks/volumes spacing | Existing shared layout verified at 390px and 1440px with production console and synthetic remote-engine responses; identical heading offsets and no page overflow | Authenticated production routes and populated data remain separate runtime coverage |
 | Source-available edition capabilities | Existing source-backed Git reference and file browsing now depends on source availability; manual entry and HEAD remain supported; explicit unadvertised refs preserved | Inventory and acceptance for capabilities absent from CE source; no blanket edition toggle or complete BE-parity claim |
 | Optional HA and Kubernetes | Explicit shared-storage active/standby gate before datastore initialization; current-source Linux arm64 pair passed same-host takeover after abrupt active exit | Cross-host coherent locking/mmap, storage fencing, host/node failure and ingress convergence on selected infrastructure |
-| Remote environments | Current-source Linux arm64 passed Docker and Swarm 29.10.1, Podman 5.8.1, Edge Agent 2.45.0 tunnel and Kubernetes 1.35.0 acceptance against disposable engines | Production transport/reconnect behavior and live Azure Container Instances |
+| Remote environments | Linux arm64 passed Docker and Swarm 29.10.1, Podman 5.8.1, Edge Agent 2.45.0 and Kubernetes 1.35.0 against disposable engines. ACI transport and lifecycle fixes passed loopback race tests | Production transport and live Azure Container Instances |
 | Settings and build management | Schema-aware save, write-only secrets, optimistic concurrency, runtime reads; existing complete-set builder ownership, progress receipts, sanitized events, cancellation cleanup and approval rechecks retained; 72 builder tests pass | Settings save/reset/conflict, secret redaction and role denial passed against a running API; extension builder execution and production activation remain separate |
 | Master webhook gateway | Optional private configuration, route-bound timestamped HMAC, local allowlisted fan-out, bounded concurrency, durable at-most-once reservation and outcome audit; replay/restart/concurrency/denial tests | Live allowlisted Swarm delivery, replay denial and persisted replay rejection after abrupt HA takeover passed; operator configuration and provider coverage remain; no queued retry guarantee |
 | Upstream changes | Seven reviewed Compose, Kubernetes, Docker-volume, Git and Helm backports adapted; focused package and race coverage | Live provider matrix; [application prerelease assets](https://github.com/TheModCraft-TMC/Vessel-HQ/releases/tag/v1.3.3-beta.1) published from source commit `beae78041` |
-| Activity log | Strict date/sort validation, exact filters, deterministic sorting, no-store and spreadsheet-safe CSV; package tests pass | Production UI/export check with real retained data |
+| Activity log | Real API-generated audit rows survived a server restart. CSV retained all filtered rows regardless of page and offset. The API denied restricted users | Production activity UI acceptance |
 
 ## Verification record — November 14, 2026
 
@@ -149,3 +149,21 @@ A stack action's restart counter now includes its declared slot ID. The
 regression test opens two slots under the same approval, verifies their
 mounts are counted separately, then checks repeated mounting of one slot
 still triggers the shared safety stop.
+
+### Activity retention and Azure proxy — November 27, 2026
+
+Four registry mutations on Linux arm64 at `8edfd7860` generated real audit
+records. A filtered JSON page matched after a container restart. CSV returned
+all four rows regardless of page size and offset, logged only method and path
+in the payload, and used `Cache-Control: no-store`. A restricted user received
+403 on both endpoints. The local receipt is
+`dist/remaining-issues-20261127/provider/activity-retention.json`.
+
+The ACI proxy refreshes Azure tokens before expiry and serializes that refresh
+independently of resource creation. The create existence check sends the Azure
+bearer and proceeds only after Azure returns 404. Upstream lifecycle responses
+keep their status and polling headers. A confirmed deletion or absence removes
+the local resource control. An accepted asynchronous deletion keeps it while
+Azure processes the request. Loopback race tests passed in the ACI proxy,
+proxy factory and endpoint proxy packages. Live acceptance remains blocked on
+an authorized nonproduction Azure subscription. [Azure Container Groups REST API](https://learn.microsoft.com/en-us/rest/api/container-instances/container-groups?view=rest-container-instances-2026-07-01)

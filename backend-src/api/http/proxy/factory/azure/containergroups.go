@@ -19,8 +19,8 @@ func (transport *Transport) proxyContainerGroupsRequest(request *http.Request) (
 
 func (transport *Transport) proxyContainerGroupsGetRequest(request *http.Request) (*http.Response, error) {
 	response, err := http.DefaultTransport.RoundTrip(request)
-	if err != nil {
-		return nil, err
+	if err != nil || response.StatusCode != http.StatusOK {
+		return response, err
 	}
 
 	responseObject, err := utils.GetResponseAsJSONObject(response)

@@ -49,8 +49,11 @@ starting a different application version and include a management outage.
 
 Deploy the [separate Compose example](../examples/ha/compose.yaml) on each host,
 setting `VESSEL_HA_IMAGE` to the same immutable image and mounting the same
-storage. The bind mount refuses to create a missing local directory, reducing
-the chance of starting a separate empty database. The existing front door must
+storage at `/srv/vessel-ha-data`. With the shared filesystem mounted, create its
+`vessel` subdirectory for the database and verify the storage mount before
+starting the pair. Keep that subdirectory absent from the underlying local
+mountpoint directory. The bind mount then fails if Docker starts without the
+shared filesystem. The existing front door must
 health-check HTTPS `/api/status` on each host and route HTTPS and the Edge TCP
 tunnel to the active host. Port 8000 cannot be routed to the waiting standby.
 No existing development or production Compose file is changed by this example.

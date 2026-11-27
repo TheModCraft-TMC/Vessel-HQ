@@ -2,6 +2,7 @@ package azure
 
 import (
 	"errors"
+	"io"
 	"net/http"
 
 	portainer "github.com/portainer/portainer/api"
@@ -31,28 +32,23 @@ func (transport *Transport) proxyContainerGroupPutRequest(request *http.Request)
 		return nil, httperror.Forbidden("Permission denied to access environment", err)
 	}
 
-	// Add a lock before processing existence check
-	transport.mutex.Lock()
-	defer transport.mutex.Unlock()
+	// Serialize the existence check and creation for this environment.
+	transport.createMu.Lock()
+	defer transport.createMu.Unlock()
 
-	// Generate a temp http GET request based on the current PUT request
-	validationRequest := &http.Request{
-		Method: http.MethodGet,
-		URL:    request.URL,
-		Header: http.Header{
-			"Authorization": []string{"Bearer " + tokenData.Token},
-		},
+	validationRequest, err := http.NewRequestWithContext(request.Context(), http.MethodGet, request.URL.String(), nil)
+	if err != nil {
+		return nil, err
 	}
+	validationRequest.Header.Set("Authorization", request.Header.Get("Authorization"))
 
-	// Fire the request to Azure API to validate if there is an existing container instance with the same name
-	// positive - reject the request
-	// negative - continue the process
 	validationResponse, err := http.DefaultTransport.RoundTrip(validationRequest)
 	if err != nil {
 		return validationResponse, err
 	}
 
 	if validationResponse.StatusCode >= 200 && validationResponse.StatusCode < 300 {
+		_ = validationResponse.Body.Close()
 		resp := &http.Response{
 			Header: http.Header{
 				http.CanonicalHeaderKey("content-type"): []string{"application/json"},
@@ -65,9 +61,14 @@ func (transport *Transport) proxyContainerGroupPutRequest(request *http.Request)
 
 		return resp, err
 	}
+	if validationResponse.StatusCode != http.StatusNotFound {
+		return validationResponse, nil
+	}
+	_, _ = io.Copy(io.Discard, io.LimitReader(validationResponse.Body, 4096))
+	_ = validationResponse.Body.Close()
 
 	response, err := http.DefaultTransport.RoundTrip(request)
-	if err != nil {
+	if err != nil || response.StatusCode < 200 || response.StatusCode >= 300 {
 		return response, err
 	}
 
@@ -81,26 +82,21 @@ func (transport *Transport) proxyContainerGroupPutRequest(request *http.Request)
 		return response, errors.New("Missing container group ID")
 	}
 
-	context, err := transport.createAzureRequestContext(request)
-	if err != nil {
-		return response, err
-	}
-
-	resourceControl, err := transport.createPrivateResourceControl(containerGroupID, portainer.ContainerGroupResourceControl, context.userID)
+	resourceControl, err := transport.createPrivateResourceControl(containerGroupID, portainer.ContainerGroupResourceControl, tokenData.ID)
 	if err != nil {
 		return response, err
 	}
 
 	responseObject = decorateObject(responseObject, resourceControl)
 
-	err = utils.RewriteResponse(response, responseObject, http.StatusOK)
+	err = utils.RewriteResponse(response, responseObject, response.StatusCode)
 
 	return response, err
 }
 
 func (transport *Transport) proxyContainerGroupGetRequest(request *http.Request) (*http.Response, error) {
 	response, err := http.DefaultTransport.RoundTrip(request)
-	if err != nil {
+	if err != nil || response.StatusCode != http.StatusOK {
 		return response, err
 	}
 
@@ -134,22 +130,11 @@ func (transport *Transport) proxyContainerGroupDeleteRequest(request *http.Reque
 	}
 
 	response, err := http.DefaultTransport.RoundTrip(request)
-	if err != nil {
-		return response, err
+	if err == nil && (response.StatusCode == http.StatusOK || response.StatusCode == http.StatusNoContent) {
+		if err := transport.removeResourceControl(request.URL.Path, context); err != nil {
+			log.Warn().Err(err).Msg("failed to remove resource control")
+		}
 	}
 
-	responseObject, err := utils.GetResponseAsJSONObject(response)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := transport.removeResourceControl(responseObject, context); err != nil {
-		log.Warn().Err(err).Msg("failed to remove resource control")
-	}
-
-	if err := utils.RewriteResponse(response, responseObject, http.StatusOK); err != nil {
-		log.Warn().Err(err).Msg("failed to rewrite response")
-	}
-
-	return response, nil
+	return response, err
 }
