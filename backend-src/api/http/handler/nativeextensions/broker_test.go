@@ -30,7 +30,10 @@ func TestBrowserBrokerRestrictsSlotsAndUsesDelegatedGRPC(t *testing.T) {
 	permissions := []domain.Permission{{Capability: "ui.native", EnvironmentIDs: []int{}}, {Capability: "stacks.network.read", EnvironmentIDs: []int{1}, StackIDs: []int{2}}}
 	record := domain.Record{Revision: 1, Status: "approved", TrustedNativeUI: true, Grants: permissions, Manifest: domain.Manifest{ID: "org.example.topology", Name: "Topology", Version: "1", APIVersion: "v1", PackageDigest: "sha256:" + strings.Repeat("d", 64), Permissions: permissions, UI: &domain.UI{Entry: "ui/index.tsx", Slots: []domain.UISlot{{ID: "network", Title: "Networks", Slot: "docker.stack.detail.action"}}}}}
 	require.NoError(t, store.NativeExtension().Create(&record))
-	h := NewHandler(security.NewRequestBouncer(t.Context(), store, service, apikey.NewAPIKeyService(nil, nil)))
+	bouncer := security.NewRequestBouncer(t.Context(), store, service, apikey.NewAPIKeyService(nil, nil))
+	mutations := 0
+	bouncer.SetMutationPublisher(func() { mutations++ })
+	h := NewHandler(bouncer)
 	h.DataStore = store
 	h.AuthorizeUser = func(_ context.Context, id, env, stack int) error {
 		if id != int(user.ID) || env != 1 || stack != 2 {
@@ -83,6 +86,7 @@ func TestBrowserBrokerRestrictsSlotsAndUsesDelegatedGRPC(t *testing.T) {
 	require.Equal(t, 200, w.Code, w.Body.String())
 	require.Equal(t, 1, reads)
 	require.Equal(t, 1, audits)
+	require.Zero(t, mutations, "reading topology must not invalidate and refetch itself")
 	require.Equal(t, 409, call("POST", "/native-extensions/1/invoke", token, invokePayload{Revision: record.Revision + 1, PackageDigest: record.Manifest.PackageDigest, Operation: "stacks.network.read", EnvironmentID: 1, StackID: 2}).Code)
 	require.Equal(t, 409, call("POST", "/native-extensions/1/invoke", token, invokePayload{Revision: record.Revision, PackageDigest: "sha256:" + strings.Repeat("e", 64), Operation: "stacks.network.read", EnvironmentID: 1, StackID: 2}).Code)
 	require.Equal(t, 400, call("POST", "/native-extensions/1/invoke", token, invokePayload{Operation: "stacks.network.read", EnvironmentID: 1, StackID: 2}).Code)

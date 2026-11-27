@@ -3103,6 +3103,74 @@ paths:
       summary: preview the content of target file in the git repository
       tags:
         - gitops
+  /gitops/repo/files/search:
+    post:
+      operationId: GitOperationRepoFileSearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/gitops.repositoryBrowsePayload"
+        description: Stored source, reference and path filter
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: Search deployment paths in an authorized stored Git source
+      tags:
+        - gitops
+  /gitops/repo/refs:
+    post:
+      operationId: GitOperationRepoRefs
+      parameters:
+        - description: Refresh cached references
+          in: query
+          name: force
+          schema:
+            type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/gitops.repositoryBrowsePayload"
+        description: Stored source
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+        "400":
+          description: Invalid request
+        "403":
+          description: Source access denied
+        "404":
+          description: Source not found
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: List references from an authorized stored Git source
+      tags:
+        - gitops
   /gitops/sources:
     get:
       description: >-
@@ -8992,6 +9060,40 @@ paths:
       summary: Test LDAP connectivity
       tags:
         - ldap
+  /ldap/test:
+    post:
+      description: >-
+        Test user credentials against the supplied LDAP settings without
+        creating a user or session.
+
+        **Access policy**: administrator
+      operationId: LDAPTestLogin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ldap.testLoginPayload"
+        description: LDAP settings and user credentials
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ldap.testLoginResponse"
+        "400":
+          description: Invalid request
+        "403":
+          description: Permission denied
+        "500":
+          description: Server error
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: Test LDAP user login
+      tags:
+        - ldap
   /motd:
     get:
       description: "**Access policy**: restricted"
@@ -9839,6 +9941,12 @@ paths:
           required: true
           schema:
             type: integer
+        - description: Quoted project revision returned by StackFileInspect; stale
+            revisions are rejected
+          in: header
+          name: If-Match
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -9932,11 +10040,21 @@ paths:
           required: true
           schema:
             type: integer
+        - description: Use project for a portable archive of declared Compose files
+          in: query
+          name: format
+          schema:
+            type: string
+            enum:
+              - project
       responses:
         "200":
           description: Success
           content:
             application/json:
+              schema:
+                $ref: "#/components/schemas/stacks.stackFileResponse"
+            application/zip:
               schema:
                 $ref: "#/components/schemas/stacks.stackFileResponse"
         "400":
@@ -10344,9 +10462,13 @@ paths:
                     JSON array [{'name': 'name', 'value': 'value'}]."
                   type: string
                 file:
-                  description: Stack file
+                  description: Stack YAML file or reviewed portable project ZIP
                   type: string
                   format: binary
+                ProjectDigest:
+                  description: Exact archive digest from StackProjectInspect, required for ZIP
+                    projects
+                  type: string
               required:
                 - Name
         required: true
@@ -10479,9 +10601,13 @@ paths:
                     JSON array [{'name': 'name', 'value': 'value'}]. Optional"
                   type: string
                 file:
-                  description: Stack file
+                  description: Stack YAML file or reviewed portable project ZIP
                   type: string
                   format: binary
+                ProjectDigest:
+                  description: Exact archive digest from StackProjectInspect, required for ZIP
+                    projects
+                  type: string
       responses:
         "200":
           description: OK
@@ -10619,6 +10745,40 @@ paths:
         - ApiKeyAuth: []
         - jwt: []
       summary: Remove Kubernetes stacks by name
+      tags:
+        - stacks
+  /stacks/project/inspect:
+    post:
+      description: Checks bounded archive paths, checksums, file order and YAML
+        syntax. Does not resolve interpolation or referenced host files, contact
+        an engine, or certify external requirements.
+      operationId: StackProjectInspect
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: Portable project ZIP archive
+                  type: string
+                  format: binary
+              required:
+                - file
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/stacks.projectArchiveResponse"
+        "400":
+          description: Invalid project archive
+      security:
+        - ApiKeyAuth: []
+        - jwt: []
+      summary: Validate and preview a portable Compose project without deployment
       tags:
         - stacks
   "/stacks/webhooks/{webhookID}":
@@ -13926,6 +14086,17 @@ components:
         FileContent:
           type: string
       type: object
+    gitops.repositoryBrowsePayload:
+      properties:
+        dirOnly:
+          type: boolean
+        keyword:
+          type: string
+        reference:
+          type: string
+        sourceId:
+          type: integer
+      type: object
     gitops.repositoryFilePreviewPayload:
       properties:
         password:
@@ -14220,27 +14391,29 @@ components:
       properties:
         apiGroup:
           description: |-
-            APIGroup holds the API group of the referenced subject.
+            apiGroup holds the API group of the referenced subject.
             Defaults to "" for ServiceAccount subjects.
             Defaults to "rbac.authorization.k8s.io" for User and Group subjects.
             +optional
           type: string
         kind:
           description: >-
-            Kind of object being referenced. Values defined by this API group
+            kind of object being referenced. Values defined by this API group
             are "User", "Group", and "ServiceAccount".
 
             If the Authorizer does not recognized the kind value, the Authorizer should report an error.
+
+            +required
           type: string
         name:
           description: |-
-            Name of the object being referenced.
+            name of the object being referenced.
             +required
-            +k8s:required
+            +k8s:beta(since: "1.37")=+k8s:required
           type: string
         namespace:
           description: >-
-            Namespace of the referenced object.  If the object kind is
+            namespace of the referenced object.  If the object kind is
             non-namespace, such as "User" or "Group", and this value is not
             empty
 
@@ -15394,7 +15567,7 @@ components:
             - $ref: "#/components/schemas/v1.DeploymentSpec"
           description: |-
             Specification of the desired behavior of the Deployment.
-            +optional
+            +required
         status:
           allOf:
             - $ref: "#/components/schemas/v1.DeploymentStatus"
@@ -15808,6 +15981,20 @@ components:
       properties:
         LDAPSettings:
           $ref: "#/components/schemas/portainer.LDAPSettings"
+      type: object
+    ldap.testLoginPayload:
+      properties:
+        LDAPSettings:
+          $ref: "#/components/schemas/portainer.LDAPSettings"
+        Password:
+          type: string
+        Username:
+          type: string
+      type: object
+    ldap.testLoginResponse:
+      properties:
+        valid:
+          type: boolean
       type: object
     motd.Motd:
       properties:
@@ -18302,6 +18489,36 @@ components:
       x-enum-varnames:
         - _
         - ServiceWebhook
+    projectfiles.File:
+      properties:
+        path:
+          type: string
+        sha256:
+          type: string
+      type: object
+    projectfiles.Manifest:
+      properties:
+        composeFiles:
+          items:
+            type: string
+          type: array
+        entryPoint:
+          type: string
+        environmentNames:
+          items:
+            type: string
+          type: array
+        files:
+          items:
+            $ref: "#/components/schemas/projectfiles.File"
+          type: array
+        requirements:
+          items:
+            type: string
+          type: array
+        version:
+          type: integer
+      type: object
     registries.registryCatalogResponse:
       properties:
         repositories:
@@ -19671,8 +19888,23 @@ components:
         StackName:
           type: string
       type: object
+    stacks.projectArchiveResponse:
+      properties:
+        archiveDigest:
+          type: string
+        files:
+          additionalProperties:
+            type: string
+          type: object
+        manifest:
+          $ref: "#/components/schemas/projectfiles.Manifest"
+      type: object
     stacks.stackFileResponse:
       properties:
+        Revision:
+          description: Revision of all declared project files; use as If-Match when
+            updating.
+          type: string
         StackFileContent:
           description: Content of the Stack file
           example: |-
@@ -20980,6 +21212,18 @@ components:
             ClusterTrustBundles will be unified and deduplicated.
             +optional
           type: string
+        user:
+          description: >-
+            user is Optional: The owner UID of the created file.
+
+            If specified, the item-level user field takes precedence over defaultUser.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
+
+            +optional
+          type: integer
       type: object
     v1.ConfigMapEnvSource:
       properties:
@@ -21012,7 +21256,10 @@ components:
     v1.ConfigMapKeySelector:
       properties:
         key:
-          description: The key to select.
+          description: >-
+            The key to select from the ConfigMap's Data field.
+
+            Keys in the BinaryData field are not currently propagated to container env vars.
           type: string
         name:
           description: >-
@@ -21144,6 +21391,19 @@ components:
             This might be in conflict with other options that affect the file
 
             mode, like fsGroup, and the result can be other mode bits set.
+
+            +optional
+          type: integer
+        defaultUser:
+          description: >-
+            defaultUser is Optional: The owner UID of the created files by
+            default.
+
+            The defaultUser field is only used as a fallback when the item-level user field is unset.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
 
             +optional
           type: integer
@@ -21868,8 +22128,6 @@ components:
 
             and after successfully admitting desired pod resize.
 
-            +featureGate=InPlacePodVerticalScalingAllocatedStatus
-
             +optional
         allocatedResourcesStatus:
           description: |-
@@ -22101,7 +22359,7 @@ components:
             - $ref: "#/components/schemas/v1.DeploymentSpec"
           description: |-
             Specification of the desired behavior of the Deployment.
-            +optional
+            +required
         status:
           allOf:
             - $ref: "#/components/schemas/v1.DeploymentStatus"
@@ -22112,25 +22370,37 @@ components:
     v1.DeploymentCondition:
       properties:
         lastTransitionTime:
-          description: Last time the condition transitioned from one status to another.
+          description: |-
+            Last time the condition transitioned from one status to another.
+            +optional
           type: string
         lastUpdateTime:
-          description: The last time this condition was updated.
+          description: |-
+            The last time this condition was updated.
+            +optional
           type: string
         message:
-          description: A human readable message indicating details about the transition.
+          description: |-
+            A human readable message indicating details about the transition.
+            +optional
           type: string
         reason:
-          description: The reason for the condition's last transition.
+          description: |-
+            The reason for the condition's last transition.
+            +optional
           type: string
         status:
           allOf:
             - $ref: "#/components/schemas/k8s_io_api_core_v1.ConditionStatus"
-          description: Status of the condition, one of True, False, Unknown.
+          description: |-
+            Status of the condition, one of True, False, Unknown.
+            +optional
         type:
           allOf:
             - $ref: "#/components/schemas/v1.DeploymentConditionType"
-          description: Type of deployment condition.
+          description: |-
+            Type of deployment condition.
+            +optional
       type: object
     v1.DeploymentConditionType:
       enum:
@@ -22172,6 +22442,8 @@ components:
             reason will be surfaced in the deployment status. Note that progress will
 
             not be estimated during the time a deployment is paused. Defaults to 600s.
+
+            +optional
           type: integer
         replicas:
           description: >-
@@ -22199,6 +22471,7 @@ components:
             Label selector for pods. Existing ReplicaSets whose pods are
             selected by this will be the ones affected by this deployment.
             It must match the pod template's labels.
+            +required
         strategy:
           allOf:
             - $ref: "#/components/schemas/v1.DeploymentStrategy"
@@ -22215,6 +22488,7 @@ components:
           description: |-
             Template describes the pods that will be created.
             The only allowed template.spec.restartPolicy value is "Always".
+            +required
       type: object
     v1.DeploymentStatus:
       properties:
@@ -22390,6 +22664,18 @@ components:
             (limits.cpu, limits.memory, requests.cpu and requests.memory) are currently supported.
 
             +optional
+        user:
+          description: >-
+            user is Optional: The owner UID of the created file.
+
+            If specified, the item-level user field takes precedence over defaultUser.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
+
+            +optional
+          type: integer
       type: object
     v1.DownwardAPIVolumeSource:
       properties:
@@ -22410,6 +22696,19 @@ components:
             This might be in conflict with other options that affect the file
 
             mode, like fsGroup, and the result can be other mode bits set.
+
+            +optional
+          type: integer
+        defaultUser:
+          description: >-
+            defaultUser is Optional: The owner UID of the created files by
+            default.
+
+            The defaultUser field is only used as a fallback when the item-level user field is unset.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
 
             +optional
           type: integer
@@ -22438,6 +22737,29 @@ components:
             More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir
 
             +optional
+        mode:
+          description: >-
+            mode specifies the permission bits for the emptyDir directory, in
+            numeric
+
+            notation (e.g., 0755, 01777). Must be a value between 0000 and 01777.
+
+            If not specified, defaults to 0777.
+
+            This might be in conflict with other options that affect the file
+
+            mode, like fsGroup. If fsGroup is specified, the fsGroup permissions
+
+            will override the mode specified here.
+
+            This field has no effect on Windows.
+
+            This field is alpha and requires EmptyDirVolumeMode featuregate to be enabled.
+
+            +featureGate=EmptyDirVolumeMode
+
+            +optional
+          type: integer
         sizeLimit:
           allOf:
             - $ref: "#/components/schemas/resource.Quantity"
@@ -22928,6 +23250,66 @@ components:
 
             Required, must not be nil.
       type: object
+    v1.EvictionResponder:
+      properties:
+        name:
+          description: >-
+            name allows you to identify the responder responding to the
+            Eviction.
+
+
+            It must be a valid domain-prefixed key (such as "acme.io/foo").
+
+            Domain names *.k8s.io and *.kubernetes.io are reserved.
+
+            This field must be unique for each responder.
+
+            This field is required.
+
+            +required
+
+            +k8s:required
+
+            +k8s:format=k8s-prefixed-label-key
+
+            +k8s:customValidation
+          type: string
+        priority:
+          description: >-
+            priority for this responder. Higher priorities are selected first by
+            the evictionrequest-controller.
+
+            If there are responders with the same priority, the responder whose domain name comes first in the
+
+            alphabetical higher domain order, will be picked. This means that the top domain labels are compared
+
+            alphabetically first, followed by the lower domain labels. The key is compared last.
+
+
+            The responder that is the managing controller of the pod should set the value of
+
+            this field to 10000 to allow both for preemption or fallback registration by other
+
+            responders.
+
+
+            The minimum value is 0 and the maximum value is 100000.
+
+            The interval 0-999 is reserved for responders with *.k8s.io suffix.
+
+            This field is required.
+
+            +required
+
+            +k8s:required
+
+            +k8s:minimum=0
+
+            +k8s:maximum=100000
+
+            +k8s:customValidation
+          type: integer
+      type: object
     v1.ExecAction:
       properties:
         command:
@@ -23171,6 +23553,21 @@ components:
       type: object
     v1.GRPCAction:
       properties:
+        mode:
+          allOf:
+            - $ref: "#/components/schemas/v1.GRPCProbeMode"
+          description: >-
+            mode specifies the connection mode for the gRPC health probe.
+
+            Set to "TLS" to use TLS without certificate verification.
+
+            Set to "Plaintext" to use a plaintext (insecure) connection explicitly.
+
+            If not specified, the probe uses a plaintext (insecure) connection.
+
+            +featureGate=GRPCContainerProbeTLS
+
+            +optional
         port:
           description: Port number of the gRPC service. Number must be in the range 1 to
             65535.
@@ -23190,6 +23587,14 @@ components:
             +default=""
           type: string
       type: object
+    v1.GRPCProbeMode:
+      enum:
+        - Plaintext
+        - TLS
+      type: string
+      x-enum-varnames:
+        - GRPCProbeModePlaintext
+        - GRPCProbeModeTLS
     v1.GitRepoVolumeSource:
       properties:
         directory:
@@ -23267,6 +23672,14 @@ components:
             Name or number of the port to access on the container.
             Number must be in the range 1 to 65535.
             Name must be an IANA_SVC_NAME.
+        protocol:
+          allOf:
+            - $ref: "#/components/schemas/v1.HTTPProtocol"
+          description: |-
+            Protocol selects the wire protocol for the probe connection.
+            Nil defaults to HTTP/1.1.
+            +optional
+            +featureGate=H2CContainerProbe
         scheme:
           allOf:
             - $ref: "#/components/schemas/v1.URIScheme"
@@ -23275,6 +23688,14 @@ components:
             Defaults to HTTP.
             +optional
       type: object
+    v1.HTTPProtocol:
+      enum:
+        - HTTP1
+        - HTTP2
+      type: string
+      x-enum-varnames:
+        - HTTPProtocolHTTP1
+        - HTTPProtocolHTTP2
     v1.HostAlias:
       properties:
         hostnames:
@@ -23462,6 +23883,21 @@ components:
             +optional
           type: string
       type: object
+    v1.ImageVolumeStatus:
+      properties:
+        imageRef:
+          description: >-
+            ImageRef is the digest of the image used for this volume.
+
+            It should have a value that's similar to the pod's status.containerStatuses[i].imageID.
+
+            The ImageRef length should not exceed 256 characters.
+
+            +kubebuilder:validation:MaxLength=256
+
+            +required
+          type: string
+      type: object
     v1.KeyToPath:
       properties:
         key:
@@ -23490,6 +23926,18 @@ components:
             May not contain the path element '..'.
             May not start with the string '..'.
           type: string
+        user:
+          description: >-
+            user is Optional: The owner UID of the created file.
+
+            If specified, the item-level user field takes precedence over defaultUser.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
+
+            +optional
+          type: integer
       type: object
     v1.LabelSelector:
       properties:
@@ -23732,6 +24180,27 @@ components:
 
             +optional
           type: string
+        shardInfo:
+          allOf:
+            - $ref: "#/components/schemas/v1.ShardInfo"
+          description: >-
+            shardInfo is set when the list is a filtered subset of the full
+            collection,
+
+            as selected by a shard selector on the request. It echoes back the selector
+
+            so clients can verify which shard they received and merge sharded responses.
+
+            Clients should not cache sharded list responses as a full representation
+
+            of the collection.
+
+
+            This is an alpha field and requires enabling the ShardedListAndWatch feature gate.
+
+            +featureGate=ShardedListAndWatch
+
+            +optional
       type: object
     v1.ManagedFieldsEntry:
       properties:
@@ -23768,6 +24237,8 @@ components:
             ManagedFieldsEntry being created.
 
             The only valid values for this field are 'Apply' and 'Update'.
+
+            +k8s:alpha(since: "1.37")=+k8s:required
         subresource:
           description: >-
             Subresource is the name of the subresource used to update that
@@ -24000,6 +24471,156 @@ components:
 
             +optional
       type: object
+    v1.NodeAllocatableMappedResources:
+      properties:
+        name:
+          allOf:
+            - $ref: "#/components/schemas/v1.ResourceName"
+          description: |-
+            Name is the name of the resource (e.g., cpu, memory).
+            +required
+            +k8s:required
+        quantity:
+          allOf:
+            - $ref: "#/components/schemas/resource.Quantity"
+          description: >-
+            Quantity is the total node allocatable resource capacity allocated
+            for the claim.
+
+            This claim's allocated devices is shared by all the containers referencing the claim.
+
+            Kubelet adds this value to both requests and limits at the pod-level cgroup, and to limits at the container-level cgroup for each container referencing the claim.
+
+            +required
+
+            +k8s:required
+      type: object
+    v1.NodeAllocatableOverheadResources:
+      properties:
+        name:
+          allOf:
+            - $ref: "#/components/schemas/v1.ResourceName"
+          description: |-
+            Name is the name of the resource (e.g., cpu, memory).
+            +required
+            +k8s:required
+        perContainer:
+          allOf:
+            - $ref: "#/components/schemas/resource.Quantity"
+          description: >-
+            PerContainer is the variable overhead quantity applied for each
+            container referencing the claim.
+
+            The container references are recorded in `nodeAllocatableResourceClaimStatuses.containers`.
+
+            The total overhead quantity allocated for the claim is computed as:
+
+            Quantity = PerPod + (PerContainer * NumReferences)
+
+            Kubelet accounts for this overhead in cgroups:
+
+            - Pod-level cgroup (requests and limits): Kubelet adds PerPod + (PerContainer * NumReferences).
+
+            - Container-level cgroup (limits only): Kubelet adds PerPod + PerContainer for each referencing container.
+
+            This allows any single container to access the pod-level overhead, while the parent cgroup caps the total usage to account for PerPod exactly once.
+
+            At least one of PerPod or PerContainer must be specified. Specifying neither is an invalid configuration.
+
+            +optional
+
+            +k8s:optional
+        perPod:
+          allOf:
+            - $ref: "#/components/schemas/resource.Quantity"
+          description: >-
+            PerPod is the flat overhead quantity allocated per pod.
+
+            Adding to each container limit allows individual containers to utilize the overhead, while the parent pod-level cgroup limit caps the total usage at the pod boundary where the overhead is accounted for exactly once.
+
+            At least one of PerPod or PerContainer must be specified. Specifying neither is an invalid configuration.
+
+            +optional
+
+            +k8s:optional
+      type: object
+    v1.NodeAllocatableResourceClaimStatus:
+      properties:
+        containers:
+          description: >-
+            Containers lists the names of all containers in this pod that
+            reference the claim.
+
+            +optional
+
+            +listType=set
+
+            +k8s:optional
+
+            +k8s:listType=set
+          items:
+            type: string
+          type: array
+        mapping:
+          description: >-
+            Mapping contains allocations through devices mapped in the device
+            spec's `nodeAllocatableResources[...].mapping` field.
+
+            This is used by kubelet for pod level and container-level cgroup enforcement.
+
+            +optional
+
+            +patchStrategy=merge
+
+            +patchMergeKey=name
+
+            +listType=map
+
+            +listMapKey=name
+
+            +k8s:optional
+
+            +k8s:listType=map
+
+            +k8s:listMapKey=name
+          items:
+            $ref: "#/components/schemas/v1.NodeAllocatableMappedResources"
+          type: array
+        overhead:
+          description: >-
+            Overhead contains allocations through devices mapped in the device
+            spec's `nodeAllocatableResources[...].overhead` field.
+
+            This is used by kubelet for pod level and container-level cgroup enforcement.
+
+            +optional
+
+            +patchStrategy=merge
+
+            +patchMergeKey=name
+
+            +listType=map
+
+            +listMapKey=name
+
+            +k8s:optional
+
+            +k8s:listType=map
+
+            +k8s:listMapKey=name
+          items:
+            $ref: "#/components/schemas/v1.NodeAllocatableOverheadResources"
+          type: array
+        resourceClaimName:
+          description: >-
+            ResourceClaimName is the resource claim referenced by the pod that
+            resulted in this node allocatable resource allocation.
+
+            +required
+
+            +k8s:required
+          type: string
+      type: object
     v1.NodeCondition:
       properties:
         lastHeartbeatTime:
@@ -24038,6 +24659,11 @@ components:
         - DiskPressure
         - PIDPressure
         - NetworkUnavailable
+        - GracefulNodeShutdownInProgress
+        - DrainInProgress
+        - Drained
+        - MaintenancePlanned
+        - MaintenanceInProgress
       type: string
       x-enum-varnames:
         - NodeReady
@@ -24045,6 +24671,11 @@ components:
         - NodeDiskPressure
         - NodePIDPressure
         - NodeNetworkUnavailable
+        - NodeGracefulNodeShutdownInProgress
+        - NodeDrainInProgress
+        - NodeDrained
+        - NodeMaintenancePlanned
+        - NodeMaintenanceInProgress
     v1.NodeConfigSource:
       properties:
         configMap:
@@ -24183,6 +24814,34 @@ components:
         - NodePending
         - NodeRunning
         - NodeTerminated
+    v1.NodePodPreemptionPolicy:
+      properties:
+        disableResizePreemption:
+          description: >-
+            DisableResizePreemption lists the owners (e.g., autoscalers,
+            operators, administrators)
+
+            that have requested to disable scheduler and Kubelet preemption for in-place pod resize on this node.
+
+            If this list is non-empty, resize-induced preemption is disabled on this node.
+
+            This is an alpha field and requires enabling the InPlacePodVerticalScalingSchedulerPreemption feature gate.
+
+            +listType=set
+
+            +k8s:listType=set
+
+            +optional
+
+            +k8s:maxItems=20
+
+            +k8s:optional
+
+            +k8s:eachVal=+k8s:format=k8s-label-key
+          items:
+            type: string
+          type: array
+      type: object
     v1.NodeRuntimeHandler:
       properties:
         features:
@@ -24211,8 +24870,6 @@ components:
           description: >-
             UserNamespaces is set to true if the runtime handler supports
             UserNamespaces, including for volumes.
-
-            +featureGate=UserNamespacesSupport
 
             +optional
           type: boolean
@@ -24334,12 +24991,34 @@ components:
           items:
             type: string
           type: array
+        podPreemptionPolicy:
+          allOf:
+            - $ref: "#/components/schemas/v1.NodePodPreemptionPolicy"
+          description: >-
+            PodPreemptionPolicy controls the node-level preemption behaviors for
+            pods on this node.
+
+            This is an alpha field and requires enabling the InPlacePodVerticalScalingSchedulerPreemption feature gate.
+
+            +featureGate=InPlacePodVerticalScalingSchedulerPreemption
+
+            +optional
+
+            +k8s:optional
+
+            +k8s:ifDisabled(InPlacePodVerticalScalingSchedulerPreemption)=+k8s:forbidden
         providerID:
           description: >-
             ID of the node assigned by the cloud provider in the format:
             <ProviderName>://<ProviderSpecificNodeID>
 
             +optional
+
+            +k8s:alpha(since: "1.36")=+k8s:optional
+
+            +k8s:alpha(since: "1.36")=+k8s:update=NoModify
+
+            +k8s:alpha(since: "1.36")=+k8s:update=NoUnset
           type: string
         taints:
           description: |-
@@ -24497,7 +25176,6 @@ components:
         runtimeHandlers:
           description: |-
             The available runtime handlers.
-            +featureGate=UserNamespacesSupport
             +optional
             +listType=atomic
           items:
@@ -24563,6 +25241,12 @@ components:
           description: OS Image reported by the node from /etc/os-release (e.g. Debian
             GNU/Linux 7 (wheezy)).
           type: string
+        runningInUserNamespace:
+          description: |-
+            Whether the node is running in a user namespace.
+            +featureGate=KubeletInUserNamespace
+            +optional
+          type: boolean
         swap:
           allOf:
             - $ref: "#/components/schemas/v1.NodeSwapStatus"
@@ -24633,6 +25317,8 @@ components:
             More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
             +optional
+
+            +k8s:alpha(since: "1.37")=+k8s:immutable
           type: string
         deletionGracePeriodSeconds:
           description: >-
@@ -24646,6 +25332,10 @@ components:
             Read-only.
 
             +optional
+
+            +k8s:alpha(since: "1.37")=+k8s:optional
+
+            +k8s:alpha(since: "1.37")=+k8s:immutable
           type: integer
         deletionTimestamp:
           description: >-
@@ -24686,6 +25376,10 @@ components:
             More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
             +optional
+
+            +k8s:alpha(since: "1.37")=+k8s:optional
+
+            +k8s:alpha(since: "1.37")=+k8s:immutable
           type: string
         finalizers:
           description: >-
@@ -24759,6 +25453,10 @@ components:
             Populated by the system. Read-only.
 
             +optional
+
+            +k8s:alpha(since: "1.37")=+k8s:optional
+
+            +k8s:alpha(since: "1.37")=+k8s:minimum=0
           type: integer
         labels:
           additionalProperties:
@@ -24787,6 +25485,7 @@ components:
 
             +optional
             +listType=atomic
+            +k8s:alpha(since: "1.37")=+k8s:optional
           items:
             $ref: "#/components/schemas/v1.ManagedFieldsEntry"
           type: array
@@ -24847,6 +25546,8 @@ components:
             +listType=map
 
             +listMapKey=uid
+
+            +k8s:alpha(since:"1.37")=+k8s:optional
           items:
             $ref: "#/components/schemas/v1.OwnerReference"
           type: array
@@ -24898,12 +25599,18 @@ components:
             More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
 
             +optional
+
+            +k8s:alpha(since: "1.37")=+k8s:optional
+
+            +k8s:alpha(since: "1.37")=+k8s:immutable
           type: string
       type: object
     v1.OwnerReference:
       properties:
         apiVersion:
-          description: API version of the referent.
+          description: |-
+            API version of the referent.
+            +k8s:alpha(since:"1.37")=+k8s:required
           type: string
         blockOwnerDeletion:
           description: >-
@@ -24936,18 +25643,24 @@ components:
             Kind of the referent.
 
             More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+
+            +k8s:alpha(since:"1.37")=+k8s:required
           type: string
         name:
           description: >-
             Name of the referent.
 
             More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
+
+            +k8s:alpha(since:"1.37")=+k8s:required
           type: string
         uid:
           description: >-
             UID of the referent.
 
             More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
+
+            +k8s:alpha(since:"1.37")=+k8s:required
           type: string
       type: object
     v1.PersistentVolumeAccessMode:
@@ -25001,9 +25714,9 @@ components:
 
             it will create a new volume based on the contents of the specified data source.
 
-            When the AnyVolumeDataSource feature gate is enabled, dataSource contents will be copied to dataSourceRef,
+            dataSource contents will be copied to dataSourceRef, and dataSourceRef contents will be
 
-            and dataSourceRef contents will be copied to dataSource when dataSourceRef.namespace is not specified.
+            copied to dataSource when dataSourceRef.namespace is not specified.
 
             If the namespace is specified, then dataSourceRef will not be copied to dataSource.
 
@@ -25048,8 +25761,6 @@ components:
               specified.
             * While dataSource only allows local objects, dataSourceRef allows objects
               in any namespaces.
-            (Beta) Using this field requires the AnyVolumeDataSource feature gate to be enabled.
-
             (Alpha) Using the namespace field of dataSourceRef requires the CrossNamespaceVolumeDataSource feature gate to be enabled.
 
             +optional
@@ -25139,6 +25850,8 @@ components:
 
 
             +optional
+
+            +k8s:opaqueType
         spec:
           allOf:
             - $ref: "#/components/schemas/v1.PersistentVolumeClaimSpec"
@@ -25596,6 +26309,18 @@ components:
 
             +required
           type: string
+        user:
+          description: >-
+            user is Optional: The owner UID of the created file.
+
+            If specified, the item-level user field takes precedence over defaultUser.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
+
+            +optional
+          type: integer
         userAnnotations:
           additionalProperties:
             type: string
@@ -25645,10 +26370,6 @@ components:
           description: >-
             If set, this represents the .metadata.generation that the pod
             condition was set based upon.
-
-            The PodObservedGenerationTracking feature gate must be enabled to use this field.
-
-            +featureGate=PodObservedGenerationTracking
 
             +optional
           type: integer
@@ -25883,6 +26604,25 @@ components:
             ResourceClaim, which will be recorded in pod.status.resourceClaimStatuses.
 
 
+            When the DRAWorkloadResourceClaims feature gate is enabled and the pod
+
+            belongs to a PodGroup that defines a PodGroupResourceClaim with the same
+
+            Name and ResourceClaimTemplateName, this PodResourceClaim resolves to the
+
+            ResourceClaim generated for the PodGroup. All pods in the group that
+
+            define an equivalent PodResourceClaim matching the
+
+            PodGroupResourceClaim's Name and ResourceClaimTemplateName share the same
+
+            generated ResourceClaim. ResourceClaims generated for a PodGroup are
+
+            owned by the PodGroup and their lifecycles are tied to the PodGroup
+
+            instead of any individual pod.
+
+
             This field is immutable and no changes will be made to the
 
             corresponding ResourceClaim by the control plane after creating the
@@ -25906,9 +26646,16 @@ components:
         resourceClaimName:
           description: |-
             ResourceClaimName is the name of the ResourceClaim that was
-            generated for the Pod in the namespace of the Pod. If this is
-            unset, then generating a ResourceClaim was not necessary. The
-            pod.spec.resourceClaims entry can be ignored in this case.
+            generated for the Pod in the namespace of the Pod.
+
+            When the DRAWorkloadResourceClaims feature is enabled and the
+            corresponding PodResourceClaim matches a PodGroupResourceClaim
+            made by the Pod's PodGroup, then this is the name of the
+            ResourceClaim generated and reserved for the PodGroup.
+
+            If this is unset, then generating a ResourceClaim was not
+            necessary. The pod.spec.resourceClaims entry can be ignored in
+            this case.
 
             +optional
           type: string
@@ -25927,6 +26674,18 @@ components:
           description: |-
             Name of the scheduling gate.
             Each scheduling gate must have a unique name field.
+          type: string
+      type: object
+    v1.PodSchedulingGroup:
+      properties:
+        podGroupName:
+          description: |-
+            PodGroupName specifies the name of the standalone PodGroup object
+            that represents the runtime instance of this group.
+            Must be a DNS subdomain.
+
+            +optional
+            +oneOf=GroupSelection
           type: string
       type: object
     v1.PodSecurityContext:
@@ -26061,14 +26820,8 @@ components:
 
             CSIDriver instance. Other volumes are always re-labelled recursively.
 
-            "MountOption" value is allowed only when SELinuxMount feature gate is enabled.
 
-
-            If not specified and SELinuxMount feature gate is enabled, "MountOption" is used.
-
-            If not specified and SELinuxMount feature gate is disabled, "MountOption" is used for ReadWriteOncePod volumes
-
-            and "Recursive" for all other volumes.
+            If not specified, "MountOption" is used.
 
 
             This field affects only Pods that have SELinux label set, either in PodSecurityContext or in SecurityContext of all containers.
@@ -26279,6 +27032,61 @@ components:
           items:
             $ref: "#/components/schemas/v1.EphemeralContainer"
           type: array
+        evictionResponders:
+          description: >-
+            evictionResponders reference responders that react to Evictions
+            based on EvictionRequests.
+
+            Responders should observe and communicate through the Eviction Resource API to help with
+
+            the graceful termination of a pod. The responders are selected sequentially, according to
+
+            their specified priority.
+
+
+            Responders should periodically report on an eviction progress by updating the
+
+            .status.responders[].heartbeatTime field of the Eviction object. If this field is not updated
+
+            within the heartbeat deadline defined by the Eviction API (currently 20 minutes), the eviction
+
+            is passed over to the next responder with a lower priority. If there is no other responder,
+
+            the last default imperative-eviction.k8s.io/evictor responder with a priority of 100 will
+
+            evict the pod using the imperative Eviction API (pods/<name>/eviction subresource).
+
+
+            The maximum length of the responders list is 10.
+
+            Responders are not supported when the pod is part of a PodGroup (.spec.schedulingGroup is set).
+
+            This field can only be set on creation and is immutable afterwards.
+
+            +featureGate=EvictionRequestAPI
+
+            +optional
+
+            +patchMergeKey=name
+
+            +patchStrategy=merge
+
+            +listType=map
+
+            +listMapKey=name
+
+            +k8s:optional
+
+            +k8s:listType=map
+
+            +k8s:listMapKey=name
+
+            +k8s:maxItems=10
+
+            +k8s:alpha(since: "1.37")=+k8s:dependentForbidden("schedulingGroup")
+          items:
+            $ref: "#/components/schemas/v1.EvictionResponder"
+          type: array
         hostAliases:
           description: >-
             HostAliases is an optional list of hosts and IPs that will be
@@ -26302,7 +27110,6 @@ components:
           description: |-
             Use the host's ipc namespace.
             Optional: Default to false.
-            +k8s:conversion-gen=false
             +optional
           type: boolean
         hostNetwork:
@@ -26318,15 +27125,12 @@ components:
 
             Default to false.
 
-            +k8s:conversion-gen=false
-
             +optional
           type: boolean
         hostPID:
           description: |-
             Use the host's pid namespace.
             Optional: Default to false.
-            +k8s:conversion-gen=false
             +optional
           type: boolean
         hostUsers:
@@ -26346,10 +27150,6 @@ components:
             mitigating container breakout vulnerabilities even allowing users to run their
 
             containers as root without actually having root privileges on the host.
-
-            This field is alpha-level and is only honored by servers that enable the UserNamespacesSupport feature.
-
-            +k8s:conversion-gen=false
 
             +optional
           type: boolean
@@ -26380,8 +27180,6 @@ components:
 
 
             This field must be a valid DNS subdomain as defined in RFC 1123 and contain at most 64 characters.
-
-            Requires the HostnameOverride feature gate to be enabled.
 
 
             +featureGate=HostnameOverride
@@ -26543,6 +27341,10 @@ components:
 
             One of Never, PreemptLowerPriority.
 
+            When Priority Admission Controller is enabled, it prevents users from setting
+
+            this field. The admission controller populates this field from PriorityClassName.
+
             Defaults to PreemptLowerPriority if unset.
 
             +optional
@@ -26702,6 +27504,39 @@ components:
           items:
             $ref: "#/components/schemas/v1.PodSchedulingGate"
           type: array
+        schedulingGroup:
+          allOf:
+            - $ref: "#/components/schemas/v1.PodSchedulingGroup"
+          description: >-
+            SchedulingGroup provides a reference to the immediate scheduling
+            runtime
+
+            grouping object that this Pod belongs to.
+
+            This field is used by the scheduler to identify the group and apply the
+
+            correct group scheduling policies. The association with a group also
+
+            impacts other lifecycle aspects of a Pod that are relevant in a wider context
+
+            of scheduling like preemption, resource attachment, etc. If not specified,
+
+            the Pod is treated as a single unit in all of these aspects.
+
+            The group object referenced by this field may not exist at the time the
+
+            Pod is created.
+
+            This field is immutable, but a group object with the same name may be
+
+            recreated with different policies. Doing this during pod scheduling
+
+            may result in the placement not conforming to the expected policies.
+
+
+            +featureGate=GenericWorkload
+
+            +optional
         securityContext:
           allOf:
             - $ref: "#/components/schemas/v1.PodSecurityContext"
@@ -26718,8 +27553,6 @@ components:
             ServiceAccountName.
 
             Deprecated: Use serviceAccountName instead.
-
-            +k8s:conversion-gen=false
 
             +optional
           type: string
@@ -26760,8 +27593,6 @@ components:
 
             Optional: Default to false.
 
-            +k8s:conversion-gen=false
-
             +optional
           type: boolean
         subdomain:
@@ -26799,6 +27630,7 @@ components:
             If specified, the pod's tolerations.
             +optional
             +listType=atomic
+            +k8s:alpha(since: "1.37")=+k8s:optional
           items:
             $ref: "#/components/schemas/v1.Toleration"
           type: array
@@ -26844,29 +27676,6 @@ components:
           items:
             $ref: "#/components/schemas/v1.Volume"
           type: array
-        workloadRef:
-          allOf:
-            - $ref: "#/components/schemas/v1.WorkloadReference"
-          description: >-
-            WorkloadRef provides a reference to the Workload object that this
-            Pod belongs to.
-
-            This field is used by the scheduler to identify the PodGroup and apply the
-
-            correct group scheduling policies. The Workload object referenced
-
-            by this field may not exist at the time the Pod is created.
-
-            This field is immutable, but a Workload object with the same name
-
-            may be recreated with different policies. Doing this during pod scheduling
-
-            may result in the placement not conforming to the expected policies.
-
-
-            +featureGate=GenericWorkload
-
-            +optional
       type: object
     v1.PodStatus:
       properties:
@@ -27023,6 +27832,39 @@ components:
 
             +optional
           type: string
+        nodeAllocatableResourceClaimStatuses:
+          description: >-
+            NodeAllocatableResourceClaimStatuses contains the status of
+            node-allocatable resources
+
+            that were allocated for this pod through DRA claims. This includes resources currently
+
+            reported in v1.Node `status.allocatable` that are not extended resources
+
+            (see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#extended-resources).
+
+            Examples include "cpu", "memory", "ephemeral-storage", and hugepages.
+
+            +featureGate=DRANodeAllocatableResources
+
+            +optional
+
+            +patchStrategy=merge
+
+            +patchMergeKey=resourceClaimName
+
+            +listType=map
+
+            +listMapKey=resourceClaimName
+
+            +k8s:optional
+
+            +k8s:listType=map
+
+            +k8s:listMapKey=resourceClaimName
+          items:
+            $ref: "#/components/schemas/v1.NodeAllocatableResourceClaimStatus"
+          type: array
         nominatedNodeName:
           description: >-
             nominatedNodeName is set only when this pod preempts other pods on
@@ -27048,8 +27890,6 @@ components:
             was set based upon.
 
             The PodObservedGenerationTracking feature gate must be enabled to use this field.
-
-            +featureGate=PodObservedGenerationTracking
 
             +optional
           type: integer
@@ -27198,6 +28038,29 @@ components:
 
             +optional
           type: string
+        volumeHealth:
+          description: >-
+            volumeHealth contains node-reported health for each volume the pod
+            is using.
+
+            Populated by the kubelet on the pod's node.
+
+            +featureGate=CSIVolumeHealth
+
+            +optional
+
+            +listType=map
+
+            +listMapKey=name
+
+            +k8s:optional
+
+            +k8s:listType=map
+
+            +k8s:listMapKey=name
+          items:
+            $ref: "#/components/schemas/v1.PodVolumeHealth"
+          type: array
       type: object
     v1.PodTemplateSpec:
       properties:
@@ -27210,6 +28073,8 @@ components:
             More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 
             +optional
+
+            +k8s:opaqueType
         spec:
           allOf:
             - $ref: "#/components/schemas/v1.PodSpec"
@@ -27219,6 +28084,41 @@ components:
             More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
             +optional
+      type: object
+    v1.PodVolumeHealth:
+      properties:
+        healthConditions:
+          description: |-
+            conditions is the set of adverse conditions reported by
+            the CSI node plugin for this volume on this node.
+            At most 16 conditions may be reported.
+            +optional
+            +listType=map
+            +listMapKey=status
+            +patchMergeKey=status
+            +patchStrategy=merge
+            +listMapKey=reason
+            +k8s:optional
+            +k8s:listType=map
+            +k8s:listMapKey=status
+            +k8s:listMapKey=reason
+            +k8s:maxItems=16
+          items:
+            $ref: "#/components/schemas/v1.VolumeHealthCondition"
+          type: array
+        lastTransitionTime:
+          description: >-
+            lastTransitionTime is when the current set of conditions first
+            appeared.
+
+            +optional
+          type: string
+        name:
+          description: |-
+            name matches an entry in pod.spec.volumes.
+            +required
+            +k8s:required
+          type: string
       type: object
     v1.PortworxVolumeSource:
       properties:
@@ -27376,6 +28276,19 @@ components:
             This might be in conflict with other options that affect the file
 
             mode, like fsGroup, and the result can be other mode bits set.
+
+            +optional
+          type: integer
+        defaultUser:
+          description: >-
+            defaultUser is Optional: The owner UID of the created files by
+            default.
+
+            The defaultUser field is only used as a fallback when the item-level user field is unset.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
 
             +optional
           type: integer
@@ -27608,7 +28521,7 @@ components:
 
             More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status
 
-            +optional
+            +required
         status:
           allOf:
             - $ref: "#/components/schemas/v1.ReplicaSetStatus"
@@ -27645,11 +28558,15 @@ components:
         status:
           allOf:
             - $ref: "#/components/schemas/k8s_io_api_core_v1.ConditionStatus"
-          description: Status of the condition, one of True, False, Unknown.
+          description: |-
+            Status of the condition, one of True, False, Unknown.
+            +optional
         type:
           allOf:
             - $ref: "#/components/schemas/v1.ReplicaSetConditionType"
-          description: Type of replica set condition.
+          description: |-
+            Type of replica set condition.
+            +optional
       type: object
     v1.ReplicaSetConditionType:
       enum:
@@ -27694,6 +28611,8 @@ components:
             It must match the pod template's labels.
 
             More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors
+
+            +required
         template:
           allOf:
             - $ref: "#/components/schemas/v1.PodTemplateSpec"
@@ -27810,6 +28729,17 @@ components:
                         For example, Device Plugin got unregistered and hasn't been re-registered since.
 
             In future we may want to introduce the PermanentlyUnhealthy Status.
+        message:
+          description: >-
+            Message provides human-readable context for Health (e.g. "ECC error
+            count exceeded threshold").
+
+            This field is populated by the kubelet when ResourceHealthStatusMessage is enabled if the DRA plugin returns a message, and is null otherwise.
+
+            +featureGate=ResourceHealthStatusMessage
+
+            +optional
+          type: string
         resourceID:
           description: ResourceID is the unique identifier of the resource. See the
             ResourceID type for more information.
@@ -28065,9 +28995,19 @@ components:
             Name of the resource. Must be unique within the pod and in case of
             non-DRA resource, match one of the resources from the pod spec.
 
-            For DRA resources, the value must be "claim:<claim_name>/<request>".
+            For DRA resources, the value must be "claim:<claim_name>/<request>" when
 
-            When this status is reported about a container, the "claim_name" and "request" must match one of the claims of this container.
+            container.resources.claims[*].request is set or "claim:<claim_name>" when
+
+            container.resources.claims[*].request is empty.
+
+            For DRA-backed extended resources, "claim:<claim_name>/<request>" is used
+
+            when the claim name and request name are recorded in pod.status.extendedResourceClaimStatus.
+
+            When this status is reported about a container, the "claim_name" and "request"
+
+            must match one of the claims of this container.
 
             +required
         resources:
@@ -28101,16 +29041,20 @@ components:
     v1.RoleRef:
       properties:
         apiGroup:
-          description: APIGroup is the group for the resource being referenced
+          description: |-
+            apiGroup is the group for the resource being referenced
+            +optional
           type: string
         kind:
-          description: Kind is the type of resource being referenced
+          description: |-
+            kind is the type of resource being referenced
+            +required
           type: string
         name:
           description: |-
-            Name is the name of resource being referenced
+            name is the name of resource being referenced
             +required
-            +k8s:required
+            +k8s:beta(since: "1.37")=+k8s:required
           type: string
       type: object
     v1.RollingUpdateDeployment:
@@ -28503,6 +29447,19 @@ components:
 
             +optional
           type: integer
+        defaultUser:
+          description: >-
+            defaultUser is Optional: The owner UID of the created files by
+            default.
+
+            The defaultUser field is only used as a fallback when the item-level user field is unset.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
+
+            +optional
+          type: integer
         items:
           description: >-
             items If unspecified, each key-value pair in the Data field of the
@@ -28599,8 +29556,6 @@ components:
             The default value is Default which uses the container runtime defaults for
 
             readonly paths and masked paths.
-
-            This requires the ProcMountType feature flag to be enabled.
 
             Note that this field cannot be set when spec.os.name is windows.
 
@@ -28732,6 +29687,30 @@ components:
             the
 
             token into.
+          type: string
+        user:
+          description: >-
+            user is Optional: The owner UID of the created file.
+
+            If specified, the item-level user field takes precedence over defaultUser.
+
+            (Alpha) This field requires the AtomicWriteVolumeUserFields feature gate to be enabled.
+
+            +featureGate=AtomicWriteVolumeUserFields
+
+            +optional
+          type: integer
+      type: object
+    v1.ShardInfo:
+      properties:
+        selector:
+          description: >-
+            selector is the shard selector string from the request, echoed back
+            so clients
+
+            can verify which shard they received and merge responses from multiple shards.
+
+            +required
           type: string
       type: object
     v1.Signal:
@@ -29044,6 +30023,10 @@ components:
             If the key is empty, operator must be Exists; this combination means to match all values and all keys.
 
             +optional
+
+            +k8s:alpha(since: "1.37")=+k8s:optional
+
+            +k8s:alpha(since: "1.37")=+k8s:format=k8s-label-key
           type: string
         operator:
           allOf:
@@ -29651,13 +30634,11 @@ components:
 
             The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
 
-            The volume will be mounted read-only (ro) and non-executable files (noexec).
+            The volume will be mounted read-only (ro).
 
             Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
 
             The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
-
-            +featureGate=ImageVolume
 
             +optional
         iscsi:
@@ -29714,9 +30695,7 @@ components:
 
             Deprecated: PortworxVolume is deprecated. All operations for the in-tree portworxVolume type
 
-            are redirected to the pxd.portworx.com CSI driver when the CSIMigrationPortworx feature-gate
-
-            is on.
+            are redirected to the pxd.portworx.com CSI driver.
 
             +optional
         projected:
@@ -29796,14 +30775,79 @@ components:
           description: name must match the name of a persistentVolumeClaim in the pod
           type: string
       type: object
+    v1.VolumeHealthCondition:
+      properties:
+        message:
+          description: |-
+            message is a human-readable description.
+            Maximum permitted length of a message is 1024 bytes.
+            +optional
+            +k8s:optional
+            +k8s:maxBytes=1024
+          type: string
+        reason:
+          description: >-
+            reason is a brief CamelCase machine-parseable reason.
+
+            Together with status it forms the unique identity of a condition entry.
+
+            Maximum permitted length of a reason is 256 bytes.
+
+            +required
+
+            +k8s:required
+
+            +k8s:maxBytes=256
+          type: string
+        status:
+          allOf:
+            - $ref: "#/components/schemas/v1.VolumeHealthStatusType"
+          description: |-
+            status is the machine-parseable health category.
+            Possible values:
+            - "Inaccessible": the volume cannot be accessed.
+            - "DataLoss": data loss has been detected on the volume.
+            - "Degraded": the volume is functioning with reduced capability.
+            +required
+            +k8s:required
+      type: object
+    v1.VolumeHealthStatusType:
+      enum:
+        - Inaccessible
+        - DataLoss
+        - Degraded
+      type: string
+      x-enum-varnames:
+        - VolumeHealthInaccessible
+        - VolumeHealthDataLoss
+        - VolumeHealthDegraded
     v1.VolumeMount:
       properties:
-        mountPath:
+        bindMountOptions:
           description: >-
-            Path within the container at which the volume should be
-            mounted.  Must
+            bindMountOptions is the list of additional bind mount options to
+            apply when
 
-            not contain ':'.
+            mounting this volume into the container. Allowed values are noexec,
+
+            nodev, and nosuid. These are Linux mount options and have no effect on
+
+            Windows nodes.
+
+            This field is not supported with image volumes.
+
+            This is an alpha field and requires enabling the VolumeBindMountOptions feature gate.
+
+            +featureGate=VolumeBindMountOptions
+
+            +optional
+
+            +listType=set
+          items:
+            type: string
+          type: array
+        mountPath:
+          description: Path within the container at which the volume should be mounted.
           type: string
         mountPropagation:
           allOf:
@@ -29914,6 +30958,16 @@ components:
             An IfPossible value in the original VolumeMount must be translated to Disabled or Enabled,
 
             depending on the mount result.
+
+            +optional
+        volumeStatus:
+          allOf:
+            - $ref: "#/components/schemas/v1.VolumeStatus"
+          description: >-
+            volumeStatus represents volume-type-specific status about the
+            mounted
+
+            volume.
 
             +optional
       type: object
@@ -30074,6 +31128,19 @@ components:
 
             +optional
       type: object
+    v1.VolumeStatus:
+      properties:
+        image:
+          allOf:
+            - $ref: "#/components/schemas/v1.ImageVolumeStatus"
+          description: >-
+            image represents an OCI object (a container image or artifact)
+            pulled and mounted on the kubelet's host machine.
+
+            +featureGate=ImageVolumeWithDigest
+
+            +optional
+      type: object
     v1.VsphereVirtualDiskVolumeSource:
       properties:
         fsType:
@@ -30159,52 +31226,6 @@ components:
             May also be set in PodSecurityContext. If set in both SecurityContext and
 
             PodSecurityContext, the value specified in SecurityContext takes precedence.
-
-            +optional
-          type: string
-      type: object
-    v1.WorkloadReference:
-      properties:
-        name:
-          description: >-
-            Name defines the name of the Workload object this Pod belongs to.
-
-            Workload must be in the same namespace as the Pod.
-
-            If it doesn't match any existing Workload, the Pod will remain unschedulable
-
-            until a Workload object is created and observed by the kube-scheduler.
-
-            It must be a DNS subdomain.
-
-
-            +required
-          type: string
-        podGroup:
-          description: >-
-            PodGroup is the name of the PodGroup within the Workload that this
-            Pod
-
-            belongs to. If it doesn't match any existing PodGroup within the Workload,
-
-            the Pod will remain unschedulable until the Workload object is recreated
-
-            and observed by the kube-scheduler. It must be a DNS label.
-
-
-            +required
-          type: string
-        podGroupReplicaKey:
-          description: >-
-            PodGroupReplicaKey specifies the replica key of the PodGroup to
-            which this
-
-            Pod belongs. It is used to distinguish pods belonging to different replicas
-
-            of the same pod group. The pod group policy is applied separately to each replica.
-
-            When set, it must be a DNS label.
-
 
             +optional
           type: string

@@ -23,7 +23,12 @@ export function counterRate(
       Date.parse(previous!.traffic.collectedAt)) /
     1000;
   const delta = BigInt(after[direction]) - BigInt(before[direction]);
-  if (elapsed <= 0 || delta < 0n || delta > BigInt(Number.MAX_SAFE_INTEGER))
+  if (
+    !Number.isFinite(elapsed) ||
+    elapsed <= 0 ||
+    delta < 0n ||
+    delta > BigInt(Number.MAX_SAFE_INTEGER)
+  )
     return 'Counter reset or invalid interval';
   return `${(Number(delta) / elapsed / 1024).toFixed(2)} KiB/s`;
 }

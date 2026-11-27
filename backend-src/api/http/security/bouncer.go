@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	portainer "github.com/portainer/portainer/api"
@@ -302,10 +303,35 @@ func (bouncer *RequestBouncer) mwUpgradeToRestrictedRequest(next http.Handler) h
 		}
 
 		responseWriter := &statusCapturingResponseWriter{ResponseWriter: w}
+		notification, _ := ctx.Value(mutationNotificationKey{}).(*atomic.Bool)
+		if notification == nil {
+			notification = &atomic.Bool{}
+			ctx = context.WithValue(ctx, mutationNotificationKey{}, notification)
+		}
 		next.ServeHTTP(responseWriter, r.WithContext(ctx))
-		if bouncer.publishMutation != nil && responseWriter.wasSuccessful() {
+		if bouncer.publishMutation != nil && responseWriter.wasSuccessful() && notification.CompareAndSwap(false, true) {
 			bouncer.publishMutation()
 		}
+	})
+}
+
+type mutationNotificationKey struct{}
+
+// MarkReadOnlyOperation prevents a POST used only to read data from triggering
+// realtime mutation notifications. Only server handlers can set this marker;
+// authentication, authorization and activity auditing are unchanged.
+func MarkReadOnlyOperation(r *http.Request) {
+	if notification, ok := r.Context().Value(mutationNotificationKey{}).(*atomic.Bool); ok {
+		notification.Store(true)
+	}
+}
+
+// ReadOnlyOperation marks a read handler whose HTTP method would otherwise be
+// classified as a mutation. It must not wrap handlers that can change data.
+func ReadOnlyOperation(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		MarkReadOnlyOperation(r)
+		next.ServeHTTP(w, r)
 	})
 }
 

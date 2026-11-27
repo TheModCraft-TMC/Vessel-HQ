@@ -3,11 +3,13 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { execFile } from 'node:child_process';
 import { promisify, parseArgs } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
 import { baseline, verify, stage, build } from './builder.mjs';
+import { withBuildLock } from './build-lock.mjs';
 
 const execute = promisify(execFile);
 const json = (value) => `${JSON.stringify(value, null, 2)}\n`;
@@ -62,7 +64,7 @@ export function packageSet(options) {
 }
 
 export async function prepareArchives({ source, baselineFile, baselineDigest, candidate, extractor, packages }) {
-  const temporary = await fs.mkdtemp('/tmp/vessel-verified-extension-');
+  const temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'vessel-verified-extension-'));
   try {
     const roots = [];
     for (const [index, item] of packages.entries()) {
@@ -142,6 +144,12 @@ export async function activateDevelopment({ source, candidate, receipt, baseline
 }
 
 export async function developmentPipeline(options) {
+ if (!options.development) throw new Error('Explicit --development required; this is not a production release adapter');
+ const api = new URL(options.api);
+ if (!['localhost', '127.0.0.1', '[::1]'].includes(api.hostname) || !['http:', 'https:'].includes(api.protocol)) throw new Error('Development controller requires a loopback backend API');
+ return withBuildLock(options.source,()=>developmentPipelineLocked(options));
+}
+async function developmentPipelineLocked(options) {
   if (!options.development) throw new Error('Explicit --development required; this is not a production release adapter');
   const api = new URL(options.api);
   if (!['localhost', '127.0.0.1', '[::1]'].includes(api.hostname) || !['http:', 'https:'].includes(api.protocol))
@@ -155,13 +163,7 @@ export async function developmentPipeline(options) {
   if (!tokenStat.isFile() || (tokenStat.mode & 0o077) !== 0) throw new Error('Operator token file must be private (0600)');
   const token = (await fs.readFile(tokenFile, 'utf8')).trim();
   if (!token || /\s/.test(token)) throw new Error('Expected one bearer token in private credential file');
-  let existing = [];
-  try {
-    existing = await fs.readdir(path.join(source, namespace));
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
-  }
-  if (existing.length) throw new Error('Initial development controller requires an empty compiled package set; retain the reviewed baseline for a later complete-set rebuild');
+
   const packages = packageSet(options);
   const initial = await Promise.all(packages.map((expected) => snapshot(api, token, expected)));
   const approve = async () => {

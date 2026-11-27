@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
 import axios from '@/shared/http';
-import { isBE } from '@/shared/feature-flags/feature-flags.service';
 
 interface SearchPayload {
   keyword: string;
@@ -14,7 +13,10 @@ export function useSearch(payload: SearchPayload, enabled: boolean) {
   return useQuery({
     queryKey: ['gitops', 'search', payload],
     queryFn: () => searchRepo(payload),
-    enabled: isBE && enabled,
+    enabled:
+      enabled &&
+      Number.isSafeInteger(payload.sourceId) &&
+      payload.sourceId! > 0,
     retry: false,
     cacheTime: 0,
   });

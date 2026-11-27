@@ -17,6 +17,7 @@ import {
 } from '../../queries/useExtensions';
 import { PermissionReview } from '../ExtensionsView/PermissionReview';
 
+import { ExtensionConfiguration } from './ExtensionConfiguration/ExtensionConfiguration';
 import styles from './ExtensionDetailsView.module.css';
 
 export function ExtensionDetailsView({
@@ -122,7 +123,10 @@ function ExtensionSettings({
   const actions = useExtensionActions();
   const [error, setError] = useState('');
   const [confirmRemove, setConfirmRemove] = useState(false);
-  const busy = Object.values(actions).some((action) => action.isLoading);
+  const [configurationBusy, setConfigurationBusy] = useState(false);
+  const busy =
+    configurationBusy ||
+    Object.values(actions).some((action) => action.isLoading);
   async function run(operation: () => Promise<unknown>) {
     setError('');
     try {
@@ -137,6 +141,9 @@ function ExtensionSettings({
     }
   }
   const settings = [
+    ...(extension.safetyReason
+      ? [['Safety stop', extension.safetyReason]]
+      : []),
     [
       'Package',
       extension.packageAvailable
@@ -211,6 +218,11 @@ function ExtensionSettings({
               ))}
             </tbody>
           </table>
+          <ExtensionConfiguration
+            extension={extension}
+            disabled={busy}
+            onBusyChange={setConfigurationBusy}
+          />
           <PermissionReview
             extension={extension}
             busy={busy}
@@ -245,7 +257,7 @@ function ExtensionSettings({
             <div role="group" aria-label="Confirm extension removal">
               <p>
                 Remove {extension.manifest.name}, revoke all its grants, and
-                delete its saved notes?
+                delete its saved notes and settings?
               </p>
               <div className="flex gap-2">
                 <Button

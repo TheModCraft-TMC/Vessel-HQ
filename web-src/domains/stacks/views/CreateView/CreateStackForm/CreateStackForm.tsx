@@ -165,6 +165,7 @@ function buildCreateStackPayload({
             ...basePayload,
             swarmId,
             file: values.upload.file,
+            projectDigest: values.upload.projectDigest,
             webhook: values.enableWebhook ? webhookId : undefined,
           },
         };
@@ -175,6 +176,7 @@ function buildCreateStackPayload({
         payload: {
           ...basePayload,
           file: values.upload.file,
+          projectDigest: values.upload.projectDigest,
           webhook: values.enableWebhook ? webhookId : undefined,
         },
       };

@@ -1,6 +1,49 @@
 # Backend dependency security remediation
 
-## Status (not a zero-alert claim)
+## Published dependency migration — November 20, 2026
+
+The working tree now consumes the five published maintained dependency variants
+documented in [the dependency handoff](../docs/agent-handoff/issue-262-dependency-forks.md).
+All five module tags resolved through proxy.golang.org and sum.golang.org in a
+fresh task cache, without checksum exceptions. Their module sums and source commit
+hashes match the reviewed archives. The application uses split Moby API 1.57.0
+and SDK 0.6.3 with retained legacy version diagnostics; maintained CLI, Compose,
+image and Distribution v3 sources remove the obsolete dependency requirements.
+
+Application receipts recovered on November 21 confirm the full backend suite
+passed (157 test packages, exit 0), module verification passed, and the full-source
+Go 1.26.11 / darwin-arm64 advisory report contains zero finding records. The
+selected graph has 755 modules, no Docker monolith or Distribution v2 identities,
+and no local-path replacements. Affected race tests (five packages) and supplemental Swarm race tests passed.
+Linux builds are blocked: Avira quarantined the linked amd64 executable as
+`PUA/LINUX.Chisel.G` before Go could update its build ID. Chisel is an existing
+Edge tunnel dependency. No security setting was changed; arm64 was not attempted
+after confirming the quarantine. Provider runtime acceptance remains open. Actual receipts are under
+`dist/verification-20261120/issue-262/application/`. The sections below preserve
+the original alert inventory and historical dependency graph; their versions
+and unresolved counts describe that earlier state. #262 stays open pending final
+application checks and provider compatibility acceptance. No application release
+or deployment is claimed.
+
+## Historical pre-publication scan — November 20, 2026
+
+`GOWORK=off go list -m -json all` and the pinned `govulncheck v1.9.0`
+were rerun against this working tree on Go 1.26.11 / darwin-arm64. The selected
+graph still contains Docker monolith `v28.5.2+incompatible` and Distribution
+`v2.8.3+incompatible`, without replacements for either module. The scanner emits
+six distinct advisory IDs: `GO-2026-4883`, `GO-2026-4887`, `GO-2026-5617`,
+`GO-2026-5668`, `GO-2026-5746` and `GO-2026-6778`. This is a fresh scanner
+inventory, separate from the five residual alerts in the supplied snapshot below.
+No finding was suppressed or resolved by this continuation.
+
+The scanner includes initialization traces for two IDs; those traces alone do
+not establish runtime exploitability. This platform-specific scan also does not
+establish absence of risk in other target builds. The full report, selected
+module graph and concise ID summary are local artifacts under
+`dist/verification-20261120/`. #262 remains open pending the maintained dependency
+migration and provider compatibility acceptance.
+
+## Historical supplied-snapshot remediation status
 
 This change remediates **21 of the 26 Go alerts** in the supplied open-alert snapshot. **Five no-patch alerts remain in selected transitive modules**. They are not dismissed, ignored, aliased, or represented as fixed because their daemon/client entry points are not linked. The release identity and API/datastore compatibility baseline remain unchanged.
 
@@ -248,3 +291,33 @@ Distribution v2.8.3+incompatible, x/net v0.62.0 and x/crypto v0.58.0.
 remaining source/publication follow-up. The
 [current audit ledger](../docs/security/audit-follow-up-2026-10-29.md) records
 verification and separates these results from historical runtime experiments.
+
+## November 15, 2026: continuation scan
+
+A fresh `GOWORK=off govulncheck v1.9.0 -json ./...` on Go 1.26.11
+reports **15 records across seven IDs**: GO-2026-4883, GO-2026-4887,
+GO-2026-5617, GO-2026-5668, GO-2026-5746, GO-2026-5932 and GO-2026-6778.
+The module graph still selects Docker v28.5.2+incompatible and Distribution
+v2.8.3+incompatible. No advisory was suppressed. Module, package and symbol
+findings must remain distinct when interpreting the JSON report.
+
+GO-2026-6778 now explicitly tracks Distribution's missing returned-content digest
+verification; its v3 fixed boundary is 3.1.2, while the old v2 identities have no
+fixed release in this database record. The earlier October scan's absence of a
+Distribution Go advisory is historical and no longer describes this result.
+
+Current upstream discovery returns Moby client v0.6.3, Compose v5.7.1 and
+Podman image v5.42.1. Moby v0.6.3 still omits legacy top-level version diagnostics
+from its public result. Existing local maintained-fork experiments remain isolated
+and unpublished; these checks do not change the application's module graph or
+complete #262. The sanitized current reports are temporary verification artifacts,
+not shipped application dependencies.
+
+The continuation upgrades x/crypto to the maintained v0.59.0 release with its
+required sync/sys/term/text/mod/tools versions. A fresh module graph and
+`govulncheck -scan=module -json` from `api/cmd/portainer` confirm that
+GO-2026-5932 is absent from the selected-module report. This removes one advisory
+from that scope; the six Docker/Distribution IDs remain. The post-upgrade full
+symbol scan and backend suite were interrupted during local resource contention,
+so this module-level result does not establish full runtime compatibility or
+complete #262.

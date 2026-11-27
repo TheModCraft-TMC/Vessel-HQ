@@ -1,8 +1,15 @@
 package websocket
 
 import (
+	"net"
+	"net/http"
+	"net/url"
+	"strings"
+	"sync"
+
 	portainer "github.com/portainer/portainer/api"
 	"github.com/portainer/portainer/api/dataservices"
+	dockerclient "github.com/portainer/portainer/api/docker/client"
 	"github.com/portainer/portainer/api/http/proxy"
 	"github.com/portainer/portainer/api/http/proxy/factory/kubernetes"
 	"github.com/portainer/portainer/api/http/security"
@@ -25,16 +32,20 @@ type Handler struct {
 	connectionUpgrader          websocket.Upgrader
 	kubernetesTokenCacheManager *kubernetes.TokenCacheManager
 	eventHub                    *eventHub
+	DockerClientFactory         *dockerclient.ClientFactory
+	engineWatchMu               sync.Mutex
+	engineWatches               map[int]*engineWatch
 }
 
 // NewHandler creates a handler to manage websocket operations.
 func NewHandler(kubernetesTokenCacheManager *kubernetes.TokenCacheManager, bouncer security.BouncerService) *Handler {
 	h := &Handler{
 		Router:                      mux.NewRouter(),
-		connectionUpgrader:          websocket.Upgrader{},
+		connectionUpgrader:          websocket.Upgrader{CheckOrigin: checkOrigin},
 		requestBouncer:              bouncer,
 		kubernetesTokenCacheManager: kubernetesTokenCacheManager,
 		eventHub:                    newEventHub(),
+		engineWatches:               map[int]*engineWatch{},
 	}
 	h.PathPrefix("/websocket/exec").Handler(
 		bouncer.AuthenticatedAccess(httperror.LoggerHandler(h.websocketExec)))
@@ -49,6 +60,35 @@ func NewHandler(kubernetesTokenCacheManager *kubernetes.TokenCacheManager, bounc
 	h.Handle("/websocket/logs",
 		bouncer.AuthenticatedAccess(httperror.LoggerHandler(h.websocketLogs))).Methods("GET")
 	return h
+}
+
+func checkOrigin(r *http.Request) bool {
+	origins := r.Header.Values("Origin")
+	if len(origins) == 0 {
+		return true
+	}
+	if len(origins) != 1 {
+		return false
+	}
+	origin, err := url.Parse(origins[0])
+	if err != nil || origin.Host == "" || (origin.Scheme != "http" && origin.Scheme != "https") {
+		return false
+	}
+	if strings.EqualFold(origin.Host, r.Host) {
+		return true
+	}
+
+	// Next.js rewrites the upstream Host and overwrites X-Forwarded-Host
+	// with the original Host. Only consult it on the local proxy hop.
+	peer, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil || !net.ParseIP(peer).IsLoopback() {
+		return false
+	}
+	if site := r.Header.Get("Sec-Fetch-Site"); site != "" && site != "same-origin" {
+		return false
+	}
+	forwarded := r.Header.Values("X-Forwarded-Host")
+	return len(forwarded) == 1 && strings.EqualFold(origin.Host, forwarded[0])
 }
 
 // PublishMutation notifies connected browsers that cached API data may have

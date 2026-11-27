@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"testing/iotest"
+	"time"
 	"unicode/utf8"
 
 	"github.com/portainer/portainer/api/logs"
@@ -175,6 +177,22 @@ func TestStreamFromWebsocketToWriter_WriteError(t *testing.T) {
 
 	err = <-errorChan
 	require.ErrorIs(t, err, expectedErr)
+}
+
+func TestReadTerminalOutputPreservesUnicodeAndFinalRead(t *testing.T) {
+	t.Parallel()
+
+	want := strings.Repeat("a", ReaderBufferSize-1) + "🌍 grüezi"
+	reader := iotest.DataErrReader(strings.NewReader(want))
+	var output strings.Builder
+	err := readTerminalOutput(reader, func(chunk string) error {
+		require.True(t, utf8.ValidString(chunk))
+		output.WriteString(chunk)
+		return nil
+	})
+
+	require.ErrorIs(t, err, io.EOF)
+	require.Equal(t, want, output.String())
 }
 
 func TestStreamFromReaderToWebsocket_ForwardsData(t *testing.T) {
@@ -407,7 +425,7 @@ func TestHijackRequest_UnexpectedStatus(t *testing.T) {
 func TestHijackRequest_Success(t *testing.T) {
 	t.Parallel()
 
-	serverConn, _ := newTestWSPair(t)
+	serverConn, clientConn := newTestWSPair(t)
 
 	backendServer, backendClient := net.Pipe()
 	defer logs.CloseAndLogErr(backendClient)
@@ -420,7 +438,7 @@ func TestHijackRequest_Success(t *testing.T) {
 			return
 		}
 
-		resp := "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n\r\n"
+		resp := "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n\r\nhello from the container"
 		if _, err := backendServer.Write([]byte(resp)); err != nil {
 			return
 		}
@@ -429,8 +447,15 @@ func TestHijackRequest_Success(t *testing.T) {
 	req, err := http.NewRequestWithContext(t.Context(), http.MethodGet, "http://backend/", nil)
 	require.NoError(t, err)
 
-	// The backend closes after sending 101, which delivers EOF to the reader goroutine.
-	// HijackRequest treats EOF (not a CloseError) as a clean session end and returns nil.
-	err = HijackRequest(serverConn, backendClient, req)
+	done := make(chan error, 1)
+	go func() {
+		done <- HijackRequest(serverConn, backendClient, req)
+	}()
+
+	require.NoError(t, clientConn.SetReadDeadline(time.Now().Add(2*time.Second)))
+	messageType, message, err := clientConn.ReadMessage()
 	require.NoError(t, err)
+	require.Equal(t, websocket.TextMessage, messageType)
+	require.Equal(t, "hello from the container", string(message))
+	require.NoError(t, <-done)
 }

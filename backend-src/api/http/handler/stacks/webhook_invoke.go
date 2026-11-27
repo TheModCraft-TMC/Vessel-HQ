@@ -1,7 +1,6 @@
 package stacks
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -49,7 +48,7 @@ func (handler *Handler) webhookInvoke(w http.ResponseWriter, r *http.Request) *h
 		return httperror.Conflict("Unable to update stack", errors.New("Stack deployment is already in progress"))
 	}
 
-	if err = deployments.RedeployWhenChanged(context.TODO(), stack.ID, handler.StackDeployer, handler.DataStore, handler.GitService); err != nil {
+	if err = deployments.RedeployWhenChanged(r.Context(), stack.ID, handler.StackDeployer, handler.DataStore, handler.GitService); err != nil {
 		if _, ok := errors.AsType[*deployments.StackAuthorMissingErr](err); ok {
 			return httperror.Conflict("Autoupdate for the stack isn't available", err)
 		}

@@ -30,6 +30,7 @@ import { useStopStackMutation } from './useStopStackMutation';
 export function StackActions({
   stack,
   fileContent,
+  fileRevision,
   isRegular,
   environmentId,
   isExternal,
@@ -37,6 +38,7 @@ export function StackActions({
 }: {
   stack: Stack;
   fileContent?: string;
+  fileRevision?: string;
   isRegular?: boolean;
   environmentId: number;
   isExternal: boolean;
@@ -238,6 +240,7 @@ export function StackActions({
       {
         environmentId,
         stackId: stack.Id,
+        expectedRevision: fileRevision,
         payload: {
           stackFileContent: fileContent!,
           env: stack.Env,

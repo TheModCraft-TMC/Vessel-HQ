@@ -1,6 +1,12 @@
 package websocket
 
 import (
+	gorilla "github.com/gorilla/websocket"
+	"github.com/portainer/portainer/api/http/security"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -59,11 +65,12 @@ func TestEventHubSnapshotRefreshAdvancesSequenceWithoutBroadcast(t *testing.T) {
 	updates, unsubscribe, _ := hub.subscribe()
 	defer unsubscribe()
 
-	refresh := hub.snapshotRefresh()
+	refresh := hub.snapshotRefresh(7)
 	require.Equal(t, eventMessage{
-		Version: eventProtocolVersion,
-		ID:      1,
-		Type:    "invalidate",
+		Version:    eventProtocolVersion,
+		ID:         1,
+		Type:       "snapshot",
+		EndpointID: 7,
 	}, refresh)
 
 	select {
@@ -74,4 +81,62 @@ func TestEventHubSnapshotRefreshAdvancesSequenceWithoutBroadcast(t *testing.T) {
 
 	hub.publish()
 	require.Equal(t, uint64(2), (<-updates).ID)
+}
+
+func TestEventHubScopesEngineInvalidations(t *testing.T) {
+	hub := newEventHub()
+	first, stopFirst, _ := hub.subscribeEndpoint(1)
+	defer stopFirst()
+	second, stopSecond, _ := hub.subscribeEndpoint(2)
+	defer stopSecond()
+	global, stopGlobal, _ := hub.subscribe()
+	defer stopGlobal()
+
+	hub.publishEndpoint(1)
+	require.Equal(t, "invalidate", (<-first).Type)
+	for _, updates := range []<-chan eventMessage{second, global} {
+		select {
+		case <-updates:
+			t.Fatal("engine activity reached a different environment subscriber")
+		default:
+		}
+	}
+
+	hub.publish()
+	for _, updates := range []<-chan eventMessage{first, second, global} {
+		require.Equal(t, "invalidate", (<-updates).Type)
+	}
+}
+
+type revocableEventBouncer struct {
+	security.BouncerService
+	revoked atomic.Bool
+}
+
+func (b *revocableEventBouncer) AuthenticatedAccess(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if b.revoked.Load() {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func TestEventConnectionClosesAfterSessionRevocation(t *testing.T) {
+	bouncer := &revocableEventBouncer{}
+	handler := NewHandler(nil, bouncer)
+	server := httptest.NewServer(handler)
+	defer server.Close()
+	connection, _, err := gorilla.DefaultDialer.Dial("ws"+strings.TrimPrefix(server.URL, "http")+"/websocket/events", nil)
+	require.NoError(t, err)
+	defer connection.Close()
+	require.NoError(t, connection.SetReadDeadline(time.Now().Add(3*time.Second)))
+	var ready eventMessage
+	require.NoError(t, connection.ReadJSON(&ready))
+	require.Equal(t, "ready", ready.Type)
+	bouncer.revoked.Store(true)
+	handler.PublishMutation()
+	_, _, err = connection.ReadMessage()
+	require.Error(t, err, "revoked session must lose its event subscription")
 }

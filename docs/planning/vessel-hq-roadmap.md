@@ -1,8 +1,13 @@
 # Vessel HQ product and architecture roadmap
 
-Status: canonical frontend foundation established; experimental native extensions are in the `1.3.1-beta.1` preview. Future product and design items remain proposals, not implementation commitments.
+Status: stable `1.3.2` is released; native extensions remain experimental. Future product and design items remain proposals unless explicitly scoped for implementation.
 
-Last updated: October 31, 2026.
+Last updated: November 12, 2026.
+
+November 15 continuation: the [open-issue ledger](open-issue-continuation-2026-11-15.md)
+covers all 35 current issues. Compose project portability is now implemented in
+the working tree with reviewed import/export and file-revision conflict checks;
+remaining runtime acceptance and broader product work are recorded separately.
 
 This document records why the fork exists, what has already changed, and the direction agreed for future work. It is deliberately explicit about status so that roadmap context is not mistaken for shipped behavior.
 
@@ -37,8 +42,8 @@ The React migration WIP was published from commit `0298e99dd56c08fdd4004fb995697
 
 - Vessel images use `themodcrafttmc/vessel-hq`, mirrored to `ghcr.io/themodcraft-tmc/vessel-hq`; release automation, update discovery and UI links use the Vessel repository.
 - Previous stable work is recorded in the [1.3.1 release notes](../releases/1.3.1.md).
-  The next source version is `1.3.2`, in preparation; see its
-  [release notes and publication checklist](../releases/1.3.2.md).
+  Stable `1.3.2` was released and reissued on October 31; see its
+  [release notes and publication record](../releases/1.3.2.md).
 - The October 16 [publication record](migration-change-summary.md#2026-10-16-beta-publication-and-verified-docker-hub-mirror) verifies the Docker Hub beta image and its `beta` alias. Previews do not promote `latest`; stable releases use that channel.
 - Keep the existing `themodcrafttmc/portainer` repository and its published tags intact. The transitional references above are historical.
 
@@ -59,7 +64,78 @@ The migration established the baseline for future product work:
 
 The upstream API and datastore compatibility version remains `2.45.0`. That value is not the Vessel HQ image release number and must not be changed merely for branding.
 
-## Dependency compatibility follow-up — planned, not started
+## Effort-ordered implementation queue — November 11, 2026
+
+### Current cycle and extension follow-up
+
+Working branch: `fix/resource-layout-cycle`, created from `develop` with the
+existing working-tree changes preserved. The current cycle focuses on the
+desktop resource-page alignment already underway. The maintainer resumed extension
+work on November 11 with the administrator settings backend foundation described
+below. The completed isolated validation remains a dated result, not work to repeat
+automatically or a claim of production activation.
+
+The extension follow-up is planned in this order:
+
+1. Extension settings: the administrator backend foundation now persists namespaced
+   public/write-only secret string maps with bounded validation, revision/version
+   checks, update/reset and transactional audits. Secret values stay server-side
+   and registration responses omit all settings. The administrator editor now
+   supports public values, write-only secrets, reload and confirmed reset.
+   Package-declared schemas and the beta.2 runtime/SDK settings contract are now implemented with separate public and secret machine grants.
+   See the [API contract and limits](../native-extensions.md#administrator-settings-api).
+2. Improve complete-set build management: visible status and sanitized logs,
+   repeatable source/package identities, serialized builds, retry/cancellation
+   and approval rechecks before privileged steps. Failed candidates preserve
+   the serving console.
+3. Exercise package upload/update, permission changes and revocation, native UI
+   slots, topology/traffic and persistent notes. Complete authenticated browser
+   checks, combined-extension checks and failure-path regressions, then patch
+   confirmed defects and repeat the checks affected by each fix.
+4. Address managed service startup, production activation/health/rollback and
+   production certificate provisioning/rotation as a later lifecycle phase.
+   These remain unimplemented and need their own acceptance and recovery
+   criteria; successful candidate tests do not enable them.
+
+This sequencing now guides the resumed extension work; desktop/UI changes remain
+a separate scope. See the
+[extension design](plugin-system.md) for existing contracts and lifecycle limits.
+
+The maintainer requested working from lower to higher effort. This is a relative
+implementation order, not a delivery estimate or evidence of completion. Each
+batch needs fresh verification; remote findings stay open until reanalysis.
+
+| Order | Effort | Work and completion evidence |
+| --- | --- | --- |
+| 1 | Small | Correct stale release/tracking text; fix invalid CSS, namespaced number parsing, explicit test assertions and mutable workflow action references. Run affected tests and workflow validation. |
+| 2 | Small–medium | Review extension-tool subprocess paths, temporary directories and builder permissions; resolve the standalone MCP Zod update (#298). Run tooling/security regressions without weakening isolation. |
+| 3 | Medium | Repair topology ordering and extension callbacks through authoring sources and reviewed package rebuilds. Preserve digest-bound grants; do not patch approved compiled packages in place. |
+| 4 | Medium | Finish images/networks/volumes shared spacing and authenticated desktop/mobile route checks (#241, #299), including the released sidebar/statistics repair. Record actual browser coverage and unavailable environments. |
+| 5 | Medium–large | Improve extension settings persistence/build management, activity logs and externally changed container synchronization (#299). Define concrete gaps against existing behavior before implementation; preserve authorization and realtime ownership. |
+| 6 | Large | Complete maintained Go module source migrations/publications (#262) and registry/runtime compatibility checks; isolate YAML/toolchain upgrades and remove obsolete compatibility adapters when consumers migrate. |
+| 7 | Large | Replace remaining Bootstrap 3 styles, evaluate upstream backports and improve logs, terminal and Compose editing. Preserve supported platform workflows and verify responsive behavior. |
+| 8 | Very large | Design and implement managed extension execution/activation/rollback, certificate lifecycle, webhook gateway, HA and remote-environment improvements (#299), with explicit lifecycle and compatibility criteria. |
+| 9 | Product design required | Turn #300's portable Compose/CLI workflow discussion, Business Edition capability requests and infrastructure-as-code proposals into scoped requirements before choosing implementations. These broad requests do not yet specify acceptance criteria. |
+
+Issue #264 is an umbrella with historical unchecked boxes; its child status and
+the released fixes must be reconciled before treating those boxes as new work.
+The October 31 release records supersede the earlier preparation status below.
+
+Current execution: row 1 and row 2's local source changes are implemented; remote
+Sonar reanalysis remains outstanding. The new trusted builder, complete-set package
+staging, all eight isolated frontend gates and an isolated startup health check
+passed. Row 3's graph package `0.3.1` is validated in that candidate; its approved
+installed package has not been replaced. Row 4's list/create route spacing and
+shared toolbar fixes are implemented. Selected desktop images, networks, volumes
+and network-creation fixtures passed browser checks. Other desktop forms, phone
+widths and authenticated production coverage remain open because browser control
+failed. The separate SDK workspace is available; SDK beta.2 is published from its independent repository. Fresh
+results and exact limits are recorded in the
+[November 11 validation handoff](migration-change-summary.md#isolated-extension-validation-and-desktop-spacing--november-11-2026).
+All #299 items remain in scope, including the request to recreate Business Edition
+capabilities. The frontend contains an edition feature map and direct edition checks. Source-backed Git reference and file browsing are now selected by source availability; a complete capability inventory must distinguish existing handlers from absent implementations before broader parity is claimed.
+
+## Dependency compatibility follow-up
 
 - Complete the maintained Go source migrations and module publications tracked
   in #262 before claiming the Docker monolith/Distribution advisory ranges are
@@ -232,7 +308,7 @@ See the [plugin system proposal](plugin-system.md) for architecture, trust limit
 - Final visual language after reviewing the Portainer 3 reference instance.
 - Supported minimum viewport and browser matrix.
 - Long-term maintenance and optimization of the current Next.js App Router and build pipeline.
-- The next stable release scope and promotion criteria after the native extension preview.
+- The next release scope and promotion criteria after stable `1.3.2`.
 
 No implementation should be inferred from these open items. Record the decision and migration impact before changing production behavior.
 
@@ -262,3 +338,26 @@ Docker/Compose/Swarm/Podman/Kubernetes compatibility checks. No module identity
 aliases or advisory suppression substitutes for that work. The current
 [audit ledger](../security/audit-follow-up-2026-10-29.md) separates fresh results
 from historical proof experiments.
+
+## November 12 bounded implementation cycle
+
+The maintainer requested a 40-minute cycle prioritizing an Argo-inspired network
+view, Docker stack GitOps and Arcane/Watchtower-style image updates. Authoring now
+includes Network Overview 0.4.0's searchable resource tree/inspector, Stack GitOps
+0.1.0 with confirmed source synchronization, and Stack image updates 0.1.0 with
+registry checks, confirmed repulls and opt-in server-side monitor/automatic jobs.
+The host adds separate administrator/scoped capabilities, opaque stack/source
+review versions, redacted responses and current-role/grant checks. This is not
+complete Argo CD or Arcane parity; runtime diffs, deployment history/rollback,
+image-age delay, tag selection and notifications remain future acceptance work.
+
+Build management also gains exclusive ownership, per-gate progress, sanitized
+phase events and complete-set development replacement. Managed binaries,
+production activation/rollback, certificate lifecycle, HA, webhook provisioning,
+remaining Bootstrap replacement, module publications and the other broad backlog
+items remain open. They were not all completed by this bounded cycle. Fresh checks
+and actual runtime coverage belong to the November 12 migration handoff.
+
+Development launcher repair: the Docker dev instance now uses loopback ports
+9000/19443/18000 with explicit overrides, avoiding the existing normal UI's
+8000/9443 bindings. The frontend derives its origin from the selected HTTP port.

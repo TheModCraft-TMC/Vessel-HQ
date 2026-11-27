@@ -143,37 +143,18 @@ function openLogsStream(
 ) {
   let socket: WebSocket | undefined;
   let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
-  let updateTimer: ReturnType<typeof setTimeout> | undefined;
   let stopped = false;
   const lineLimit = Math.min(
     normalizeNonNegative(options.tail, 100),
     MAX_LOG_LINES
   );
-  const rawLogs = new BoundedTextBuffer(Math.max(1, lineLimit + 1));
-  const publisher = createThrottledPublisher(
-    () => options.onLogs(formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps })),
+  const publisher = createThrottledPublisher<BoundedTextBuffer>(
+    (rawLogs) =>
+      options.onLogs(
+        formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps })
+      ),
     UPDATE_INTERVAL_MS
   );
-
-  function publish() {
-    updateTimer = undefined;
-    options.onLogs(formatLogs(rawLogs.toString(), { withTimestamps: options.timestamps }));
-  }
-
-  function schedulePublish() {
-    if (!updateTimer) {
-      updateTimer = setTimeout(publish, UPDATE_INTERVAL_MS);
-    }
-  }
-
-  function appendLogs(value: string) {
-    if (!value) {
-      return;
-    }
-    rawLogs.append(value);
-    publisher.publish(value);
-    schedulePublish();
-  }
 
   function connect() {
     if (stopped) {
@@ -181,10 +162,24 @@ function openLogsStream(
     }
 
     const decoder = new DockerLogStreamDecoder(multiplexed);
-    socket = new WebSocket(url);
-    socket.binaryType = 'arraybuffer';
+    // Each connection requests a fresh historical tail, so replace the previous
+    // snapshot as the new stream supplies output.
+    const rawLogs = new BoundedTextBuffer(Math.max(1, lineLimit + 1));
+    const connection = new WebSocket(url);
+    connection.binaryType = 'arraybuffer';
+    socket = connection;
 
-    socket.addEventListener('message', (event) => {
+    function appendLogs(value: string) {
+      if (value) {
+        rawLogs.append(value);
+        publisher.publish(rawLogs);
+      }
+    }
+
+    connection.addEventListener('message', (event) => {
+      if (stopped || socket !== connection) {
+        return;
+      }
       try {
         if (typeof event.data === 'string') {
           throw new Error(event.data || 'Unable to stream Docker logs');
@@ -192,12 +187,15 @@ function openLogsStream(
         appendLogs(decoder.push(event.data as ArrayBuffer));
       } catch (error) {
         stopped = true;
-        socket?.close();
+        connection.close();
         options.onError(toError(error));
       }
     });
 
-    socket.addEventListener('close', () => {
+    connection.addEventListener('close', () => {
+      if (socket !== connection) {
+        return;
+      }
       socket = undefined;
       if (stopped) {
         return;
@@ -212,17 +210,20 @@ function openLogsStream(
       }
 
       if (!stopped && !reconnectTimer) {
-        reconnectTimer = setTimeout(() => {
-          reconnectTimer = undefined;
-          connect();
-        }, exponentialBackoff(0, { jitterMs: 0 }));
+        reconnectTimer = setTimeout(
+          () => {
+            reconnectTimer = undefined;
+            connect();
+          },
+          exponentialBackoff(0, { jitterMs: 0 })
+        );
       }
     });
 
-    socket.addEventListener('error', () => {
-      if (!stopped) {
+    connection.addEventListener('error', () => {
+      if (!stopped && socket === connection) {
         stopped = true;
-        socket?.close();
+        connection.close();
         options.onError(
           new Error('Unable to connect to the Docker log stream')
         );
@@ -238,10 +239,6 @@ function openLogsStream(
       if (reconnectTimer) {
         clearTimeout(reconnectTimer);
       }
-      if (updateTimer) {
-        clearTimeout(updateTimer);
-      }
-      publisher.flush();
       publisher.close();
       socket?.close();
     },

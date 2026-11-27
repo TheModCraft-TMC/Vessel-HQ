@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { PageContent } from '@console/layout/PageContent';
 
 import { withError } from '@/core/query';
 import { ServiceViewModel } from '@/domains/services/models/service';
@@ -89,11 +90,13 @@ export default function Page() {
   return (
     <>
       <PageHeader title="Volume list" breadcrumbs="Volumes" reload />
-      <VolumesDatatable
-        dataset={volumes}
-        onRemove={handleRemove}
-        isBrowseVisible={isBrowseVisible}
-      />
+      <PageContent>
+        <VolumesDatatable
+          dataset={volumes}
+          onRemove={handleRemove}
+          isBrowseVisible={isBrowseVisible}
+        />
+      </PageContent>
     </>
   );
 }

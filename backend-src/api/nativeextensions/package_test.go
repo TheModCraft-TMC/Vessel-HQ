@@ -49,6 +49,24 @@ func TestPackageMatchesNodeReferenceDigest(t *testing.T) {
 	require.Equal(t, "sha256:7352da43730269f8c7720f389d89865efd42364932e0d85f541fb7d9d98af4b9", bundle.Manifest.PackageDigest)
 	require.True(t, strings.HasPrefix(bundle.ArchiveDigest, "sha256:"))
 }
+
+func TestPackageSettingsSchema(t *testing.T) {
+	inputs := referenceInputs(t)
+	var manifest Manifest
+	require.NoError(t, json.Unmarshal(inputs[0].data, &manifest))
+	manifest.Settings = &SettingsSchema{Fields: map[string]SettingField{"token": {Type: "string", Secret: true}}}
+	var err error
+	inputs[0].data, err = json.Marshal(manifest)
+	require.NoError(t, err)
+	bundle, err := InspectPackage(makeArchive(t, inputs))
+	require.NoError(t, err)
+	require.Equal(t, manifest.Settings, bundle.Manifest.Settings)
+	// Exact field names must match the builder, despite encoding/json's
+	// case-insensitive struct decoding.
+	inputs[0].data = bytes.ReplaceAll(inputs[0].data, []byte(`"secret"`), []byte(`"Secret"`))
+	_, err = InspectPackage(makeArchive(t, inputs))
+	require.Error(t, err)
+}
 func TestPackageRejectsUnsafeInputs(t *testing.T) {
 	for _, test := range []struct {
 		name   string

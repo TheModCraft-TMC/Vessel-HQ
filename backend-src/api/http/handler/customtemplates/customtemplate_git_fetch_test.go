@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -39,6 +40,7 @@ var testFileContent = "abcdefg"
 type TestGitService struct {
 	portainer.GitService
 	targetFilePath string
+	commitID       string
 }
 
 func (g *TestGitService) CloneRepository(
@@ -211,6 +213,8 @@ func Test_customTemplateGitFetch(t *testing.T) {
 	require.NoError(t, err, "Error initiating jwt service")
 
 	requestBouncer := security.NewRequestBouncer(t.Context(), store, jwtService, nil)
+	var mutations atomic.Int32
+	requestBouncer.SetMutationPublisher(func() { mutations.Add(1) })
 
 	gitService := &TestGitService{
 		targetFilePath: filesystem.JoinPaths(template1.ProjectPath, configFilePath),
@@ -226,9 +230,27 @@ func Test_customTemplateGitFetch(t *testing.T) {
 	jwt2, _, err := jwtService.GenerateToken(&portainer.TokenData{ID: user2.ID, Username: user2.Username, Role: user2.Role})
 	require.NoError(t, err)
 
+	t.Run("serializes concurrent first fetches", func(t *testing.T) {
+		var g errgroup.Group
+		for range 5 {
+			g.Go(func() error { return singleAPIRequest(h, jwt1, "abcdefg") })
+		}
+		require.NoError(t, g.Wait())
+		require.Zero(t, mutations.Load())
+	})
+
 	t.Run("can return the expected file content by a single call from one user", func(t *testing.T) {
 		err := singleAPIRequest(h, jwt1, "abcdefg")
 		require.NoError(t, err)
+		require.Zero(t, mutations.Load(), "an unchanged checkout must not invalidate its query")
+	})
+
+	t.Run("notifies once for a new commit and stays quiet on the next fetch", func(t *testing.T) {
+		gitService.commitID = "next-commit"
+		require.NoError(t, singleAPIRequest(h, jwt1, "abcdefg"))
+		require.Equal(t, int32(1), mutations.Load())
+		require.NoError(t, singleAPIRequest(h, jwt1, "abcdefg"))
+		require.Equal(t, int32(1), mutations.Load())
 	})
 
 	t.Run("can return the expected file content by multiple calls from one user", func(t *testing.T) {
@@ -339,7 +361,7 @@ func TestCustomTemplateGitFetch_EmptySourceIDsReturnsBadRequest(t *testing.T) {
 }
 
 func (g *TestGitService) CloneRepositoryWithCommit(ctx context.Context, destination, url, ref, username, password string, skipTLS bool) (string, error) {
-	return "", g.CloneRepository(ctx, destination, url, ref, username, password, skipTLS)
+	return g.commitID, g.CloneRepository(ctx, destination, url, ref, username, password, skipTLS)
 }
 func (g *InvalidTestGitService) CloneRepositoryWithCommit(ctx context.Context, destination, url, ref, username, password string, skipTLS bool) (string, error) {
 	return "", g.CloneRepository(ctx, destination, url, ref, username, password, skipTLS)

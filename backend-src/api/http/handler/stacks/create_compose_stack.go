@@ -351,6 +351,7 @@ func (handler *Handler) createComposeStackFromGitRepository(w http.ResponseWrite
 type composeStackFromFileUploadPayload struct {
 	Name             string
 	StackFileContent []byte
+	ProjectArchive   []byte
 	Env              []portainer.Pair
 }
 
@@ -363,6 +364,7 @@ func createStackPayloadFromComposeFileUploadPayload(name string, fileContentByte
 }
 
 func decodeRequestForm(r *http.Request) (*composeStackFromFileUploadPayload, error) {
+	limitProjectUpload(r)
 	payload := &composeStackFromFileUploadPayload{}
 	name, err := request.RetrieveMultiPartFormValue(r, "Name", false)
 	if err != nil {
@@ -370,11 +372,14 @@ func decodeRequestForm(r *http.Request) (*composeStackFromFileUploadPayload, err
 	}
 	payload.Name = name
 
-	composeFileContent, _, err := request.RetrieveMultiPartFormFile(r, "file")
+	composeFileContent, filename, err := retrieveProjectUploadFile(r)
 	if err != nil {
 		return nil, errors.New("Invalid Compose file. Ensure that the Compose file is uploaded correctly")
 	}
-	payload.StackFileContent = composeFileContent
+	payload.StackFileContent, payload.ProjectArchive, err = decodeProjectUpload(r, composeFileContent, filename)
+	if err != nil {
+		return nil, err
+	}
 
 	var env []portainer.Pair
 	err = request.RetrieveMultiPartFormJSONValue(r, "Env", &env, true)
@@ -396,7 +401,8 @@ func decodeRequestForm(r *http.Request) (*composeStackFromFileUploadPayload, err
 // @produce json
 // @param Name formData string true "Name of the stack"
 // @param Env formData string false "Environment variables passed during deployment, represented as a JSON array [{'name': 'name', 'value': 'value'}]."
-// @param file formData file false "Stack file"
+// @param file formData file false "Stack YAML file or reviewed portable project ZIP"
+// @param ProjectDigest formData string false "Exact archive digest from StackProjectInspect, required for ZIP projects"
 // @param endpointId query int true "Identifier of the environment that will be used to deploy the stack"
 // @success 200 {object} portainer.Stack
 // @failure 400 "Invalid request"
@@ -420,6 +426,7 @@ func (handler *Handler) createComposeStackFromFileUpload(w http.ResponseWriter, 
 	}
 
 	stackPayload := createStackPayloadFromComposeFileUploadPayload(payload.Name, payload.StackFileContent, payload.Env)
+	stackPayload.ProjectArchive = payload.ProjectArchive
 
 	composeStackBuilder := stackbuilders.CreateComposeStackFileBuilder(securityContext,
 		handler.DataStore,

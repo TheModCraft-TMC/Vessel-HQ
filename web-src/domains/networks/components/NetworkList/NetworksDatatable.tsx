@@ -52,6 +52,7 @@ export function NetworksDatatable({ onRemove }: Props) {
 
   return (
     <ExpandableDatatable<DecoratedNetwork>
+      flush
       settingsManager={settings}
       title="Networks"
       titleIcon={Network}
@@ -74,7 +75,7 @@ export function NetworksDatatable({ onRemove }: Props) {
         </>
       )}
       renderTableActions={(selectedRows) => (
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <Authorized
             authorizations={['DockerNetworkDelete', 'DockerNetworkCreate']}
           >

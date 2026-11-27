@@ -42,8 +42,7 @@ export class BoundedTextBuffer {
   append(value: string) {
     if (!value) return;
     const existing = this.buffer.snapshot();
-    const combined =
-      (existing.length ? existing.join('\n') + '\n' : '') + value;
+    const combined = existing.join('\n') + value;
     const next = combined.split('\n');
     this.buffer.clear();
     this.buffer.pushMany(next.slice(-this.maxLines));

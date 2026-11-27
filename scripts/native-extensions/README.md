@@ -49,6 +49,12 @@ source digest for a package author to write into a reviewed manifest. `inspect`
 and `pack` require that declared digest to match. This is integrity metadata, not
 publisher provenance.
 
+Staging selects a complete package set. Previously compiled packages and generated
+registrations are omitted from the candidate core copy, then rebuilt from the
+selected inputs. This permits same-ID package upgrades and prevents unselected
+compiled packages from lingering. The original installed files remain protected
+by the baseline and unchanged in the source checkout.
+
 The assembler copies only frontend source and the manifest into
 `web-src/core/native-extensions/packages/<id>/` and generates the fixed registration
 module. Backend executables never enter the browser source tree and are not
@@ -131,6 +137,15 @@ pinned by digest. Publish/identify the resulting builder by its own image digest
 The supplied Dockerfile expects a Debian-based Node image and provisions git and
 ripgrep for the existing architecture guards. Git metadata is created afresh in
 the disposable candidate; the real checkout's `.git` is never mounted.
+The validator invokes `/usr/bin/git` and `/usr/local/bin/pnpm` with a fixed tool
+search path; candidate inputs and inherited environment cannot select replacements.
+The image defaults to the unprivileged `node` user. The builder explicitly selects
+root only to seed a fresh dependency volume, then runs checks as the operator UID
+with private temporary cache mounts; image cache directories are not world-writable.
+Host Docker commands use an absolute executable from standard Docker installation
+locations, including cleanup. For another installation, the operator can set
+`VESSEL_DOCKER_BINARY` to a trusted absolute executable path. Relative paths and
+PATH-based lookup are rejected; extension packages cannot configure this value.
 Image provisioning is an operator/release action; the extension CLI never installs
 packages or builds a toolchain image. The image must include pnpm 10.26.2 and the
 approved dependency tree; changing either requires a new image review. The
@@ -168,9 +183,11 @@ inputs after every check. The volume is removed on completion or failure; cleanu
 warnings name any volume the operator needs to remove.
 
 Container isolation depends on the operator's Docker/kernel security. Do not run
-this as a privileged production-host service. The current tool does not provide a
-build queue API, log sanitization, provenance verification or production deployment
-adapter. Container output should stay in a trusted operator terminal.
+this as a privileged production-host service. The current tool records sanitized
+gate progress and fixed failure diagnostics; it does not sanitize arbitrary
+container output or provide a build queue API, provenance verification or
+production deployment adapter. Container output should stay in a trusted operator
+terminal.
 
 All checks must succeed for `validated` status. Failures record `failed`; the
 running console remains untouched. Even `validated` candidates retain
@@ -223,9 +240,10 @@ checks the exact uploaded archive/source digests, revision, current grants and
 native trust before and after compilation and around selection. A changed
 approval rejects the candidate. Credentials never reach build containers.
 
-The initial controller requires an empty compiled extension namespace so it cannot
-silently discard existing extensions. After successful isolated checks, it swaps
-only `web-src/core/native-extensions/packages/` and the trusted generated registry,
+The controller accepts an existing compiled extension namespace. Supply the
+complete desired package set: packages omitted from that set are removed from the
+development selection. After successful isolated checks, it swaps only
+`web-src/core/native-extensions/packages/` and the trusted generated registry,
 with rollback if selection or fresh approval checks fail. It compares all other
 protected inputs against the reviewed baseline. Next.js development reloads the
 selected source; run browser checks before treating the result as verified. Native
@@ -235,8 +253,8 @@ checkout is not a production artifact deployment mechanism.
 Every production receipt remains `activatable:false`. The development selection
 record explicitly reports `productionActivatable:false` and
 `browserSmokeRequired:true`. Production artifact signing/serving, health checks,
-replica coordination, complete-set updates and emergency rollback remain required
-before enabling UI-driven production builds or activation.
+replica coordination, production complete-set updates and emergency rollback
+remain required before enabling UI-driven production builds or activation.
 
 ## Tests
 
@@ -276,9 +294,10 @@ replacing the single-package `--archive`, `--archive-digest`, `--extension-id` a
 `--package-digest` arguments with `--packages-file /tmp/approved-packages.json`.
 All other arguments remain required. The set must contain 1–32 unique IDs. Every
 archive is revalidated by the Go extractor before staging. All package approvals
-must remain unchanged for the entire build and selection. The initial development
-controller still requires an empty compiled namespace; use a fresh disposable
-checkout for a new complete-set build rather than overwriting an existing set.
+must remain unchanged for the entire build and selection. The development
+controller preserves the existing compiled set until validation and approval
+checks pass, then replaces it with this complete set. Selection failures restore
+the previous packages and generated registry.
 
 [Persistent Notes](../../docs/extension-sdk-workspace.md)
 demonstrates explicit write-back with independent note-read and note-write grants,
@@ -300,3 +319,20 @@ container. Node's automatic ~2 GiB heap in that container is insufficient for th
 full console webpack build. Other checks keep their default heap. This setting is
 part of the reviewed validator image, never inherited from operator or extension
 input; provision a new pinned builder after changing it.
+
+## Build ownership and progress
+
+Candidate builds and development source selection now hold an exclusive
+`.vessel-build.lock` directory. Concurrent owners are rejected. Normal success,
+failure and cancellation release ownership; a crashed process may leave a lock.
+Inspect `owner.json` and running Docker containers before manually removing a
+stale lock. A PID or timestamp alone never automatically steals ownership.
+
+`candidate.json` records the current gate, completed gates and start/update/finish
+times. `validation-events.jsonl` contains only gate names, timestamps and pass
+outcomes; terminal output is not copied into these events. Failed receipts use a
+fixed diagnostic. Retry with a fresh staged candidate and its independently
+retained receipt digest. Complete-set development selection now accepts existing
+compiled packages, protecting their original bytes and replacing only the selected
+set after validation and repeated approval checks. This remains a development
+adapter; it does not activate production or run extension backend binaries.

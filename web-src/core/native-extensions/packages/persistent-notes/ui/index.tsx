@@ -19,21 +19,22 @@ export default function PersistentNotes({ storage }: NativeExtensionProps) {
   useEffect(() => {
     let disposed = false;
     if (!storage) return;
-    void storage
-      .read()
-      .then((note) => {
-        if (disposed) return null;
+    async function load() {
+      if (!storage) return;
+      try {
+        const note = await storage.read();
+        if (disposed) return;
         setSaved(note);
         setText(note.text);
         setMessage('Notes loaded.');
-        return null;
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
         if (!disposed)
           setMessage(
             error instanceof Error ? error.message : 'Unable to load notes.'
           );
-      });
+      }
+    }
+    void load();
     return () => {
       disposed = true;
     };

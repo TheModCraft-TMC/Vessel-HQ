@@ -36,6 +36,8 @@ Vessel HQ is a community fork, not Portainer Business Edition. Future capabiliti
 - Custom roles, Authentik group synchronization, effective-access visibility, and per-stack read-only sharing.
 - GitHub Container Registry integration and authenticated repository/tag browsing.
 - Persistent activity logs and export workflows.
+- Optional signed webhook fan-out with durable replay reservations; see the [gateway contract](./docs/webhook-gateway.md).
+- Experimental opt-in shared-storage active/standby startup; see the [HA requirements and limits](./docs/high-availability.md).
 - Cached overviews, authenticated realtime invalidation, live logs, and node metrics.
 - Fork-aware version reporting and multi-architecture release tooling.
 
@@ -43,14 +45,14 @@ See the [feature catalog](./docs/recent-features/README.md) and [customization g
 
 ## Local development
 
-Prerequisites: Docker, Go 1.26.10, Node.js 24.21.0 or newer in the 24.x line, and pnpm 10.26.2. Keep Docker running for the local backend.
+Prerequisites: Docker, Go 1.26.11, Node.js 24.21.0 or newer in the 24.x line, and pnpm 10.26.2. Keep Docker running for the local backend.
 
 ```sh
 make deps
 ./launch-dev.sh
 ```
 
-Default development URLs are `http://localhost:8999` for the frontend and `https://localhost:9443` for the backend. The development launcher can enable automatic login; use it only locally.
+Default development URLs are `http://localhost:8999` for the frontend and `https://localhost:19443` for the backend. The development launcher can enable automatic login; use it only locally.
 
 See [development setup](./docs/development-setup.md) for separate processes and configuration, and [release and deployment](./docs/themodcraft/release-and-deployment.md) and the [build guide](./docs/build-guide.md) for image builds and rollback.
 

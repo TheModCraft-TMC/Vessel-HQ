@@ -1,6 +1,7 @@
 import axios, { parseAxiosError } from '@/shared/http';
 
 export interface ExtensionSlotRegistration {
+  updatedAt?: number;
   id: number;
   revision: number;
   manifest: {
@@ -18,6 +19,7 @@ export async function getExtensionSlots(
   try {
     return (
       await axios.get<ExtensionSlotRegistration[]>('/native-extensions/slots', {
+        timeout: 10_000,
         params: { environmentId, stackId },
       })
     ).data;
@@ -28,8 +30,25 @@ export async function getExtensionSlots(
 
 export async function invokeStackExtension<T>(
   registrationId: number,
-  operation: 'stacks.network.read' | 'stacks.traffic.read',
-  input: { environmentId: number; stackId: number },
+  operation:
+    | 'stacks.network.read'
+    | 'stacks.traffic.read'
+    | 'stacks.delivery.read'
+    | 'stacks.gitops.sync'
+    | 'stacks.images.read'
+    | 'stacks.images.update'
+    | 'stacks.images.configure',
+  input: {
+    environmentId: number;
+    stackId: number;
+    version?: string;
+    automation?: {
+      version: number;
+      enabled: boolean;
+      mode: 'monitor-only' | 'automatic';
+      intervalMinutes: number;
+    };
+  },
   binding: { revision: number; packageDigest: string }
 ) {
   try {
@@ -38,19 +57,32 @@ export async function invokeStackExtension<T>(
         operation,
         environmentId: input.environmentId,
         stackId: input.stackId,
+        ...(input.version ? { version: input.version } : {}),
+        ...(input.automation ? { automation: input.automation } : {}),
         revision: binding.revision,
         packageDigest: binding.packageDigest,
       })
     ).data;
-  } catch (error) {
-    throw parseAxiosError(error, 'Unable to read stack network');
+  } catch {
+    // Transport errors can retain request data; return a fixed diagnostic.
+    throw operationError();
   }
 }
 
 /** One user-started, bounded session. Closing the drawer aborts its HTTP stream. */
 export async function watchStackTraffic<T>(
   registrationId: number,
-  input: { environmentId: number; stackId: number },
+  input: {
+    environmentId: number;
+    stackId: number;
+    version?: string;
+    automation?: {
+      version: number;
+      enabled: boolean;
+      mode: 'monitor-only' | 'automatic';
+      intervalMinutes: number;
+    };
+  },
   binding: { revision: number; packageDigest: string },
   onSnapshot: (snapshot: T) => void,
   signal: AbortSignal
@@ -69,6 +101,8 @@ export async function watchStackTraffic<T>(
         operation: 'stacks.traffic.read',
         environmentId: input.environmentId,
         stackId: input.stackId,
+        ...(input.version ? { version: input.version } : {}),
+        ...(input.automation ? { automation: input.automation } : {}),
         revision: binding.revision,
         packageDigest: binding.packageDigest,
       }),
@@ -117,4 +151,10 @@ export async function watchStackTraffic<T>(
     await reader.cancel().catch(() => undefined);
     reader.releaseLock();
   }
+}
+
+function operationError() {
+  return new Error(
+    'Extension operation failed. Refresh status and check the current grants before retrying.'
+  );
 }

@@ -1,4 +1,5 @@
 import YAML from 'yaml';
+import { YAMLError } from 'yaml/util';
 import _ from 'lodash';
 
 import { extractContainerNamesFromYaml } from './container-names';
@@ -18,9 +19,16 @@ export function validateYAML(
   let yamlObject;
 
   try {
-    yamlObject = YAML.parse(yaml, { maxAliasCount: 10000 });
+    yamlObject = YAML.parse(yaml, {
+      maxAliasCount: 10000,
+      prettyErrors: true,
+    });
   } catch (err) {
-    return `There is an error in the yaml syntax: ${err}`;
+    const location = err instanceof YAMLError && err.linePos?.start;
+    const position = location
+      ? `line ${location.line}, column ${location.col}. `
+      : '';
+    return `There is an error in the yaml syntax: ${position}Check indentation, quotes, and keys near the error.`;
   }
 
   const names = extractContainerNamesFromYaml(yamlObject);

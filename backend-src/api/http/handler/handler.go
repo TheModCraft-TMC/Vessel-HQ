@@ -44,6 +44,7 @@ import (
 // Handler is a collection of all the feature handlers. It acts like a small
 // front controller: every /api request arrives here before being delegated.
 type Handler struct {
+	WebhookGateway          http.Handler
 	AuthHandler             *auth.Handler
 	BackupHandler           *backup.Handler
 	CustomTemplatesHandler  *customtemplates.Handler
@@ -293,6 +294,12 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.StripPrefix("/api", h.TeamMembershipHandler).ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/websocket"):
 		http.StripPrefix("/api", h.WebSocketHandler).ServeHTTP(w, r)
+	case strings.HasPrefix(r.URL.Path, "/api/webhook-gateway/"):
+		if h.WebhookGateway == nil {
+			http.NotFound(w, r)
+			return
+		}
+		h.WebhookGateway.ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/api/webhooks"):
 		http.StripPrefix("/api", h.WebhookHandler).ServeHTTP(w, r)
 	case strings.HasPrefix(r.URL.Path, "/storybook"):

@@ -1,7 +1,6 @@
 package customtemplates
 
 import (
-	"context"
 	"net/http"
 	"os"
 	"sync"
@@ -85,11 +84,8 @@ func (handler *Handler) customTemplateGitFetch(w http.ResponseWriter, r *http.Re
 	}
 
 	// If multiple users are trying to fetch the same custom template simultaneously, a lock needs to be added
-	mu, ok := handler.gitFetchMutexs[portainer.TemplateID(customTemplateID)]
-	if !ok {
-		mu = &sync.Mutex{}
-		handler.gitFetchMutexs[portainer.TemplateID(customTemplateID)] = mu
-	}
+	lock, _ := handler.gitFetchMutexs.LoadOrStore(portainer.TemplateID(customTemplateID), &sync.Mutex{})
+	mu := lock.(*sync.Mutex)
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -106,7 +102,7 @@ func (handler *Handler) customTemplateGitFetch(w http.ResponseWriter, r *http.Re
 		}
 	}()
 
-	commitHash, err := stackutils.DownloadGitRepository(context.TODO(), *gitConfig, handler.GitService, func() string {
+	commitHash, err := stackutils.DownloadGitRepository(r.Context(), *gitConfig, handler.GitService, func() string {
 		return customTemplate.ProjectPath
 	})
 	if err != nil {
@@ -125,6 +121,10 @@ func (handler *Handler) customTemplateGitFetch(w http.ResponseWriter, r *http.Re
 		if err := handler.DataStore.CustomTemplate().Update(customTemplate.ID, customTemplate); err != nil {
 			return httperror.InternalServerError("Unable to persist custom template changes inside the database", err)
 		}
+	} else {
+		// This PUT also backs a query. Refreshing an unchanged checkout must not
+		// invalidate that query and start another fetch of the same commit.
+		security.MarkReadOnlyOperation(r)
 	}
 
 	fileContent, err := handler.FileService.GetFileContent(customTemplate.ProjectPath, gitConfig.ConfigFilePath)

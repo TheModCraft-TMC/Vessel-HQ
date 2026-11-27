@@ -1,0 +1,84 @@
+name: Backend dependency security
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - 'backend-src/**'
+      - 'go.work'
+      - '.github/workflows/backend-security.yml'
+      - '.github/tools/govulncheck/**'
+  push:
+    branches: [develop]
+    paths:
+      - 'backend-src/**'
+      - 'go.work'
+      - '.github/workflows/backend-security.yml'
+      - '.github/tools/govulncheck/**'
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  published-dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: backend-src
+    env:
+      GOWORK: 'off'
+      CGO_ENABLED: '0'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: backend-src/go.mod
+          cache-dependency-path: |
+            backend-src/go.sum
+            .github/tools/govulncheck/go.sum
+      - name: Verify published module identities and checksums
+        run: |
+          mkdir -p ../dist/security/backend
+          go list -mod=readonly -m -json all > ../dist/security/backend/modules.json
+          go mod verify
+          python3 - <<'PY'
+          import json, pathlib, re
+          text = pathlib.Path('../dist/security/backend/modules.json').read_text()
+          decoder = json.JSONDecoder()
+          forbidden = {'github.com/docker/docker', 'github.com/docker/distribution', 'github.com/distribution/distribution'}
+          position = count = 0
+          while position < len(text):
+              position = re.compile(r'\s*').match(text, position).end()
+              if position == len(text):
+                  break
+              module, position = decoder.raw_decode(text, position)
+              if module['Path'] in forbidden:
+                  raise SystemExit('Obsolete advisory module selected: ' + module['Path'])
+              replacement = module.get('Replace')
+              if replacement and not replacement.get('Version'):
+                  raise SystemExit('Unpublished local replacement selected: ' + module['Path'])
+              count += 1
+          print(f'Verified {count} selected module identities')
+          PY
+      - name: Build the official scanner from its locked dependency graph
+        working-directory: .github/tools/govulncheck
+        run: |
+          go build -mod=readonly -trimpath -o "$RUNNER_TEMP/go-security-bin/govulncheck" golang.org/x/vuln/cmd/govulncheck
+          go mod verify
+      - name: Scan deployed Linux source for reachable advisories
+        run: '"$RUNNER_TEMP/go-security-bin/govulncheck" -json ./... > ../dist/security/backend/govulncheck.json'
+      - name: Retain dependency security evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: backend-dependency-security
+          path: dist/security/backend/
+          if-no-files-found: error
+          retention-days: 30

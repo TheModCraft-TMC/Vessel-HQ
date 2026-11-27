@@ -6,7 +6,8 @@ if (existsSync('.env')) {
   process.loadEnvFile('.env');
 }
 
-const apiOrigin = process.env.PORTAINER_API_ORIGIN || 'http://127.0.0.1:9000';
+const apiOrigin = process.env.PORTAINER_API_ORIGIN || `http://127.0.0.1:${process.env.PORTAINER_HTTP_PORT || '9000'}`;
+process.env.PORTAINER_API_ORIGIN = apiOrigin;
 
 if (!(await backendIsReady())) {
   await run('make', ['dev-server']);

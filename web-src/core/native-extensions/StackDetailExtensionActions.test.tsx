@@ -17,6 +17,7 @@ import { StackDetailExtensionActions } from './StackDetailExtensionActions';
 vi.mock('@/domains/extensions', () => ({
   useExtensionSlots: vi.fn(),
   invokeStackExtension: vi.fn(),
+  tripExtensionRuntime: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock('./generated/registrations', () => ({
   nativeExtensionRegistrations: [],
@@ -104,6 +105,7 @@ function setQuery(data: ExtensionSlotRegistration[], overrides: object = {}) {
 }
 
 beforeEach(() => {
+  sessionStorage.clear();
   vi.clearAllMocks();
   load.mockResolvedValue({ default: TestExtension });
   nativeExtensionRegistrations.splice(0, nativeExtensionRegistrations.length, {
@@ -217,7 +219,34 @@ it.each([
   expect(invokeStackExtension).not.toHaveBeenCalled();
 });
 
-it.each(['revoked', 'refetching', 'refetch error'] as const)(
+it('retains an open drawer through background authorization refresh', async () => {
+  const data = [record];
+  setQuery(data);
+  const view = renderActions();
+  await userEvent.click(
+    screen.getByRole('button', { name: 'Network overview' })
+  );
+  const drawer = await screen.findByRole('region', {
+    name: 'Network overview drawer',
+  });
+  setQuery(data, { isFetching: true });
+  view.rerender();
+  expect(screen.getByRole('region', { name: 'Network overview drawer' })).toBe(
+    drawer
+  );
+  expect(load).toHaveBeenCalledOnce();
+});
+
+it('blocks cached slots until the initial authorization check completes', () => {
+  setQuery([record], { isFetching: true });
+  renderActions();
+  expect(
+    screen.queryByRole('button', { name: 'Network overview' })
+  ).not.toBeInTheDocument();
+  expect(load).not.toHaveBeenCalled();
+});
+
+it.each(['revoked', 'refetch error'] as const)(
   'removes an open extension when authorization is %s',
   async (reason) => {
     const view = renderActions();
@@ -227,11 +256,7 @@ it.each(['revoked', 'refetching', 'refetch error'] as const)(
     await screen.findByText('Extension scope 2:5:shop');
     setQuery(
       reason === 'revoked' ? [] : [record],
-      reason === 'refetching'
-        ? { isFetching: true }
-        : reason === 'refetch error'
-          ? { isError: true }
-          : {}
+      reason === 'refetch error' ? { isError: true } : {}
     );
     view.rerender();
     await waitFor(() =>
@@ -246,7 +271,7 @@ it.each(['revoked', 'refetching', 'refetch error'] as const)(
   }
 );
 
-it('contains a failed bundle and retries only when the drawer refresh is requested', async () => {
+it('stops a failed bundle and blocks drawer retries until a new approval', async () => {
   const consoleError = vi
     .spyOn(console, 'error')
     .mockImplementation(() => undefined);
@@ -257,14 +282,16 @@ it('contains a failed bundle and retries only when the drawer refresh is request
       screen.getByRole('button', { name: 'Network overview' })
     );
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      'The extension could not render'
+      'Extension stopped by its safety guard'
     );
     expect(invokeStackExtension).not.toHaveBeenCalled();
     await userEvent.click(
       screen.getByRole('button', { name: 'Refresh drawer content' })
     );
-    expect(await screen.findByText('Extension scope 2:5:shop')).toBeVisible();
-    expect(load).toHaveBeenCalledTimes(2);
+    expect(
+      screen.queryByText('Extension scope 2:5:shop')
+    ).not.toBeInTheDocument();
+    expect(load).toHaveBeenCalledTimes(1);
   } finally {
     consoleError.mockRestore();
   }

@@ -2,85 +2,76 @@ package sdk
 
 import (
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/portainer/portainer/pkg/libhelm/options"
-
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-type testCase struct {
-	name    string
-	url     string
-	invalid bool
-}
-
-var tests = []testCase{
-	{"not a helm repo", "https://portainer.io", true},
-	{"ingress helm repo", "https://kubernetes.github.io/ingress-nginx", false},
-	{"portainer helm repo", "https://portainer.github.io/k8s/", false},
-	{"elastic helm repo with trailing slash", "https://helm.elastic.co/", false},
-}
-
 func Test_SearchRepo(t *testing.T) {
-	t.Parallel()
-	is := assert.New(t)
+	// SearchRepo creates CLI settings for each request. Keep its cache and
+	// repositories file private, and avoid concurrent writers to that file.
+	t.Setenv("HELM_CONFIG_HOME", t.TempDir())
+	t.Setenv("HELM_CACHE_HOME", t.TempDir())
+	t.Setenv("HELM_DATA_HOME", t.TempDir())
 
-	// Create a new SDK package manager
+	const index = `apiVersion: v1
+generated: "2026-11-20T00:00:00Z"
+entries:
+  example:
+    - name: example
+      version: 1.2.3
+      apiVersion: v2
+      description: Local repository fixture
+      urls:
+        - example-1.2.3.tgz
+`
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/charts/index.yaml":
+			w.Header().Set("Content-Type", "text/yaml")
+			_, _ = w.Write([]byte(index))
+		case "/invalid/index.yaml":
+			_, _ = w.Write([]byte("entries: [invalid yaml"))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(server.Close)
+
 	hspm := NewHelmSDKPackageManager()
-
-	for _, test := range tests {
-		func(tc testCase) {
-			t.Run(tc.name, func(t *testing.T) {
-				t.Parallel()
-				response, err := hspm.SearchRepo(options.SearchRepoOptions{Repo: tc.url})
-				if tc.invalid {
-					require.Error(t, err, "error expected: %s", tc.url)
-				} else {
-					require.NoError(t, err, "no error expected: %s", tc.url)
-				}
-
-				if err == nil {
-					is.NotEmpty(response, "response expected")
-				}
-			})
-		}(test)
+	for _, tc := range []struct {
+		name string
+		path string
+	}{
+		{"repository", "/charts"},
+		{"repository with trailing slash", "/charts/"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			response, err := hspm.SearchRepo(options.SearchRepoOptions{Repo: server.URL + tc.path})
+			require.NoError(t, err)
+			var result RepoIndex
+			require.NoError(t, json.Unmarshal(response, &result))
+			require.Equal(t, "v1", result.APIVersion)
+			require.Equal(t, "2026-11-20 00:00:00 +0000 UTC", result.Generated)
+			require.Len(t, result.Entries["example"], 1)
+			require.Equal(t, "1.2.3", result.Entries["example"][0].Version)
+		})
 	}
 
-	t.Run("search repo with keyword", func(t *testing.T) {
-		// Search for charts with keyword
-		searchOpts := options.SearchRepoOptions{
-			Repo: "https://kubernetes.github.io/ingress-nginx",
-		}
-		responseBytes, err := hspm.SearchRepo(searchOpts)
-
-		// The function should not fail by design, even when not running in a k8s environment
-		require.NoError(t, err, "should not return error when not in k8s environment")
-		is.NotNil(responseBytes, "should return non-nil response")
-		is.NotEmpty(responseBytes, "should return non-empty response")
-
-		// Parse the 	ext response
-		var repoIndex RepoIndex
-		err = json.Unmarshal(responseBytes, &repoIndex)
-		require.NoError(t, err, "should parse JSON response without error")
-		is.NotEmpty(repoIndex, "should have at least one chart")
-
-		// Verify charts structure apiVersion, entries, generated
-		is.Equal("v1", repoIndex.APIVersion, "apiVersion should be v1")
-		is.NotEmpty(repoIndex.Entries, "entries should not be empty")
-		is.NotEmpty(repoIndex.Generated, "generated should not be empty")
-
-		// there should be at least one chart
-		is.NotEmpty(repoIndex.Entries, "should have at least one chart")
-	})
-
-	t.Run("search repo with empty repo URL", func(t *testing.T) {
-		// Search with empty repo URL
-		searchOpts := options.SearchRepoOptions{
-			Repo: "",
-		}
-		_, err := hspm.SearchRepo(searchOpts)
-		require.Error(t, err, "should return error when repo URL is empty")
-	})
+	for _, tc := range []struct {
+		name string
+		repo string
+	}{
+		{"not a repository", server.URL + "/missing"},
+		{"malformed index", server.URL + "/invalid"},
+		{"empty repository URL", ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := hspm.SearchRepo(options.SearchRepoOptions{Repo: tc.repo})
+			require.Error(t, err)
+		})
+	}
 }

@@ -1,5 +1,35 @@
 # Native extension development
 
+## Runtime safety stops
+
+The host SDK blocks more than 120 calls per minute, more than eight failed calls
+within 30 seconds, more than six mounts of the same view within a minute, and
+bundle/render failures. Cancellation is excluded from failure counts. Live
+traffic streams are aborted on a stop; the server permits at most four concurrent
+streams per user and extension. Server request limits also apply to SDK calls
+that bypass the UI wrappers.
+
+A safety report revokes the exact reviewed package's native UI/service grants
+and image automation, preserving notes and settings. The stop reason is visible
+in extension settings and recorded as a fixed-reason audit action. Reports bind
+the package digest, revision and approval timestamp; an old tab cannot revoke a
+newly reviewed approval. Re-approve only after reviewing the cause. Re-approval
+clears the reason and request counters; no automatic retry loop re-enables code.
+Restricted users are throttled without permission to revoke an extension for
+other users. Failed server revocation leaves the SDK locally blocked and shows
+an explicit recovery message.
+
+An unchanged verified view remains mounted during background approval checks.
+Initial checks, failed verification and revoked grants still block native code.
+Periodic provider snapshots do not revalidate extensions or console metadata.
+
+These controls are SDK circuit breakers, not a browser-code sandbox. Trusted
+native UI still shares the console's browser context; arbitrary raw browser APIs
+and synchronous JavaScript are outside the SDK guard. Uploaded backend binaries
+are not automatically executed.
+
+## Initial implementation record
+
 Status: experimental implementation, verified October 16, 2026. This branch adds the first
 whole-package upload, approval, native preview, protected candidate-build tooling,
 and scoped gRPC environment and Docker stack topology reads. It does not automatically start
@@ -88,6 +118,58 @@ activation or managed service startup. See the
   Network reads return stack workloads, attached network metadata, and their relationships;
   unrelated network members, IPs, raw labels, environment variables, and
   credentials are excluded. There is no routine polling.
+
+## Administrator settings API
+
+The host now provides a settings foundation at
+`/api/native-extensions/{id}/settings`. This is administrator configuration,
+independent of runtime grants: pending and disabled registrations can be configured
+without enabling their code. Administrators can open an extension's **Settings**
+dialog to edit public values, add or replace write-only secrets, explicitly remove
+entries, or reset all settings after confirmation. Leave an existing secret blank
+to preserve it. Reloading asks before discarding edits; a failed save clears entered
+secrets and requires reloading before another write. Package and settings version
+conflicts never overwrite newer data. Packages may declare a bounded `settings.fields`
+schema with string, boolean or integer fields, required flags, string enums and
+secret placement. Undeclared keys, invalid values and public/secret mismatches
+are rejected; packages without a schema retain the existing string-map contract.
+
+SDK beta.2 adds `GetSettings(revision, includeSecrets)` over package-bound mTLS.
+Every read requires current approval and `settings.service.read`; secrets also
+require the independent `settings.service.secrets.read` grant. Public reads never
+return secrets. Revision checks, schema validation and value-free audits are
+transactional. Upload and administrator settings access grant no machine access.
+
+- `GET` requires `revision` and `packageDigest` query parameters. It returns
+  `{version, values, secretKeys}`. Secret values are never returned.
+- `PUT` accepts `{revision, packageDigest, version, values, secrets}`. `values`
+  replaces the public string map; omitted secret keys retain their stored values,
+  string values set/replace secrets, and `null` removes a secret. A currently secret
+  key cannot become public in the same request, including when removed from secrets.
+- `DELETE` accepts only `{revision, packageDigest, version}` and clears both maps.
+  Reset increments the settings version so stale editors cannot restore old data.
+
+Settings are namespaced by the registration, persist across package updates and
+revocation, and are deleted with registration removal. Package updates still revoke
+runtime approvals and invalidate requests using the old revision. Concurrent
+updates/resets use optimistic concurrency; stale package identities and settings
+versions return `409` without changing data. Missing registrations return `404`.
+
+Keys start with an ASCII letter and contain only letters, numbers, `_`, `.` and
+`-`, up to 64 characters. Values are UTF-8 strings up to 16 KiB each; public and
+secret settings share limits of 64 entries and 64 KiB total key/value bytes. A key
+cannot appear in both maps. These storage limits also apply when a package declares a schema. A schema
+does not grant runtime authorization.
+
+Settings responses use `Cache-Control: no-store`. Registration responses exclude
+all settings. Reads, updates and resets are audited transactionally with package
+identity and settings version, excluding configuration keys and values. Failed
+writes or audits preserve the previous settings. Secrets remain in the server
+datastore under its existing storage/backup protections; this slice adds no
+separate field encryption or external secret manager integration. Protect datastore
+backups as credentials. Native UI remains trusted code in the current browser
+context, so write-only responses do not isolate secrets while an administrator
+is entering them.
 
 ## Whole-package format
 
@@ -258,7 +340,7 @@ generates private development mTLS credentials and uses the SDK for its calls.
 The SDK also includes an independent environment-configured executable example.
 Rust or other gRPC clients can use the same protobuf contract.
 
-The shared [wire contract](https://github.com/TheModCraft-TMC/Vessel-HQ/blob/sdk/go/v0.1.0-beta.1/sdk/go/proto/v1/extension.proto) comes from the pinned published SDK module. Vessel has no local SDK replacement or duplicate generated Go wire types. SDK authoring and pinned protobuf generation now belong to the [independent SDK workspace](extension-sdk-workspace.md); host integration tests run with `GOWORK=off make test-extension-host`.
+The shared [wire contract](https://github.com/TheModCraft-TMC/Vessel-HQ-Extension-SDK/blob/v0.1.0-beta.2/proto/v1/extension.proto) comes from the pinned published SDK module. Vessel has no local SDK replacement or duplicate generated Go wire types. SDK authoring and pinned protobuf generation now belong to the [independent SDK workspace](extension-sdk-workspace.md); host integration tests run with `GOWORK=off make test-extension-host`.
 
 See the [design and remaining milestones](planning/plugin-system.md) and
 [roadmap](planning/vessel-hq-roadmap.md) before expanding this experimental API.
@@ -362,3 +444,30 @@ intentionally refuses to overwrite an existing path. Stop the owning server and
 verify that no other listener uses the dedicated volume before removing only the
 stale socket and restarting. The current development backend does not manage
 this recovery automatically; production lifecycle supervision remains future work.
+
+## Stack delivery extensions (development)
+
+The authoring packages now include [Stack GitOps](../examples/native-extensions/stack-gitops/README.md)
+and [Stack image updates](../examples/native-extensions/stack-image-updates/README.md),
+alongside Network Overview 0.4.0's resource tree. They require the new host and
+an isolated complete-set console build; uploading does not compile or activate them.
+
+The authenticated invoke endpoint additionally supports administrator-only
+`stacks.delivery.read`, `stacks.gitops.sync`, `stacks.images.read`,
+`stacks.images.update` and `stacks.images.configure`. Every capability requires
+explicit environment **and** stack scopes in both manifest and grants. Delivery
+and image reads return bounded projections without Compose, environment values,
+repository URLs or credentials. Writes include the returned `version`, an opaque
+hash of persisted stack/workflow/source inputs, and recheck that review inside
+normal deployment transactions. Deployment responses contain only acceptance and
+scope; the normal stack response is never forwarded to extension code.
+
+Image policy configuration includes `{version, enabled, mode, intervalMinutes}`
+in `automation`, with optimistic configuration versions. Enabling background
+checks also requires `stacks.images.auto-update`; automatic mode requires
+`stacks.images.update`. This is a host scheduler, not extension service execution
+or a new gRPC delegation. It validates the configuring administrator on every run,
+rechecks current grants before deployment, serializes extension deployment requests
+and audits checks/requests/outcomes. Disabled or replaced packages turn jobs off.
+Background checks persist across server restarts, but no HA scheduling lease is
+provided. See the package README for label behavior and current limitations.

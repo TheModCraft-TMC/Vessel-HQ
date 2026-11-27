@@ -300,8 +300,26 @@ func decodePackageManifest(data []byte, manifest *Manifest) error {
 	if err := json.Unmarshal(data, &top); err != nil {
 		return err
 	}
-	if err := exactFields(top, "id", "name", "version", "description", "apiVersion", "packageDigest", "permissions", "ui", "backend"); err != nil {
+	if err := exactFields(top, "id", "name", "version", "description", "apiVersion", "packageDigest", "permissions", "ui", "backend", "settings"); err != nil {
 		return err
+	}
+	if value := top["settings"]; value != nil && string(value) != "null" {
+		var schema map[string]json.RawMessage
+		if err := json.Unmarshal(value, &schema); err != nil {
+			return err
+		}
+		if err := exactFields(schema, "fields"); err != nil {
+			return err
+		}
+		var fields map[string]map[string]json.RawMessage
+		if err := json.Unmarshal(schema["fields"], &fields); err != nil {
+			return err
+		}
+		for _, field := range fields {
+			if err := exactFields(field, "type", "required", "secret", "enum"); err != nil {
+				return err
+			}
+		}
 	}
 	var permissions []map[string]json.RawMessage
 	if value := top["permissions"]; value != nil {

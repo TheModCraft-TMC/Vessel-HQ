@@ -6,11 +6,6 @@ import { GitFormModel } from '../types';
 
 import { ComposePathField } from './ComposePathField';
 
-// Mock the feature flags
-vi.mock('../../feature-flags/feature-flags.service', () => ({
-  isBE: false,
-}));
-
 // Mock the PathSelector component
 vi.mock('./PathSelector', () => ({
   PathSelector: vi.fn(({ value, onChange, placeholder, inputId }) => (
@@ -19,7 +14,7 @@ vi.mock('./PathSelector', () => ({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       id={inputId}
-      data-testid="path-selector"
+      data-cy="path-selector"
     />
   )),
 }));
@@ -29,7 +24,7 @@ const defaultProps = {
   onChange: vi.fn(),
   isCompose: true,
   model: {
-    SourceId: 1,
+    SourceId: 0,
     ComposeFilePathInRepository: 'docker-compose.yml',
   } as GitFormModel,
   isDockerStandalone: false,
@@ -139,28 +134,22 @@ describe('ComposePathField', () => {
   });
 });
 
-describe('ComposePathField with limited features', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+describe('source-backed path browsing', () => {
+  it('offers the existing selector when a source is selected in CE', () => {
+    render(
+      <ComposePathField
+        {...defaultProps}
+        model={{ ...defaultProps.model, SourceId: 7 }}
+      />
+    );
+    expect(screen.getByTestId('path-selector')).toBeVisible();
   });
 
-  it('should render PathSelector when isBE is true', () => {
-    // Mock isBE to return true for this test
-    vi.doMock('../../feature-flags/feature-flags.service', () => ({
-      isBE: true,
-    }));
-
-    // Since we can't use dynamic imports in this test environment,
-    // we'll test the BE functionality by mocking the feature flag
-    // and verifying the PathSelector is called with correct props
-    const mockPathSelector = vi.fn(() => <div data-testid="path-selector" />);
-    vi.doMock('./PathSelector', () => ({
-      PathSelector: mockPathSelector,
-    }));
-
-    // Note: In a real scenario with BE features enabled,
-    // the PathSelector component would be rendered instead of the Input
-    // This test verifies the conditional rendering logic works correctly
-    expect(mockPathSelector).toBeDefined();
+  it('keeps manual input when no source is selected', async () => {
+    const onChange = vi.fn();
+    render(<ComposePathField {...defaultProps} onChange={onChange} />);
+    expect(screen.queryByTestId('path-selector')).not.toBeInTheDocument();
+    await userEvent.setup().type(screen.getByRole('textbox'), 'compose.yml');
+    expect(onChange).toHaveBeenLastCalledWith('compose.yml');
   });
 });

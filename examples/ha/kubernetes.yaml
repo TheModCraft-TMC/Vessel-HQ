@@ -1,0 +1,76 @@
+# Opt-in active/standby example. Provision vessel-ha-data as RWX storage with
+# coherent cross-host locking/mmap BEFORE applying. Never use independent PVCs.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vessel-ha
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: vessel-ha
+  template:
+    metadata:
+      labels:
+        app: vessel-ha
+    spec:
+      automountServiceAccountToken: false
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: vessel-ha
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: vessel
+          # Replace with the SAME reviewed immutable Vessel image on both nodes.
+          image: vessel-ha-image-must-be-replaced:unconfigured
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+              ephemeral-storage: 256Mi
+            limits:
+              memory: 1Gi
+              ephemeral-storage: 2Gi
+          env:
+            - name: VESSEL_HA_MODE
+              value: shared-storage
+          ports:
+            - name: https
+              containerPort: 9443
+            - name: edge
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /api/status
+              port: https
+              scheme: HTTPS
+            periodSeconds: 5
+          # A standby intentionally has no API listener. An API liveness probe
+          # would repeatedly kill it; process exits are restarted by Kubernetes.
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: vessel-ha-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vessel-ha
+spec:
+  selector:
+    app: vessel-ha
+  ports:
+    - name: https
+      port: 9443
+      targetPort: https
+    - name: edge
+      port: 8000
+      targetPort: edge

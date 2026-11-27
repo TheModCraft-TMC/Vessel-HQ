@@ -30,6 +30,9 @@ import type {
   StackDetailContext,
   StackTrafficOverview,
 } from './sdk';
+import { useVerifiedExtensionData } from './useVerifiedExtensionData';
+import { useRuntimeWatchdog } from './useRuntimeWatchdog';
+import type { RuntimeWatchdog } from './runtime-watchdog';
 
 const actionSlot = 'docker.stack.detail.action';
 
@@ -40,8 +43,9 @@ export function StackDetailExtensionActions({
   context: StackDetailContext;
 }) {
   const query = useExtensionSlots(context.environmentId, context.stackId);
-  if (query.isFetching || query.isError || !query.data?.length) return null;
-  const actions = query.data.flatMap((record) => {
+  const data = useVerifiedExtensionData(query);
+  if (!data?.length) return null;
+  const actions = data.flatMap((record) => {
     const registration = nativeExtensionRegistrations.find(
       (item) =>
         item.id === record.manifest.id &&
@@ -79,7 +83,10 @@ export function StackDetailExtensionActions({
 }
 
 class ExtensionBoundary extends Component<
-  NativeExtensionProps & { registration: NativeExtensionRegistration },
+  NativeExtensionProps & {
+    registration: NativeExtensionRegistration;
+    watchdog?: RuntimeWatchdog;
+  },
   { failed: boolean }
 > {
   state = { failed: false };
@@ -95,6 +102,11 @@ class ExtensionBoundary extends Component<
 
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+
+  componentDidCatch() {
+    const { watchdog } = this.props;
+    watchdog?.trip('render-error');
   }
 
   render() {
@@ -133,6 +145,25 @@ function ExtensionAction({
     [environmentId, stackId, stackName]
   );
   const [open, setOpen] = useState(false);
+  const binding = useMemo(
+    () => ({
+      id: record.id,
+      revision: record.revision,
+      packageDigest: record.manifest.packageDigest,
+      updatedAt: record.updatedAt ?? 0,
+    }),
+    [
+      record.id,
+      record.revision,
+      record.manifest.packageDigest,
+      record.updatedAt,
+    ]
+  );
+  const { guard, state: safety } = useRuntimeWatchdog(
+    binding,
+    `stack:${environmentId}:${stackId}`,
+    open
+  );
   const drawerId = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const drawer = useRef<HTMLElement>(null);
@@ -155,23 +186,66 @@ function ExtensionAction({
   }, [open, close]);
   const [generation, setGeneration] = useState(0);
   const client = useQueryClient();
-  const invoke = useCallback<NativeExtensionProps['invoke']>(
+  const invokeUnchecked = useCallback<NativeExtensionProps['invoke']>(
     <T,>(
-      operation: 'stacks.network.read' | 'stacks.traffic.read',
-      input: { environmentId: number; stackId: number }
+      operation:
+        | 'stacks.network.read'
+        | 'stacks.traffic.read'
+        | 'stacks.delivery.read'
+        | 'stacks.gitops.sync'
+        | 'stacks.images.read'
+        | 'stacks.images.update'
+        | 'stacks.images.configure',
+      input: {
+        environmentId: number;
+        stackId: number;
+        version?: string;
+        automation?: {
+          version: number;
+          enabled: boolean;
+          mode: 'monitor-only' | 'automatic';
+          intervalMinutes: number;
+        };
+      }
     ) => {
       const scopedInput = {
         environmentId: input.environmentId,
         stackId: input.stackId,
+        version: input.version,
+        automation: input.automation,
       };
       if (
-        !['stacks.network.read', 'stacks.traffic.read'].includes(operation) ||
+        ![
+          'stacks.network.read',
+          'stacks.traffic.read',
+          'stacks.delivery.read',
+          'stacks.gitops.sync',
+          'stacks.images.read',
+          'stacks.images.update',
+          'stacks.images.configure',
+        ].includes(operation) ||
         scopedInput.environmentId !== environmentId ||
         scopedInput.stackId !== stackId
       ) {
         return Promise.reject(
           new Error('Extension request is outside the current stack.')
         );
+      }
+      if (
+        operation === 'stacks.gitops.sync' ||
+        operation === 'stacks.images.update' ||
+        operation === 'stacks.images.configure'
+      ) {
+        return invokeStackExtension<T>(record.id, operation, scopedInput, {
+          revision: record.revision,
+          packageDigest: record.manifest.packageDigest,
+        }).then(async (result) => {
+          await Promise.all([
+            client.invalidateQueries(['stacks']),
+            client.invalidateQueries(['docker', environmentId]),
+          ]);
+          return result;
+        });
       }
       return client.fetchQuery<T>({
         queryKey: [
@@ -196,29 +270,50 @@ function ExtensionAction({
     },
     [client, record, environmentId, stackId]
   );
+  const invoke = useCallback(
+    <T,>(...args: Parameters<NativeExtensionProps['invoke']>) =>
+      guard!.run(() => invokeUnchecked<T>(...args)),
+    [guard, invokeUnchecked]
+  );
 
   const watchTraffic = useCallback<
     NonNullable<NativeExtensionProps['watchTraffic']>
   >(
     (onSnapshot, signal) =>
-      watchStackTraffic<StackTrafficOverview>(
-        record.id,
-        scopedContext,
-        {
-          revision: record.revision,
-          packageDigest: record.manifest.packageDigest,
-        },
-        (snapshot) => {
-          if (
-            snapshot.environmentId !== environmentId ||
-            snapshot.stackId !== stackId
-          )
-            throw new Error('Traffic response is outside the current stack.');
-          onSnapshot(snapshot);
-        },
-        signal
-      ),
-    [record, scopedContext, environmentId, stackId]
+      guard!.run(async () => {
+        const controller = new AbortController();
+        function abort() {
+          controller.abort();
+        }
+        signal.addEventListener('abort', abort, { once: true });
+        guard!.signal.addEventListener('abort', abort, { once: true });
+        if (signal.aborted || guard!.signal.aborted) controller.abort();
+        try {
+          await watchStackTraffic<StackTrafficOverview>(
+            record.id,
+            scopedContext,
+            {
+              revision: record.revision,
+              packageDigest: record.manifest.packageDigest,
+            },
+            (snapshot) => {
+              if (
+                snapshot.environmentId !== environmentId ||
+                snapshot.stackId !== stackId
+              )
+                throw new Error(
+                  'Traffic response is outside the current stack.'
+                );
+              onSnapshot(snapshot);
+            },
+            controller.signal
+          );
+        } finally {
+          signal.removeEventListener('abort', abort);
+          guard!.signal.removeEventListener('abort', abort);
+        }
+      }),
+    [record, scopedContext, environmentId, stackId, guard]
   );
 
   return (
@@ -258,7 +353,15 @@ function ExtensionAction({
           </div>
         )}
       </WidgetTitle>
-      {open && (
+      {open && safety.reason && (
+        <p role="alert">
+          Extension stopped by its safety guard ({safety.reason}).{' '}
+          {safety.reportFailed
+            ? 'Server revocation failed; disable it in extension settings.'
+            : 'Review settings before approving again.'}
+        </p>
+      )}
+      {open && !safety.reason && (
         <WidgetBody>
           <section id={drawerId} ref={drawer} aria-label={`${title} drawer`}>
             <ExtensionBoundary
@@ -267,6 +370,7 @@ function ExtensionAction({
               context={scopedContext}
               invoke={invoke}
               watchTraffic={watchTraffic}
+              watchdog={guard}
             />
           </section>
         </WidgetBody>

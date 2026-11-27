@@ -491,6 +491,12 @@ import type {
   GitOperationRepoFilePreviewData,
   GitOperationRepoFilePreviewErrors,
   GitOperationRepoFilePreviewResponses,
+  GitOperationRepoFileSearchData,
+  GitOperationRepoFileSearchErrors,
+  GitOperationRepoFileSearchResponses,
+  GitOperationRepoRefsData,
+  GitOperationRepoRefsErrors,
+  GitOperationRepoRefsResponses,
   GitOpsSourceGetData,
   GitOpsSourceGetErrors,
   GitOpsSourceGetResponses,
@@ -575,6 +581,9 @@ import type {
   LdapCheckData,
   LdapCheckErrors,
   LdapCheckResponses,
+  LdapTestLoginData,
+  LdapTestLoginErrors,
+  LdapTestLoginResponses,
   LogoutData,
   LogoutErrors,
   LogoutResponses,
@@ -733,6 +742,9 @@ import type {
   StackMigrateData,
   StackMigrateErrors,
   StackMigrateResponses,
+  StackProjectInspectData,
+  StackProjectInspectErrors,
+  StackProjectInspectResponses,
   StackStartData,
   StackStartErrors,
   StackStartResponses,
@@ -1253,6 +1265,11 @@ import {
   zGetWebsocketPodQuery,
   zGitOperationRepoFilePreviewBody,
   zGitOperationRepoFilePreviewResponse,
+  zGitOperationRepoFileSearchBody,
+  zGitOperationRepoFileSearchResponse,
+  zGitOperationRepoRefsBody,
+  zGitOperationRepoRefsQuery,
+  zGitOperationRepoRefsResponse,
   zGitOpsSourceGetPath,
   zGitOpsSourceGetResponse,
   zGitOpsSourcesCreateGitBody,
@@ -1320,6 +1337,8 @@ import {
   zKubernetesNamespacesToggleSystemResponse,
   zLdapCheckBody,
   zLdapCheckResponse,
+  zLdapTestLoginBody,
+  zLdapTestLoginResponse2,
   zLogoutResponse,
   zMotdResponse,
   zPatchKubernetesDeploymentBody,
@@ -1432,6 +1451,7 @@ import {
   zStackDeleteQuery,
   zStackDeleteResponse,
   zStackFileInspectPath,
+  zStackFileInspectQuery,
   zStackFileInspectResponse,
   zStackGitRedeployBody,
   zStackGitRedeployPath,
@@ -1445,6 +1465,8 @@ import {
   zStackMigratePath,
   zStackMigrateQuery,
   zStackMigrateResponse,
+  zStackProjectInspectBody,
+  zStackProjectInspectResponse,
   zStackStartPath,
   zStackStartQuery,
   zStackStartResponse,
@@ -1456,6 +1478,7 @@ import {
   zStackUpdateGitPath,
   zStackUpdateGitQuery,
   zStackUpdateGitResponse,
+  zStackUpdateHeaders,
   zStackUpdatePath,
   zStackUpdateQuery,
   zStackUpdateResponse,
@@ -4248,6 +4271,82 @@ export const gitOperationRepoFilePreview = <
       { name: 'Authorization', type: 'apiKey' },
     ],
     url: '/gitops/repo/file/preview',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * Search deployment paths in an authorized stored Git source
+ */
+export const gitOperationRepoFileSearch = <ThrowOnError extends boolean = true>(
+  options: Options<GitOperationRepoFileSearchData, ThrowOnError>
+): RequestResult<
+  GitOperationRepoFileSearchResponses,
+  GitOperationRepoFileSearchErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    GitOperationRepoFileSearchResponses,
+    GitOperationRepoFileSearchErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: zGitOperationRepoFileSearchBody,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
+    responseType: 'json',
+    responseValidator: async (data) =>
+      await zGitOperationRepoFileSearchResponse.parseAsync(data),
+    security: [
+      { name: 'X-API-KEY', type: 'apiKey' },
+      { name: 'Authorization', type: 'apiKey' },
+    ],
+    url: '/gitops/repo/files/search',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
+ * List references from an authorized stored Git source
+ */
+export const gitOperationRepoRefs = <ThrowOnError extends boolean = true>(
+  options: Options<GitOperationRepoRefsData, ThrowOnError>
+): RequestResult<
+  GitOperationRepoRefsResponses,
+  GitOperationRepoRefsErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    GitOperationRepoRefsResponses,
+    GitOperationRepoRefsErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: zGitOperationRepoRefsBody,
+          path: z.never().optional(),
+          query: zGitOperationRepoRefsQuery.optional(),
+        })
+        .parseAsync(data),
+    responseType: 'json',
+    responseValidator: async (data) =>
+      await zGitOperationRepoRefsResponse.parseAsync(data),
+    security: [
+      { name: 'X-API-KEY', type: 'apiKey' },
+      { name: 'Authorization', type: 'apiKey' },
+    ],
+    url: '/gitops/repo/refs',
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -9097,6 +9196,43 @@ export const ldapCheck = <ThrowOnError extends boolean = true>(
   });
 
 /**
+ * Test LDAP user login
+ *
+ * Test user credentials against the supplied LDAP settings without creating a user or session.
+ * **Access policy**: administrator
+ */
+export const ldapTestLogin = <ThrowOnError extends boolean = true>(
+  options: Options<LdapTestLoginData, ThrowOnError>
+): RequestResult<LdapTestLoginResponses, LdapTestLoginErrors, ThrowOnError> =>
+  (options.client ?? client).post<
+    LdapTestLoginResponses,
+    LdapTestLoginErrors,
+    ThrowOnError
+  >({
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: zLdapTestLoginBody,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
+    responseType: 'json',
+    responseValidator: async (data) =>
+      await zLdapTestLoginResponse2.parseAsync(data),
+    security: [
+      { name: 'X-API-KEY', type: 'apiKey' },
+      { name: 'Authorization', type: 'apiKey' },
+    ],
+    url: '/ldap/test',
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+/**
  * fetches the message of the day
  *
  * **Access policy**: restricted
@@ -10061,6 +10197,7 @@ export const stackUpdate = <ThrowOnError extends boolean = true>(
       await z
         .object({
           body: zStackUpdateBody,
+          headers: zStackUpdateHeaders.optional(),
           path: zStackUpdatePath,
           query: zStackUpdateQuery,
         })
@@ -10135,7 +10272,7 @@ export const stackFileInspect = <ThrowOnError extends boolean = true>(
         .object({
           body: z.never().optional(),
           path: zStackFileInspectPath,
-          query: z.never().optional(),
+          query: zStackFileInspectQuery.optional(),
         })
         .parseAsync(data),
     responseType: 'json',
@@ -10745,6 +10882,47 @@ export const stackDeleteKubernetesByName = <
     ],
     url: '/stacks/name/{name}',
     ...options,
+  });
+
+/**
+ * Validate and preview a portable Compose project without deployment
+ *
+ * Checks bounded archive paths, checksums, file order and YAML syntax. Does not resolve interpolation or referenced host files, contact an engine, or certify external requirements.
+ */
+export const stackProjectInspect = <ThrowOnError extends boolean = true>(
+  options: Options<StackProjectInspectData, ThrowOnError>
+): RequestResult<
+  StackProjectInspectResponses,
+  StackProjectInspectErrors,
+  ThrowOnError
+> =>
+  (options.client ?? client).post<
+    StackProjectInspectResponses,
+    StackProjectInspectErrors,
+    ThrowOnError
+  >({
+    ...formDataBodySerializer,
+    requestValidator: async (data) =>
+      await z
+        .object({
+          body: zStackProjectInspectBody,
+          path: z.never().optional(),
+          query: z.never().optional(),
+        })
+        .parseAsync(data),
+    responseType: 'json',
+    responseValidator: async (data) =>
+      await zStackProjectInspectResponse.parseAsync(data),
+    security: [
+      { name: 'X-API-KEY', type: 'apiKey' },
+      { name: 'Authorization', type: 'apiKey' },
+    ],
+    url: '/stacks/project/inspect',
+    ...options,
+    headers: {
+      'Content-Type': null,
+      ...options.headers,
+    },
   });
 
 /**

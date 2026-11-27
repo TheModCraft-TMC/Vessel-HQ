@@ -11,11 +11,10 @@ import {
   setupCache,
   StorageValue,
 } from 'axios-cache-interceptor';
-import { loadProgressBar } from 'axios-progress-bar';
-import 'axios-progress-bar/dist/nprogress.css';
 import qs from 'qs';
 
 import { dockerMaxAPIVersionInterceptor } from './dockerMaxApiVersionInterceptor';
+import { installRequestActivity } from './request-activity';
 import {
   CACHE_DURATION,
   portainerAgentManagerOperation,
@@ -98,7 +97,7 @@ export function updateAxiosAdapter(useCache: boolean) {
 
 export default axios;
 
-loadProgressBar(undefined, axios);
+installRequestActivity(axios);
 
 export const agentTargetHeader = 'X-PortainerAgent-Target';
 

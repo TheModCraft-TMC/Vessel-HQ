@@ -13,6 +13,7 @@ import (
 	httperrors "github.com/portainer/portainer/api/http/errors"
 	"github.com/portainer/portainer/api/http/security"
 	"github.com/portainer/portainer/api/stacks/deployments"
+	"github.com/portainer/portainer/api/stacks/projectfiles"
 	"github.com/portainer/portainer/api/stacks/stackutils"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 	"github.com/portainer/portainer/pkg/libhttp/request"
@@ -81,6 +82,7 @@ func (payload *updateSwarmStackPayload) Validate(r *http.Request) error {
 // @produce json
 // @param id path int true "Stack identifier"
 // @param endpointId query int true "Environment identifier"
+// @param If-Match header string false "Quoted project revision returned by StackFileInspect; stale revisions are rejected"
 // @param body body updateSwarmStackPayload true "Stack details"
 // @success 200 {object} portainer.Stack "Success"
 // @failure 400 "Invalid request"
@@ -162,6 +164,9 @@ func (handler *Handler) updateStackInTx(tx dataservices.DataStoreTx, r *http.Req
 		return nil, nil, nil, httperror.InternalServerError("Unable to find a stack with the specified identifier inside the database", err)
 	}
 
+	if reviewErr := checkExtensionReview(tx, r, stack); reviewErr != nil {
+		return nil, nil, nil, reviewErr
+	}
 	if stack.Status == portainer.StackStatusDeploying {
 		return nil, nil, nil, httperror.Conflict("Unable to update stack", errors.New("Stack deployment is already in progress"))
 	}
@@ -206,6 +211,13 @@ func (handler *Handler) updateStackInTx(tx dataservices.DataStoreTx, r *http.Req
 		errMsg := "Stack editing is disabled for non-admin users"
 
 		return nil, nil, nil, httperror.Forbidden(errMsg, errors.New(errMsg))
+	}
+
+	if expected := r.Header.Get("If-Match"); expected != "" {
+		snapshot, err := projectfiles.Read(r.Context(), stack.ProjectPath, stack.EntryPoint, stack.AdditionalFiles)
+		if err != nil || expected != `"`+snapshot.Revision+`"` {
+			return nil, nil, nil, httperror.Conflict("Stack files changed outside this editor. Reload and review the current project before deploying; your changes have not been saved.", errors.New("project revision conflict"))
+		}
 	}
 
 	deploymentConfig, postDeploy, httpErr := handler.updateAndDeployStack(tx, r, stack, endpoint)

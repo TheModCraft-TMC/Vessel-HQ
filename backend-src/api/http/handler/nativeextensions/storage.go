@@ -43,6 +43,9 @@ func (h *Handler) storage(w http.ResponseWriter, r *http.Request, write bool) *h
 		}
 	}
 	var result domain.Note
+	if err := h.checkRuntimeBudget(w, r, input.Revision, input.PackageDigest); err != nil {
+		return err
+	}
 	err = h.DataStore.UpdateTx(func(tx dataservices.DataStoreTx) error {
 		record, err := tx.NativeExtension().Read(id)
 		if tx.IsErrObjectNotFound(err) {

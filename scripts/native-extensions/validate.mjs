@@ -4,13 +4,15 @@ import { readFile, cp } from 'node:fs/promises';
 import { spawn, spawnSync } from 'node:child_process';
 
 const checks = new Set(['check:frontend-modernization', 'check:frontend-boundaries', 'check:app-router-compliance', 'typecheck', 'test:extensions', 'test', 'lint:ci', 'build']);
-const check = process.argv[2];
-if (check === '--seed-dependencies') {
+// Select the trusted literal rather than forwarding the caller's raw argument.
+const requestedCheck = process.argv[2];
+const check = [...checks].find((operation) => operation === requestedCheck);
+if (requestedCheck === '--seed-dependencies') {
   // This action receives only a fresh Docker volume, never candidate sources.
   await cp('/opt/vessel/node_modules', '/deps', { recursive: true, verbatimSymlinks: true });
   process.exit(0);
 }
-if (!checks.has(check)) throw new Error('Unknown validation operation');
+if (!check) throw new Error('Unknown validation operation');
 const expected = (await readFile('/opt/vessel/lock.sha256', 'utf8')).trim();
 const actual = createHash('sha256')
   .update(await readFile('/workspace/pnpm-lock.yaml'))
@@ -18,13 +20,18 @@ const actual = createHash('sha256')
 if (expected !== actual) throw new Error('Build image dependencies do not match candidate lockfile');
 // Existing repository guards resolve their root with git. Never mount the real
 // checkout's .git or credentials into the build container.
-if (spawnSync('git', ['init', '--quiet', '/workspace']).status !== 0) throw new Error('Cannot initialize disposable build metadata');
-const child = spawn('pnpm', ['run', check, ...(['test', 'test:extensions'].includes(check) ? ['--maxWorkers=4'] : [])], {
+// These are fixed paths in the separately provisioned Debian/official Node
+// builder image. Candidate files and an inherited PATH cannot select tools.
+const toolEnvironment = {
+  PATH: '/usr/local/bin:/usr/bin:/bin',
+  HOME: '/tmp',
+};
+if (spawnSync('/usr/bin/git', ['init', '--quiet', '/workspace'], { env: toolEnvironment }).status !== 0) throw new Error('Cannot initialize disposable build metadata');
+const child = spawn('/usr/local/bin/pnpm', ['run', check, ...(['test', 'test:extensions'].includes(check) ? ['--maxWorkers=4'] : [])], {
   cwd: '/workspace',
   stdio: 'inherit',
   env: {
-    PATH: process.env.PATH,
-    HOME: '/tmp',
+    ...toolEnvironment,
     COREPACK_HOME: '/opt/vessel/corepack',
     COREPACK_ENABLE_NETWORK: '0',
     COREPACK_ENABLE_DOWNLOAD_PROMPT: '0',

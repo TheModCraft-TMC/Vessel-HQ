@@ -1,0 +1,51 @@
+{
+  "id": "stack-gitops",
+  "name": "Stack GitOps",
+  "version": "0.1.0",
+  "description": "Stack GitOps with reviewed stack-scoped host operations.",
+  "apiVersion": "v1",
+  "packageDigest": "sha256:61775be9336d3dcb6da207c0cb10138020cfeea0d36b8b8403af9a56ce61aefe",
+  "permissions": [
+    {
+      "capability": "ui.native",
+      "environmentIds": []
+    },
+    {
+      "capability": "stacks.network.read",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    },
+    {
+      "capability": "stacks.delivery.read",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    },
+    {
+      "capability": "stacks.gitops.sync",
+      "environmentIds": [
+        1
+      ],
+      "stackIds": [
+        1
+      ]
+    }
+  ],
+  "ui": {
+    "entry": "ui/index.tsx",
+    "slots": [
+      {
+        "id": "stack-gitops",
+        "title": "Stack GitOps",
+        "slot": "docker.stack.detail.action"
+      }
+    ]
+  }
+}

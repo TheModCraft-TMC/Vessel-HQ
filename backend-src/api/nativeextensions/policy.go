@@ -31,15 +31,16 @@ type Backend struct {
 	Entrypoints map[string]string `json:"entrypoints"`
 }
 type Manifest struct {
-	ID            string       `json:"id"`
-	Name          string       `json:"name"`
-	Version       string       `json:"version"`
-	Description   string       `json:"description,omitempty"`
-	APIVersion    string       `json:"apiVersion"`
-	PackageDigest string       `json:"packageDigest"`
-	Permissions   []Permission `json:"permissions"`
-	UI            *UI          `json:"ui,omitempty"`
-	Backend       *Backend     `json:"backend,omitempty"`
+	Settings      *SettingsSchema `json:"settings,omitempty"`
+	ID            string          `json:"id"`
+	Name          string          `json:"name"`
+	Version       string          `json:"version"`
+	Description   string          `json:"description,omitempty"`
+	APIVersion    string          `json:"apiVersion"`
+	PackageDigest string          `json:"packageDigest"`
+	Permissions   []Permission    `json:"permissions"`
+	UI            *UI             `json:"ui,omitempty"`
+	Backend       *Backend        `json:"backend,omitempty"`
 }
 type Note struct {
 	Text    string `json:"text"`
@@ -47,17 +48,20 @@ type Note struct {
 }
 
 type Record struct {
-	Note               *Note        `json:"note,omitempty"`
-	ID                 int          `json:"id"`
-	Manifest           Manifest     `json:"manifest"`
-	Revision           int          `json:"revision"`
-	Status             string       `json:"status"`
-	Grants             []Permission `json:"grants"`
-	TrustedNativeUI    bool         `json:"trustedNativeUI"`
-	ServiceReadEnabled bool         `json:"serviceReadEnabled"`
-	UpdatedAt          int64        `json:"updatedAt"`
-	PackageAvailable   bool         `json:"packageAvailable"`
-	ArchiveDigest      string       `json:"archiveDigest,omitempty"`
+	SafetyReason       string           `json:"safetyReason,omitempty"`
+	ImageAutomation    *ImageAutomation `json:"imageAutomation,omitempty"`
+	Settings           *Settings        `json:"settings,omitempty"`
+	Note               *Note            `json:"note,omitempty"`
+	ID                 int              `json:"id"`
+	Manifest           Manifest         `json:"manifest"`
+	Revision           int              `json:"revision"`
+	Status             string           `json:"status"`
+	Grants             []Permission     `json:"grants"`
+	TrustedNativeUI    bool             `json:"trustedNativeUI"`
+	ServiceReadEnabled bool             `json:"serviceReadEnabled"`
+	UpdatedAt          int64            `json:"updatedAt"`
+	PackageAvailable   bool             `json:"packageAvailable"`
+	ArchiveDigest      string           `json:"archiveDigest,omitempty"`
 }
 type Approval struct {
 	Revision           int          `json:"revision"`
@@ -71,6 +75,9 @@ var slug = regexp.MustCompile(`^[a-z0-9][a-z0-9.-]{1,126}[a-z0-9]$`)
 var digest = regexp.MustCompile(`^sha256:[a-f0-9]{64}$`)
 
 func (m *Manifest) Validate() error {
+	if err := m.Settings.Validate(); err != nil {
+		return err
+	}
 	if !slug.MatchString(m.ID) || strings.Contains(m.ID, "..") || strings.TrimSpace(m.Name) == "" || len(m.Name) > 128 || len(m.Version) == 0 || len(m.Version) > 64 || len(m.Description) > 4096 || m.APIVersion != "v1" || !digest.MatchString(m.PackageDigest) {
 		return errors.New("invalid manifest identity, version, API version, or package digest")
 	}
@@ -118,7 +125,7 @@ func validatePermissions(ps []Permission) error {
 		}
 		seen[p.Capability] = true
 		if !isStackCapability(p.Capability) && p.StackIDs != nil {
-			return errors.New("stack scopes are only supported for stack network and traffic reads")
+			return errors.New("stack scopes require an explicitly supported stack capability")
 		}
 		if isStackCapability(p.Capability) {
 			if len(p.StackIDs) == 0 || len(p.StackIDs) > 1000 {
@@ -134,11 +141,11 @@ func validatePermissions(ps []Permission) error {
 		}
 
 		switch p.Capability {
-		case "ui.native", "storage.read", "storage.write", "storage.service.read", "storage.service.write":
+		case "ui.native", "storage.read", "storage.write", "storage.service.read", "storage.service.write", "settings.service.read", "settings.service.secrets.read":
 			if len(p.EnvironmentIDs) != 0 {
 				return errors.New("native UI and extension storage permissions are global")
 			}
-		case "environments.read", "containers.read", "stacks.read", "stacks.network.read", "stacks.traffic.read":
+		case "environments.read", "containers.read", "stacks.read", "stacks.network.read", "stacks.traffic.read", "stacks.delivery.read", "stacks.gitops.sync", "stacks.images.read", "stacks.images.update", "stacks.images.configure", "stacks.images.auto-update":
 			if len(p.EnvironmentIDs) == 0 || len(p.EnvironmentIDs) > 1000 {
 				return errors.New("explicit environment scope required")
 			}
@@ -158,7 +165,7 @@ func validatePermissions(ps []Permission) error {
 func has(ps []Permission, capability string, environmentID int) bool {
 	for _, p := range ps {
 		if p.Capability == capability {
-			if capability == "ui.native" || capability == "storage.read" || capability == "storage.write" || capability == "storage.service.read" || capability == "storage.service.write" {
+			if isGlobalCapability(capability) {
 				return environmentID == 0 && len(p.EnvironmentIDs) == 0
 			}
 			return environmentID > 0 && slices.Contains(p.EnvironmentIDs, environmentID)
@@ -180,7 +187,7 @@ func (a *Approval) ValidateFor(r Record) error {
 		return err
 	}
 	for _, p := range a.Grants {
-		if p.Capability == "ui.native" || p.Capability == "storage.read" || p.Capability == "storage.write" || p.Capability == "storage.service.read" || p.Capability == "storage.service.write" {
+		if isGlobalCapability(p.Capability) {
 			if (p.Capability == "ui.native" && !a.TrustedNativeUI) || !has(r.Manifest.Permissions, p.Capability, 0) {
 				return ErrDenied
 			}
@@ -222,6 +229,15 @@ func (a *Approval) ValidateFor(r Record) error {
 	return nil
 }
 
+func isGlobalCapability(capability string) bool {
+	switch capability {
+	case "ui.native", "storage.read", "storage.write", "storage.service.read", "storage.service.write", "settings.service.read", "settings.service.secrets.read":
+		return true
+	default:
+		return false
+	}
+}
+
 // Authorize checks an approved grant, not runtime activation or user access.
 // A runtime caller must additionally authenticate the extension and enforce the
 // operation's service grant or intersect the user's resource permissions.
@@ -243,7 +259,7 @@ func AuthorizeStackNetwork(r Record, environmentID, stackID int) error {
 	return AuthorizeStackCapability(r, "stacks.network.read", environmentID, stackID)
 }
 func isStackCapability(capability string) bool {
-	return capability == "stacks.network.read" || capability == "stacks.traffic.read"
+	return capability == "stacks.network.read" || capability == "stacks.traffic.read" || capability == "stacks.delivery.read" || capability == "stacks.gitops.sync" || capability == "stacks.images.read" || capability == "stacks.images.update" || capability == "stacks.images.configure" || capability == "stacks.images.auto-update"
 }
 
 // AuthorizeStackCapability never permits a stack capability using an environment grant alone.

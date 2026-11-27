@@ -27,7 +27,9 @@ func NewHandler(bouncer security.BouncerService) *Handler {
 	}
 
 	h.Handle("/ldap/check",
-		bouncer.AdminAccess(httperror.LoggerHandler(h.ldapCheck))).Methods(http.MethodPost)
+		bouncer.AdminAccess(security.ReadOnlyOperation(httperror.LoggerHandler(h.ldapCheck)))).Methods(http.MethodPost)
+	h.Handle("/ldap/test",
+		bouncer.AdminAccess(security.ReadOnlyOperation(httperror.LoggerHandler(h.ldapTest)))).Methods(http.MethodPost)
 
 	return h
 }

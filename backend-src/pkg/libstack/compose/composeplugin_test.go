@@ -415,7 +415,7 @@ networks:
 			})
 			require.NoError(t, err)
 
-			require.Equal(t, tc.expectFileContent, string(actual))
+			require.YAMLEq(t, tc.expectFileContent, string(actual))
 		})
 	}
 }
@@ -755,9 +755,11 @@ func Test_createProject(t *testing.T) {
 				"nginx": {
 					Name:          "nginx",
 					ContainerName: "nginx",
-					Environment:   types.MappingWithEquals{},
-					Image:         "nginx:latest",
-					Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+					ContainerSpec: types.ContainerSpec{
+						Environment: types.MappingWithEquals{},
+						Image:       "nginx:latest",
+						Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+					},
 				},
 			},
 			Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -792,9 +794,11 @@ func Test_createProject(t *testing.T) {
 					Name:          "nginx",
 					Profiles:      []string{"web1"},
 					ContainerName: "nginx",
-					Environment:   types.MappingWithEquals{},
-					Image:         "nginx:latest",
-					Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+					ContainerSpec: types.ContainerSpec{
+						Environment: types.MappingWithEquals{},
+						Image:       "nginx:latest",
+						Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+					},
 				},
 			},
 			Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -807,9 +811,11 @@ func Test_createProject(t *testing.T) {
 					Name:          "apache",
 					Profiles:      []string{"web2"},
 					ContainerName: "apache",
-					Environment:   nil,
-					Image:         "httpd:latest",
-					Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+					ContainerSpec: types.ContainerSpec{
+						Environment: nil,
+						Image:       "httpd:latest",
+						Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+					},
 				},
 			},
 			Profiles: []string{"web1"},
@@ -888,9 +894,11 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "totally_different_name_default"}},
@@ -946,16 +954,20 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 					"apache": {
 						Name:          "apache",
 						ContainerName: "apache",
-						Environment:   types.MappingWithEquals{},
-						Image:         "httpd:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "httpd:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -989,16 +1001,20 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 					"apache": {
 						Name:          "apache",
 						ContainerName: "apache",
-						Environment:   types.MappingWithEquals{},
-						Image:         "httpd:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "httpd:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -1032,16 +1048,20 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 					"apache": {
 						Name:          "apache",
 						ContainerName: "apache",
-						Environment:   types.MappingWithEquals{},
-						Image:         "httpd:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "httpd:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -1213,9 +1233,11 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.NewMappingWithEquals([]string{"PORTAINER_VAR=compose_file_environment"}),
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.NewMappingWithEquals([]string{"PORTAINER_VAR=compose_file_environment"}),
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -1254,9 +1276,11 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.NewMappingWithEquals([]string{"PORTAINER_VAR=compose_env_file"}),
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.NewMappingWithEquals([]string{"PORTAINER_VAR=compose_env_file"}),
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -1293,9 +1317,11 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -1331,9 +1357,11 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},
@@ -1366,9 +1394,11 @@ func Test_createProject(t *testing.T) {
 					"nginx": {
 						Name:          "nginx",
 						ContainerName: "nginx",
-						Environment:   types.MappingWithEquals{},
-						Image:         "nginx:latest",
-						Networks:      map[string]*types.ServiceNetworkConfig{"default": nil},
+						ContainerSpec: types.ContainerSpec{
+							Environment: types.MappingWithEquals{},
+							Image:       "nginx:latest",
+							Networks:    map[string]*types.ServiceNetworkConfig{"default": nil},
+						},
 					},
 				},
 				Networks: types.Networks{"default": {Name: "create-project-test_default"}},

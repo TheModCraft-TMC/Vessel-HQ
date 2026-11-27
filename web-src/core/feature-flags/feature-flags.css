@@ -42,11 +42,10 @@ div.limited-be {
   position: absolute;
   top: 0px;
   right: 0px;
-  float: right;
   border-top-right-radius: 8px;
   border-bottom-left-radius: 8px;
   touch-action: auto;
-  cursor: hand;
+  cursor: pointer;
   pointer-events: auto;
 }
 

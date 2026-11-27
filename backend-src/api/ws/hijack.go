@@ -24,7 +24,9 @@ const (
 )
 
 func HijackRequest(websocketConn *websocket.Conn, conn net.Conn, request *http.Request) error {
-	resp, err := sendHTTPRequest(conn, request)
+	defer logs.CloseAndLogErr(conn)
+	reader := bufio.NewReader(conn)
+	resp, err := sendHTTPRequest(conn, reader, request)
 	if err != nil {
 		return err
 	}
@@ -43,7 +45,7 @@ func HijackRequest(websocketConn *websocket.Conn, conn net.Conn, request *http.R
 
 	errorChan := make(chan error, 2)
 	go StreamFromWebsocketToWriter(websocketConn, conn, errorChan)
-	go WriteReaderToWebSocket(websocketConn, &mu, conn, errorChan)
+	go WriteReaderToWebSocket(websocketConn, &mu, reader, errorChan)
 
 	err = <-errorChan
 	if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseNoStatusReceived) {
@@ -58,14 +60,14 @@ func HijackRequest(websocketConn *websocket.Conn, conn net.Conn, request *http.R
 }
 
 // sendHTTPRequest sends an HTTP request over the provided net.Conn and parses the response.
-func sendHTTPRequest(conn net.Conn, req *http.Request) (*http.Response, error) {
+func sendHTTPRequest(conn net.Conn, reader *bufio.Reader, req *http.Request) (*http.Response, error) {
 	// Send the HTTP request to the server
 	if err := req.Write(conn); err != nil {
 		return nil, fmt.Errorf("error writing request: %w", err)
 	}
 
 	// Read the response from the server
-	resp, err := http.ReadResponse(bufio.NewReader(conn), req)
+	resp, err := http.ReadResponse(reader, req)
 	if err != nil {
 		return nil, fmt.Errorf("error reading response: %w", err)
 	}
@@ -74,11 +76,10 @@ func sendHTTPRequest(conn net.Conn, req *http.Request) (*http.Response, error) {
 }
 
 func WriteReaderToWebSocket(websocketConn *websocket.Conn, mu *sync.Mutex, reader io.Reader, errorChan chan error) {
-	out := make([]byte, ReaderBufferSize)
 	input := make(chan string)
+	readError := make(chan error, 1)
 	pingTicker := time.NewTicker(PingPeriod)
-
-	defer logs.CloseAndLogErr(websocketConn)
+	defer pingTicker.Stop()
 
 	done := make(chan struct{})
 	defer close(done)
@@ -107,31 +108,28 @@ func WriteReaderToWebSocket(websocketConn *websocket.Conn, mu *sync.Mutex, reade
 	mu.Unlock()
 
 	go func() {
-		for {
-			n, err := reader.Read(out)
-			if err != nil {
-				errorChan <- err
-
-				if !errors.Is(err, io.EOF) {
-					log.Debug().Err(err).Msg("error reading from server")
-				}
-
-				return
-			}
-
-			processedOutput := ValidString(string(out[:n]))
-
+		defer close(input)
+		readError <- readTerminalOutput(reader, func(output string) error {
 			select {
-			case input <- processedOutput:
+			case input <- output:
+				return nil
 			case <-done:
-				return
+				return io.ErrClosedPipe
 			}
-		}
+		})
 	}()
 
 	for {
 		select {
-		case msg := <-input:
+		case msg, open := <-input:
+			if !open {
+				err := <-readError
+				if !errors.Is(err, io.EOF) {
+					log.Debug().Err(err).Msg("error reading from server")
+				}
+				errorChan <- err
+				return
+			}
 			if err := wsWrite(websocketConn, mu, msg); err != nil {
 				log.Debug().Err(err).Msg("error writing to websocket")
 				errorChan <- err

@@ -21,6 +21,49 @@ import (
 // testHandler200 is a simple handler which returns HTTP status 200 OK
 var testHandler200 = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 
+func TestMutationNotificationsForReadOnlyPOST(t *testing.T) {
+	for _, test := range []struct {
+		name              string
+		readOnly          bool
+		nested            bool
+		status            int
+		wantNotifications int
+	}{
+		{name: "POST query", readOnly: true, status: http.StatusOK},
+		{name: "nested POST query", readOnly: true, nested: true, status: http.StatusOK},
+		{name: "successful write", status: http.StatusCreated, wantNotifications: 1},
+		{name: "nested successful write", nested: true, status: http.StatusCreated, wantNotifications: 1},
+		{name: "failed write", status: http.StatusBadRequest},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			_, store := datastore.MustNewTestStore(t, true, true)
+			user := &portainer.User{Username: "admin", Role: portainer.AdministratorRole}
+			require.NoError(t, store.User().Create(user))
+			notifications := 0
+			bouncer := &RequestBouncer{dataStore: store, publishMutation: func() { notifications++ }}
+			var handler http.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				ctx, err := RetrieveRestrictedRequestContext(r)
+				require.NoError(t, err)
+				require.Equal(t, user.ID, ctx.UserID)
+				w.WriteHeader(test.status)
+			})
+			if test.readOnly {
+				handler = ReadOnlyOperation(handler)
+			}
+			if test.nested {
+				handler = bouncer.mwUpgradeToRestrictedRequest(handler)
+			}
+			handler = bouncer.mwUpgradeToRestrictedRequest(handler)
+			r := httptest.NewRequest(http.MethodPost, "/test", nil)
+			r = r.WithContext(StoreTokenData(r, &portainer.TokenData{ID: user.ID, Role: user.Role}))
+			response := httptest.NewRecorder()
+			handler.ServeHTTP(response, r)
+			require.Equal(t, test.status, response.Code)
+			require.Equal(t, test.wantNotifications, notifications)
+		})
+	}
+}
+
 func TestIsMutationRequest(t *testing.T) {
 	t.Parallel()
 

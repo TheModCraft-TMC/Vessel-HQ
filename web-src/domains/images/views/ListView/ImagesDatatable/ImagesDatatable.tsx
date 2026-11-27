@@ -58,6 +58,7 @@ export function ImagesDatatable({
 
   return (
     <Datatable
+      flush
       title="Images"
       titleIcon={List}
       data-cy="docker-images-datatable"

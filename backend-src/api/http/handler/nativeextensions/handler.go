@@ -1,6 +1,7 @@
 package nativeextensions
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -9,30 +10,38 @@ import (
 	"github.com/portainer/portainer/api/dataservices"
 	"github.com/portainer/portainer/api/http/security"
 	domain "github.com/portainer/portainer/api/nativeextensions"
+	"github.com/portainer/portainer/api/nativeextensions/delivery"
 	extensionrpc "github.com/portainer/portainer/api/nativeextensions/rpc"
 	httperror "github.com/portainer/portainer/pkg/libhttp/error"
 	librequest "github.com/portainer/portainer/pkg/libhttp/request"
 	libresponse "github.com/portainer/portainer/pkg/libhttp/response"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 )
 
 type Handler struct {
 	*mux.Router
-	DataStore     dataservices.DataStore
-	FileService   portainer.FileService
-	Broker        *extensionrpc.InternalBroker
-	AuthorizeUser extensionrpc.UserAuthorize
+	DataStore         dataservices.DataStore
+	FileService       portainer.FileService
+	Broker            *extensionrpc.InternalBroker
+	AuthorizeUser     extensionrpc.UserAuthorize
+	DeliveryRead      func(context.Context, int, int, bool) (delivery.Snapshot, error)
+	Redeploy          func(http.ResponseWriter, *http.Request, int, int, string, bool) *httperror.HandlerError
+	deploymentMutex   sync.Mutex
+	runtimeRequests   runtimeBudget
+	PublishSafetyTrip func()
 }
 
 func NewHandler(b security.BouncerService) *Handler {
 	h := &Handler{Router: mux.NewRouter()}
 	h.Handle("/native-extensions/slots", b.RestrictedAccess(httperror.LoggerHandler(h.slots))).Methods("GET")
-	h.Handle("/native-extensions/{id}/traffic-stream", b.RestrictedAccess(httperror.LoggerHandler(h.trafficStream))).Methods("POST")
+	h.Handle("/native-extensions/{id}/traffic-stream", b.RestrictedAccess(security.ReadOnlyOperation(httperror.LoggerHandler(h.trafficStream)))).Methods("POST")
 	h.Handle("/native-extensions/{id}/invoke", b.RestrictedAccess(httperror.LoggerHandler(h.invoke))).Methods("POST")
 	h.Handle("/native-extensions/{id}/storage", b.AdminAccess(httperror.LoggerHandler(h.readStorage))).Methods("GET")
 	h.Handle("/native-extensions/{id}/storage", b.AdminAccess(httperror.LoggerHandler(h.writeStorage))).Methods("PUT")
+	h.Handle("/native-extensions/{id}/settings", b.AdminAccess(httperror.LoggerHandler(h.settings))).Methods("GET", "PUT", "DELETE")
 	h.Handle("/native-extensions/{id}/package", b.AdminAccess(httperror.LoggerHandler(h.download))).Methods("GET")
 
 	h.Handle("/native-extensions", b.AdminAccess(httperror.LoggerHandler(h.list))).Methods("GET")
@@ -40,6 +49,7 @@ func NewHandler(b security.BouncerService) *Handler {
 	h.Handle("/native-extensions/upload", b.AdminAccess(httperror.LoggerHandler(h.upload))).Methods("POST")
 	h.Handle("/native-extensions/{id}/approval", b.AdminAccess(httperror.LoggerHandler(h.approve))).Methods("PUT")
 	h.Handle("/native-extensions/{id}/disable", b.AdminAccess(httperror.LoggerHandler(h.disable))).Methods("POST")
+	h.Handle("/native-extensions/{id}/safety-trip", b.AdminAccess(httperror.LoggerHandler(h.safetyTrip))).Methods("POST")
 	h.Handle("/native-extensions/{id}", b.AdminAccess(httperror.LoggerHandler(h.remove))).Methods("DELETE")
 	return h
 }
@@ -59,6 +69,7 @@ func decode(w http.ResponseWriter, r *http.Request, v any) error {
 // Registration metadata must not bypass the dedicated storage.read grant.
 func publicRecord(record domain.Record) domain.Record {
 	record.Note = nil
+	record.Settings = nil
 	return record
 }
 func (h *Handler) list(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
@@ -93,6 +104,13 @@ func (h *Handler) persistRegistration(r *http.Request, m domain.Manifest, availa
 				v.ID = old.ID
 				v.Revision = old.Revision + 1
 				v.Note = old.Note
+				v.Settings = old.Settings
+				if old.ImageAutomation != nil {
+					copy := *old.ImageAutomation
+					copy.Enabled = false
+					copy.Version++
+					v.ImageAutomation = &copy
+				}
 				break
 			}
 		}
@@ -124,9 +142,12 @@ func (h *Handler) mutate(w http.ResponseWriter, r *http.Request, action string, 
 			return e
 		}
 		if e = f(v); e != nil {
+			if errors.Is(e, errRuntimeAlreadyDisabled) {
+				return nil
+			}
 			return e
 		}
-		v.UpdatedAt = time.Now().Unix()
+		v.UpdatedAt = max(time.Now().Unix(), v.UpdatedAt+1)
 		if action == "extension.remove" {
 			e = tx.NativeExtension().Delete(id)
 		} else {
@@ -164,15 +185,14 @@ func (h *Handler) approve(w http.ResponseWriter, r *http.Request) *httperror.Han
 		v.TrustedNativeUI = a.TrustedNativeUI
 		v.ServiceReadEnabled = a.ServiceReadEnabled
 		v.Status = "approved"
+		v.SafetyReason = ""
+		h.runtimeRequests.resetExtension(v.ID)
 		return nil
 	})
 }
 func (h *Handler) disable(w http.ResponseWriter, r *http.Request) *httperror.HandlerError {
 	return h.mutate(w, r, "extension.disable", func(v *domain.Record) error {
-		v.Status = "disabled"
-		v.Grants = []domain.Permission{}
-		v.TrustedNativeUI = false
-		v.ServiceReadEnabled = false
+		disableRecord(v)
 		return nil
 	})
 }
@@ -187,9 +207,17 @@ func audit(tx dataservices.DataStoreTx, r *http.Request, action string, v domain
 	if !u.IsAdmin || u.User == nil {
 		return httperror.Forbidden("Administrator required", errors.New("admin context required"))
 	}
-	payload, e := json.Marshal(map[string]any{"id": v.ID, "extensionId": v.Manifest.ID, "revision": v.Revision, "packageDigest": v.Manifest.PackageDigest, "status": v.Status, "grants": v.Grants, "trustedNativeUI": v.TrustedNativeUI, "serviceReadEnabled": v.ServiceReadEnabled, "archiveDigest": v.ArchiveDigest, "packageAvailable": v.PackageAvailable})
+	payload, e := json.Marshal(map[string]any{"id": v.ID, "extensionId": v.Manifest.ID, "revision": v.Revision, "packageDigest": v.Manifest.PackageDigest, "status": v.Status, "grants": v.Grants, "trustedNativeUI": v.TrustedNativeUI, "serviceReadEnabled": v.ServiceReadEnabled, "archiveDigest": v.ArchiveDigest, "packageAvailable": v.PackageAvailable, "settingsVersion": settingsVersion(v), "imageAutomation": v.ImageAutomation})
 	if e != nil {
 		return e
 	}
 	return tx.ActivityLog().Create(&portainer.ActivityLog{Timestamp: time.Now().Unix(), Username: u.User.Username, Action: action, Context: "native-extensions", Payload: base64.StdEncoding.EncodeToString(payload)})
+}
+
+// Only the version is auditable; configuration values and secret names stay out.
+func settingsVersion(v domain.Record) int {
+	if v.Settings == nil {
+		return 0
+	}
+	return v.Settings.Version
 }
