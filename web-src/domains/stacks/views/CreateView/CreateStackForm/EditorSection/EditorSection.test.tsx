@@ -39,10 +39,7 @@ describe('EditorSection', () => {
     });
 
     const editor = screen.getByTestId('stack-creation-editor');
-    expect(editor).toBeInTheDocument();
-
-    const textarea = screen.getByRole('textbox');
-    expect(textarea).toHaveValue(value);
+    expect(editor).toHaveValue(value);
   });
 });
 
