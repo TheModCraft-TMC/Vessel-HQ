@@ -69,6 +69,7 @@ export function StackDetailExtensionActions({
           key={`${record.id}:${record.revision}:${slot.id}:${context.environmentId}:${context.stackId}`}
           record={record}
           registration={registration}
+          slotId={slot.id}
           title={slot.title}
           context={context}
         />
@@ -131,11 +132,13 @@ class ExtensionBoundary extends Component<
 function ExtensionAction({
   record,
   registration,
+  slotId,
   title,
   context,
 }: {
   record: ExtensionSlotRegistration;
   registration: NativeExtensionRegistration;
+  slotId: string;
   title: string;
   context: StackDetailContext;
 }) {
@@ -161,7 +164,7 @@ function ExtensionAction({
   );
   const { guard, state: safety } = useRuntimeWatchdog(
     binding,
-    `stack:${environmentId}:${stackId}`,
+    `stack:${environmentId}:${stackId}:${slotId}`,
     open
   );
   const drawerId = useId();

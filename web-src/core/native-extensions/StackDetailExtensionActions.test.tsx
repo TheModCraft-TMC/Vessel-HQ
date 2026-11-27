@@ -6,6 +6,7 @@ import { beforeEach, vi } from 'vitest';
 import { withTestQueryProvider } from '@/core/query/test-support/withTestQuery';
 import {
   invokeStackExtension,
+  tripExtensionRuntime,
   useExtensionSlots,
   type ExtensionSlotRegistration,
 } from '@/domains/extensions';
@@ -184,6 +185,41 @@ it('loads matching code only when the action opens the inline stack drawer', asy
       screen.getByRole('button', { name: 'Network overview' })
     ).toHaveFocus()
   );
+});
+
+it('tracks restart loops per slot while sharing the extension safety stop', async () => {
+  const secondSlot = { ...slot, id: 'traffic', title: 'Traffic overview' };
+  const slots = [slot, secondSlot];
+  nativeExtensionRegistrations[0].slots = slots;
+  setQuery([
+    {
+      ...record,
+      manifest: {
+        ...record.manifest,
+        ui: {
+          ...record.manifest.ui,
+          slots,
+        },
+      },
+    },
+  ]);
+  const user = userEvent.setup();
+  renderActions();
+
+  async function openAndClose(title: string, times: number) {
+    const button = screen.getByRole('button', { name: title });
+    for (let i = 0; i < times; i += 1) {
+      await user.click(button);
+      await user.click(button);
+    }
+  }
+
+  await openAndClose(slot.title, 4);
+  await openAndClose(secondSlot.title, 3);
+  expect(tripExtensionRuntime).not.toHaveBeenCalled();
+
+  await openAndClose(slot.title, 3);
+  await waitFor(() => expect(tripExtensionRuntime).toHaveBeenCalledOnce());
 });
 
 it('sends a matching operation through the permission-checked host broker with the exact context', async () => {

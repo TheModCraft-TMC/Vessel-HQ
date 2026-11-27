@@ -1,6 +1,7 @@
 import { useFormikContext } from 'formik';
 import { JSONSchema7 } from 'json-schema';
 
+import { DockerRunImport } from '@/domains/stacks/components/common/DockerRunImport';
 import { textByType } from '@/domains/stacks/components/common/form-texts';
 import { StackType } from '@/domains/stacks/models/types';
 import { usePreventExit, WebEditorForm } from '@/ui/components/WebEditorForm';
@@ -28,16 +29,24 @@ export function EditorSection({
   );
 
   return (
-    <WebEditorForm
-      id="stack-creation-editor"
-      value={values.editor.fileContent}
-      onChange={(value) => setFieldValue('editor.fileContent', value)}
-      schema={schema}
-      error={errors.editor?.fileContent}
-      textTip={texts.editor.placeholder}
-      data-cy="stack-creation-editor"
-    >
-      {texts.editor.description}
-    </WebEditorForm>
+    <>
+      {!isSwarm && (
+        <DockerRunImport
+          isEmpty={!values.editor.fileContent.trim()}
+          onInsert={(value) => setFieldValue('editor.fileContent', value)}
+        />
+      )}
+      <WebEditorForm
+        id="stack-creation-editor"
+        value={values.editor.fileContent}
+        onChange={(value) => setFieldValue('editor.fileContent', value)}
+        schema={schema}
+        error={errors.editor?.fileContent}
+        textTip={texts.editor.placeholder}
+        data-cy="stack-creation-editor"
+      >
+        {texts.editor.description}
+      </WebEditorForm>
+    </>
   );
 }
