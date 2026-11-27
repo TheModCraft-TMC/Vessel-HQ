@@ -159,7 +159,7 @@ func dockerSnapshotContainers(snapshot *portainer.DockerSnapshot, cli *client.Cl
 		}
 
 		// Snapshot GPUs and Env
-		responseResult, err := cli.ContainerInspect(context.Background(), container.ID, client.ContainerInspectOptions{})
+		responseResult, err := cli.ContainerInspect(ctx, container.ID, client.ContainerInspectOptions{})
 		response := responseResult.Container
 		if err != nil && !snapshot.Swarm {
 			return err
