@@ -63,7 +63,7 @@ export function dockerRunToCompose(commandLine: string) {
   const environment = new Map<string, string>();
 
   let index = 0;
-  for (; index < args.length && args[index].startsWith('-'); index += 1) {
+  while (index < args.length && args[index].startsWith('-')) {
     const argument = args[index];
     if (argument === '--') {
       index += 1;
@@ -88,6 +88,7 @@ export function dockerRunToCompose(commandLine: string) {
       applyOption(parsed.option, parsed.value);
       index = parsed.lastIndex;
     }
+    index += 1;
   }
 
   const image = args[index];
