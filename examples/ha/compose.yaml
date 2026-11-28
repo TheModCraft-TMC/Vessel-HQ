@@ -1,5 +1,6 @@
 # Deploy this opt-in file separately on EACH of the two Docker hosts.
-# /srv/vessel-ha-data must be the SAME coherently locked shared filesystem.
+# Mount the SAME coherently locked filesystem at /srv/vessel-ha-data on both
+# hosts. Create the data subdirectory on the shared filesystem after mounting.
 services:
   vessel:
     image: ${VESSEL_HA_IMAGE:?Set the same reviewed immutable image on both hosts}
@@ -11,7 +12,7 @@ services:
       - "8000:8000"
     volumes:
       - type: bind
-        source: /srv/vessel-ha-data
+        source: /srv/vessel-ha-data/vessel
         target: /data
         bind:
           create_host_path: false

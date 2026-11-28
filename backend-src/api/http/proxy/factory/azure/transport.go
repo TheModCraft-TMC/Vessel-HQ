@@ -22,7 +22,8 @@ type (
 		credentials *portainer.AzureCredentials
 		client      *client.HTTPClient
 		token       *azureAPIToken
-		mutex       sync.Mutex
+		tokenMu     sync.Mutex
+		createMu    sync.Mutex
 		dataStore   dataservices.DataStore
 		endpoint    *portainer.Endpoint
 	}
@@ -54,12 +55,13 @@ func (transport *Transport) RoundTrip(request *http.Request) (*http.Response, er
 func (transport *Transport) proxyAzureRequest(request *http.Request) (*http.Response, error) {
 	requestPath := request.URL.Path
 
-	err := transport.retrieveAuthenticationToken()
+	token, err := transport.retrieveAuthenticationToken()
 	if err != nil {
 		return nil, err
 	}
 
-	request.Header.Set("Authorization", "Bearer "+transport.token.value)
+	request = request.Clone(request.Context())
+	request.Header.Set("Authorization", "Bearer "+token)
 
 	if match, _ := path.Match(portainer.AzurePathContainerGroups, requestPath); match {
 		return transport.proxyContainerGroupsRequest(request)
@@ -89,18 +91,15 @@ func (transport *Transport) authenticate() error {
 	return nil
 }
 
-func (transport *Transport) retrieveAuthenticationToken() error {
-	transport.mutex.Lock()
-	defer transport.mutex.Unlock()
+func (transport *Transport) retrieveAuthenticationToken() (string, error) {
+	transport.tokenMu.Lock()
+	defer transport.tokenMu.Unlock()
 
-	if transport.token == nil {
-		return transport.authenticate()
+	if transport.token == nil || !time.Now().Add(5*time.Minute).Before(transport.token.expirationTime) {
+		if err := transport.authenticate(); err != nil {
+			return "", err
+		}
 	}
 
-	timeLimit := time.Now().Add(-5 * time.Minute)
-	if timeLimit.After(transport.token.expirationTime) {
-		return transport.authenticate()
-	}
-
-	return nil
+	return transport.token.value, nil
 }

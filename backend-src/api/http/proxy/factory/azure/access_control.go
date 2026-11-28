@@ -131,14 +131,7 @@ func (transport *Transport) filterContainerGroups(containerGroups []any, context
 	return filteredContainerGroups
 }
 
-func (transport *Transport) removeResourceControl(containerGroup map[string]any, context *azureRequestContext) error {
-	containerGroupID, ok := containerGroup["id"].(string)
-	if !ok {
-		log.Debug().Msg("missing ID in container group")
-
-		return nil
-	}
-
+func (transport *Transport) removeResourceControl(containerGroupID string, context *azureRequestContext) error {
 	if resourceControl := transport.findResourceControl(containerGroupID, context); resourceControl != nil {
 		return transport.dataStore.ResourceControl().Delete(resourceControl.ID)
 	}

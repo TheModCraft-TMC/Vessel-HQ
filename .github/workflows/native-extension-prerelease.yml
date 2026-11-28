@@ -91,7 +91,13 @@ jobs:
             tar -czf "dist/prerelease/vessel-hq-$APPLICATION_VERSION-linux-$arch.tar.gz" \
               -C dist/release-context "$arch/portainer" next next-entrypoint.js mustache-templates
           done
-          cp docs/releases/native-extensions-prerelease.md dist/prerelease/README.md
+          notes="docs/releases/$APPLICATION_VERSION.md"
+          if [[ -f "$notes" ]]; then
+            cp "$notes" dist/prerelease/README.md
+          else
+            printf '# Vessel HQ %s\n\nSee IMAGE.txt for the verified image digest.\n' \
+              "$APPLICATION_VERSION" > dist/prerelease/README.md
+          fi
           (cd dist/prerelease && sha256sum *.tar.gz *.vesselhq > SHA256SUMS)
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -198,5 +204,5 @@ jobs:
           VERSION: ${{ steps.version.outputs.application }}
         run: |
           gh release create "v$VERSION" --repo TheModCraft-TMC/Vessel-HQ --verify-tag \
-            --prerelease --title "Vessel HQ $VERSION — native extensions preview" \
-            --notes-file docs/releases/native-extensions-prerelease.md dist/prerelease/*
+            --prerelease --title "Vessel HQ $VERSION" \
+            --notes-file dist/prerelease/README.md dist/prerelease/*
