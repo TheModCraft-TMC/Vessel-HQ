@@ -94,6 +94,14 @@ export function useLoginController() {
         storeReturnUrl(returnUrl);
       }
 
+      const requestedLogout =
+        searchParams.has('logout') || (!hasOAuth && searchParams.has('error'));
+      if (requestedLogout) {
+        cleanUrlParameters();
+        await logout();
+        authStorage.setLogoutReason(searchParams.get('error') || '');
+      }
+
       if (hasOAuth) {
         const oauth = prepareOAuthLogin({
           authorizationUri: settings.OAuthLoginURI,
@@ -127,13 +135,6 @@ export function useLoginController() {
       }
       setLogo(getAppState().application.logo);
 
-      if (searchParams.has('logout') || searchParams.has('error')) {
-        await logout();
-        authStorage.setLogoutReason(searchParams.get('error') || '');
-        window.location.reload();
-        return;
-      }
-
       const logoutReason = authStorage.getLogoutReason();
       if (logoutReason) {
         setAuthenticationError(logoutReason);
@@ -141,7 +142,8 @@ export function useLoginController() {
       }
 
       clearQueryCache(queryClient);
-      const restored = await initializeAuthentication();
+      const restored =
+        !requestedLogout && (await initializeAuthentication());
       const user = restored ? getAuthenticatedUser() : undefined;
       if (user) {
         applyTheme(user.ThemeSettings.color);
@@ -151,7 +153,7 @@ export function useLoginController() {
         return;
       }
 
-      if (await attemptDevelopmentLogin()) {
+      if (!requestedLogout && (await attemptDevelopmentLogin())) {
         await postLoginSteps();
         return;
       }
